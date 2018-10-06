@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+	<title>Recherche - ON-AIR</title>
+	<meta name="keywords" content="Download, Apartment, Premium, Real Estate, HMTL, Site Template, property, mortgage, CSS" />
+	<meta name="description" content="Download Apartment - Premium Real Estate HMTL Site Template" />
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="/asset/bootstrap/bootstrap.min.css">    
+	<!-- Font awesome styles -->    
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous"> 
+	<!-- Custom styles -->
+	<link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Roboto:400,400italic,300,300italic,500,500italic,700,700italic&amp;subset=latin,latin-ext'>
+	<link rel="stylesheet" type="text/css" href="/asset/css/plugins.css">
+    <link rel="stylesheet" type="text/css" href="/asset/css/apartment-layout.css">
+    <link id="skin" rel="stylesheet" type="text/css" href="/asset/css/navy.css">
+	<link rel="stylesheet" type="text/css" href="/asset/css/style.css">
+	<link rel="stylesheet" type="text/css" href="/asset/css/chat.css">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+	<!-- Socket IO JS -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script> -->
+    <script src="http://localhost:4000/socket.io/socket.io.js"></script>
+</head>
+<body>
+<div id="wrapper">
+    <section class="section-light section-top-shadow">
+		<div id="chatbox">
+			<div id="friendslist">
+		    	<div id="topmenu">
+		        	<span class="friends"></span>
+		            <span class="chats"></span>
+		            <span class="history"></span>
+		        </div>
+		        
+		        <div id="friends">
+		        	<div class="friend">
+		            	<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" />
+		                <p>
+		                	<strong>Mirodg Badev</strong>
+			                <span>Artiste</span>
+		                </p>
+		                <div class="status available"></div>
+		            </div>
+		            
+		            <div class="friend">
+		            	<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/2_copy.jpg" />
+		                <p>
+		                	<strong>Martin Joseph</strong>
+			                <span>marjoseph@gmail.com</span>
+		                </p>
+		                <div class="status away"></div>
+		            </div>
+		            
+		            <div class="friend">
+		            	<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/3_copy.jpg" />
+		                <p>
+		                	<strong>Tomas Kennedy</strong>
+			                <span>tomaskennedy@gmail.com</span>
+		                </p>
+		                <div class="status inactive"></div>
+		            </div>
+		            
+		            <div class="friend">
+		            	<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/4_copy.jpg" />
+		                <p>
+		                	<strong>Enrique	Sutton</strong>
+			                <span>enriquesutton@gmail.com</span>
+		                </p>
+		                <div class="status inactive"></div>
+		            </div>
+		            
+		            <div class="friend">
+		            	<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/5_copy.jpg" />
+		                <p>
+		                <strong>Darnell	Strickland</strong>
+			                <span>Artiste</span>
+			                <p class="preview">Un message...</p>
+		                </p>
+		                <div class="status inactive"></div>
+		            </div>
+		            
+		            <div id="search">
+			            <input type="text" id="searchfield" value="Search contacts..." />
+		            </div>
+		        </div>
+		    </div>
+		    
+		    <div id="chatview" class="p1">    	
+		        <div id="profile">
+
+		            <div id="close">
+		                <div class="cy"></div>
+		                <div class="cx"></div>
+		            </div>
+		            
+		            <p>Miro Badev</p>
+		            <span>Artiste</span>
+		            <div class="box-module">
+		            	<a class="module" href="#booking-modal" data-toggle="modal">booking</a>
+		            	<a class="module" href="#devis-modal" data-toggle="modal">devis</a>
+		            	<a class="module" href="#rdv-modal" data-toggle="modal">rdv</a>
+		            	<a class="module" href="#paiement-modal" data-toggle="modal">paiement</a>
+		            	<a class="module" href="#son-modal" data-toggle="modal">son</a>
+		            	<a class="module" href="#video-modal" data-toggle="modal">video</a>
+		            </div>
+		        </div>
+		        <div id="chat-messages">
+		        	<label>Thursday 02</label>
+		            
+		            <div class="message">
+		            	<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" />
+		                <div class="bubble">
+<div class="card-chat"><div class="picture "></div><div class="navigation"><div class="nav_btns"><i class=" icon-home" aria-hidden="true"></i><i class="nav_btn icon-magnifier" aria-hidden="true"></i><i class="nav_btn_r icon-bell" aria-hidden="true"></i><i class="nav_btn icon-user" aria-hidden="true"></i></div><div id="plusButton" class="plus"><div class="plusHor"></div><div class="plusVer "></div></div></div><div class="options"><i class=" icon-camera" aria-hidden="true"></i><i class=" icon-picture" aria-hidden="true"></i><i class=" icon-camrecorder" aria-hidden="true"></i></div></div><div class="corner"></div>
+		                    <span>3 min</span>
+		                </div>
+		            </div>
+		            
+		            <div class="message right">
+		            	<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/2_copy.jpg" />
+		                <div class="bubble">
+		                	Can you share a link for the tutorial?
+		                    <div class="corner"></div>
+		                    <span>1 min</span>
+		                </div>
+		            </div>
+		            
+		            <div class="message">
+		            	<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" />
+		                <div class="bubble">
+		                	Yeah, hold on
+		                    <div class="corner"></div>
+		                    <span>Now</span>
+		                </div>
+		            </div>
+		            
+		            <div class="message right">
+		            	<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/2_copy.jpg" />
+		                <div class="bubble">
+		                	Can you share a link for the tutorial?
+		                    <div class="corner"></div>
+		                    <span>1 min</span>
+		                </div>
+		            </div>
+		            
+		            <div class="message">
+		            	<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" />
+		                <div class="bubble">
+		                	Yeah, hold on
+		                    <div class="corner"></div>
+		                    <span>Now</span>
+		                </div>
+		            </div>
+		            
+		        </div>
+		    	
+		        <div id="sendmessage">
+		        	<textarea name="message"></textarea>
+		            <button id="send"></button>
+		        </div> 
+		    </div>
+		</div> 
+    </section>
+
+<!-- SON modal -->
+	<div class="modal fade apartment-modal" id="son-modal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<div class="modal-title msg-song">
+						<h1>Envoyer une musique<span class="special-color">?</span></h1>
+						<div class="short-title-separator"></div>
+					</div>
+					<!-- <p class="negative-margin forgot-info">Instert your account email address.<br/>We will send you a link to reset your password.</p> -->
+					<form action="/song_upload" method="POST" class="upload" style="height:100%;" enctype="multipart/form-data">
+						<input name="msg"  type="text" class="input-full main-input" placeholder="Objet du message..." />
+						<input name="uploaded_file" type="file" class="input-file-ghost" style="height:0;" />
+						<input name="song"  type="text" class="input-full main-input" placeholder="Sélection de fichier..." />
+						<a id="song_up" href="#" class="button-primary button-shadow button-full">
+							<span>Uploader le fichier</span>
+							<div class="button-triangle"></div>
+							<div class="button-triangle2"></div>
+							<div class="button-icon"><i class="fa fa-user"></i></div>
+						</a>
+					</form>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+
+<!-- video password modal -->
+	<div class="modal fade apartment-modal" id="video-modal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<div class="modal-title msg-video">
+						<h1>Envoyer une video<span class="special-color">?</span></h1>
+						<div class="short-title-separator"></div>
+					</div>
+					<!-- <p class="negative-margin forgot-info">Instert your account email address.<br/>We will send you a link to reset your password.</p> -->
+					<input name="msg" type="text" class="input-full main-input" placeholder="Objet du message..." />
+					<input name="video" type="text" class="input-full main-input" placeholder="http:// ou https://" />
+					<a id="video_up" class="button-primary button-shadow button-full">
+						<span>Envoyer le lien</span>
+						<div class="button-triangle"></div>
+						<div class="button-triangle2"></div>
+						<div class="button-icon"><i class="fa fa-user"></i></div>
+					</a>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+
+<!-- rdv password modal -->
+	<div class="modal fade apartment-modal" id="rdv-modal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<div class="modal-title msg-rdv">
+						<h1>Proposer un/des rdv<span class="special-color">?</span></h1>
+						<div class="short-title-separator"></div>
+					</div>
+					<iframe class="cal" src="/widget_calendar?page=chat" style="border: none;width: 100%;min-height: 350px;"></iframe>
+					<div id="selectHours"></div>
+					<a class="button-primary button-shadow button-full meet-up-chat">
+						<span>Valider le(s) rendez-vous</span>
+						<div class="button-triangle"></div>
+						<div class="button-triangle2"></div>
+						<div class="button-icon"><i class="fa fa-user"></i></div>
+					</a>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+
+<!-- devis password modal -->
+	<div class="modal fade apartment-modal" id="devis-modal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<div class="modal-title msg-devis">
+						<h1>Envoyer un devis<span class="special-color">?</span></h1>
+						<div class="short-title-separator"></div>
+					</div>
+					<input name="msg" type="text" class="input-full main-input" placeholder="Objet du message..." />
+					<!-- <p class="negative-margin forgot-info">Instert your account email address.<br/>We will send you a link to reset your password.</p>
+					<input name="login" type="email" class="input-full main-input" placeholder="Your email" /> -->
+					<a id="devis-send" class="button-primary button-shadow button-full">
+						<span>Envoyer le devis</span>
+						<div class="button-triangle"></div>
+						<div class="button-triangle2"></div>
+						<div class="button-icon"><i class="fa fa-user"></i></div>
+					</a>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+
+<!-- booking password modal -->
+	<div class="modal fade apartment-modal" id="booking-modal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<div class="modal-title msg-booking">
+						<h1>Proposer un/des booking(s)<span class="special-color">?</span></h1>
+						<div class="short-title-separator"></div>
+					</div>
+					<iframe class="cal" src="/widget_calendar?page=chat" style="border: none;width: 100%;min-height: 350px;"></iframe>
+					<div id="selectHours"></div>
+					<a class="button-primary button-shadow button-full booking-chat">
+						<span>Valider le(s) booking(s)</span>
+						<div class="button-triangle"></div>
+						<div class="button-triangle2"></div>
+						<div class="button-icon"><i class="fa fa-user"></i></div>
+					</a>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+
+<!-- paiement password modal -->
+	<div class="modal fade apartment-modal" id="paiement-modal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<div class="modal-title msg-paiement">
+						<h1>Envoyer une demande de paiement<span class="special-color">?</span></h1>
+						<div class="short-title-separator"></div>
+					</div>
+					<p class="negative-margin forgot-info">Instert your account email address.<br/>We will send you a link to reset your password.</p>
+					<input name="login" type="email" class="input-full main-input" placeholder="Your email" />
+					<a href="my-profile.html" class="button-primary button-shadow button-full">
+						<span>Reset password</span>
+						<div class="button-triangle"></div>
+						<div class="button-triangle2"></div>
+						<div class="button-icon"><i class="fa fa-user"></i></div>
+					</a>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+
+<!-- jQuery  -->
+    <script type="text/javascript" src="/asset/js/jQuery/jquery.min.js"></script>
+	<script type="text/javascript" src="/asset/js/jQuery/jquery-ui.min.js"></script>
+	
+<!-- Bootstrap-->
+    <script type="text/javascript" src="/asset/bootstrap/bootstrap.min.js"></script>
+
+<!-- Google Maps -->
+	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDfDCV5hXiPamCIT8_vwGXuzimLQ9MF76g&amp;sensor=false&amp;libraries=places"></script>
+	
+<!-- plugins script -->
+	<script type="text/javascript" src="/asset/js/plugins.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/i18n/defaults-fr_FR.min.js"></script>
+<!-- template scripts -->
+	<script type="text/javascript" src="/asset/mail/validate.js"></script>
+    <script>
+    	var user = {};
+    	var session = {};
+    	session.page = <%- locals.page !== undefined ? '"'+ locals.page+ '"' : "null" %>;
+    	session.id_u = <%- locals.session.id_u !== undefined ? '"'+locals.session.id_u +'"' : "null" %>;
+    	session.id_coresp = <%- locals.session.id_coresp !== undefined ? locals.session.id_coresp : "null" %>;
+    	user.id = "<%- locals.session.userId != undefined ? 
+    		locals.session.userId : "null" %>";
+    	user.nom = "<%- locals.session.userName ? 
+    		locals.session.userName : "null" %>";
+    	user.type = "<%- locals.session.userType ? 
+    		locals.session.userType : "null" %>";
+    	console.log(session);
+    	session.user = user;
+    	sessionStorage.setItem("session", JSON.stringify(session));
+    </script>
+    <script type="module" src="/asset/js/chat.js"></script>
+	</body>
+</html>
