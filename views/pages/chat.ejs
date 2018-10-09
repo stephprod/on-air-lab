@@ -1,0 +1,916 @@
+<% include header %>
+<div class="all">
+	<div class="content">
+		<div id="frame">
+			<div id="sidepanel">
+				<div id="profile">
+					<div class="wrap">
+						<img id="profile-img" src="http://emilcarlsson.se/assets/mikeross.png" class="online" alt="" />
+						<p><%= locals.user.userName+' '+locals.user.userFirstName %></p>
+						<i class="fa fa-chevron-down expand-button" aria-hidden="true"></i>
+						<div id="status-options">
+							<ul>
+								<li id="status-online" class="active"><span class="status-circle"></span> <p>Online</p></li>
+								<li id="status-away"><span class="status-circle"></span> <p>Away</p></li>
+								<li id="status-busy"><span class="status-circle"></span> <p>Busy</p></li>
+								<li id="status-offline"><span class="status-circle"></span> <p>Offline</p></li>
+							</ul>
+						</div>
+						<div id="expanded">
+							<label for="twitter"><i class="fa fa-facebook fa-fw" aria-hidden="true"></i></label>
+							<input name="twitter" type="text" value="mikeross" />
+							<label for="twitter"><i class="fa fa-twitter fa-fw" aria-hidden="true"></i></label>
+							<input name="twitter" type="text" value="ross81" />
+							<label for="twitter"><i class="fa fa-instagram fa-fw" aria-hidden="true"></i></label>
+							<input name="twitter" type="text" value="mike.ross" />
+						</div>
+					</div>
+				</div>
+				<div id="search">
+					<label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
+					<input type="text" placeholder="Search contacts..." />
+				</div>
+				<div id="contacts">
+					<ul>
+						<!--<li class="contact">
+							<div class="wrap">
+								<span class="contact-status online"></span>
+								<img src="http://emilcarlsson.se/assets/louislitt.png" alt="" />
+								<div class="meta">
+									<p class="name">Louis Litt</p>
+									<p class="preview">You just got LITT up, Mike.</p>
+								</div>
+							</div>
+						</li>
+						 <li class="contact active">
+							<div class="wrap">
+								<span class="contact-status busy"></span>
+								<img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
+								<div class="meta">
+									<p class="name">Harvey Specter</p>
+									<p class="preview">Wrong. You take the gun, or you pull out a bigger one. Or, you call their bluff. Or, you do any one of a hundred and forty six other things.</p>
+								</div>
+							</div>
+						</li>
+						<li class="contact">
+							<div class="wrap">
+								<span class="contact-status away"></span>
+								<img src="http://emilcarlsson.se/assets/rachelzane.png" alt="" />
+								<div class="meta">
+									<p class="name">Rachel Zane</p>
+									<p class="preview">I was thinking that we could have chicken tonight, sounds good?</p>
+								</div>
+							</div>
+						</li>
+						<li class="contact">
+							<div class="wrap">
+								<span class="contact-status online"></span>
+								<img src="http://emilcarlsson.se/assets/donnapaulsen.png" alt="" />
+								<div class="meta">
+									<p class="name">Donna Paulsen</p>
+									<p class="preview">Mike, I know everything! I'm Donna..</p>
+								</div>
+							</div>
+						</li>
+						<li class="contact">
+							<div class="wrap">
+								<span class="contact-status busy"></span>
+								<img src="http://emilcarlsson.se/assets/jessicapearson.png" alt="" />
+								<div class="meta">
+									<p class="name">Jessica Pearson</p>
+									<p class="preview">Have you finished the draft on the Hinsenburg deal?</p>
+								</div>
+							</div>
+						</li>
+						<li class="contact">
+							<div class="wrap">
+								<span class="contact-status"></span>
+								<img src="http://emilcarlsson.se/assets/haroldgunderson.png" alt="" />
+								<div class="meta">
+									<p class="name">Harold Gunderson</p>
+									<p class="preview">Thanks Mike! :)</p>
+								</div>
+							</div>
+						</li>
+						<li class="contact">
+							<div class="wrap">
+								<span class="contact-status"></span>
+								<img src="http://emilcarlsson.se/assets/danielhardman.png" alt="" />
+								<div class="meta">
+									<p class="name">Daniel Hardman</p>
+									<p class="preview">We'll meet again, Mike. Tell Jessica I said 'Hi'.</p>
+								</div>
+							</div>
+						</li>
+						<li class="contact">
+							<div class="wrap">
+								<span class="contact-status busy"></span>
+								<img src="http://emilcarlsson.se/assets/katrinabennett.png" alt="" />
+								<div class="meta">
+									<p class="name">Katrina Bennett</p>
+									<p class="preview">I've sent you the files for the Garrett trial.</p>
+								</div>
+							</div>
+						</li>
+						<li class="contact">
+							<div class="wrap">
+								<span class="contact-status"></span>
+								<img src="http://emilcarlsson.se/assets/charlesforstman.png" alt="" />
+								<div class="meta">
+									<p class="name">Charles Forstman</p>
+									<p class="preview">Mike, this isn't over.</p>
+								</div>
+							</div>
+						</li>
+						<li class="contact">
+							<div class="wrap">
+								<span class="contact-status"></span>
+								<img src="http://emilcarlsson.se/assets/jonathansidwell.png" alt="" />
+								<div class="meta">
+									<p class="name">Jonathan Sidwell</p>
+									<p class="preview"><span>You:</span> That's bullshit. This deal is solid.</p>
+								</div>
+							</div>
+						</li> -->
+					</ul>
+				</div>
+				<div id="bottom-bar">
+					<button id="addcontact"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> <span>Add contact</span></button>
+					<button id="settings"><i class="fa fa-cog fa-fw" aria-hidden="true"></i> <span>Settings</span></button>
+				</div>
+			</div>
+			<div class="content">
+				<div class="contact-profile">
+					<!-- <img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
+					<p>Harvey Specter</p>
+					<div class="social-media">
+						<i class="fa fa-facebook" aria-hidden="true"></i>
+						<i class="fa fa-twitter" aria-hidden="true"></i>
+						 <i class="fa fa-instagram" aria-hidden="true"></i>
+					</div> -->
+				</div>
+				<div class="messages">
+					<ul id="recept">
+						<li class="sent">
+							<img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />
+							<p>How the hell am I supposed to get a jury to believe you when I am not even sure that I do?!</p>
+						</li>
+						<li class="replies">
+							<img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
+							<p>When you're backed against the wall, break the god damn thing down.</p>
+						</li>
+						<li class="replies">
+							<img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
+							<p>Excuses don't win championships.</p>
+						</li>
+						<li class="sent">
+							<img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />
+							<p>Oh yeah, did Michael Jordan tell you that?</p>
+						</li>
+						<li class="replies">
+							<img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
+							<p>No, I told him that.</p>
+						</li>
+						<li class="replies">
+							<img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
+							<p>What are your choices when someone puts a gun to your head?</p>
+						</li>
+						<li class="sent">
+							<img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />
+							<p>What are you talking about? You do what they say or they shoot you.</p>
+						</li>
+						<li class="replies">
+							<img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
+							<p>Wrong. You take the gun, or you pull out a bigger one. Or, you call their bluff. Or, you do any one of a hundred and forty six other things.</p>
+						</li>
+						<li class="sent meet-up">
+							<img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />
+							<div class="card">
+							  <img class="card-img-top" src="http://emilcarlsson.se/assets/mikeross.png" alt="Card image cap"/>
+							  <div class="card-body">
+							    <h5 class="card-title">
+							    	<i class="fas fa-calendar-alt"></i>Demande de rendez-vous
+							    </h5>
+							    <p class="card-text">Nouvelle demande de rendez-vous envoyée pour le 24/06/2018 à 15h30.</p>
+							    <a href="#" class="btn btn-primary">Modifier</a>
+							  </div>
+							</div>
+						</li>
+						<li class="replies meet-up">
+							<img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
+							<div class="card">
+							  <img class="card-img-top" src="http://emilcarlsson.se/assets/harveyspecter.png" alt="Card image cap">
+							  <div class="card-body">
+							    <h5 class="card-title"><i class="fas fa-calendar-alt"></i>Demande de rendez-vous</h5>
+							    <p class="card-text">Nouvelle demande de rendez-vous reçue pour le 24/06/2018 à 15h30.</p>
+							    <div>
+							    	<a href="#" class="btn btn-primary">Annuler</a>
+							    	<a href="#" class="btn btn-primary">Valider</a>
+							    </div>
+							  </div>
+							</div>
+						</li>
+						<li class="sent link-in">
+							<img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />
+							<div class="card">
+							  <img class="card-img-top" src="http://emilcarlsson.se/assets/mikeross.png" alt="Card image cap">
+							  <div class="card-body">
+							    <h5 class="card-title"><i class="fas fa-handshake"></i>Prise de contact</h5>
+							    <p class="card-text">Nouvelle demande de prise de contact envoyée le 24/06/2018 à 15h30.</p>
+							  </div>
+							</div>
+						</li>
+						<li class="replies link-in">
+							<img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
+							<div class="card">
+							  <img class="card-img-top" src="http://emilcarlsson.se/assets/harveyspecter.png" alt="Card image cap" >
+							  <div class="card-body">
+							    <h5 class="card-title"><i class="fas fa-handshake"></i>Prise de contact</h5>
+							    <p class="card-text">Nouvelle demande de prise de contact reçue le 24/06/2018 à 15h30.</p>
+							    <div>
+							    	<a href="#" class="btn btn-primary">Annuler</a>
+							    	<a href="#" class="btn btn-primary">Valider</a>
+							    </div>
+							  </div>
+							</div>
+						</li>
+						<li class="sent video">
+							<img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />
+							<div class="card">
+								<div class="embed-responsive embed-responsive-16by9 card-img-top">
+								  <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/zpOULjyy-n8?rel=0" allowfullscreen></iframe>
+								</div>
+								<div class="card-body">
+								    <h5 class="card-title"><i class="fas fa-film"></i>Envoi de video</h5>
+								    <p class="card-text">Nouvelle vidéo envoyée le 24/06/2018 à 15h30.</p>
+								  	</div>
+							</div>
+						</li>
+						<li class="replies video">
+							<img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />
+							<div class="card">
+								<div class="embed-responsive embed-responsive-16by9 card-img-top">
+								  <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/zpOULjyy-n8?rel=0" allowfullscreen></iframe>
+								</div>
+								<div class="card-body">
+								    <h5 class="card-title"><i class="fas fa-film"></i>Envoi de video</h5>
+								    <p class="card-text">Nouvelle vidéo reçue le 24/06/2018 à 15h30.</p>
+								  	</div>
+							</div>
+						</li>
+						<li class="replies song">
+							<img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />
+							<div class="card">
+								<div class="card-body">
+								    <h5 class="card-title"><i class="fas fa-music"></i>Envoi de son</h5>
+								    <p class="card-text">Nouveau fichier audio reçu le 24/06/2018 à 15h30.</p>
+								</div>
+								<div id="mainwrap">
+						            <div id="nowPlay">
+						                <span class="left" id="npAction">Paused...</span>
+						                <span class="right" id="npTitle"></span>
+						            </div>
+						            <div id="audiowrap">
+											<audio preload id="audio1" controls="controls">Your browser does not support HTML5 Audio!</audio>
+									</div>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+				<!-- <div class="message-input">
+					<div class="wrap">
+					<input type="text" placeholder="Write your message..." />
+					<i class="fa fa-paperclip attachment" aria-hidden="true"></i>
+					<button class="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+					</div>
+				</div> -->
+				<form action="" class="socket">
+					<input id="mess" type="text" placeholder="Write your message..." value=""/>
+					<i class="fa fa-paperclip attachment" aria-hidden="true"></i>
+					<button class="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+				</form>
+			</div>
+		</div>
+		<!-- Start Modules du chat -->
+		<!-- <section class="team" style="display: inline-block;"> -->
+		<div id="modules" class='tiles'>
+		  <div class='col ms-slide' data-member-id="1">
+		    <a href="#"></a>
+		    <a href="#"></a>
+		    <a href="#"></a>
+		    <a href="#"></a>
+		    <div class='box'></div>
+		  </div>
+		  <div class='col ms-slide' data-member-id="2">
+		    <a href="#"></a>
+		    <a href="#"></a>
+		    <a href="#"></a>
+		    <a href="#"></a>
+		    <div class='box'></div>
+		  </div>
+		  <div class='col ms-slide' data-member-id="3">
+		    <a href="#"></a>
+		    <a href="#"></a>
+		    <a href="#"></a>
+		    <a href="#"></a>
+		    <div class='box'></div>
+		  </div>
+		  <div class='col ms-slide' data-member-id="4">
+		    <a href="#"></a>
+		    <a href="#"></a>
+		    <a href="#"></a>
+		    <a href="#"></a>
+		    <div class='box'></div>
+		  </div>
+		  <div class='col ms-slide' data-member-id="5">
+		    <a href="#"></a>
+		    <a href="#"></a>
+		    <a href="#"></a>
+		    <a href="#"></a>
+		    <div class='box'></div>
+		  </div>
+		</div>
+		<!-- Start popup module -->
+		<div class="member-box-wrapper" style="width: 50%;margin: auto;position:absolute;top:215px;left:475px;">
+
+		    <% include chat_module_apointment %>
+		    <% include chat_module_video %>
+		    <% include chat_module_song %>
+		    <% include chat_module_devis %>
+		    <% include chat_module_contact %>
+		</div>
+		<!-- End popup module -->
+		<!-- </section> -->
+		<div style="float:left;width:100px;border-right:1px solid black;height:300px;padding:10px;overflow:scroll-y;">
+		<b>ROOMS</b>
+		<div id="rooms"></div>
+	<!-- End Modules du chat -->
+	</div>
+<div style="overflow:scroll-y;padding:10px;">
+	<div id="conversation"></div>
+	<input id="data" style="width:200px;" />
+	<input type="button" id="datasend" value="send" />
+</div>
+</div>
+</div>
+<script type="text/javascript">
+//jQuery(document).ready(function($) {
+/*ACTION SOCKET MESSAGE INSTANT*/
+  // $(function () {
+  //   var socket = io();
+  //   $('form.socket').submit(function(){
+  //     socket.emit('chat message', $('#mess').val());
+  //     $('#mess').val('');
+  //     return false;
+  //   });
+  //   socket.on('chat message', function(msg){
+  //       $('#recept').append($('<li class="sent">').html("<img src='http://emilcarlsson.se/assets/mikeross.png' alt='' /><p>"+msg+"</p>"));
+  //   });
+  // });
+    var socket = io.connect('http://localhost:4000');
+    var actions = {};
+    actions.audio = [];
+    actions.video = [];
+    actions.rdv = [];
+    var user_receiv = {};
+    var fa1=function appendAudioSendCard(data){
+        $('div.messages ul#recept').append('<li id-message="'+data.id_m+'" class="sent song">'+
+                    '<img src="http://emilcarlsson.se/assets/mikeross.png"'+ 'alt="" />'+
+                    data.user_receiver+
+                    '<div class="card">'+
+                        '<div class="card-body">'+
+                            '<h5 class="card-title"><i class="fas fa-music"></i>Envoi de son</h5>'+
+                            '<p class="card-text">Nouveau fichier audio envoyé le '+data.created+'.</p>'+
+                        '</div>'+
+                        '<div id="mainwrap">'+
+                            '<div id="nowPlay">'+
+                                '<span class="left" id="npAction">Paused...</span>'+
+                                '<span class="right" id="npTitle"></span>'+
+                            '</div>'+
+                            '<div id="audiowrap">'+
+                                    '<audio preload id="audio1" controls="controls">Your browser does not support HTML5 Audio!</audio>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>'+
+                '</li>');
+    };
+    var fa2=function appendAudioReplyCard(data){
+        $('div.messages ul#recept').append('<li id-message="'+data.id_m+'" class="replies song">'+
+                    '<img src="http://emilcarlsson.se/assets/mikeross.png"'+ 'alt="" />'+
+                    data.user_receiver+
+                    '<div class="card">'+
+                        '<div class="card-body">'+
+                            '<h5 class="card-title"><i class="fas fa-music"></i>Envoi de son</h5>'+
+                            '<p class="card-text">Nouveau fichier audio reçu le '+data.created+'.</p>'+
+                        '</div>'+
+                        '<div id="mainwrap">'+
+                            '<div id="nowPlay">'+
+                                '<span class="left" id="npAction">Paused...</span>'+
+                                '<span class="right" id="npTitle"></span>'+
+                            '</div>'+
+                            '<div id="audiowrap">'+
+                                    '<audio preload id="audio1" controls="controls">Your browser does not support HTML5 Audio!</audio>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>'+
+                '</li>');
+    };
+    var fv1=function appendVideoSendCard(data){
+        $('div.messages ul#recept').append('<li id-message="'+data.id_m+'" class="sent video">'+
+            '<img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />'+
+                    data.user_receiver+
+            '<div class="card">'+
+                '<div class="embed-responsive embed-responsive-16by9 card-img-top">'+
+                  '<iframe class="embed-responsive-item" src="'+data.path+'" allowfullscreen></iframe>'+
+                '</div>'+
+                '<div class="card-body">'+
+                    '<h5 class="card-title"><i class="fas fa-film"></i>Envoi de video</h5>'+
+                    data.content_m+
+                    '<p class="card-text">Nouvelle vidéo envoyée le '+data.created+'</p>'+
+                    '</div>'+
+            '</div>'+
+        '</li>');
+    };
+    var fv2=function appendVideoReplyCard(data){
+        $('div.messages ul#recept').append('<li id-message="'+data.id_m+'" class="replies video">'+
+            '<img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />'+
+                    data.user_receiver+
+            '<div class="card">'+
+                '<div class="embed-responsive embed-responsive-16by9 card-img-top">'+
+                  '<iframe class="embed-responsive-item" src="'+data.path+'" allowfullscreen></iframe>'+
+                '</div>'+
+                '<div class="card-body">'+
+                    '<h5 class="card-title"><i class="fas fa-film"></i>Envoi de video</h5>'+
+                    data.content_m+
+                    '<p class="card-text">Nouvelle vidéo reçue le '+data.created+'</p>'+
+                    '</div>'+
+            '</div>'+
+        '</li>');
+    };
+    var fr1=function appendRdvSendCard(data){
+        $('div.messages ul#recept').append('<li id-message="'+data.id_m+'" class="sent meet-up">'+
+							'<img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />'+
+                    		data.user_receiver+
+							'<div class="card">'+
+							  '<img class="card-img-top" src="http://emilcarlsson.se/assets/mikeross.png" alt="Card image cap"/>'+
+							  '<div class="card-body">'+
+							    '<h5 class="card-title">'+
+							    	'<i class="fas fa-calendar-alt"></i>Demande de rendez-vous'+
+							    '</h5>'+
+							    '<p class="card-text">Nouvelle demande de rendez-vous envoyée pour le '+data.date+'</p>'+
+							  '</div>'+
+							'</div>'+
+						'</li>');
+    };
+    var fr2=function appendRdvReplyCard(data){
+        $('div.messages ul#recept').append('<li id-message="'+data.id_m+'" class="replies meet-up">'+
+			'<img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />'+
+    		data.user_receiver+
+			'<div class="card">'+
+			  '<img class="card-img-top" src="http://emilcarlsson.se/assets/mikeross.png" alt="Card image cap"/>'+
+			  '<div class="card-body">'+
+			    '<h5 class="card-title">'+
+			    	'<i class="fas fa-calendar-alt"></i>Demande de rendez-vous'+
+			    '</h5>'+
+			    '<p class="card-text">Nouvelle demande de rendez-vous reçue pour le '+data.date+'</p>'+
+			  '</div>'+
+			'</div>'+
+		'</li>');
+    };
+    actions.audio.push(fa1, fa2);
+    actions.video.push(fv1, fv2);
+    actions.rdv.push(fr1, fr2);
+    function updateUserReceived(data){
+        user_receiv = data;
+    }
+    socket.on('updatechat', function (coresp, data) {       
+        console.log("updatechat -> ");
+        console.log(data);
+        console.log(coresp);
+        if (data !== undefined && data != null){
+            if (data.type_m !== undefined && data.type_m != null){
+                $('#conversation').append('<b>'+coresp.id_coresp + ':</b> ' + data.type_m + '<br>');
+                if (data.type_m == 'audio'){
+                    if (data.user_sender == <%= locals.user.userId %>)
+                        actions.audio[0](data);
+                    else
+                        actions.audio[1](data);
+                }
+                else if (data.type_m == 'video')
+                {
+                    if (data.user_sender == <%= locals.user.userId %>)
+                        actions.video[0](data);
+                    else
+                        actions.video[1](data);
+                }
+                else
+                {
+                	if (data.user_sender == <%= locals.user.userId %>)
+                        actions.rdv[0](data);
+                    else
+                        actions.rdv[1](data);
+                }
+            }
+            else{
+                //user_receiv = data.user_receiver;
+                $('#conversation').append('<b>'+data.user_sender + ':</b> ' + data.txt + '<br>');
+                if (data.user_sender == <%= locals.user.userId %>)
+                    $('div.messages ul#recept').append('<li id-message="'+data.id_m+'" class="sent"><img src="http://emilcarlsson.se/assets/mikeross.png" />'+
+                        data.user_receiver+'<p>'+data.txt+'</p></li>');
+                else
+                    $('div.messages ul#recept').append('<li id-message="'+data.id_m+'" class="replies"><img src="http://emilcarlsson.se/assets/mikeross.png" />'+
+                        data.user_receiver+'<p>'+data.txt+'</p></li>');
+            }
+            if (data.user_sender != "SERVER")
+            	socket.emit('update_preview_in_room', data);
+        }
+    });
+    function switchRoom(room, id_coresp, nom, prenom){
+        //$('#conversation').empty();
+        var coresp= {};
+        coresp.nom = nom;
+        coresp.prenom = prenom;
+        coresp.id_coresp = id_coresp;
+        updateUserReceived(coresp);
+        //Mise à jour du tableau des correspondances rooms/id_receiver
+        switch (<%= locals.user.userType %>){
+        	case 2:
+        		socket.emit('maj_coresp_pro', <%= locals.user.userId !== undefined ? 
+        	locals.user.userId : 'null' %>, room, user_receiv)
+        		break;
+        	case 3:
+        		socket.emit('maj_coresp_art', <%= locals.user.userId !== undefined ? 
+        	locals.user.userId : 'null' %>, room, user_receiv)
+        		break;
+        	default:
+        		socket.emit('maj_coresp_pro', <%= locals.user.userId !== undefined ? 
+        	locals.user.userId : 'null' %>, room, user_receiv)
+        		break;
+        }
+        socket.emit('switchRoom', <%= locals.user.userId !== undefined ? 
+        	locals.user.userId : 'null' %>, room, user_receiv);
+        //console.log("switchRoom -> var user_receiv");
+        //console.log(user_receiv);
+
+        //console.log("switchRoom -> var user_sender"+<%= locals.userId %>);
+        $('#conversation').empty();
+        $('div.messages ul#recept').empty();
+        if (room == 1 && <%= locals.user.userId %> != 1)
+            socket.emit('list_msg_admin', room, user_receiv, <%= locals.user.userId !== undefined ? locals.user.userId : "null" %>);
+        else{
+            socket.emit('list_msg', room, user_receiv); 
+            socket.emit('update_services', <%= locals.user.userId !== undefined ? locals.user.userId : "null" %>, room, user_receiv);
+            socket.emit('update_modeles_devis', <%= locals.user.userId !== undefined ? locals.user.userId : "null" %>, room, user_receiv);
+        }
+    }
+    // chaque fois que le serveur émet des «updaterooms», cela met à jour la room dans laquelle se trouve le client
+    socket.on('updatepreview', function(tabCorresp){
+    	var li_to_update = $("div#contacts ul li[id-room='"+tabCorresp[1]+"']");
+    	li_to_update.find("p.preview").empty();
+    	li_to_update.find("p.preview").append(tabCorresp[5]);
+    });
+    socket.on('updaterooms', function(rooms, current_room, coresp) {
+        $('#rooms').empty();
+        $("div#contacts ul").empty();
+        if (coresp != null){
+	        $(".contact-profile").empty();
+	        $(".contact-profile").append('<img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />'+
+	                '<p>'+coresp.prenom+' '+coresp.nom+'</p>'+
+	                '<div class="social-media">'+
+	                    '<i class="fa fa-facebook" aria-hidden="true"></i>'+
+	                    '<i class="fa fa-twitter" aria-hidden="true"></i>'+
+	                    '<i class="fa fa-instagram" aria-hidden="true"></i>'+
+	                '</div>');
+	    }
+        /*console.log("updaterooms ->");
+        console.log(rooms);*/
+        console.log("updaterooms -> "+current_room);
+        for (var i = 0; i < rooms.length; i++) {
+            //console.log("updaterooms ->  room -> i -> "+i);
+            //console.log(rooms[i]);
+            for (var j = 0; j < rooms[i].length; j++) {
+                //console.log("updaterooms ->  room -> "+rooms[i][j]+" j "+j);
+                if(j == 1 && rooms[i][j] == current_room){
+                    $('#rooms').append('<div id="current" data-room="'+rooms[i][j]+'">' + rooms[i][j] + '</div>');
+                    $("div#contacts ul").append('<li id-room="'+rooms[i][j]+'" class="contact current">'+
+                            '<div class="wrap">'+
+                                '<span class="contact-status online"></span>'+
+                                '<img src="http://emilcarlsson.se/assets/louislitt.png" alt="" />'+
+                                '<div class="meta">'+
+                                    '<p class="name">'+rooms[i][2]+' '+rooms[i][3]+'</p>'+
+                                    '<p class="preview">'+rooms[i][5]+'</p>'+
+                                '</div>'+
+                            '</div>'+
+                        '</li>');
+                    //console.log($('#current').attr('data-room'));
+                }
+                else if(j == 1) {
+                    $('#rooms').append('<div><a href="#" onclick="switchRoom(\"'+rooms[i][j]+'\", \"'+rooms[i][0]+'\", \"'+rooms[i][2]+'\", \"'+rooms[i][3]+'\")">' + rooms[i][j] + '</a></div>');
+                    $("div#contacts ul").append('<li id-room="'+rooms[i][j]+'" class="contact">'+
+                            '<div class="wrap" onclick="switchRoom(\''+rooms[i][j]+'\', \''+rooms[i][0]+'\', \''+rooms[i][2]+'\', \''+rooms[i][3]+'\')">'+
+                                '<span class="contact-status online"></span>'+
+                                '<img src="http://emilcarlsson.se/assets/louislitt.png" alt="" />'+
+                                '<div class="meta">'+
+                                    '<p class="name">'+rooms[i][2]+' '+rooms[i][3]+'</p>'+
+                                    '<p class="preview">'+rooms[i][5]+'</p>'+
+                                '</div>'+
+                            '</div>'+
+                        '</li>');
+                }
+                else if(j > 1){
+                    break;
+                }
+            };        
+        };
+    });
+
+    // on load of page
+    //$(function(){
+        // on connection to server, ask for user's name with an anonymous callback
+        socket.on('connect', function(id){
+            // Recuperation du user name
+                console.log("connect --> "+<%= locals.user.userId %>)
+                <% if (locals.user.userId !== undefined) { %>
+                    id = <%= locals.user.userId %>;
+                    var type = <%= locals.user.userType %>;
+                    var coresp = {};
+                    coresp.nom = "Admin";
+                    coresp.prenom = "amdin";
+                    coresp.id_coresp = 1;
+                    socket.emit('adduser', id, type);
+                    //socket.emit('switchRoom', 1, <%= locals.user.userId %>);
+                    $('div.messages ul#recept').empty();
+                    //SI TU ES L'ADMINISTRATEUR
+                    if (id == 1){
+                        socket.emit('list_msg', 1, coresp);
+                    }
+                    else
+                    {
+                        socket.emit('list_msg_admin', 1, coresp, id);
+                    }
+                    console.log("TU ES DEJA CONNECTE :)");
+                    updateUserReceived(coresp);
+                    
+                <%}if(locals.user.userId === undefined){%>
+                    console.log("CONNECTE TOI POUR UTILISER LE TCHAT NO HACK :)");
+                <%}%>
+
+        });
+        // when the client clicks SEND
+        $('#datasend').click(function() {
+            var message = $('#data').val();
+            var data = {};
+            var room = $('#current').attr('data-room');
+            $('#data').val('');
+            console.log("datasend room --> "+$('#current').attr('data-room'));
+            var userId = <%= locals.user.userId %>;
+            console.log(<%= locals.user.userId %>)
+            data.txt = message;
+            //data.user_receiver = user_receiv;
+            console.log(user_receiv);
+            console.log("datasend user_receiv --> "+user_receiv);
+            var i = 0;
+          //  console.time("insert")
+           // while (i < 10000){
+                //data.id_message = $("ul#recept li").last().attr('id-message')
+                socket.emit('sendchat', data, userId, user_receiv);   
+                i++;
+            //}
+           // console.timeEnd("insert")
+           
+        });
+
+        // when the client hits ENTER on their keyboard
+        $('#data').keypress(function(e) {
+            if(e.which == 13) {
+                $(this).blur();
+                $('#datasend').focus().click();
+            }
+        });
+//    });
+</script>
+<script type="text/javascript">
+/*Input File uploader actions in chat*/
+$(function(){
+    $("div.song").before(
+        function(){
+            if (!$(this).prev().hasClass("input-file-ghost")){
+                var element = $("<input type='file' class='input-file-ghost' style='height:0;' />");
+                element.attr("name", "uploaded_file");
+                element.change(function(e){
+                    element.next(element).find("input").val(element.val().split("\\").pop());
+                    console.log(element.val());                
+                });
+                $(this).find("button.input-group-text").click(function(e){
+                    element.click();
+                });
+                $(this).find('input').css("cursor","pointer");
+                $(this).find('input').mousedown(function() {
+                    $(this).parents('.input-popup').prev().click();
+                    return false;
+                });
+                return element;
+            }
+    });
+    $("button[type='submit']").click(function(e){
+        e.preventDefault();
+        $(this).parents("form").submit();
+    });
+    /*Module sons*/
+    $("form.upload").submit(function (e){
+        e.preventDefault();
+        var formData = new FormData(e.target);
+        var that = $(this);
+
+        $.ajax({
+            type : that.attr('method'),
+            url : that.attr('action'),
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: function(data) {
+                console.log(data);
+                $("form span input").removeAttr("data-original-title");
+                $("form span").removeClass("has-error");
+                if (!data.success){
+                    for (var prop in data.errors)
+                    {
+                        var title= '';
+                        var input_in_error = that.find("input[name='"+prop+"'], select[name='"+prop+"']");
+                        that.find("span."+prop).addClass("has-error");
+                        input_in_error.attr("data-toggle", "tooltip");
+                        input_in_error.attr("data-placement", "top");
+                        for (var prop2 in data.errors[prop])
+                        {
+                            title+="- "+data.errors[prop][prop2]+"<br>";
+                        }
+                        input_in_error.attr("data-original-title", title);
+                    }
+                    $('[data-toggle="tooltip"]').tooltip({html: true});
+                }
+                else
+                {
+                    /*Emmistion de socket*/
+                    console.log("audio enregistré !" + <%= locals.user.userId !== undefined ? locals.user.userId : "null" %>);
+                    var song = {
+                        type_m : data.type_a,
+                        path: data.path,
+                        user_receiver : data.user_receiver,
+                        txt : data.msg[0]
+                    }
+                    console.log(song)
+                    socket.emit('sendchat', song, <%= locals.user.userId !== undefined ? locals.user.userId : "null" %>, user_receiv);
+                }
+            }
+        });
+    });
+    /*Module videos*/
+    $("select.type_v").change(function(e){
+        $("div.other_video_url, div.vimeo_video_url, div.youtube_video_url").css("display", "none");
+        $("input[name='other_video_url'],"+ 
+            "input[name='vimeo_video_url'],"+ 
+            "input[name='youtube_video_url']").val("");
+        if ($(e.target).val() != "default"){
+           $("div."+$(e.target).val()).css("display", "block");
+        }
+    });
+    $("form.module_video").submit(function (e){
+        e.preventDefault();
+        var that = $(this);
+        $.ajax({
+            type : that.attr('method'),
+            url : that.attr('action'),
+            data: that.serializeArray(),
+            success: function(data) {
+                console.log(data);
+                if (data.success){
+                     /*Emmistion de socket*/
+                    console.log("Vidéo vérifiée !" + <%= locals.user.userId !== undefined ? locals.user.userId : "null" %>);
+                    var video = {
+                        
+                    }
+                    //console.log(video);
+                    socket.emit('sendchat', video, <%= locals.user.userId !== undefined ? locals.user.userId : "null" %>, user_receiv);
+                }
+                else
+                {
+                    for (var prop in data.errors)
+                    {
+                        var title= '';
+                        var input_in_error = that.find("input[name='"+prop+"'], select[name='"+prop+"']");
+                        that.find("span."+prop).addClass("has-error");
+                        input_in_error.attr("data-toggle", "tooltip");
+                        input_in_error.attr("data-placement", "top");
+                        for (var prop2 in data.errors[prop])
+                        {
+                            title+="- "+data.errors[prop][prop2]+"<br>";
+                        }
+                        input_in_error.attr("data-original-title", title);
+                    }
+                    $('[data-toggle="tooltip"]').tooltip({html: true});
+                }
+            }
+        });
+    });
+	//MODULE PRISE DE RENDEZ-VOUS
+	$("form.apointment").submit(function (e){
+		e.preventDefault();
+		var that = $(this);
+		//console.log($(this).serializeArray());
+		$.ajax({
+            type : that.attr('method'),
+            url : that.attr('action'),
+            data: that.serializeArray(),
+            success: function(data) {
+            	console.log(data)
+            	if (data.success){
+            		/*Emmistion de socket*/
+                    console.log("Rdv vérifié !" + <%= locals.user.userId !== undefined ? locals.user.userId : "null" %>);
+                    var rdv = {
+                        type_m : data.type_r,
+                        date: data.date,
+                        txt : data.msg[0]
+                    }
+                    //console.log(video);
+                    socket.emit('sendchat', rdv, <%= locals.user.userId !== undefined ? locals.user.userId : "null" %>, user_receiv);
+            	}
+            }
+		})
+	});
+	/*Bootstrap Datepicker*/
+    $('.datepicker input').datetimepicker({
+        format: 'YYYY-MM-DDTHH:mm',
+        locale: 'fr',
+        sideBySide: true,
+        stepping: 60,
+        minDate: new Date(),
+        useCurrent: true
+    });
+    //MODULE DEVIS
+    socket.on('updateservicesfront', function(res){
+    	$("select.service").empty();
+    	$("select.service").append("<option value='default'>Service(s) associé(s) : </option>");
+    	console.log("update service -->");
+    	console.log(res);
+    	if (res.length > 0){
+    		for (k in res){
+    			$("select.service").append("<option value='"+res[k].id_service+"'>"+res[k].nom_service+"</option>");
+    		}
+    	}
+    });
+    socket.on('updatemodelesdevisfront', function(res){
+    	$("select.devis").empty();
+    	$("select.devis").append("<option value='default'>Depuis modèle(s) : </option>");
+    	console.log("update modele devis -->");
+    	console.log(res);
+    	if (res.length > 0){
+    		for (k in res){
+    			$("select.devis").append("<option value='"+res[k].id_devis+"'>"+res[k].name+" - "+res[k].price_ttc+" €</option>");
+    		}
+    	}
+    });
+});
+</script>
+<script type="text/javascript">
+    /*Audio Player In Card Actions*/
+    //var supportsAudio = !!document.createElement('audio').canPlayType,
+    var index = 0,
+    playing = false,
+    mediaPath = "http://localhost:4000/asset/content/",
+    extension = '',
+    tracks = [{"id" : 0,
+                "track": 1,
+                "name": "All This Is - Joe L.'s Studio",
+                "file": "filename"
+            }],
+    npAction = $('#npAction'),
+    npTitle = $('#npTitle'),
+    audio = $('#audio1').on('play', function () {
+        playing = true;
+        npAction.text('Now Playing...');
+    }).on('pause', function () {
+        playing = false;
+        npAction.text('Paused...');
+    }).on('ended', function () {
+        npAction.text('Paused...');
+            audio.pause();
+    }).get(0),
+    loadTrack = function (id) {
+        $('.plSel').removeClass('plSel');
+//        $('#plList li:eq(' + id + ')').addClass('plSel');
+        npTitle.text(tracks[id].name);
+        index = id;
+        audio.src = mediaPath + tracks[id].file + extension;
+    },
+    playTrack = function (id) {
+        loadTrack(id);
+        audio.play();
+    };
+    extension = audio.canPlayType('audio/mpeg') ? '.mp3' : audio.canPlayType('audio/ogg') ? '.ogg' : '';
+    loadTrack(index);
+    const player = new Plyr('#audio1', {
+    /* options */
+    });
+</script>
+<% include footer %>
