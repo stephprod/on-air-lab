@@ -175,7 +175,7 @@ router.route('/search')
 				//clause += clauseVille.length > 0 ? "AND ("+clauseVille+") " : ""
 				clause += clauseCodePostal.length > 0 ? "AND ("+clauseCodePostal+") " : ""
 			}
-			//console.log(clause)
+			console.log(clause)
 			User.getEtablissementInClause(0, clause, (result) => {
 				//console.log(result)
 				let lonA=0.0, lonB=0.0, latA=0.0, latB=0.0, distance=0.0
@@ -245,6 +245,6 @@ function getDistance(lonA, lonB, latA, latB){
 	//console.log(delta)
 	//console.log(acos * earth_radius)
 	//console.log("-")
-	return isNaN((acos * earth_radius) / 1000) ? 99999 : (acos * earth_radius) //6378137 plus ou moins rayon de la terre (possibilités d'être plus précis)
+	return (acos * earth_radius) / 1000 //6378137 plus ou moins rayon de la terre (possibilités d'être plus précis)
 }
 module.exports = router
