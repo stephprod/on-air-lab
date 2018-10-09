@@ -315,7 +315,7 @@ class User{
             'INNER JOIN `tarification` ON `tarification`.`id_tarification`=`profil`.`id_tarification` '+
             'INNER JOIN `appartenir` ON `appartenir`.`id_user`=`profil`.`id_user` '+
             'INNER JOIN `service` ON `service`.`id_service`=`appartenir`.`id_service` '+
-            'INNER JOIN `villes_france_free` ON `etablissement`.`cp`=`villes_france_free`.`ville_code_postal` '+
+            'LEFT JOIN `villes_france_free` ON `etablissement`.`cp`=`villes_france_free`.`ville_code_postal` '+
             'WHERE `etablissement`.`id` > '+ind+' GROUP BY `etablissement`.`id` LIMIT 800', (err, result, fields) =>{
 			if (err) 
 			{
@@ -348,7 +348,7 @@ class User{
             'INNER JOIN `appartenir` ON `appartenir`.`id_user`=`profil`.`id_user` '+
             'INNER JOIN `service` ON `service`.`id_service`=`appartenir`.`id_service` '+
             'INNER JOIN `tarification` ON `tarification`.`id_tarification`=`profil`.`id_tarification` '+
-            'INNER JOIN `villes_france_free` ON `etablissement`.`cp`=`villes_france_free`.`ville_code_postal` '+
+            'LEFT JOIN `villes_france_free` ON `etablissement`.`cp`=`villes_france_free`.`ville_code_postal` '+
             'WHERE '+clause+' AND `etablissement`.`id` > '+ind+' GROUP BY `etablissement`.`id` LIMIT 800', (err, result, fields) =>{
             if (err) 
             {
@@ -655,12 +655,23 @@ class User{
     static update_offre(clause, cb)
     {
         let r = db.query('UPDATE offres SET '+clause, (err, result) => {
-            console.log(r.sql)
+            //console.log(r.sql)
             if(err){
                 console.log(r.sql)
                 throw err;
             }
             cb(result.changedRows);
+        });
+    }
+    static delete_offre(table, cb)
+    {
+        let r = db.query('DELETE FROM offres WHERE id_offre=?', [table], (err, result) => {
+            //console.log(r.sql)
+            if(err){
+                console.log(r.sql)
+                throw err;
+            }
+            cb(result.affectedRows);
         });
     }
     static displayServiceForPro(iduser, cb){
@@ -959,6 +970,33 @@ class User{
     }
     static delete_devis(tab, cb){
         let r = db.query('DELETE FROM devis WHERE devis.id_devis=?', [tab], (err, result) =>{
+            if (err){
+                console.log(r.sql)
+                throw err
+            }
+            cb(result.affectedRows)
+        })
+    }
+    static delete_tarification(tab, cb){
+        let r = db.query('DELETE FROM `tarification` WHERE id_tarifiaction=?', [table], (err, res)=>{
+            if (err){
+                console.log(r.sql)
+                throw err
+            }
+            cb(result.affectedRows)
+        })
+    }
+    static delete_etablissement(tab, cb){
+       let r = db.query('DELETE FROM `etablissement` WHERE id=?', [table], (err, res)=>{
+            if (err){
+                console.log(r.sql)
+                throw err
+            }
+            cb(result.affectedRows)
+        }) 
+    }
+    static delete_user(tab, cb){
+        let r = db.query('DELETE FROM `user` WHERE id=?', [table], (err, res)=>{
             if (err){
                 console.log(r.sql)
                 throw err

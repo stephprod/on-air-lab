@@ -18,7 +18,7 @@ var mapStyle = [{"featureType":"landscape","stylers":[{	"hue":"#FFBB00"	},{	"sat
 var disableMobileHover = true; //you can disable some on-hover feature like flipping offers, when browsing on the mobile.
 var wowAnimationMobile = false; //you can WOW animations (sections sliding when on viewport) on mobile.
 var user = JSON.parse(localStorage.getItem('user'));
-console.log(user);
+//console.log(user);
 var absolutePathApp = '';
 
 /********** SETTINGS END **********/	
@@ -747,7 +747,7 @@ jQuery(window).load(function() {
 		[].slice.call( document.querySelectorAll( 'select.cs-select' ) ).forEach( function(el) {	
 			new SelectFx(el);
 		});
-		
+		//$.fn.dropdown.Constructor.Default.display = 'static';
 		$('.bootstrap-select').selectpicker({
 			 container: 'body',
 			 selectedTextFormat: 'count > 2',
@@ -1539,12 +1539,13 @@ function offersMapInit(id, locations) {
 
 
 jQuery(document).ready(function($) {
+	//console.log(absolutePathApp);
 	if (user != null && user != "null"){
 		if (user.type == 4 || user.type == "null"){
 			$('body').append('<div id="switcher-button" style="background: #3797DD; text-align: center; padding-top: 12px; width: 50px; height: 50px; color: #ffffff; cursor: pointer; z-index: 159; position: fixed; top: 150px; left: 0px;"><i class="fa fa-search fa-2x"></i><div id="switcher" style="width: 285px; position: fixed; overflow: hidden; left: -285px; top: 130px; z-index: 159; margin-top: 20px; margin-bottom: 20px;"><div style="float: left; background: #3797DD; width: 285px; height: 50px; line-height: 50px; text-align: center; color: #ffffff;"><h4 style="color:#ffffff; line-height: 50px;">Recherche</h4></div><div id="switch-content" style="height: 500px;width: 100%; background: white; float: left;"><iframe src="'+absolutePathApp+'/widget-search" style="width:100%;height:100%;border:none;"></iframe></div></div></div>');
 		}
 	}
-	$('body').append('<div id="switcher-button2"><i class="far fa-comments" style="color:#3797DD"></i></div><div id="switcher2"><div style="float: left; background: #3797DD; width: 400px; height: 50px; line-height: 50px; text-align: center; color: #ffffff;"><h4 style="color:#ffffff; line-height: 50px;">Mon chat</h4></div><div id="switch-content2" style="width: 400px; background: #fffffff0;height:100%;float: left;"><iframe src="'+absolutePathApp+'/chat" style="width:100%;height:100%;border:none;"></iframe></div>');
+	$('body').append('<div id="switcher-button2" style="border: 1px solid #3797DD; text-align: center; padding-top: 12px; width: 50px; height: 50px; color: #ffffff; cursor: pointer; z-index: 159; position: fixed; top: 220px; left: 0px;"><i class="far fa-comments" style="color:#3797DD"></i></div><div id="switcher2" style="height: 500px;width: 400px; position: fixed; overflow-x: hidden; left: -400px; top: 130px; z-index: 159; margin-top: 20px; margin-bottom: 20px;"><div style="float: left; background: #3797DD; width: 400px; height: 50px; line-height: 50px; text-align: center; color: #ffffff;"><h4 style="color:#ffffff; line-height: 50px;">Mon chat</h4></div><div id="switch-content2" style="width: 400px; background: #fffffff0;height:100%;float: left;"><iframe src="'+absolutePathApp+'/chat" style="width:100%;height:100%;border:none;"></iframe></div>');
 	$('head').append('<style>.switch-button-label{float:left;font-size:10pt;cursor:pointer}.switch-button-label.off{color:#adadad}.switch-button-label.on{color:#08C}.switch-button-background{float:left;position:relative;background:#ccc;border:1px solid #aaa;margin:1px 10px;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;cursor:pointer}.switch-button-button{position:absolute;left:-1px;top:-1px;background:#FAFAFA;border:1px solid #aaa;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}</style>');
 	$("input#boxed").switchButton({on_label: " BOXED",off_label: "WIDE ",width: 125, height: 25, button_width: 30, checked: false });
 	if( w_height - 150 < $("#switcher").innerHeight() ) {
