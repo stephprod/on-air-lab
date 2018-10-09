@@ -62,19 +62,11 @@
 						</div>
 					</div>
 					<div class="col-xs-7 col-sm-4">
-						<% if (locals.session.userId == undefined){ %>
 						<div class="top-social-last top-dark pull-right" data-toggle="tooltip" data-placement="bottom" title="Login/Register">
 							<a class="top-icon-circle" href="#login-modal" data-toggle="modal">
 								<i class="fa fa-lock"></i>
 							</a>
 						</div>
-						<% }else{ %>
-						<div class="top-social-last top-dark pull-right" data-toggle="tooltip" data-placement="bottom" title="Logout">
-							<a class="top-icon-circle" href="#logout-modal" data-toggle="modal">
-								<i class="fa fa-lock"></i>
-							</a>
-						</div>
-						<% } %>
 						
 						<div class="top-social pull-right">
 							<a class="top-icon-circle" href="#">
@@ -300,7 +292,7 @@
 								<p class="subtitle-margin">Agent</p>
 								<p class="">42 Estates</p>
 								
-								<a href="#logout-modal" class="logout-link margin-top-30" data-toggle="modal"><i class="fas fa-lg fa-sign-out-alt"></i>Se déconnecter</a>
+								<a href="#" class="logout-link margin-top-30"><i class="fas fa-lg fa-sign-out-alt"></i>Logout</a>
 							</div>
 							<div class="clearfix"></div>
 						</div>
@@ -388,7 +380,7 @@
 			<div class="modal-content">
 				<div class="modal-body">
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<div class="modal-title login-msg">
+					<div class="modal-title">
 						<h1>Login<span class="special-color">.</span></h1>
 						<div class="short-title-separator"></div>
 					</div>
@@ -449,27 +441,6 @@
 						<span>Sing Up with Google</span>
 					</a>
 					<p class="modal-bottom">Already registered? <a href="#" class="login-link">SING IN</a></p>
-				</div>
-			</div><!-- /.modal-content -->
-		</div><!-- /.modal-dialog -->
-	</div><!-- /.modal -->
-
-<!-- Logout modal -->
-	<div class="modal fade apartment-modal" id="logout-modal">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-body">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<div class="modal-title logout-msg">
-						<h1>Déconnexion<span class="special-color">.</span></h1>
-						<div class="short-title-separator"></div>
-					</div>
-					<a data-action="logout" href="#" class="button-primary button-shadow button-full">
-						<span>Se déconnecter</span>
-						<div class="button-triangle"></div>
-						<div class="button-triangle2"></div>
-						<div class="button-icon"><i class="fa fa-user"></i></div>
-					</a>
 				</div>
 			</div><!-- /.modal-content -->
 		</div><!-- /.modal-dialog -->
@@ -564,18 +535,15 @@
     </script>
     <script>
     	var user = {};
-		var session = {};
-		user.id = "<%- locals.session.userId != undefined ? 
-			locals.session.userId : "null" %>";
-		user.nom = "<%- locals.session.userName ? 
-			locals.session.userName : "null" %>";
-		user.type = "<%- locals.session.userType ? 
-			locals.session.userType : "null" %>";
-		//console.log(session);
-		session.user = user;
-		sessionStorage.setItem("session", JSON.stringify(session));
+    	user.id = "<%- locals.session.userId != undefined ? 
+    		locals.session.userId : "null" %>";
+    	user.nom = "<%- locals.session.userName ? 
+    		locals.session.userName : "null" %>";
+    	user.type = "<%- locals.session.userType ? 
+    		locals.session.userType : "null" %>";
+    	//console.log(user);
+    	sessionStorage.setItem("user", JSON.stringify(user));
     </script>
-    <script type="module" src="/asset/js/logout.js"></script>
 	</body>
 
 <!-- Mirrored from apartment-html.chart.civ.pl/my-profile.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 21 Aug 2018 17:53:43 GMT -->
