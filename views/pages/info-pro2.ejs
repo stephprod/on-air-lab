@@ -62,11 +62,19 @@
 						</div>
 					</div>
 					<div class="col-xs-7 col-sm-4">
+						<% if (locals.session.userId == undefined){ %>
 						<div class="top-social-last top-dark pull-right" data-toggle="tooltip" data-placement="bottom" title="Login/Register">
 							<a class="top-icon-circle" href="#login-modal" data-toggle="modal">
 								<i class="fa fa-lock"></i>
 							</a>
 						</div>
+						<% }else{ %>
+						<div class="top-social-last top-dark pull-right" data-toggle="tooltip" data-placement="bottom" title="Logout">
+							<a class="top-icon-circle" href="#logout-modal" data-toggle="modal">
+								<i class="fa fa-lock"></i>
+							</a>
+						</div>
+						<% } %>
 						
 						<div class="top-social pull-right">
 							<a class="top-icon-circle" href="#">
@@ -292,7 +300,7 @@
 								<p class="subtitle-margin">Agent</p>
 								<p class="">42 Estates</p>
 								
-								<a href="#" class="logout-link margin-top-30"><i class="fas fa-lg fa-sign-out-alt"></i>Logout</a>
+								<a href="#logout-modal" class="logout-link margin-top-30" data-toggle="modal"><i class="fas fa-lg fa-sign-out-alt"></i>Se déconnecter</a>
 							</div>
 							<div class="clearfix"></div>
 						</div>
@@ -543,6 +551,7 @@
 												
 											</div>
 											<div class="grid-offer-back">
+												<div class="small-icon delete-off" data-id-offre="<%= locals.offObj[i].id_offre_contenir %>"><i class="jfont" style="color: #c64b4b;cursor: pointer;">&#xe80f;</i></div>
 												<div id="offer-form-<%= locals.offObj[i].id_offre_contenir %>" data-profil="<%= locals.offObj[i].id_profil %>" method="post" action="#">
 													<div class="title-separator-primary"></div>
 													<h3 class="sidebar-title" style="margin: 14px;">Modification<span class="special-color">.</span></h3>
@@ -859,7 +868,7 @@
 			<div class="modal-content">
 				<div class="modal-body">
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<div class="modal-title">
+					<div class="modal-title login-msg">
 						<h1>Login<span class="special-color">.</span></h1>
 						<div class="short-title-separator"></div>
 					</div>
@@ -924,7 +933,26 @@
 			</div><!-- /.modal-content -->
 		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
-
+	<!-- Logout modal -->
+	<div class="modal fade apartment-modal" id="logout-modal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<div class="modal-title logout-msg">
+						<h1>Déconnexion<span class="special-color">.</span></h1>
+						<div class="short-title-separator"></div>
+					</div>
+					<a data-action="logout" href="#" class="button-primary button-shadow button-full">
+						<span>Se déconnecter</span>
+						<div class="button-triangle"></div>
+						<div class="button-triangle2"></div>
+						<div class="button-icon"><i class="fa fa-user"></i></div>
+					</a>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
 <!-- Forgotten password modal -->
 	<div class="modal fade apartment-modal" id="forgot-modal">
 		<div class="modal-dialog">
@@ -947,7 +975,6 @@
 			</div><!-- /.modal-content -->
 		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
-
 <!-- jQuery  -->
     <script type="text/javascript" src="/asset/js/jQuery/jquery.min.js"></script>
 	<script type="text/javascript" src="/asset/js/jQuery/jquery-ui.min.js"></script>
@@ -956,17 +983,17 @@
     <script type="text/javascript" src="/asset/bootstrap/bootstrap.min.js"></script>
 
 <!-- Google Maps -->
-	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDfDCV5hXiPamCIT8_vwGXuzimLQ9MF76g&amp;sensor=false&amp;libraries=places"></script>
+	<!-- <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDfDCV5hXiPamCIT8_vwGXuzimLQ9MF76g&amp;sensor=false&amp;libraries=places"></script> -->
 	
 <!-- plugins script -->
 	<script type="text/javascript" src="/asset/js/plugins.js"></script>
-							<!-- DEVIS -->
-	<script type="text/javascript" src="/asset/js/devis.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/i18n/defaults-fr_FR.min.js"></script>
+<!-- DEVIS -->
+	<script type="module" src="/asset/js/devis.js"></script>
 
 <!-- template scripts -->
 	<script type="text/javascript" src="/asset/mail/validate.js"></script>
     <script type="text/javascript" src="/asset/js/apartment.js"></script>
-    <script type="module" src="/asset/js/info-pro.js"></script>
     <script type="text/javascript">
 	var servs = [];
 	<% for (k in locals.servObj){ %>
@@ -979,17 +1006,20 @@
 	//console.log(JSON.stringify(servs));
     </script>
     <script>
-    	var user = {};
-    	user.id = "<%- locals.session.userId != undefined ? 
-    		locals.session.userId : "null" %>";
-    	user.nom = "<%- locals.session.userName ? 
-    		locals.session.userName : "null" %>";
-    	user.type = "<%- locals.session.userType ? 
-    		locals.session.userType : "null" %>";
-    	console.log(user);
-    	sessionStorage.setItem("user", JSON.stringify(user));
+    var user = {};
+	var session = {};
+	user.id = "<%- locals.session.userId != undefined ? 
+		locals.session.userId : "null" %>";
+	user.nom = "<%- locals.session.userName ? 
+		locals.session.userName : "null" %>";
+	user.type = "<%- locals.session.userType ? 
+		locals.session.userType : "null" %>";
+	//console.log(session);
+	session.user = user;
+	sessionStorage.setItem("session", JSON.stringify(session));
     </script>
+    <script type="module" src="/asset/js/info-pro.js"></script>  
+    <script type="module" src="/asset/js/logout.js"></script>
 	</body>
-
 <!-- Mirrored from apartment-html.chart.civ.pl/my-profile.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 21 Aug 2018 17:53:43 GMT -->
 </html>
