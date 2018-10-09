@@ -21,14 +21,16 @@ router.route('/info-pro')
 			response.render('pages/index')
 		}else{
 			User.displayOffre(request.session.userId, (result) => {
-				//console.log(result)
+				console.log("offre")
+				console.log(result)
 				offr = result
 				User.getInfoPro_etablissement(request.session.userId, (result) => {
-					console.log(result)
+					//console.log("etablissement")
+					//console.log(result)
 					etab = result
 					User.displayServiceForPro(request.session.userId, (result) => {
-						console.log("service")
-						console.log(result)
+						//console.log("service")
+						//console.log(result)
 						serv = result
 						if (request.session.userType == 2){
 							User.displayAllAudioServices((result) => {

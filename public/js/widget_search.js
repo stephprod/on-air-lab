@@ -124,7 +124,7 @@ function cp_change_action(e, clickedIndex, isSelected, previousValue){
 	//console.log(d);
 	$.ajax({
         type : "POST",
-        url : "http://localhost:4000/get_cities_in_cp",
+        url : "/get_cities_in_cp",
         data:  d,
         success: function(data) {
 			//AFFICHER LES VILLES ISSUS DE LA BASE DE DONNEES
@@ -153,7 +153,7 @@ function type_serv_load(e, new_type){
 	//console.log(d);
 	$.ajax({
         type : "POST",
-        url : "http://localhost:4000/search",
+        url : "/search",
         data:  d,
         success: function(data) {
 			//AFFICHER LES SERVICES ISSUS DE LA BASE DE DONNEES
