@@ -65,20 +65,7 @@ router.route('/create_off')
 				}
 			})
 		}else{
-			//Suppression des offre
-			User.delete_offre(table[1], (result) => {
-				console.log("-----------DELETE OK----------")
-				console.log("-----------"+result+" LIGNE CHANGEE(S)---------")
-				if (result > 0){
-					ret.success.push(true)
-					ret.global_msg.push("Offre supprimée avec succès !")
-				}
-				else{
-					ret.success.push(false)
-					ret.global_msg.push("Erreur lors de la suppression de l'offre !")
-				}
-				response.send(ret)
-			})
+			//Suppression des offre à venir
 		}
 })
 
