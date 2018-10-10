@@ -43,8 +43,7 @@ $.fn.easyPaginate = function (options) {
     }
         
     return this.each (function (instance) {        
-        var page = 1;
-        var first_page_ind = 0, last_page_ind = 0, total_ind = 0;
+        
         var plugin = {};
         plugin.el = $(this);
         plugin.el.addClass("easyPaginateList");
@@ -85,6 +84,7 @@ $.fn.easyPaginate = function (options) {
             plugin.htmlNav = htmlNav;
             plugin.nav = $(htmlNav);
             plugin.el.after(plugin.nav);
+
             var elSelector = '#' + plugin.el.get(0).id + ' + ';
             $(document).on('click', elSelector + ' .'+plugin.settings.paginationNavClass+' a.page,'
                 + elSelector + ' .'+plugin.settings.paginationNavClass+' a.first,'
@@ -92,41 +92,22 @@ $.fn.easyPaginate = function (options) {
                 e.preventDefault();
                 if (!$(this).hasClass("disabled")){
                     displayPage($(this).attr('rel'));
-                    //Affichage du nombre de page en visualisation
-                    first_page_ind = (parseInt($(this).attr('rel')) - 1) * elems_in_a_page + 1;
-                    last_page_ind = first_page_ind + (plugin.el.find(".grid-offer-col").length - 1);
-                    $("span.first-page-ind").html(first_page_ind > 0 ? first_page_ind : 1 );
-                    $("span.last-page-ind").html(last_page_ind);
-                    $("span.total-ind").html(total_ind);
                 }                
             });
 
             $(document).on('click', elSelector + ' .'+plugin.settings.paginationNavClass+' a.prev', function(e) {
                 e.preventDefault();
                 if (!$(this).hasClass("disabled")){
-                    page = plugin.settings.currentPage > 1 ? parseInt(plugin.settings.currentPage) - 1 : 1;
+                    page = plugin.settings.currentPage > 1?parseInt(plugin.settings.currentPage) - 1:1;
                     displayPage(page);
-                    //Affichage du nombre de page en visualisation
-                    first_page_ind = (page - 1) * elems_in_a_page + 1;
-                    last_page_ind = first_page_ind + (plugin.el.find(".grid-offer-col").length - 1);
-                    $("span.first-page-ind").html(first_page_ind > 0 ? first_page_ind : 1 );
-                    $("span.last-page-ind").html(last_page_ind);
-                    $("span.total-ind").html(total_ind);
                 }
             });
 
             $(document).on('click', elSelector + ' .'+plugin.settings.paginationNavClass+' a.next', function(e) {
                 e.preventDefault();
-                //console.log("click !");
                 if (!$(this).hasClass("disabled")){
-                    page = plugin.settings.currentPage < plugin.settings.pages ? parseInt(plugin.settings.currentPage) + 1 : plugin.settings.pages;               
+                    page = plugin.settings.currentPage < plugin.settings.pages?parseInt(plugin.settings.currentPage) + 1:plugin.settings.pages;
                     displayPage(page);
-                    //Affichage du nombre de page en visualisation
-                    first_page_ind = (page - 1) * elems_in_a_page + 1;
-                    last_page_ind = first_page_ind + (plugin.el.find(".grid-offer-col").length - 1);
-                    $("span.first-page-ind").html(first_page_ind > 0 ? first_page_ind : 1 );
-                    $("span.last-page-ind").html(last_page_ind);
-                    $("span.total-ind").html(total_ind);
                 }
             });
         };
@@ -178,7 +159,7 @@ $.fn.easyPaginate = function (options) {
         
         var transition_fade = function(offsetStart, offsetEnd) {
             plugin.currentElements.fadeOut();
-            plugin.currentElements = plugin.settings.objElements.slice(offsetStart, offsetEnd);
+            plugin.currentElements = plugin.settings.objElements.slice(offsetStart, offsetEnd).clone();
             plugin.el.html(plugin.currentElements);
             plugin.currentElements.fadeIn();
         };
@@ -190,44 +171,43 @@ $.fn.easyPaginate = function (options) {
             }, function() {
                 $(this).remove();
             });
-            //console.log(plugin.settings.objElements);
-            plugin.currentElements = plugin.settings.objElements.slice(offsetStart, offsetEnd);
-            plugin.currentElements.css({
+            console.log(plugin.settings.objElements);
+            plugin.currentElements = plugin.settings.objElements.slice(offsetStart, offsetEnd).clone();
+            /*plugin.currentElements.css({
                 'margin-left': plugin.settings.slideOffset,
                 'display': 'block',
                 'opacity': 0,
-                'max-width': plugin.el.width() / 4
-            });
+                'min-width': plugin.el.width() / 2
+            });*/
             plugin.el.html(plugin.currentElements);
             plugin.currentElements.animate({
                 'margin-left': 0,
                 'opacity': 1
             });
-            plugin.el.isotope();
         };
                 
         var transition_climb = function(offsetStart, offsetEnd) {            
             plugin.currentElements.each(function(i) {
                 var $objThis = $(this);
-                setTimeout(function() {
+                /*setTimeout(function() {
                     $objThis.animate({
                         'margin-left': plugin.settings.slideOffset * -1,
                         'opacity': 0
                     }, function() {
                         $(this).remove();
                     });
-                }, i * 200);
+                }, i * 200);*/
                 $objThis.css({
                     'display': 'none'
                 });
             });
-            plugin.currentElements = plugin.settings.objElements.slice(offsetStart, offsetEnd);
-            plugin.currentElements.css({
+            plugin.currentElements = plugin.settings.objElements.slice(offsetStart, offsetEnd).clone();
+            /*plugin.currentElements.css({
                 'margin-left': plugin.settings.slideOffset,
                 'display': 'block',
                 'opacity': 0,
-                'max-width': plugin.el.width() / 4
-            });
+                'min-width': plugin.el.width() / 2
+            });*/
            // console.log(plugin.settings.objElements);
             plugin.currentElements.css({
                 'display': 'block'
@@ -242,14 +222,14 @@ $.fn.easyPaginate = function (options) {
                     });
                 }, i * 200);
             });
-            plugin.el.isotope();
+            plugin.el.isotope("reloadItems");
         };
                 
         plugin.settings = $.extend({}, defaults, options);
         plugin.currentElements = $([]);
         plugin.settings.objElements = plugin.el.find(plugin.settings.paginateElement);
         plugin.settings.pages = getNbOfPages();
-        plugin.currentElements = plugin.settings.objElements;
+        plugin.currentElements = plugin.settings.objElements
         if(plugin.settings.pages > 0) {
             plugin.el.html();
     
@@ -263,18 +243,9 @@ $.fn.easyPaginate = function (options) {
                     page = 1;
                 }
             }
-            total_ind = plugin.el.find(".grid-offer-col").length;
+            
             displayPage(page, 'default');
         }
-        //Affichage du nombre de page en visualisation
-        if (total_ind > 0){
-            first_page_ind = 1;
-        }
-        last_page_ind += plugin.el.find(".grid-offer-col").length;
-        elems_in_a_page = plugin.settings.elementsPerPage;
-        $("span.first-page-ind").html(first_page_ind);
-        $("span.last-page-ind").html(last_page_ind);
-        $("span.total-ind").html(total_ind);
     });
 };
 })(jQuery);

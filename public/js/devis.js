@@ -1,8 +1,7 @@
-import {update_front_with_msg, update_front_with_errors, update_front_with_success} from './front-update.js';
 var servs = JSON.parse(sessionStorage.getItem('services'));
 //console.log(sessionStorage.getItem('services'));
 //console.log(servs);
-//sessionStorage.clear();
+sessionStorage.clear();
 
 function print_today() {
 
@@ -65,7 +64,6 @@ function update_total() {
   var totalTT = 0.0;
   var tva = parseFloat($('table#items').data("tva"));
   var fees = 0.0;
-  var price = 0.0;
   $('.priceht').each(function(i){
   	$(this).slider();
     price = $(this).slider('value');
@@ -151,14 +149,13 @@ function selects_presta_bind(){
 
 function insert_services(id, ind){
   var ret = "";
-  //console.log(servs);
   if (servs.length == 0)
     ret = '<select name="service'+ind+'" class="bootstrap-select" title="Service:" >'+
               '<option value="0">Aucun service.</option>'+
             '</select>';
   else{
     ret = '<select name="service'+ind+'" class="bootstrap-select" title="Service:" >';
-    for (var k in servs){
+    for (k in servs){
       if (id == servs[k].id_service)
         ret += '<option value="'+servs[k].id_service+'" selected >'+servs[k].nom_service+'</option>';
       else
@@ -309,12 +306,9 @@ function insert_services(id, ind){
 			url: "/prestas",
 			data: datas,
 			success: function (data){
-        //localStorage.setItem("datas", JSON.stringify(data));
-        //document.location = "/info-pro";
+        localStorage.setItem("datas", JSON.stringify(data));
+        document.location = "/info-pro";
 				//console.log(data);
-        update_front_with_msg(data, "msg-tab");
-        if (data.success[0])
-          document.location = "/info-pro";
 			}
 		});
 		console.log("save prestas click !");
@@ -344,9 +338,8 @@ function insert_services(id, ind){
 			data: datas,
 			success: function (data){
         //console.log(data);
-        //localStorage.setItem("datas", JSON.stringify(data));
-        //document.location = "/info-pro";
-        update_front_with_msg(data, "msg-tab");
+        localStorage.setItem("datas", JSON.stringify(data));
+        document.location = "/info-pro";
 			}
 		});
 		console.log("save devis click !");
@@ -369,9 +362,8 @@ function insert_services(id, ind){
   			data: datas,
   			success: function (data){
           console.log(data);
-  				//localStorage.setItem("datas", JSON.stringify(data));
-          //document.location.reload(true);
-          update_front_with_msg(data, "msg-tab");
+  				localStorage.setItem("datas", JSON.stringify(data));
+          document.location.reload(true);
   			}
   		});
 	}
@@ -390,11 +382,9 @@ function insert_services(id, ind){
   		data: datas,
   		success: function (data){
         //console.log(data);
-  			//localStorage.setItem("datas", JSON.stringify(data));
-        //document.location.reload(true);
-        update_front_with_msg(data, "msg-tab");
-        if (data.success[0])
-          that.parents('.item-row').remove();
+  			that.parents('.item-row').remove();
+    		localStorage.setItem("datas", JSON.stringify(data));
+        document.location.reload(true);
   		}
   	})
   });
