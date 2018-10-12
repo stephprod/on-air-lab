@@ -29,7 +29,7 @@ function update_front_with_errors(tabErr){
 			title += "- "+v+"\n";
 		});
 		if (elem.is("select[name='cp']")){
-			//console.log(elem.selectpicker());
+			console.log(elem.selectpicker());
 			elem.selectpicker();
 			elem.selectpicker({title: title}).selectpicker('render');
 			var html = '';
