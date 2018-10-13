@@ -1,11 +1,7 @@
 {
   "name": "on-air",
   "version": "1.0.0",
-<<<<<<< HEAD
   "description": "dfkmndfjd",
-=======
-  "description": "mfdzsfrzs",
->>>>>>> a53a6d1734fbb17b95ae38bdb030a79aa9ce9980
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
