@@ -1,10 +1,7 @@
 let express = require('express')
-<<<<<<< HEAD
-=======
-let app = express()
+const app = express()
 let bodyParser = require('body-parser')
-let session = require('express-session')
->>>>>>> 6a244816e7e658859e87e47267e0f613881c49fb
+const session = require('express-session')
 let db = require('./db_start_engine')
 let sass = require('node-sass')
 /*Variables routes*/
