@@ -1,4 +1,5 @@
-function on_offre_valid_link_click(event){
+import {update_front_with_msg, update_front_with_errors, update_front_with_success} from './front-update.js';
+	function on_offre_valid_link_click(event){
 		event.preventDefault();
 		console.log($(event.target).parents("a[data-action='offre']"));
 		var link = $(event.target).parents("a[data-action='offre']");
@@ -24,6 +25,8 @@ function on_offre_valid_link_click(event){
 				update_front_with_msg(data, "msg-tab");
 				if (!data.success[0])
 					update_front_with_errors(data.errors);
+				else
+					document.location = "/info-pro";
 			}
 		});
 	}
@@ -85,7 +88,7 @@ function on_offre_valid_link_click(event){
 				//localStorage.setItem("datas", JSON.stringify(data));
 				//document.location = "/info-pro";
 				update_front_with_msg(data, "msg-service");
-				if (!data.success)
+				if (!data.success[0])
 					update_front_with_errors(data.errors);
 			}
 		})
@@ -115,10 +118,10 @@ function on_offre_valid_link_click(event){
 			data: datas,
 			success: function (data){
 				update_front_with_msg(data, "msg-tab");
-				if (!data.success)
+				if (!data.success[0])
 					update_front_with_errors(data.errors);
-				//localStorage.setItem("datas", JSON.stringify(data));
-				//document.location = "/info-pro";
+				else
+					document.location = "/info-pro";
 			}
 		});
 	}
@@ -153,6 +156,46 @@ function on_offre_valid_link_click(event){
 			}
 		});
 	}
+	function on_off_delete_div_click(e){
+		e.preventDefault();
+		console.log("click on delete offre !");
+		var datas = {};
+		var that = $(this);
+		var parentRow = $("div#home > div.row");
+		datas.action = "delete";
+		datas.id_offre = $(this).data("id-offre");
+		console.log(datas);
+		console.log($(this));
+		$.ajax({
+			type: "POST",
+			url: "/create_off",
+			data: datas,
+			success: function (data){
+				update_front_with_msg(data, "msg-tab");
+				//console.log(that.parents(".grid-offer-col"));
+				if (data.success[0]){
+					/*that.parents(".grid-offer-col").remove();
+					parentRow.append(offre_add_card);
+					$(".slider[id^=slider-o-price]").each( function( index ) {
+						var sliderId = $( this ).attr('id');
+						$( this ).slider({
+							 range: "min",
+							 min:  parseFloat($( this ).attr("data-min")),
+							 max: parseFloat($( this ).attr("data-max")),
+							 value: parseFloat($( this ).attr("data-val")),
+							 step: 0.1,
+							 slide: function( event, ui ) {
+								$( "#" + sliderId + "-value" ).val( ui.value );
+							 }
+						});
+						$( "#" + sliderId + "-value" ).val( $( this ).slider( "value" ) );
+					});*/
+					document.location = "/info-pro";
+				}
+				//console.log(data);
+			}
+		});
+	}
    	var off_valid_link = $("a[data-action='offre']");
    	off_valid_link.on("click", on_offre_valid_link_click);
    	var tarif_valid_link = $("a[data-action='tarif']");
@@ -165,7 +208,9 @@ function on_offre_valid_link_click(event){
 	serv_valid_link.on("click", on_serv_valid_link_click);
 	var sliders_tarification = $("div[id^='slider-t-']");
 	var etab_valid_link = $("a[data-action='etablissement']");
+	var off_delete_div = $("div.delete-off");
 	etab_valid_link.on("click", on_etab_valid_link_click);
+	off_delete_div.on("click", on_off_delete_div_click);
 	$(sliders_tarification[0]).slider({});
 	$(sliders_tarification[1]).slider({});
 	$(sliders_tarification[2]).slider({});
@@ -198,68 +243,6 @@ function on_offre_valid_link_click(event){
 	  	}
 
   });
-	function update_front_with_errors(tabErr){
-		update_front_with_success();
-		$.each(tabErr, function (ind, val){
-			var elem = $("[name="+ind+"]");
-			var title = "";
-			console.log(elem);
-			elem.attr("data-toggle", "tooltip");
-			$.each(val, function (i, v){
-				title += "- "+v+"\n";
-			});
-			if (elem.is("select[name='cp']")){
-				//console.log(elem.selectpicker());
-				elem.selectpicker();
-				elem.selectpicker({title: title}).selectpicker('render');
-				var html = '';
-    			elem.html(html);
-				elem.selectpicker("refresh");
-			}else{
-				elem.attr("data-title", title);
-				elem.attr("data-original-title", title);
-			}
-		});
-		$('[data-toggle="tooltip"]').tooltip('enable');
-	}
-	function update_front_with_msg(ret, dataName){
-		$('.global_msg').remove();
-		var content = "";
-		$.each(ret, function (ind, val){
-			var elem = $("."+dataName);
-			//console.log(elem);
-			//elem.after();
-			if (ind == "global_msg"){
-				content += '<div class="global_msg">';
-				$.each(val, function (i, v){
-					if (!ret.success[i])
-						content += '<div class="error-box margin-top-30"><p>'+v+'</p><div class="small-triangle"></div><div class="small-icon"><i class="jfont">&#xe80f;</i></div></div>';
-					else{
-						content += '<div class="success-box margin-top-30"><p>'+v+'</p><div class="small-triangle"></div><div class="small-icon"><i class="jfont">&#xe816;</i></div></div>';
-					}
-				});
-				content += '</div>';
-				elem.after(content);		
-			}
-		});
-		//$('[data-toggle="tooltip"]').tooltip();
-	}
-	function update_front_with_success(){
-		$('[data-toggle="tooltip"]').tooltip('disable');
-		$.each($("[name]"), function (ind, val){
-			var elem = $(val);
-			if (elem.is("select")){
-				elem.selectpicker();
-				elem.selectpicker({title: "Sélectionner :"}).selectpicker('render');
-				elem.selectpicker("refresh");
-			} else{
-				$(this).removeAttr("data-title");
-				$(this).removeAttr("data-original-title");
-			}
-			$(this).removeAttr("data-toggle");
-		});
-		
-	}
 	$(".slider[id^=slider-o-price]").each( function( index ) {
 		var sliderId = $( this ).attr('id');
 		$( this ).slider({
@@ -284,6 +267,6 @@ function on_offre_valid_link_click(event){
 	  		slider.slider("value", newNumber);
 	  	}
 	});
-export {update_front_with_msg, 
-	update_front_with_errors, 
-	update_front_with_success};
+	/*var offre_add_card = '<div class="grid-offer-col" style="width: 265px;display: inline-flex;"><div class="grid-offer"><div class="grid-offer-front"><div class="grid-offer-photo"><img src="/asset/images/grid-offer1.jpg" alt="" /><div class="type-container"><div class="etiquette-name">...</div></div></div><div class="grid-offer-text"><i class="fas fa-map-marker grid-offer-localization"></i><div class="grid-offer-h4"><h4 class="grid-offer-title">..., FRANCE</h4></div><div class="clearfix"></div><p>...</p><div class="clearfix"></div></div><div class="price-grid-cont"><div class="grid-price-label pull-left">Price:</div><div class="grid-price pull-right">€ ...</div>'+
+		'<div class="clearfix"></div></div><div class="grid-offer-params"><div class="grid-area"><img src="/asset/images/area-icon.png" alt="" />54m<sup>2</sup></div><div class="grid-rooms"><img src="/asset/images/rooms-icon.png" alt="" />3</div><div class="grid-baths"><img src="/asset/images/bathrooms-icon.png" alt="" />1</div></div></div><div class="grid-offer-back"><div id="offer-form-0" method="post" action="#" data-profil="0"><div class="title-separator-primary"></div><h3 class="sidebar-title" style="margin: 14px;">Ajout<span class="special-color">.</span></h3><input type="text" name="title" class="main-input required,all" placeholder="titre"><textarea name="spe_off" class="main-input required,all" placeholder="description"></textarea>'+
+		'<div class="adv-search-range-cont"><label for="slider-o-price99-value" class="adv-search-label">Prix offre:</label><span>€</span><input type="text" id="slider-o-price99-value" class="adv-search-amount"><div class="clearfix"></div><div id="slider-o-price99" data-val="0" data-min="0" data-max="10000" class="slider" name="prix_off"></div></div></div><div class="button"><a href="#" class="button-primary" data-action="offre" data-form="offer-form-0"><span>ajouter</span><div class="button-triangle"></div><div class="button-triangle2"></div><div class="button-icon"><i class="far fa-user-circle"></i></div></a></div></div></div></div>';*/
