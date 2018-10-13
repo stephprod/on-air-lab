@@ -1,5 +1,8 @@
 let express = require('express')
 <<<<<<< HEAD
+const app = express()
+let bodyParser = require('body-parser')
+const session = require('express-session')
 =======
 let app = express()
 let bodyParser = require('body-parser')
