@@ -1,4 +1,4 @@
-import {socket, get_events, switchRoom} from './chat.js';
+*-*import {socket, get_events, switchRoom} from './chat.js';
 function on_form_contact_submit(e){
 	e.preventDefault();
 	var that = $(this);
