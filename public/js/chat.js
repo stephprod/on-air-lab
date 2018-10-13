@@ -1,4 +1,4 @@
-  	import {update_front_with_msg, update_front_with_errors, update_front_with_success} from './info-pro.js';
+*-*  	import {update_front_with_msg, update_front_with_errors, update_front_with_success} from './info-pro.js';
 
   	//import {get_events} from './profile.js';
   	

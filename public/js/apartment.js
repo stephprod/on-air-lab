@@ -1,4 +1,4 @@
-/***********************
+*-*/***********************
 Apartment HTML Site Template
 Author: Jan Skwara - http://themeforest.net/user/johnnychaos
 ***********************/
