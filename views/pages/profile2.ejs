@@ -28,7 +28,7 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-	<script src="/socket.io/socket.io.js"></script>
+	<script src="http://localhost:4000/socket.io/socket.io.js"></script>
 </head>
 <body>
 <div class="loader-bg"></div>
@@ -60,19 +60,11 @@
 						</div>
 					</div>
 					<div class="col-xs-7 col-sm-4">
-						<% if (locals.session.userId == undefined){ %>
-							<div class="top-social-last top-dark pull-right" data-toggle="tooltip" data-placement="bottom" title="Login/Register">
-								<a class="top-icon-circle" href="#login-modal" data-toggle="modal">
-									<i class="fa fa-lock"></i>
-								</a>
-							</div>
-						<% }else{ %>
-							<div class="top-social-last top-dark pull-right" data-toggle="tooltip" data-placement="bottom" title="Logout">
-								<a class="top-icon-circle" href="#logout-modal" data-toggle="modal">
-									<i class="fa fa-lock"></i>
-								</a>
-							</div>
-						<% } %>
+						<div class="top-social-last top-dark pull-right" data-toggle="tooltip" data-placement="bottom" title="Login/Register">
+							<a class="top-icon-circle" href="#login-modal" data-toggle="modal">
+								<i class="fa fa-lock"></i>
+							</a>
+						</div>
 						
 						<div class="top-social pull-right">
 							<a class="top-icon-circle" href="#">
@@ -366,7 +358,7 @@
 									<div class="details-parameters-price">Aucun service.</div>
 							<% } %>
 								<div class="center-button-cont margin-top-15">
-									<% if (locals.session.userId !== undefined && locals.session.userId != null){ %> 
+									<% if (locals.session.userId !== undefined){ %> 
 										<form id="contact" method="POST" action="/profile/<%=locals.session.id_u%>">
 											<button type="submit" style="border: none;" class="button-primary button-shadow button-full">
 												<span>Contacter</span>
@@ -386,7 +378,7 @@
 								</div>
 								<% if (locals.profilObj[0].type == 3){ %>
 									<div class="center-button-cont margin-top-15">
-										<a <% if (locals.session.userId !== undefined && locals.session.userId != null){ %>href="#rdv-modal"<%} else {%> href="#login-modal" <%}%> data-toggle="modal" class="button-alternative button-shadow button-full">
+										<a <% if (locals.session.userId !== undefined){ %>href="#rdv-modal"<%} else {%> href="#login-modal" <%}%> data-toggle="modal" class="button-alternative button-shadow button-full">
 											<span>Prendre Rendez-vous</span>
 											<div class="button-triangle"></div>
 											<div class="button-triangle2"></div>
@@ -395,7 +387,7 @@
 									</div>
 								<% }else{ %>
 									<div class="center-button-cont margin-top-15">
-										<a <%if (locals.session.userId !== undefined && locals.session.userId != null){ %>href="#resa-modal"<%} else {%> href="#login-modal" <%}%> data-toggle="modal" class="button-alternative button-shadow button-full">
+										<a <%if (locals.session.userId !== undefined){ %>href="#resa-modal"<%} else {%> href="#login-modal" <%}%> data-toggle="modal" class="button-alternative button-shadow button-full">
 											<span>Reserver studio</span>
 											<div class="button-triangle"></div>
 											<div class="button-triangle2"></div>
@@ -547,7 +539,7 @@
 			<div class="modal-content">
 				<div class="modal-body">
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<div class="modal-title login-msg">
+					<div class="modal-title">
 						<h1>Connexion<span class="special-color">.</span></h1>
 						<div class="short-title-separator"></div>
 					</div>
@@ -571,27 +563,6 @@
 						<span>Se connecter avec Google</span>
 					</a>
 					<p class="modal-bottom">Pas encore inscrit? <a href="#" class="register-link">S'enregistrer</a></p>
-				</div>
-			</div><!-- /.modal-content -->
-		</div><!-- /.modal-dialog -->
-	</div><!-- /.modal -->
-
-<!-- Logout modal -->
-	<div class="modal fade apartment-modal" id="logout-modal">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-body">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<div class="modal-title logout-msg">
-						<h1>Déconnexion<span class="special-color">.</span></h1>
-						<div class="short-title-separator"></div>
-					</div>
-					<a data-action="logout" href="#" class="button-primary button-shadow button-full">
-						<span>Se déconnecter</span>
-						<div class="button-triangle"></div>
-						<div class="button-triangle2"></div>
-						<div class="button-icon"><i class="fa fa-user"></i></div>
-					</a>
 				</div>
 			</div><!-- /.modal-content -->
 		</div><!-- /.modal-dialog -->
@@ -676,7 +647,7 @@
 					<p class="negative-margin forgot-info">Cliquer sur la date de votre choix</p>
 					<iframe class="cal" src="/widget_calendar?page=profil" style="border: none;width: 100%;min-height: 350px;"></iframe>
 					<div id="selectHours"></div>
-					<a id="meet-up" data-frame="1" href="#" class="button-primary button-shadow button-full">
+					<a id="meet-up" data-frame="1" href="my-profile.html" class="button-primary button-shadow button-full">
 						<span>Valider le rendez-vous</span>
 						<div class="button-triangle"></div>
 						<div class="button-triangle2"></div>
@@ -699,7 +670,7 @@
 					</div>
 					<p class="negative-margin forgot-info">Cliquer sur la date de votre choix</p>
 					<iframe class="cal" src="/widget_calendar?page=profil" style="border: none;width: 100%;min-height: 350px;"></iframe>
-					<a id="booking" data-frame="2" href="#" class="button-primary button-shadow button-full">
+					<a id="booking" data-frame="2" href="my-profile.html" class="button-primary button-shadow button-full">
 						<span>Réserver</span>
 						<div class="button-triangle"></div>
 						<div class="button-triangle2"></div>
@@ -718,16 +689,17 @@
     <script type="text/javascript" src="/asset/bootstrap/bootstrap.min.js"></script>
 
 <!-- Google Maps -->
-	<!-- <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDfDCV5hXiPamCIT8_vwGXuzimLQ9MF76g&amp;sensor=false&amp;libraries=places"></script> -->
+	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDfDCV5hXiPamCIT8_vwGXuzimLQ9MF76g&amp;sensor=false&amp;libraries=places"></script>
 	
 <!-- plugins script -->
 	<script type="text/javascript" src="/asset/js/plugins.js"></script>
-	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.2/js/bootstrap-select.min.js"></script> -->
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/i18n/defaults-fr_FR.min.js"></script>
 
 <!-- template scripts -->
 	<script type="text/javascript" src="/asset/mail/validate.js"></script>
     <script type="text/javascript" src="/asset/js/apartment.js"></script>
+    <script type="text/javascript" src="/asset/js/login.js"></script>
+    <script type="text/javascript" src="/asset/js/forgottenPassword.js"></script>
+	<script type="text/javascript" src="/asset/js/register.js"></script>
 	<script>
     	var user = {};
     	var session = {};
@@ -740,6 +712,7 @@
     		locals.session.userName : "null" %>";
     	user.type = "<%- locals.session.userType ? 
     		locals.session.userType : "null" %>";
+    	//console.log(session);
     	session.user = user;
     	var room, user_receiv = {};
     	room = <%- locals.room !== null ? locals.room : "null" %>;
@@ -756,11 +729,7 @@
     	sessionStorage.setItem("session", JSON.stringify(session));
     </script>
     <!-- <script type="module" src="/asset/js/chat.js"></script> -->
-    <script type="module" src="/asset/js/login.js"></script>
-    <script type="text/javascript" src="/asset/js/forgottenPassword.js"></script>
-	<script type="text/javascript" src="/asset/js/register.js"></script>
-	<script type="module" src="/asset/js/profile.js"></script>
-	<script type="module" src="/asset/js/logout.js"></script>
+    <script type="module" src="/asset/js/profile.js"></script>
 	</body>
 
 </html>
