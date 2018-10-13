@@ -63,7 +63,7 @@ let valid_form = (request, response, next) => {
     
     if (email !== undefined)
     {
-    	/*Cas du formulaire d'inscription*/
+    	//Cas du formulaire d'inscription
 		validator.isUnique(email, (result) =>
 		{
 			if (result)
@@ -90,7 +90,7 @@ let valid_form = (request, response, next) => {
 	}
 	else
 	{
-		/*Cas du formulaire de modification du mot de passe*/
+		//Cas du formulaire de modification du mot de passe
 		validator.isDifferentToPrevious(request.session.token, (res)=>{
 			if (validator.isSamePass(mdp, res))
 			{
@@ -139,18 +139,17 @@ url_video_form = (request, response, next) => {
 		next()
 }
 
-rdv_form = (request, response, next) => {
+valid_delete_account_form = (request, response, next)=>{
 	let errors = {}
-	let err_flag = false;
-	if (!validator.isDate(request.body.date))
-	{
-		errors.date = ["Date non conforme !"]
-		err_flag = true;
-	}
+	let err_flag = false
+	//Contrôle du formulaire de désinscription à faire
 	if (err_flag)
 	{
 		let ret = {}
-		ret.success = false;
+		ret.success = []
+		ret.global_msg = []
+		ret.global_msg.push("Le formulaire de suppression de compte à mal été rempli !")
+		ret.success.push(false);
 		ret.errors = errors
 		response.send(ret)
 	}
@@ -160,4 +159,4 @@ rdv_form = (request, response, next) => {
 
 module.exports = { register_updatePassword: valid_form,
 				 module_video: url_video_form,
-				 module_apointment : rdv_form }
+				 delete_account_form: valid_delete_account_form}
