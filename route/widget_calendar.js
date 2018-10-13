@@ -23,9 +23,9 @@ router.route('/widget_calendar')
 		}
 		else
 			id_user = request.session.userId
-		console.log(request.session)
-		console.log(request.body)
-		console.log(id_user)
+		//console.log(request.session)
+		//console.log(request.body)
+		//console.log(id_user)
 		User.get_calendar_widget("id_pro= '"+id_user+"' AND LEFT(start, 10)='"+request.body.d+"'", (result) =>{
 			for(let k in result){
 				table.push(result[k].start.substr(11,5),result[k].end.substr(11,5));

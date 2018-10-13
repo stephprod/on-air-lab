@@ -1,4 +1,4 @@
-*-*.cible-client {
+.cible-client {
     position: relative;
     width: 28%;
     display: inline-flex;
@@ -56,32 +56,32 @@
     #wrap {
         margin: 0 auto;
     }
-        
+
     #external-events {
         float: left;
         width: 199px;
         padding: 0 10px;
         text-align: center;
     }
-        
+
     #external-events h4 {
         font-size: 16px;
         margin-top: 0;
         padding-top: 1em;
     }
-        
+
     #external-events .fc-event {
         margin: 10px 0;
         cursor: pointer;
     }
-        
+
     #external-events input {
         margin: 0;
         vertical-align: middle;
     }
 
   #calendar {
-    float: right; 
+    float: right;
     margin: 0 auto;
     width: 75%;
     background-color: #FFFFFF;
@@ -200,7 +200,6 @@ textarea:hover, textarea:focus, #items td.total-value textarea:hover, #items td.
 .edit_devis { display: block; color: #000; text-decoration: none; position: absolute; background: #EEEEEE; font-weight: bold; padding: 0px 3px; border: 1px solid; top: -6px; left: -22px; font-family: Verdana; font-size: 12px;  }
 .edit_models { display: block; color: #000; text-decoration: none; position: absolute; background: #EEEEEE; font-weight: bold; padding: 0px 3px; border: 1px solid; left: 12px; font-family: Verdana; font-size: 12px;  }
 
-                              /*DIV SWITCHER LEFT*/
 #switcher2{
   height: 500px;
   width: 400px;
@@ -208,7 +207,7 @@ textarea:hover, textarea:focus, #items td.total-value textarea:hover, #items td.
   overflow-x: hidden;
   left: -400px;
   top: 130px;
-  z-index: 159; 
+  z-index: 159;
   margin-top: 20px;
   margin-bottom: 20px;
 }

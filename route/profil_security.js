@@ -23,7 +23,7 @@ router.route('/secure_profile')
 			ret.success = false
 			ret.msg = ["Erreur lors de la récupération du paramètre de la requète !"]
 		}
-		console.log(req.session)
+		//console.log(req.session)
 		res.send(ret)
 })
 module.exports = router;
