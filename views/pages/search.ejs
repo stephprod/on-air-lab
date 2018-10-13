@@ -1,0 +1,607 @@
+<% include header %>
+
+<!-- Start Side Navbar -->
+<div class="container-fluid">
+  <div class="row" style="height:auto;">
+    <div class="col-sm-3 col-lg-2" style="height:auto;">
+      <nav class="navbar navbar-default navbar-fixed-side">
+        <!-- normal collapsible navbar markup -->
+        <div class="container">
+          <div class="navbar-header" style="margin:0;padding-bottom:15px;border-bottom: 1px solid #a09b9b;">
+            <a class="navbar-brand" href="#" style="    padding-left: 0;">Filtres</a>
+            <div class="col-lg-6 reset" style="cursor:pointer;padding:15px 15px;float:right;padding-right:0;text-align:right;">
+              <i class="fa fa-trash" style="margin-right: 5px;"></i>Réinitialiser
+            </div>
+            <input type="text" id="filter-tags" style="display:none;"/>
+          </div>
+          <!-- Bootstrap services type radios start -->
+            <div class="col-lg-12 servicesType_radios" style="padding: 15px 0;"><a style="padding:0 0 15px 0;" class="navbar-brand">Type de service</a>
+              <form>
+                <div class="col-lg-12" style="padding: 0;">
+                  <div class="form-check">
+                    <label class="toggle">
+                      <input value="0" type="radio" name="service_type" checked /> 
+                      <span class="label-text">Audio</span>
+                    </label>
+                    <label style="float:right;font-size:15px;top:5px;">
+                      (50)
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <label class="toggle">
+                      <input value="1" type="radio" name="service_type"> <span class="label-text">Vidéo</span>
+                    </label>
+                    <label style="float:right;font-size:15px;top:5px;">
+                      (150)
+                    </label>
+                    <div class="form-check">
+                    <label class="toggle">
+                      <input value="2" type="radio" name="service_type"> <span class="label-text">Audio/Vidéo</span>
+                    </label>
+                    <label style="float:right;font-size:15px;top:5px;">
+                      (200)
+                    </label>
+                  </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <!-- Bootstrap services type radios end -->
+          <!-- Bootstrap services checkboxes start -->
+            <div id="service" class="col-lg-12 services_radios" style="display:none;padding: 15px 0;border-bottom: 1px solid #a09b9b;border-top: 1px solid #a09b9b;">
+              <!-- <a style="padding:0 0 15px 0;" class="navbar-brand">Services</a>
+              <form>
+                <div class="col-lg-12" style="padding: 0;">
+                  <div class="form-check">
+                    <label>
+                      <input id="1" type="checkbox" value="Service 01" /><span class="label-text">Service 01</span>
+                    </label>
+                    <label style="float:right;font-size:15px;top:5px;">
+                      (100)
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <label>
+                      <input id="2" type="checkbox" value="Service 02" /><span class="label-text">Service 02</span>
+                    </label>
+                    <label style="float:right;font-size:15px;top:5px;">
+                      (300)
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <label>
+                      <input id="3" type="checkbox" value="Service 03" /><span class="label-text">Service 03</span>
+                    </label>
+                    <label style="float:right;font-size:15px;top:5px;">
+                      (200)
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <label>
+                      <input id="4" type="checkbox" value="Service 04" /><span class="label-text">Service 04</span>
+                    </label>
+                    <label style="float:right;font-size:15px;top:5px;">
+                      (50)
+                    </label>
+                  </div>
+                </div>
+              </form> -->
+            </div>
+            <!-- Bootstrap services checkboxes end -->
+            <!-- Bootstrap location slider start -->
+            <div class="col-lg-12 location_slider" style="display:none;padding: 15px 0;border-bottom: 1px solid #a09b9b;">
+              <a style="padding:0;" class="navbar-brand">Distance</a>
+              <div class="col-lg-12" style="padding: 15px 15px;text-align: center;">
+                <b>10 km</b>
+                <input id="slider_distance" type="text" class="span2" value="" data-slider-min="10" data-slider-max="500" data-slider-step="10" data-slider-value="[250,450]"/>
+                <b>500 km</b></div>
+            </div>
+            <!-- Bootstrap location slider end -->
+          <!-- Bootstrap price slider start-->
+          <div class="col-lg-12 price_slider" style="display:none;padding: 15px 0;border-bottom: 1px solid #a09b9b;">
+            <a style="padding:0;" class="navbar-brand">Tarif / heure</a>
+            <div class="col-lg-12" style="padding: 15px 15px;text-align: center;">
+              <b>10 €</b>
+              <input id="slider_tarif" type="text" class="span2" value="" data-slider-min="10" data-slider-max="1000" data-slider-step="5" data-slider-value="[250,450]"/>
+              <b>1000 €</b>
+            </div>
+          </div>
+          <!-- Bootstrap price slider end-->
+            <!-- Bootstrap avalaible radios start -->
+            <div class="col-lg-12 available_radios" style="padding: 15px 0;"><a style="padding:0 0 15px 0;" class="navbar-brand">Disponibilité</a>
+            	<form>
+            		<div class="col-lg-12" style="padding: 0;">
+		            	<div class="form-check">
+      							<label class="toggle">
+      								<input value="1" type="radio" name="availability" checked /> 
+                      <span class="label-text">En ligne</span>
+      							</label>
+							      <label style="float:right;font-size:15px;top:5px;">
+	            				(50)
+	            			</label>
+						      </div>
+      						<div class="form-check">
+      							<label class="toggle">
+      								<input value="0" type="radio" name="availability"> <span class="label-text">Hors Ligne</span>
+      							</label>
+      							<label style="float:right;font-size:15px;top:5px;">
+	            				(150)
+	            			</label>
+      						</div>
+      					</div>
+      				</form>
+            </div>
+            <!-- Bootstrap avalaible radios end -->
+        </div>
+      </nav>
+    </div>
+  </div>
+</div>
+<!-- End Side Navbar -->
+
+<!-- Start Content -->
+    <div class="row search-content">
+    	<div class="row">
+        <div class="well clearfix" style="margin-bottom:0;border-top-left-radius:4px;border-top-right-radius:4px;border-bottom-left-radius:0;border-bottom-right-radius:0;">
+          <div class="pull-left">
+            <a style="padding:0;color:#777777;" class="navbar-brand">Plus de 300 studios disponibles</a>
+          </div>
+          <div class="btn-group sort-button-group pull-right"> 
+            <button class="btn btn-default" data-sort-direction="asc" data-sort-value="price" type="button">Prix <span aria-hidden="true" class="fas fa-chevron-down"></span></button> 
+            <button class="btn btn-default" data-sort-direction="asc" data-sort-value="name" type="button">Nom <span aria-hidden="true" class="fas fa-chevron-down"></span></button> 
+            <button class="btn btn-default" data-sort-direction="asc" data-sort-value="filesize" type="button">Distance  <span aria-hidden="true" class="fas fa-chevron-down"></span></button>
+        </div><!-- /.btn-group -->
+      </div>
+    </div>
+    <div class="row">
+      <a href="/"style="padding:0;color:#777777;">Accueil</a>
+    </div>
+      <div class="row">
+        <div class="contact-area">
+          <% if (locals.listEtab !== undefined) { 
+                for (k in locals.listEtab){
+            %>
+                  <% include pro_card %>
+            
+            <%  }
+              } else { %>
+                Aucune enseigne pour le moment !.
+            <% } %>
+          </div>
+      </div>
+    </div>
+<!-- End Content -->
+<script type="text/javascript">
+/*$('button.act').click(function(){
+  $('button.act').toggleClass('active');
+  $('.title').toggleClass('active');
+  $('nav').toggleClass('active');
+});*/
+/*PRO CARD ACTIONS IN SEARCH PAGE*/
+  function updateListEtabInView(value){
+    $(".contact-area").append('<div class="tri-col">'+  
+                      '<div class="wrapper-card">'+
+                        '<div class="contact">'+
+                          '<main>'+
+                            '<section>'+
+                              '<div class="content">'+
+                                '<img src="'+value.path_img+'" alt="Profile Image" width="100" height="100" />'+
+                                '<aside>'+
+                                  '<h1 class="tri-nom">'+value.nom+'</h1>'+
+                                  '<p>'+value.adresse+', '+value.cp+'</p>'+
+                                  '<p>'+value.descr+'</p>'+
+                                  '<p><a class="tri-prix">'+value.prix_h+'</a>€/h</p>'+
+                                '</aside>'+
+                                '<button class="act">'+
+                                  '<span>Contact Me</span>'+
+                                  '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"> <g class="nc-icon-wrapper" fill="#444444"> <path d="M14.83 30.83L24 21.66l9.17 9.17L36 28 24 16 12 28z"></path> </g> </svg>'+
+                                '</button>'+
+                              '</div>'+
+                              '<div class="title"><p>Contact Me</p></div>'+
+                            '</section>'+
+                          '</main>'+
+                          '<nav>'+
+                            '<a href="#" class="gmail" data-temp="'+value.id_user+'" >'+
+                             '<div class="icon">'+
+                                '<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M16 3v10c0 .567-.433 1-1 1h-1V4.925L8 9.233 2 4.925V14H1c-.567 0-1-.433-1-1V3c0-.283.108-.533.287-.712C.467 2.107.718 2 1 2h.333L8 6.833 14.667 2H15c.283 0 .533.108.713.288.179.179.287.429.287.712z" fill-rule="evenodd"/></svg>'+
+                              '</div>'+
+
+                              '<div class="content">'+
+                                '<h1>Email</h1>'+
+                                '<span>Riccavallo@gmail.com</span>'+
+                              '</div>'+
+                              
+                              '<svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"> <g class="nc-icon-wrapper" fill="#444444"> <path d="M17.17 32.92l9.17-9.17-9.17-9.17L20 11.75l12 12-12 12z"></path> </g> </svg>'+
+                            '</a>'+
+                            '<a href="#" class="facebook">'+
+                              '<div class="icon">'+
+                                '<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="1.414"><path d="M15.117 0H.883C.395 0 0 .395 0 .883v14.234c0 .488.395.883.883.883h7.663V9.804H6.46V7.39h2.086V5.607c0-2.066 1.262-3.19 3.106-3.19.883 0 1.642.064 1.863.094v2.16h-1.28c-1 0-1.195.48-1.195 1.18v1.54h2.39l-.31 2.42h-2.08V16h4.077c.488 0 .883-.395.883-.883V.883C16 .395 15.605 0 15.117 0" fill-rule="nonzero"/></svg>'+
+                              '</div>'+
+
+                              '<div class="content">'+
+                                '<h1>Facebook</h1>'+
+                                '<span>Riccardo Cavallo</span>'+
+                              '</div>'+
+                              
+                              '<svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"> <g class="nc-icon-wrapper" fill="#444444"> <path d="M17.17 32.92l9.17-9.17-9.17-9.17L20 11.75l12 12-12 12z"></path> </g> </svg>'+
+                            '</a>'+
+                          '</nav>'+
+                        '</div>'+
+                      '</div>'+ 
+                    '</div> ');
+  } 
+ var zindex = 10;
+  $(document).on("click", "div.contact a", function(e){
+    //console.log("click !");
+    var link = $(e.target).parents("a")[0];
+    console.log(link);
+    document.location = $(link).attr("href");
+  });
+  $(document).on("click", "div.contact", function(e){
+    e.preventDefault();
+
+    var isShowing = false;
+
+    if ($(this).hasClass("current")) {
+      isShowing = true
+    }
+
+    if ($("div.contact-area").hasClass("showing")) {
+      // a card is already in view
+      $('.current button.act').removeClass('active');
+            $('.current .title').removeClass('active');
+            $('.current nav').removeClass('active');
+      $("div.contact.current")
+        .removeClass("current");
+
+      if (isShowing) {
+        // this card was showing - reset the grid
+        $("div.contact-area")
+          .removeClass("showing");
+
+      } else {
+        // this card isn't showing - get in with it
+        $(this)
+          .css({zIndex: zindex})
+          .addClass("current");
+           $('.current button.act').addClass('active');
+            $('.current .title').addClass('active');
+            $('.current nav').addClass('active');
+      }
+
+      zindex++;
+
+    } else {
+      // no cards in view
+      $("div.contact-area")
+        .addClass("showing");
+      $(this)
+        .css({zIndex:zindex})
+        .addClass("current");
+         $('.current button.act').addClass('active');
+            $('.current .title').addClass('active');
+            $('.current nav').addClass('active');
+
+      zindex++;
+    }
+    /*$('.current button.act').toggleClass('active');
+    $('.current .title').toggleClass('active');
+    $('.current nav').toggleClass('active');*/
+  });
+</script>
+<script type="text/javascript">
+/* FORM-POPUP ACTIONS */
+var input_popups = $('.form-popup .input-popup input,.form-popup .input-popup select ');
+var icons = $('.form-popup .input-popup i');
+input_popups.focus(function(e){
+    icons.css("color", "#8b8b8b");
+    var icon_focused = $(e.target).prev();
+    icon_focused.css("color", "#6ebff3");
+});
+</script>
+<script type="text/javascript">
+/* FILTER TAGS INPUT SEARCH */
+    var elt = $('input#filter-tags');
+    var ls = $('div.location_slider');
+    var ps = $('div.price_slider');
+    var ar = $('div.available_radios');
+    var sr = $('div.services_radios');4
+    var $grid = ""; 
+    var type_service = "0";
+    var services = [];
+    var datas = {};
+    //INITIALISATION DU TAG INPUT FILTER
+    elt.tagsinput({
+      tagClass: function(item) {
+        switch (item.type) {
+          case 'audio'   : return 'label label-primary';
+          case 'video'  : return 'label label-danger label-important';
+          case 'distance': return 'label label-success';
+          case 'prix'   : return 'label label-default';
+          case 'disponibilite'   : return 'label label-info';
+        }
+      },
+      itemValue: 'id',
+      itemText: 'value',
+      confirmKeys: [13, 44]
+    });
+    $(".servicesType_radios .form-check input[type='radio']").change(function(e) {
+        $("#service").empty();
+        type_service = $(e.target).val();
+        datas = {};
+        datas.filtre_type_service = type_service;        
+        datas.filtre_dispo = 1;
+        console.log(datas);
+        $.ajax({
+            type : "POST",
+            url : "http://localhost:4000/search",
+            data:  datas,
+            success: function(data) {
+              //AFFICHER LES SERVICES ISSUS DE LA BASE DE DONNEES
+              $("#service").append('<a style="padding:0 0 15px 0;" class="navbar-brand">'+
+                  data.title+'</a><div class="col-lg-12" style="padding: 0;"></div>');
+              $.each(data.content, function(key, value) {
+                  $("#service > div.col-lg-12").append('<div class="form-check">'+
+                      '<label>'+
+                      '<input id="'+value.id_service+'" type="checkbox" value="'+value.nom_service+'" data-type="'+value.type_service+'"/><span class="label-text">'+value.nom_service+'</span>'+
+                  '</label>'+
+                  '<label style="float:right;font-size:15px;top:5px;">'+
+                    '(100)'+
+                  '</label>'+
+                '</div>');
+              });
+              //AFFICHER LES ETABLISSEMENT CORESPONDANT A LA RECHERCHE
+              $(".contact-area").empty();
+              $.each(data.listEtab, function(key, value){
+                    updateListEtabInView(value);
+              })
+              //Isotop reload
+              $grid.isotope("reloadItems");
+            }   
+        });
+        //Show Services checkboxes
+        $("#service").css("display", "block"); 
+    });
+    $(document).on("change", ".form-check input[type='checkbox']", function(e) {
+        datas.filtre_service = [];
+        var targ = $(e.target);
+        var checkboxes_checked = $(".form-check input[type='checkbox']:checked");
+        $.each(checkboxes_checked, function(index, value){
+          //console.log(value);
+          datas.filtre_service.push(value.id)
+        })
+        console.log(datas); 
+        var that = this;
+        $.ajax({
+            type : "POST",
+            url : "http://localhost:4000/search",
+            data: datas,
+            success: function(data) {
+              $(".contact-area").empty();
+              console.log(data);
+              //MISE A JOUR DE LA LISTE DES ETABLISSEMENTS 
+              $.each(data.listEtab, function(key, value){
+                    updateListEtabInView(value);
+              });
+              //Tags Input
+              if (that.checked){
+                  elt.tagsinput('add', {id:that.id, value:that.value, type: targ.data("type")}); 
+                  if (type_service == "0"){
+                    //Show Price slider 
+                    ps.css("display", "block");
+                    ps.find("input").slider({});
+                  }
+                  else{
+                    //Show Location slider
+                    ls.css("display", "block");
+                    ls.find("input").slider({});
+                  }
+              }
+              else
+              {    
+                  elt.tagsinput('remove', {id:that.id});
+                  //Vérification qu'il ne reste aucun tag
+                  if (!Array.isArray(elt.tagsinput('items')) || elt.tagsinput('items').length == 0)
+                  {
+                      //Hide Available Radio
+                      //ar.css("display", "none");
+                      //Hide Price Slider
+                      ps.css("display", "none");
+                      //Hide Location Slider
+                      ls.css("display", "none");
+                      //Destroy Tags Inputs
+                      //elt.tagsinput('destroy')
+                      elt.css("display", "none");
+                  }
+              }
+              //Isotop reload
+              $grid.isotope("reloadItems");
+            }
+        });
+    });
+    $("input#slider_distance").slider().on('slideStop', function(e) {
+        //Tags Input
+        //Remove Previous Tag Input
+        elt.tagsinput('remove', {id:5});
+        var val=$(this).slider('getValue');
+        //Add Tag input
+        elt.tagsinput('add', {id:5, value:"Rayon : "+val[0]+" - "+val[1]+" km", type: "distance"});
+        
+        //Show Price slider
+        ps.css("display", "block");
+        ps.find("input").slider({});
+    });
+    $("input#slider_tarif").slider().on('slideStop', function(e) {
+        datas.filtre_tarif = [];
+        var targ = $(e.target);
+        datas.filtre_tarif.push($(this).slider('getValue')[0]);
+        datas.filtre_tarif.push($(this).slider('getValue')[1]);
+        console.log(datas); 
+        var that = this;
+        $.ajax({
+            type : "POST",
+            url : "http://localhost:4000/search",
+            data: datas,
+            success: function(data) {
+              $(".contact-area").empty();
+              console.log(data);
+              //MISE A JOUR DE LA LISTE DES ETABLISSEMENTS 
+              $.each(data.listEtab, function(key, value){
+                    updateListEtabInView(value);
+              })
+              //Tags Input
+              //Remove Previous Tag Input
+              elt.tagsinput('remove', {type: "prix"});
+              var val=$(that).slider('getValue');
+              //Add Tag input
+              elt.tagsinput('add', {id:6, value:"Budget : "+val[0]+" - "+val[1]+" €", type: "prix"});
+              //Show Availability radios
+              //ar.css("display", "block");
+              //Isotop reload
+              $grid.isotope("reloadItems");
+            }
+          });
+    });
+    $(".available_radios .form-check input[type='radio']").change(function(e) {
+        var targ = $(e.target);
+        datas.filtre_type_service = type_service;
+        datas.filtre_dispo = targ.val();
+        console.log(datas); 
+        var that = this;
+        $.ajax({
+            type : "POST",
+            url : "http://localhost:4000/search",
+            data: datas,
+            success: function(data) {
+              $(".contact-area").empty();
+              console.log(data);
+              //MISE A JOUR DE LA LISTE DES ETABLISSEMENTS 
+              $.each(data.listEtab, function(key, value){
+                    updateListEtabInView(value);
+              })
+              //Tags Input
+              elt.tagsinput('remove', {id:7});
+              var val = targ.val() == "1" ? "En ligne" : "Hors ligne" ;
+              //Add Tag input
+              elt.tagsinput('add', {id:7, value:"Disponibilité : "+ val, type: "disponibilite"});
+              //Isotop reload
+              $grid.isotope("reloadItems");
+            }
+          });
+    });
+    $("div.reset").click(function(e) {
+        //Hide Available Radio
+        //ar.css("display", "none");
+        //Hide Price Slider
+        ps.css("display", "none");
+        //Unselect All Checkboxes inputs*/
+        $(".form-check input[type='checkbox']").prop("checked", false);
+        //Hide Location Slider
+        ls.css("display", "none");
+        //Destroy Tags Inputs
+        elt.tagsinput('removeAll');
+        elt.tagsinput('destroy');
+        elt.css("display", "none");
+    });
+    elt.on("itemRemoved", function(e){
+        //Désactivation de la checkbox lors de la suppression d'un tag
+        if (e.item !== undefined)
+        {
+            if (e.item.id < 5){
+                $(".form-check input#"+e.item.id+"[type='checkbox']").prop("checked", false);
+            }
+        }
+        //Vérification qu'il ne reste aucun tag
+        if (!Array.isArray(elt.tagsinput('items')) || elt.tagsinput('items').length == 0)
+        {
+            //Hide Available Radio
+            //ar.css("display", "none");
+            //Hide Price Slider
+            ps.css("display", "none");
+            //Hide Location Slider
+            ls.css("display", "none");
+            //Destroy Tags Inputs
+            //elt.tagsinput('destroy')
+            elt.css("display", "none");
+        }
+    });
+</script>
+<script type="text/javascript">
+    //TRI ASYNC AJAX ISOTOP
+    var $grid = "";
+    $grid = $(".contact-area"); 
+    $grid.isotope({
+        itemSelector:".tri-col",
+        getSortData:{
+            name:".tri-nom",
+            price: function (itemElem){
+                // get text of .tri-prix element
+                var price = $( itemElem ).find('.tri-prix').text();
+                // replace parens (), and parse as float
+                return parseFloat( price );
+            }
+        }
+    });
+    $('.sort-button-group').on('click', 'button', function () {
+        // Get the element name to sort 
+        var sortValue = $(this).attr('data-sort-value');
+        // Get the sorting direction: asc||desc 
+        var direction = $(this).attr('data-sort-direction');
+        // convert it to a boolean
+        var isAscending = (direction == 'asc');
+        var newDirection = (isAscending) ? 'desc' : 'asc';
+        // pass it to isotope
+       $grid.isotope({ sortBy: sortValue, sortAscending: isAscending });
+        $(this).attr('data-sort-direction', newDirection);
+        var span = $(this).find('.fas');
+       span.toggleClass('fa-chevron-up fa-chevron-down');
+    });
+</script>
+<script type="text/javascript">
+    //Isotop List Filter
+    $(document).on("keyup", "#searchinput", function(e){
+      //console.log("press !");
+      var ref = escape($(this).val());
+      var exp;
+      if (ref != "")
+      {
+          exp = new RegExp("("+ref+")+", "i");
+          //console.log(exp);
+          $grid.isotope({
+              filter : function (){
+                  var text = $(this).find("h1.tri-nom").text();
+                  console.log(text);
+                  console.log(text.match(exp));
+                  return text.match(exp) != null ? true : false ;
+              }
+          });
+      }
+      else
+      {
+          $grid.isotope({
+              filter : "*"
+          });
+      }
+    });
+</script>
+<script type="text/javascript">
+    //Sécurisation profile
+    $(document).on("click", "a[data-temp]", function(e){
+        e.preventDefault();
+        var link = $(e.target).parents("a[data-temp]");
+        var id_u = link.data("temp");
+        //console.log(link);
+        //console.log(id_u);
+        $.ajax({
+            type : "POST",
+            url : "http://localhost:4000/secure_profile",
+            data: {"temp": id_u},
+            success: function(data) {
+                //AFFICHER LES SERVICES ISSUS DE LA BASE DE DONNEES
+                console.log(data)
+                document.location.href = '/profile/'+id_u;
+            }   
+        });
+    });
+</script>
+<% include footer %>
