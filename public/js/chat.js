@@ -1,50 +1,50 @@
-*-*  	import {update_front_with_msg, update_front_with_errors, update_front_with_success} from './info-pro.js';
+  import {update_front_with_msg, update_front_with_errors, update_front_with_success} from './info-pro.js';
 
   	//import {get_events} from './profile.js';
-  	
+
 	$(document).on("click", ".friend", function(){
 		var childOffset = $(this).offset();
 		var parentOffset = $(this).parent().parent().offset();
 		var childTop = childOffset.top - parentOffset.top;
 		var clone = $(this).find('img').eq(0).clone();
 		var top = childTop+12+"px";
-		$(clone).css({'top': top}).addClass("floatingImg").appendTo("#chatbox");									
-		
+		$(clone).css({'top': top}).addClass("floatingImg").appendTo("#chatbox");
+
 		setTimeout(function(){$("#profile p").addClass("animate");$("#profile").addClass("animate");}, 100);
 		setTimeout(function(){
 			$("#chat-messages").addClass("animate");
 			$('.cx, .cy').addClass('s1');
 			setTimeout(function(){$('.cx, .cy').addClass('s2');}, 100);
-			setTimeout(function(){$('.cx, .cy').addClass('s3');}, 200);			
-		}, 150);														
-		
+			setTimeout(function(){$('.cx, .cy').addClass('s3');}, 200);
+		}, 150);
+
 		$('.floatingImg').animate({
 			'width': "68px",
 			'left':'108px',
 			'top':'20px'
 		}, 200);
-		
+
 		var name = $(this).find("p strong").html();
-		var email = $(this).find("p span").html();														
+		var email = $(this).find("p span").html();
 		$("#profile p").html(name);
-		$("#profile span").html(email);			
-		
-		$(".message").not(".right").find("img").attr("src", $(clone).attr("src"));									
+		$("#profile span").html(email);
+
+		$(".message").not(".right").find("img").attr("src", $(clone).attr("src"));
 		$('#friendslist').fadeOut();
 		$('#chatview').fadeIn();
 
-		$('#close').unbind("click").click(function(){				
+		$('#close').unbind("click").click(function(){
 			$("#chat-messages, #profile, #profile p").removeClass("animate");
 			$('.cx, .cy').removeClass("s1 s2 s3");
 			$('.floatingImg').animate({
 				'width': "40px",
 				'top':top,
 				'left': '12px'
-			}, 200, function(){$('.floatingImg').remove()});				
-			
+			}, 200, function(){$('.floatingImg').remove()});
+
 			setTimeout(function(){
 				$('#chatview').fadeOut();
-				$('#friendslist').fadeIn();				
+				$('#friendslist').fadeIn();
 			}, 50);
 		});
 		if ($(this).data('coresp-type') == "4"){
@@ -178,7 +178,7 @@
 						htmlToAppend += actions.paiement[0](data);
 					else
 						htmlToAppend += actions.paiement[1](data);
-				}   
+				}
 			}else{
 				if (user.id == data.user_sender)
 					htmlToAppend += actions.texte[0](data);
@@ -220,7 +220,7 @@
 			if (room == 1 && usr.id != 1)
 	            socket.emit('list_msg_admin', room, user_receiv, usr.id);
 	        else{
-	            socket.emit('list_msg', room, user_receiv, usr.type); 
+	            socket.emit('list_msg', room, user_receiv, usr.type);
 	            socket.emit('update_services', usr.id, room, user_receiv);
 	            //socket.emit('update_modeles_devis', user.id, room, user_receiv);
 	        }
@@ -250,7 +250,7 @@
 	$("#searchfield").focusout(function(){
 		if($(this).val() == ""){
 			$(this).val("Search contacts...");
-			
+
 		}
 	});
 	function on_msg_send_click(){
@@ -277,7 +277,7 @@
 	$("#sendmessage input").focusout(function(){
 		if($(this).val() == ""){
 			$(this).val("Send message...");
-			
+
 		}
 	});
     function on_reservation_link_click(e){
@@ -522,7 +522,7 @@
 					start = datePickerValTab[2] + "-" +datePickerValTab[1]+ "-" +datePickerValTab[0] + "T" + put_in_n_digits_hours(hour, 2) + ":00:00";
 					donn.start = start;
 				}else{
-				
+
 					end = datePickerValTab[2] + "-" +datePickerValTab[1]+ "-" +datePickerValTab[0] + "T" + put_in_n_digits_hours(parseInt(timeIndice), 2) + ":00:00";
 					donn.end = end;
 					datas.events.push(donn);
@@ -556,7 +556,7 @@
 						datas.events.push(donn);
 						donn = {}
 					}
-					start = datePickerValTab[2] + "-" +datePickerValTab[1]+ "-" +datePickerValTab[0] + "T" + put_in_n_digits_hours(tabH[0], 2) + ":" + 
+					start = datePickerValTab[2] + "-" +datePickerValTab[1]+ "-" +datePickerValTab[0] + "T" + put_in_n_digits_hours(tabH[0], 2) + ":" +
 							put_in_n_digits_minutes(tabH[1], 2)+":00";
 					donn.start = start;
 				}else{
@@ -565,7 +565,7 @@
 					donn.end = end;
 					datas.events.push(donn);
 					donn = {}
-					start = datePickerValTab[2] + "-" +datePickerValTab[1]+ "-" +datePickerValTab[0] + "T" + put_in_n_digits_hours(tabH[0], 2) + ":" + 
+					start = datePickerValTab[2] + "-" +datePickerValTab[1]+ "-" +datePickerValTab[0] + "T" + put_in_n_digits_hours(tabH[0], 2) + ":" +
 							put_in_n_digits_minutes(tabH[1], 2)+":00";
 					donn.start = start;
 				}
