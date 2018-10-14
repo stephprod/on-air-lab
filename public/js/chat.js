@@ -1,5 +1,5 @@
-  	/*import {update_front_with_msg, update_front_with_errors, update_front_with_success} from './front-update.js';
-  	import {get_events} from './events.js';
+  	import {update_front_with_msg, update_front_with_errors, update_front_with_success} from './front-update.js';
+  	/*import {get_events} from './events.js';
   	import {socket, switchRoom} from './socket_modules.js';*/
 	$(document).on("click", ".friend", function(){
 		var childOffset = $(this).offset();
@@ -7,44 +7,44 @@
 		var childTop = childOffset.top - parentOffset.top;
 		var clone = $(this).find('img').eq(0).clone();
 		var top = childTop+12+"px";
-		
-		$(clone).css({'top': top}).addClass("floatingImg").appendTo("#chatbox");									
-		
+
+		$(clone).css({'top': top}).addClass("floatingImg").appendTo("#chatbox");
+
 		setTimeout(function(){$("#profile p").addClass("animate");$("#profile").addClass("animate");}, 100);
 		setTimeout(function(){
 			$("#chat-messages").addClass("animate");
 			$('.cx, .cy').addClass('s1');
 			setTimeout(function(){$('.cx, .cy').addClass('s2');}, 100);
-			setTimeout(function(){$('.cx, .cy').addClass('s3');}, 200);			
-		}, 150);														
-		
+			setTimeout(function(){$('.cx, .cy').addClass('s3');}, 200);
+		}, 150);
+
 		$('.floatingImg').animate({
 			'width': "68px",
 			'left':'108px',
 			'top':'20px'
 		}, 200);
-		
+
 		var name = $(this).find("p strong").html();
-		var email = $(this).find("p span").html();														
+		var email = $(this).find("p span").html();
 		$("#profile p").html(name);
-		$("#profile span").html(email);			
-		
-		$(".message").not(".right").find("img").attr("src", $(clone).attr("src"));									
+		$("#profile span").html(email);
+
+		$(".message").not(".right").find("img").attr("src", $(clone).attr("src"));
 		$('#friendslist').fadeOut();
 		$('#chatview').fadeIn();
 
-		$('#close').unbind("click").click(function(){				
+		$('#close').unbind("click").click(function(){
 			$("#chat-messages, #profile, #profile p").removeClass("animate");
 			$('.cx, .cy').removeClass("s1 s2 s3");
 			$('.floatingImg').animate({
 				'width': "40px",
 				'top':top,
 				'left': '12px'
-			}, 200, function(){$('.floatingImg').remove()});				
-			
+			}, 200, function(){$('.floatingImg').remove()});
+
 			setTimeout(function(){
 				$('#chatview').fadeOut();
-				$('#friendslist').fadeIn();				
+				$('#friendslist').fadeIn();
 			}, 50);
 		});
 		if ($(this).data('coresp-type') == "4"){
@@ -175,7 +175,7 @@
 						htmlToAppend += actions.paiement[0](data);
 					else
 						htmlToAppend += actions.paiement[1](data);
-				}   
+				}
 			}else{
 				if (user.id == data.user_sender)
 					htmlToAppend += actions.texte[0](data);
@@ -215,7 +215,7 @@
 	$("#searchfield").focusout(function(){
 		if($(this).val() == ""){
 			$(this).val("Search contacts...");
-			
+
 		}
 	});
 	function on_msg_send_click(){
@@ -242,7 +242,7 @@
 	$("#sendmessage input").focusout(function(){
 		if($(this).val() == ""){
 			$(this).val("Send message...");
-			
+
 		}
 	});
     function on_reservation_link_click(e){
@@ -538,58 +538,62 @@
 	});
 	actions.audio.push(function (data){
 		//console.log(data);
-		var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">'+data.txt+' - Audio - '+data.path+'<div class="corner"></div><span>'+data.created+'</span></div></div>';
+		var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><audio src="'+data.path+'" style="width:100%;" controls></audio><span>'+data.created+'</span></div></div></div>';
 		return (ret);
 	}, function (data){
 		//console.log(data);
-		var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">'+data.txt+' - Audio - '+data.path+'<div class="corner"></div><span>'+data.created+'</span></div></div>';
+		var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><audio src="'+data.path+'" style="width:100%;" controls></audio><span>'+data.created+'</span></div></div></div>';
 		return (ret);
 	});
 	actions.rdv.push(function (data){
 		//console.log(data);
-		var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">'+data.txt+' - Dates : <p class="date_creneau">';
+		var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de rendez-vous</h3><p class="date_creneau">'+data.txt+'';
 		$.each(data.events, function(ind, val){
-			ret += 'début ('+val.start+') - fin ('+val.end+') / ';
+			ret += '<p style="background: #18457c;color: white;padding: 12px;">Début ('+val.start.substr(0,10)+') A ('+val.start.substr(11,5)+') </br>';
+			ret += 'Fin ('+val.end.substr(0,10)+') A ('+val.end.substr(11,5)+') </p> ';
 		});
 		ret += 'statut de la demande ('+data.request_state+')';
-		ret += '</p><div class="corner"></div><span>'+data.created+'</span></div></div>';
+		ret += '</p><div class="div-submi"><a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a></div></div><div class="corner"></div><span>'+data.created+'</span></div></div>';
 		return (ret);
 	}, function (data){
 		//console.log(data);
-		var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">'+data.txt+' - Dates : <p class="date_creneau">';
+		var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de rendez-vous</h3><p class="date_creneau">'+data.txt+'';
 		$.each(data.events, function(ind, val){
-			ret += 'début ('+val.start+') - fin ('+val.end+') / ';
+			ret += '<p style="background: #18457c;color: white;padding: 12px;">Début ('+val.start.substr(0,10)+') A ('+val.start.substr(11,5)+') </br>';
+			ret += 'Fin ('+val.end.substr(0,10)+') A ('+val.end.substr(11,5)+') </p> ';
 		});
 		ret += 'statut de la demande ('+data.request_state+')';
-		ret += '</p><div class="corner"></div><span>'+data.created+'</span></div></div>';
+		ret += '</p><div class="div-submi"><a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a></div></div><div class="corner"></div><span>'+data.created+'</span></div></div>';
 		return (ret);
 	});
 	actions.booking.push(function (data){
 		//console.log(data);
-		var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">'+data.txt+' - Dates : <p class="date_creneau">';
+		var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de booking</h3><p class="date_creneau">'+data.txt+'';
 		$.each(data.events, function(ind, val){
-			ret += 'début ('+val.start+') - fin ('+val.end+') / ';
+			ret += '<p style="background: #18457c;color: white;padding: 12px;">Début ('+val.start.substr(0,10)+') A ('+val.start.substr(11,5)+') </br>';
+			ret += 'Fin ('+val.end.substr(0,10)+') A ('+val.end.substr(11,5)+') </p> ';
 		});
 		ret += 'statut de la demande ('+data.request_state+')';
-		ret += '</p><div class="corner"></div><span>'+data.created+'</span></div></div>';
+		ret += '</p><div class="div-submi"><a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a></div></div><div class="corner"></div><span>'+data.created+'</span></div></div>';
 		return (ret);
 	}, function (data){
 		//console.log(data);
-		var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">'+data.txt+' - Dates : <p class="date_creneau">';
+		var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de booking</h3><p class="date_creneau">'+data.txt+'';
 		$.each(data.events, function(ind, val){
-			ret += 'début ('+val.start+') - fin ('+val.end+') / ';
+			ret += '<p style="background: #18457c;color: white;padding: 12px;">Début ('+val.start.substr(0,10)+') A ('+val.start.substr(11,5)+') </br>';
+			ret += 'Fin ('+val.end.substr(0,10)+') A ('+val.end.substr(11,5)+') </p> ';
 		});
 		ret += 'statut de la demande ('+data.request_state+')';
-		ret += '</p><div class="corner"></div><span>'+data.created+'</span></div></div>';
+		ret += '</p><div class="div-submi"><a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a></div></div><div class="corner"></div><span>'+data.created+'</span></div></div>';
 		return (ret);
 	});
 	actions.video.push(function (data){
 		//console.log(data);
-		var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">Objet : '+data.txt+' / Lien : '+data.path+'<div class="corner"></div><span>'+data.created+'</span></div></div>';
+		var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><iframe class="picture" src="'+data.path+'" frameborder="0" allowfullscreen></iframe><div class="navigation"><p style="position:relative;text-align:center;top:27%;">'+data.txt+'</p></div></div><div class="corner"></div><span>'+data.created+'</span></div></div>';
 		return (ret);
 	}, function (data){
 		//console.log(data);
-		var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">Objet : '+data.txt+' / Lien : '+data.path+'<div class="corner"></div><span>'+data.created+'</span></div></div>';
+		var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><iframe class="picture" src="'+data.path+'" frameborder="0" allowfullscreen></iframe><div class="navigation"><p style="position:relative;text-align:center;top:27%;">'+data.txt+'</p></div></div><div class="corner"></div><span>'+data.created+'</span></div></div>';
 		return (ret);
 	});
 	actions.devis_request.push(function (data){
@@ -669,7 +673,7 @@
 					start = datePickerValTab[2] + "-" +datePickerValTab[1]+ "-" +datePickerValTab[0] + "T" + put_in_n_digits_hours(hour, 2) + ":00:00";
 					donn.start = start;
 				}else{
-				
+
 					end = datePickerValTab[2] + "-" +datePickerValTab[1]+ "-" +datePickerValTab[0] + "T" + put_in_n_digits_hours(parseInt(timeIndice), 2) + ":00:00";
 					donn.end = end;
 					datas.events.push(donn);
@@ -703,7 +707,7 @@
 						datas.events.push(donn);
 						donn = {}
 					}
-					start = datePickerValTab[2] + "-" +datePickerValTab[1]+ "-" +datePickerValTab[0] + "T" + put_in_n_digits_hours(tabH[0], 2) + ":" + 
+					start = datePickerValTab[2] + "-" +datePickerValTab[1]+ "-" +datePickerValTab[0] + "T" + put_in_n_digits_hours(tabH[0], 2) + ":" +
 							put_in_n_digits_minutes(tabH[1], 2)+":00";
 					donn.start = start;
 				}else{
@@ -712,7 +716,7 @@
 					donn.end = end;
 					datas.events.push(donn);
 					donn = {}
-					start = datePickerValTab[2] + "-" +datePickerValTab[1]+ "-" +datePickerValTab[0] + "T" + put_in_n_digits_hours(tabH[0], 2) + ":" + 
+					start = datePickerValTab[2] + "-" +datePickerValTab[1]+ "-" +datePickerValTab[0] + "T" + put_in_n_digits_hours(tabH[0], 2) + ":" +
 							put_in_n_digits_minutes(tabH[1], 2)+":00";
 					donn.start = start;
 				}
@@ -794,7 +798,7 @@ function switchRoom(room, id_coresp, nom, prenom, type, usr){
 		if (room == 1 && usr.id != 1)
             socket.emit('list_msg_admin', room, user_receiv, usr.id);
         else{
-            socket.emit('list_msg', room, user_receiv, usr.type); 
+            socket.emit('list_msg', room, user_receiv, usr.type);
             socket.emit('update_services', usr.id, room, user_receiv);
             //socket.emit('update_modeles_devis', user.id, room, user_receiv);
         }
