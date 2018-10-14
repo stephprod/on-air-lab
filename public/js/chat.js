@@ -350,13 +350,14 @@
     	form_song.submit();
     }
     function on_socket_update_eventstypemessage(data){
-    	//console.log("events_type_message");
-    	//console.log(data);
+    	console.log("events_type_message");
+    	console.log(data);
     	var div = $("div[id-message='"+data.id_m+"']");
     	div.find("p.date_creneau").empty();
     	var content = '';
     	$.each(data.events, function(ind, val){
-    		content += 'début ('+val.start+') - fin ('+val.end+') / ';
+    		content += '<p style="background: #18457c;color: white;padding: 12px;">Début ('+val.start.substr(0,10)+') A ('+val.start.substr(11,5)+') </br>';
+    		content += 'Fin ('+val.end.substr(0,10)+') A ('+val.end.substr(11,5)+') </p> ';
     	});
     	content += 'statut demande ('+data.request_state+')';
     	div.find("p.date_creneau").append(content);
