@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 /*import {update_front_with_msg, update_front_with_errors, update_front_with_success} from './front-update.js';
+=======
+*-*/*import {update_front_with_msg, update_front_with_errors, update_front_with_success} from './front-update.js';
+>>>>>>> bab5d8b0678d6d9ee18ea3540beba96728db6d69
 import {get_events} from './events.js';
 import {socket, switchRoom} from './socket_modules.js';*/
 $(document).on("click", ".friend", function(){
