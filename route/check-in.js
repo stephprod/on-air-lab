@@ -1,4 +1,4 @@
-*-*let express = require('express')
+let express = require('express')
 let User = require('../models/req_user')
 let router = express.Router()
 let id_user

@@ -1,4 +1,4 @@
-*-*let express = require('express')
+let express = require('express')
 let User = require('../models/req_user')
 //let validator = require('../middlewares/valid_form').search
 
