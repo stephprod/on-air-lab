@@ -24,7 +24,7 @@ function get_events(hours, datePickerValTab){
 					start = datePickerValTab[2] + "-" +datePickerValTab[1]+ "-" +datePickerValTab[0] + "T" + put_in_n_digits_hours(hour, 2) + ":00:00";
 					donn.start = start;
 				}else{
-
+				
 					end = datePickerValTab[2] + "-" +datePickerValTab[1]+ "-" +datePickerValTab[0] + "T" + put_in_n_digits_hours(parseInt(timeIndice), 2) + ":00:00";
 					donn.end = end;
 					datas.events.push(donn);
@@ -58,7 +58,7 @@ function get_events(hours, datePickerValTab){
 						datas.events.push(donn);
 						donn = {}
 					}
-					start = datePickerValTab[2] + "-" +datePickerValTab[1]+ "-" +datePickerValTab[0] + "T" + put_in_n_digits_hours(tabH[0], 2) + ":" +
+					start = datePickerValTab[2] + "-" +datePickerValTab[1]+ "-" +datePickerValTab[0] + "T" + put_in_n_digits_hours(tabH[0], 2) + ":" + 
 							put_in_n_digits_minutes(tabH[1], 2)+":00";
 					donn.start = start;
 				}else{
@@ -67,7 +67,7 @@ function get_events(hours, datePickerValTab){
 					donn.end = end;
 					datas.events.push(donn);
 					donn = {}
-					start = datePickerValTab[2] + "-" +datePickerValTab[1]+ "-" +datePickerValTab[0] + "T" + put_in_n_digits_hours(tabH[0], 2) + ":" +
+					start = datePickerValTab[2] + "-" +datePickerValTab[1]+ "-" +datePickerValTab[0] + "T" + put_in_n_digits_hours(tabH[0], 2) + ":" + 
 							put_in_n_digits_minutes(tabH[1], 2)+":00";
 					donn.start = start;
 				}
@@ -149,7 +149,7 @@ function switchRoom(room, id_coresp, nom, prenom, type, usr){
 		if (room == 1 && usr.id != 1)
             socket.emit('list_msg_admin', room, user_receiv, usr.id);
         else{
-            socket.emit('list_msg', room, user_receiv, usr.type);
+            socket.emit('list_msg', room, user_receiv, usr.type); 
             socket.emit('update_services', usr.id, room, user_receiv);
             //socket.emit('update_modeles_devis', user.id, room, user_receiv);
         }
@@ -223,7 +223,7 @@ function on_reservation_link_click(e){
 			datas.from = "rdv";
 			datas.title = "event-meet";
 		}
-		else{
+		else{ 
 			datas.from = "booking";
 			datas.title = "event-work";
 		}

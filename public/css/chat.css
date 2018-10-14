@@ -1,10 +1,10 @@
 * { margin: 0px; padding: 0px; }
 body {
   background: #f0f1f2;
-  font:12px "Open Sans", sans-serif;
+  font:12px "Open Sans", sans-serif; 
 }
 #view-code{
-  color:#89a2b5;
+  color:#89a2b5;    
   opacity:0.7;
   font-size:14px;
   text-transform:uppercase;
@@ -33,10 +33,10 @@ body {
 #topmenu{
   height:69px;
   width:100%;
-  border-bottom:1px solid #d8dfe3;
+  border-bottom:1px solid #d8dfe3;  
 }
 #topmenu span{
-  float:left;
+  float:left; 
   width: 96px;
   height: 70px;
   background: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/top-menu.png") -3px -118px no-repeat;
@@ -48,7 +48,7 @@ body {
 #topmenu span.history:hover{background-position:-190px -47px; cursor:pointer;}
 .friend{
   height:70px;
-  border-bottom:1px solid #e7ebee;
+  border-bottom:1px solid #e7ebee;    
   position:relative;
   box-sizing: unset;
 }
@@ -71,13 +71,13 @@ body {
   border:3px solid #fff;
 }
 .friend p{
-  padding:15px 0 0 0;
+  padding:15px 0 0 0;     
   text-align: center;
 }
 .friend p strong{
   font-weight:600;
   font-size:15px;
-  color:#597a96;
+  color:#597a96;  
 
 }
 .friend p span{
@@ -87,7 +87,7 @@ body {
 }
 .friend .status{
   background:#26c281;
-  border-radius:50%;
+  border-radius:50%;  
   width:9px;
   height:9px;
   position:absolute;
@@ -110,7 +110,7 @@ body {
   border:none;
   padding:0;
   font-size:14px;
-  font-family:"Open Sans", sans-serif;
+  font-family:"Open Sans", sans-serif; 
   font-weight:400px;
   color:#8198ac;
 }
@@ -122,7 +122,7 @@ body {
   height:484px;
   position:absolute;
   top:0;
-  left:0;
+  left:0; 
   display:none;
   background:#fff;
 }
@@ -151,7 +151,7 @@ body {
      -moz-transition: all 200ms cubic-bezier(0.000, 0.995, 0.990, 1.000);
       -ms-transition: all 200ms cubic-bezier(0.000, 0.995, 0.990, 1.000);
        -o-transition: all 200ms cubic-bezier(0.000, 0.995, 0.990, 1.000);
-          transition: all 200ms cubic-bezier(0.000, 0.995, 0.990, 1.000);
+          transition: all 200ms cubic-bezier(0.000, 0.995, 0.990, 1.000); 
 }
 #profile  p.animate{
   margin-top:97px;
@@ -160,7 +160,7 @@ body {
      -moz-transition: all 200ms cubic-bezier(0.000, 0.995, 0.990, 1.000);
       -ms-transition: all 200ms cubic-bezier(0.000, 0.995, 0.990, 1.000);
        -o-transition: all 200ms cubic-bezier(0.000, 0.995, 0.990, 1.000);
-          transition: all 200ms cubic-bezier(0.000, 0.995, 0.990, 1.000);
+          transition: all 200ms cubic-bezier(0.000, 0.995, 0.990, 1.000); 
 }
 #profile  span{
   font-weight:400;
@@ -171,7 +171,7 @@ body {
   margin-top:30px;
   width:100%;
   height:270px;
-  overflow-y:scroll;
+  overflow-y:scroll;  
   overflow-x:hidden;
   padding-right: 20px;
   -webkit-transition: all 200ms cubic-bezier(0.000, 0.995, 0.990, 1.000);
@@ -191,7 +191,7 @@ body {
   text-align:center;
   margin:15px 0;
   width:290px;
-  display:block;
+  display:block;  
 }
 #chat-messages div.message{
   padding:0 0 30px 58px;
@@ -211,11 +211,11 @@ body {
     margin-top: 12px;
 }
 #chat-messages div.message.right img{
-  float: right;
+  float: right; 
     margin-left: 0;
-  margin-right: -38px;
+  margin-right: -38px;  
 }
-.message .bubble{
+.message .bubble{ 
   background:#f0f4f7;
   font-size:13px;
   font-weight:600;
@@ -251,7 +251,7 @@ div.message.right .corner{
 }
 #sendmessage{
   height:60px;
-  border-top:1px solid #e7ebee;
+  border-top:1px solid #e7ebee; 
   position:absolute;
   bottom:0;
   right:0px;
@@ -268,7 +268,7 @@ div.message.right .corner{
   border:none;
   padding:0;
   font-size:14px;
-  font-family:"Open Sans", sans-serif;
+  font-family:"Open Sans", sans-serif; 
   font-weight:400px;
   color:#aab8c2;
   width: 88%;
@@ -291,12 +291,12 @@ div.message.right .corner{
   background-position: 0 0 ;
 }
 #sendmessage button:focus{
-   outline: 0;
+   outline: 0;   
 }
 
 #close{
   position:absolute;
-  top: 8px;
+  top: 8px; 
   opacity:0.8;
   right: 20px;
   width:20px;
@@ -319,67 +319,67 @@ div.message.right .corner{
      -o-transition: all 250ms ease-in-out;
       transition: all 250ms ease-in-out;
 }
-.cx.s1, .cy.s1{
-  right:0;
-  width:20px;
+.cx.s1, .cy.s1{ 
+  right:0;  
+  width:20px; 
   -webkit-transition: all 100ms ease-out;
      -moz-transition: all 100ms ease-out;
     -ms-transition: all 100ms ease-out;
      -o-transition: all 100ms ease-out;
       transition: all 100ms ease-out;
 }
-.cy.s2{
-  -ms-transform: rotate(50deg);
-  -webkit-transform: rotate(50deg);
-  transform: rotate(50deg);
+.cy.s2{ 
+  -ms-transform: rotate(50deg); 
+  -webkit-transform: rotate(50deg); 
+  transform: rotate(50deg);    
   -webkit-transition: all 100ms ease-out;
      -moz-transition: all 100ms ease-out;
     -ms-transition: all 100ms ease-out;
      -o-transition: all 100ms ease-out;
       transition: all 100ms ease-out;
 }
-.cy.s3{
-  -ms-transform: rotate(45deg);
-  -webkit-transform: rotate(45deg);
-  transform: rotate(45deg);
+.cy.s3{ 
+  -ms-transform: rotate(45deg); 
+  -webkit-transform: rotate(45deg); 
+  transform: rotate(45deg);    
   -webkit-transition: all 100ms ease-out;
      -moz-transition: all 100ms ease-out;
     -ms-transition: all 100ms ease-out;
      -o-transition: all 100ms ease-out;
       transition: all 100ms ease-out;
 }
-.cx.s1{
-  right:0;
-  width:20px;
+.cx.s1{ 
+  right:0;  
+  width:20px; 
   -webkit-transition: all 100ms ease-out;
      -moz-transition: all 100ms ease-out;
     -ms-transition: all 100ms ease-out;
      -o-transition: all 100ms ease-out;
       transition: all 100ms ease-out;
 }
-.cx.s2{
-  -ms-transform: rotate(140deg);
-  -webkit-transform: rotate(140deg);
-  transform: rotate(140deg);
+.cx.s2{ 
+  -ms-transform: rotate(140deg); 
+  -webkit-transform: rotate(140deg); 
+  transform: rotate(140deg);     
   -webkit-transition: all 100ms ease-out;
      -moz-transition: all 100ms ease-out;
     -ms-transition: all 100ease-out;
      -o-transition: all 100ms ease-out;
       transition: all 100ms ease-out;
 }
-.cx.s3{
-  -ms-transform: rotate(135deg);
-  -webkit-transform: rotate(135deg);
-  transform: rotate(135deg);
+.cx.s3{ 
+  -ms-transform: rotate(135deg); 
+  -webkit-transform: rotate(135deg); 
+  transform: rotate(135deg);     
   -webkit-transition: all 100ease-out;
      -moz-transition: all 100ms ease-out;
     -ms-transition: all 100ms ease-out;
      -o-transition: all 100ms ease-out;
       transition: all 100ms ease-out;
 }
-#chatview, #sendmessage {
-overflow:hidden;
-border-radius:6px;
+#chatview, #sendmessage { 
+overflow:hidden; 
+border-radius:6px; 
 }
 
                             /*ICONE MODULE DE POPUP CHAT*/
@@ -398,243 +398,4 @@ a.module:hover {
 .box-module{
     position: relative;
     top: 7px;
-}
-
-                                      /*CARD CHAT*/
-
-.card-chat {
-  width: 250px;
-  height: 100%;
-  background: #fff;
-  margin: 10px auto;
-  text-align: center;
-  padding: 0 12px 12px 12px;
-  overflow: hidden;
-  box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3), 0 15px 12px rgba(0, 0, 0, 0.22);
-  border-top: 12px solid white;
-}
-.card-chat .picture {
-  position: relative;
-  top: 0;
-  width: 100%;
-  height: 190px;
-  transition: all 0.5s ease;
-  animation: pictureDown 0.7s;
-  animation-fill-mode: forwards;
-}
-.card-chat .picture_up {
-  animation: pictureUp 0.7s;
-  animation-fill-mode: forwards;
-}
-.card-chat .options {
-  position: relative;
-  bottom: 110px;
-  width: 300px;
-  height: 37px;
-  display: none;
-  opacity: 0;
-  padding: 15px 0 0 0;
-  user-select: none;
-  font-size: 24px;
-  color: #FFF;
-  text-align: left;
-}
-.card-chat .options i {
-  padding-left: 52px;
-}
-.card-chat .options_show {
-  animation: optionsDisplay 0.7s;
-  animation-fill-mode: forwards;
-  opacity: 1;
-}
-.card-chat .navigation {
-    width: 100%;
-    height: 55px;
-    position: relative;
-    bottom: 0;
-    color: #ffffff;
-    text-align: left;
-    background-color: #43bae4;
-    font-size: 24px;
-}
-.card-chat .navigation .plus {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 34px;
-  height: 34px;
-  transform: translate(-50%, -50%);
-  cursor: pointer;
-  border-radius: 150px;
-  background: #43bae4;
-}
-.card-chat .navigation .plus .plusHor {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 24px;
-  height: 2px;
-  background: #ffffff;
-}
-.card-chat .navigation .plus .plusVer {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 2px;
-  height: 24px;
-  background: #ffffff;
-  animation: deactivation 0.7s;
-  animation-fill-mode: forwards;
-}
-.card-chat .navigation .plus .plusVer_active {
-  animation: activation 0.7s;
-  animation-fill-mode: forwards;
-  width: 300px;
-  height: 55px;
-  top: -38px;
-  background: #18457c;
-}
-
-.nav_btns {
-  padding-top: 17px;
-  padding-left: 17px;
-  animation: navShow 0.7s;
-  animation-fill-mode: forwards;
-}
-.nav_btns .nav_btn {
-  margin-left: 32px;
-}
-.nav_btns .nav_btn_r {
-  margin-left: 83px;
-}
-
-.nav_btns_hide {
-  animation: navHide 0.7s;
-  animation-fill-mode: forwards;
-}
-
-.div-submi{
-    width: 100%;
-    position: relative;
-    bottom: 0;
-    color: #ffffff;
-    font-size: 23px;
-}
-
-.btn-accept{
-    text-align: center;
-    background: #85e68d;
-    padding: 6px;
-    color: white;
-    font-size: 0.9em;
-    text-decoration: none;
-}
-.btn-refus{
-    text-align: center;
-    background: #ef6c5d;
-    padding: 6px;
-    color: white;
-    font-size: 0.9em;
-    text-decoration: none;
-    margin-right: 5px;
-}
-
-@keyframes activation {
-  0% {
-    width: 2px;
-    height: 34px;
-    top: 50%;
-  }
-  50% {
-    width: 2px;
-    height: 55px;
-    top: -38px;
-  }
-  100% {
-    width: 300px;
-    height: 55px;
-    top: -38px;
-  }
-}
-@keyframes deactivation {
-  0% {
-    width: 300px;
-    height: 55px;
-    top: -38px;
-  }
-  50% {
-    width: 2px;
-    height: 55px;
-    top: -38px;
-  }
-  100% {
-    width: 2px;
-    height: 24px;
-    top: 50%;
-  }
-}
-@keyframes pictureUp {
-  0% {
-    top: 0;
-  }
-  50% {
-    top: -65px;
-  }
-  100% {
-    top: -65px;
-  }
-}
-@keyframes pictureDown {
-  0% {
-    top: -65px;
-  }
-  50% {
-    top: -65px;
-  }
-  100% {
-    top: 0;
-  }
-}
-@keyframes optionsDisplay {
-  0% {
-    opacity: 0;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-@keyframes navShow {
-  0% {
-    opacity: 0;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-@keyframes navHide {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-@media only screen and (max-width: 519px) {
-  #switcher-button2 {
-    left: 300px;
-  }
-  #switcher2{
-    width: 300px;
-  }
 }
