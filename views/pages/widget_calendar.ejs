@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<link href='./asset/css/fullcalendar/fullcalendar.min.css' rel='stylesheet' />
+<link href='./asset/css/fullcalendar/fullcalendar.print.min.css' rel='stylesheet' media='print' />
+<script src='./asset/js/jQuery/jquery.min.js'></script>
+    <!-- Bootstrap Date time picker -->
+<link href="/asset/css/fullcalendar/bootstrap_datetimepicker_build.css" rel="stylesheet" />
+<script src='/asset/js/fullcalendar/moment.min.js'></script>
+<script src='/asset/js/locale/fr.js'></script>
+<style type="text/css">
+.timeSelect{
+    width: 21%;
+    position: relative;
+    display: inline-table;
+    background: #43bae4;
+    color: white;
+    text-align: center;
+    margin: 5px;
+}
+.sel{
+    background: #e45943 !important;
+}
+</style>
+</head>
+<body>
+<div class="datepicker" style="position: relative;">
+	<input type="hidden" name="date-select" value="">
+</div>
+<div id="selectHours"></div>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script src='asset/js/fullcalendar/fullcalendar.min.js'></script>
+    <!-- Bootstrap Date time picker -->
+<script language="javascript" src="asset/js/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	$('.datepicker input').datetimepicker({
+		format : 'DD/MM/YYYY',
+		locale : 'fr',
+		inline : true,
+		sideBySide : true,
+		debug : true
+	});
+	$('input[name="date-select"]').on("dp.change", function(e){
+		var a = e.date._d;
+		var str = a.toString().substr(0,3);
+		if (str === 'Mon')
+			str = 'lundi';
+		if (str === 'Tue')
+			str = 'mardi';
+		if (str === 'Wed')
+			str = 'mercredi';
+		if (str === 'Thu')
+			str = 'jeudi';
+		if (str === 'Fri')
+			str = 'vendredi';
+		if (str === 'Sat')
+			str = 'samedi';
+		if (str === 'Sun')
+			str = 'dimanche';
+		var page = <%- locals.page !== undefined ? '"'+ locals.page+ '"' : "null" %> ;
+		console.log(page);
+		var datas = {}
+		if (page != "null"){
+			datas.page = page;
+		}
+		datas.d = e.date.format("YYYY-MM-DD");
+		datas.word = str;
+		$.ajax({
+			url: '/widget_calendar',
+			data: datas,
+			type: 'POST',
+			success: function(data) {
+				console.log(data);
+				var dow = data[data.length - 1][0];
+				var pause_start = data[data.length - 1][1].substr(0,5);
+				var pause_end = data[data.length - 1][1].substr(6,5);
+				var dow_start = dow.substr(0, 5);
+				var dow_end = dow.substr(6, 5);
+				var timeInitial = parseFloat(dow_start.replace(":", "."));
+				var timeInitial_INT = parseInt(timeInitial);
+				var timeEnd = parseFloat(dow_end.replace(":", "."));
+				var timeEnd_INT = parseInt(timeEnd);
+				var compteur = 0;
+				var tmp = timeInitial;
+				var pausedeb = parseFloat(pause_start.replace(":", "."));
+				var pausedeb_INT = parseInt(pausedeb);
+				var pausefin = parseFloat(pause_end.replace(":", "."));
+				var delta = 0.7;
+				var delta_end = 0;
+				if (timeEnd == timeEnd_INT)
+					delta_end = 0.7;
+				else
+					delta_end = 0.3;
+				var delta_pause = 0.7;
+				var delta_i = 0;
+				//console.log("TIME START- "+timeInitial);
+				//console.log("TIME END - "+timeEnd);
+				//console.log("PAUSE START- "+pausedeb);
+				//console.log("PAUSE END - "+pausefin);
+				$('#selectHours').empty();
+				var i = timeInitial;
+				while (i < (timeEnd - delta_end)){
+					var i_INT = parseInt(i);
+					if (i == i_INT)
+						delta_i = 0.3;
+					else
+						delta_i = 0.7;
+					var event_start = null;
+					var event_end = null;
+					var event_start_INT = null;
+					if (compteur < data.length - 1){
+						event_start = parseFloat(data[compteur].replace(":", "."));
+						event_start_INT = parseInt(event_start);
+						event_end = parseFloat(data[compteur + 1].replace(":", "."));
+					}
+					if (event_start != event_start_INT){ //Si l'evenement commence à la demi-heure
+						delta = 0.3;	
+					}
+					else
+					{
+						delta = 0.7;	
+					}
+					//console.log("DELTA - "+delta);
+					if (pausedeb != pausedeb_INT){ //Si la pause commence à la demi-heure
+						delta_pause = 0.3;	
+					}
+					else
+					{
+						delta_pause = 0.7;	
+					}
+					//console.log("EVENT START- "+event_start);
+					//console.log("EVENT END - "+event_end);
+					if (event_start != null && i >= (event_start - delta)){
+						if (i < event_end){
+							//console.log("INDISPONIBLE - "+i);
+							i = event_end;
+						}
+						else{
+							//Vérification des heures de pauses
+							if (i < (pausedeb - delta_pause)){
+								//console.log("DISPONIBLE A - "+i);
+								$('#selectHours').append("<p class='timeSelect'>"+i+"</p>");
+								i += 1;
+							}
+							else
+							{
+								if (i < pausefin){
+									console.log("INDISPONIBLE - "+i);
+									i = pausefin;
+								}
+								else
+								{
+									/*console.log("DISPONIBLE B - "+i+ "EVENT START - "+event_start);
+									$('#selectHours').append("<p class='timeSelect'>"+i+"</p>");
+									i += 1;*/
+									event_start = null;
+									if ((compteur + 2) < data.length - 1){
+										// Cas particulier event suivant
+										event_start = parseFloat(data[compteur + 2].replace(":", "."));
+										//event_start_INT = parseInt(event_start);
+										//event_end = parseFloat(data[compteur + 3].replace(":", "."));
+									}
+									if ((i + delta_i) < event_start || event_start == null){ //Cas particulier +0.5 event
+										//console.log("DISPONIBLE - "+i);
+										$('#selectHours').append("<p class='timeSelect'>"+i+"</p>");
+									}
+									else
+									{
+										//console.log("INDISPONIBLE - "+i);
+									}
+									i += 1;
+								}
+							}
+							compteur += 2;
+						}
+					}else{
+						//Vérification des heures de pauses
+						if (i < (pausedeb - delta_pause)){
+							//console.log("DISPONIBLE - "+i);
+							$('#selectHours').append("<p class='timeSelect'>"+i+"</p>");
+							i += 1;
+						}
+						else
+						{
+							if (i < pausefin){
+								//console.log("INDISPONIBLE - "+i);
+								i = pausefin;
+							}
+							else
+							{
+								//console.log("DISPONIBLE - "+i);
+								$('#selectHours').append("<p class='timeSelect'>"+i+"</p>");
+								i += 1;
+							}
+						}
+						//console.log("DISPONIBLE - "+i);
+					}
+				}				
+			}
+		});
+	})
+});
+</script>
+<script>
+	function on_click_dispo(e){
+    	//console.log("dispo select");
+    	$(this).toggleClass("sel");
+    }
+    $(document).on("click", ".timeSelect", on_click_dispo);
+</script>
+</body>
+</html>
