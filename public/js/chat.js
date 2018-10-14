@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /*import {update_front_with_msg, update_front_with_errors, update_front_with_success} from './front-update.js';
 import {get_events} from './events.js';
 import {socket, switchRoom} from './socket_modules.js';*/
@@ -8,9 +7,6 @@ var parentOffset = $(this).parent().parent().offset();
 var childTop = childOffset.top - parentOffset.top;
 var clone = $(this).find('img').eq(0).clone();
 var top = childTop+12+"px";
-=======
-  	import {update_front_with_msg, update_front_with_errors, update_front_with_success} from './info-pro.js';
->>>>>>> nilobranch
 
 $(clone).css({'top': top}).addClass("floatingImg").appendTo("#chatbox");
 
