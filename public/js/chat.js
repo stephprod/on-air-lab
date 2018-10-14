@@ -530,122 +530,126 @@ actions.booking = [], actions.devis = [], actions.paiement = [],
 actions.texte = [], actions.devis_request = [], actions.contactArt = [],
 actions.contactPro = [];
 actions.texte.push(function (data){
-var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">'+data.txt+'<div class="corner"></div><span>'+data.created+'</span></div></div>';
-return (ret);
+  var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">'+data.txt+'<div class="corner"></div><span>'+data.created+'</span></div></div>';
+  return (ret);
 }, function (data){
-var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">'+data.txt+'<div class="corner"></div><span>'+data.created+'</span></div></div>';
-return (ret);
+  var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">'+data.txt+'<div class="corner"></div><span>'+data.created+'</span></div></div>';
+  return (ret);
 });
 actions.audio.push(function (data){
-//console.log(data);
-var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">'+data.txt+' - Audio - '+data.path+'<div class="corner"></div><span>'+data.created+'</span></div></div>';
-return (ret);
+  //console.log(data);
+  var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><audio src="'+data.path+'" style="width:100%;" controls></audio><span>'+data.created+'</span></div></div></div>';
+  return (ret);
 }, function (data){
-//console.log(data);
-var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">'+data.txt+' - Audio - '+data.path+'<div class="corner"></div><span>'+data.created+'</span></div></div>';
-return (ret);
+  //console.log(data);
+  var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><audio src="'+data.path+'" style="width:100%;" controls></audio><span>'+data.created+'</span></div></div></div>';
+  return (ret);
 });
 actions.rdv.push(function (data){
-//console.log(data);
-var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">'+data.txt+' - Dates : <p class="date_creneau">';
-$.each(data.events, function(ind, val){
-  ret += 'début ('+val.start+') - fin ('+val.end+') / ';
-});
-ret += 'statut de la demande ('+data.request_state+')';
-ret += '</p><div class="corner"></div><span>'+data.created+'</span></div></div>';
-return (ret);
+  //console.log(data);
+  var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de rendez-vous</h3><p class="date_creneau">'+data.txt+'';
+  $.each(data.events, function(ind, val){
+    ret += '<p style="background: #18457c;color: white;padding: 12px;">Début ('+val.start.substr(0,10)+') A ('+val.start.substr(11,5)+') </br>';
+    ret += 'Fin ('+val.end.substr(0,10)+') A ('+val.end.substr(11,5)+') </p> ';
+  });
+  ret += 'statut de la demande ('+data.request_state+')';
+  ret += '</p><div class="div-submi"><a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a></div></div><div class="corner"></div><span>'+data.created+'</span></div></div>';
+  return (ret);
 }, function (data){
-//console.log(data);
-var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">'+data.txt+' - Dates : <p class="date_creneau">';
-$.each(data.events, function(ind, val){
-  ret += 'début ('+val.start+') - fin ('+val.end+') / ';
-});
-ret += 'statut de la demande ('+data.request_state+')';
-ret += '</p><div class="corner"></div><span>'+data.created+'</span></div></div>';
-return (ret);
+  //console.log(data);
+  var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de rendez-vous</h3><p class="date_creneau">'+data.txt+'';
+  $.each(data.events, function(ind, val){
+    ret += '<p style="background: #18457c;color: white;padding: 12px;">Début ('+val.start.substr(0,10)+') A ('+val.start.substr(11,5)+') </br>';
+    ret += 'Fin ('+val.end.substr(0,10)+') A ('+val.end.substr(11,5)+') </p> ';
+  });
+  ret += 'statut de la demande ('+data.request_state+')';
+  ret += '</p><div class="div-submi"><a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a></div></div><div class="corner"></div><span>'+data.created+'</span></div></div>';
+  return (ret);
 });
 actions.booking.push(function (data){
-//console.log(data);
-var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">'+data.txt+' - Dates : <p class="date_creneau">';
-$.each(data.events, function(ind, val){
-  ret += 'début ('+val.start+') - fin ('+val.end+') / ';
-});
-ret += 'statut de la demande ('+data.request_state+')';
-ret += '</p><div class="corner"></div><span>'+data.created+'</span></div></div>';
-return (ret);
+  //console.log(data);
+  var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de booking</h3><p class="date_creneau">'+data.txt+'';
+  $.each(data.events, function(ind, val){
+    ret += '<p style="background: #18457c;color: white;padding: 12px;">Début ('+val.start.substr(0,10)+') A ('+val.start.substr(11,5)+') </br>';
+    ret += 'Fin ('+val.end.substr(0,10)+') A ('+val.end.substr(11,5)+') </p> ';
+  });
+  ret += 'statut de la demande ('+data.request_state+')';
+  ret += '</p><div class="div-submi"><a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a></div></div><div class="corner"></div><span>'+data.created+'</span></div></div>';
+  return (ret);
 }, function (data){
-//console.log(data);
-var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">'+data.txt+' - Dates : <p class="date_creneau">';
-$.each(data.events, function(ind, val){
-  ret += 'début ('+val.start+') - fin ('+val.end+') / ';
-});
-ret += 'statut de la demande ('+data.request_state+')';
-ret += '</p><div class="corner"></div><span>'+data.created+'</span></div></div>';
-return (ret);
+  //console.log(data);
+  var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de booking</h3><p class="date_creneau">'+data.txt+'';
+  $.each(data.events, function(ind, val){
+    ret += '<p style="background: #18457c;color: white;padding: 12px;">Début ('+val.start.substr(0,10)+') A ('+val.start.substr(11,5)+') </br>';
+    ret += 'Fin ('+val.end.substr(0,10)+') A ('+val.end.substr(11,5)+') </p> ';
+  });
+  ret += 'statut de la demande ('+data.request_state+')';
+  ret += '</p><div class="div-submi"><a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a></div></div><div class="corner"></div><span>'+data.created+'</span></div></div>';
+  return (ret);
 });
 actions.video.push(function (data){
-//console.log(data);
-var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">Objet : '+data.txt+' / Lien : '+data.path+'<div class="corner"></div><span>'+data.created+'</span></div></div>';
-return (ret);
+  //console.log(data);
+  var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><iframe class="picture" src="'+data.path+'" frameborder="0" allowfullscreen></iframe><div class="navigation"><p style="position:relative;text-align:center;top:27%;">'+data.txt+'</p></div></div><div class="corner"></div><span>'+data.created+'</span></div></div>';
+  return (ret);
 }, function (data){
-//console.log(data);
-var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">Objet : '+data.txt+' / Lien : '+data.path+'<div class="corner"></div><span>'+data.created+'</span></div></div>';
-return (ret);
+  //console.log(data);
+  var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><iframe class="picture" src="'+data.path+'" frameborder="0" allowfullscreen></iframe><div class="navigation"><p style="position:relative;text-align:center;top:27%;">'+data.txt+'</p></div></div><div class="corner"></div><span>'+data.created+'</span></div></div>';
+  return (ret);
 });
 actions.devis_request.push(function (data){
-//console.log(data);
-var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">Objet : '+data.txt+' / Demande de devis pour les services : <p class="services">';
-$.each(data.servs, function(ind, val){
-  ret += '('+val.libelle+') / ';
-});
-ret += '</p><div class="corner"></div><span>'+data.created+'</span></div></div>';
-return (ret);
+  //console.log(data);
+  var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">Objet : '+data.txt+' / Demande de devis pour les services : <p class="services">';
+  $.each(data.servs, function(ind, val){
+    ret += '('+val.libelle+') / ';
+  });
+  ret += '</p><div class="corner"></div><span>'+data.created+'</span></div></div>';
+  return (ret);
 }, function (data){
-//console.log(data);
-var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">Objet : '+data.txt+' / Demande de devis pour les services : <p class="services">';
-$.each(data.servs, function(ind, val){
-  ret += '('+val.libelle+') / ';
-});
-ret += '</p><div class="corner"></div><span>'+data.created+'</span></div></div>';
-return (ret);
+  //console.log(data);
+  var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">Objet : '+data.txt+' / Demande de devis pour les services : <p class="services">';
+  $.each(data.servs, function(ind, val){
+    ret += '('+val.libelle+') / ';
+  });
+  ret += '</p><div class="corner"></div><span>'+data.created+'</span></div></div>';
+  return (ret);
 });
 actions.contactArt.push(function (data){
-//console.log(data);
-var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">Objet : '+data.txt+' // Détails : <p class="user">';
-if (data.user_request_info != null){
-  ret += 'nom ('+data.user_request_info.nom+') / prénom ('+data.user_request_info.prenom+') / type ('+data.user_request_info.type+') / id_temporisation ('+data.id_temp+')';
-}
-ret += 'statut de la demande ('+data.request_state+')';
-ret += '</p><div class="corner"></div><span>'+data.created+'</span></div></div>';
-return (ret);
+  //console.log(data);
+  var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">Objet : '+data.txt+' // Détails : <p class="user">';
+  if (data.user_request_info != null){
+    ret += 'nom ('+data.user_request_info.nom+') / prénom ('+data.user_request_info.prenom+') / type ('+data.user_request_info.type+') / id_temporisation ('+data.id_temp+')';
+  }
+  ret += 'statut de la demande ('+data.request_state+')';
+  ret += '</p><div class="corner"></div><span>'+data.created+'</span></div></div>';
+  return (ret);
 }, function (data){
-//console.log(data);
-var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">Objet : '+data.txt+' // Détails : <p class="user">';
-if (data.user_request_info != null){
-  ret += 'nom ('+data.user_request_info.nom+') / prénom ('+data.user_request_info.prenom+') / type ('+data.user_request_info.type+') / id_temporisation ('+data.id_temp+')';
-}
-ret += 'statut de la demande ('+data.request_state+')';
-ret += '</p><div class="corner"></div><span>'+data.created+'</span></div></div>';
-return (ret);
+  //console.log(data);
+  var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">Objet : '+data.txt+' // Détails : <p class="user">';
+  if (data.user_request_info != null){
+    ret += 'nom ('+data.user_request_info.nom+') / prénom ('+data.user_request_info.prenom+') / type ('+data.user_request_info.type+') / id_temporisation ('+data.id_temp+')';
+  }
+  ret += 'statut de la demande ('+data.request_state+')';
+  ret += '</p><div class="corner"></div><span>'+data.created+'</span></div></div>';
+  return (ret);
 });
 actions.contactPro.push(function (data){
-//console.log(data);
-var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">Objet : '+data.txt+' // Détails : <p class="user">';
-if (data.user_sender_info != null){
-  ret += 'nom ('+data.user_sender_info.nom+') / prénom ('+data.user_sender_info.prenom+') / type ('+data.user_sender_info.type+') / id_temporisation ('+data.id_temp+')';
-}
-ret += 'statut de la demande ('+data.request_state+')';
-ret += '</p><div class="corner"></div><span>'+data.created+'</span></div></div>';
-return (ret);
+  //console.log(data);
+  var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">Objet : '+data.txt+' // Détails : <p class="user">';
+  if (data.user_sender_info != null){
+    ret += 'nom ('+data.user_sender_info.nom+') / prénom ('+data.user_sender_info.prenom+') / type ('+data.user_sender_info.type+') / id_temporisation ('+data.id_temp+')';
+  }
+  ret += 'statut de la demande ('+data.request_state+')';
+  ret += '</p><div class="corner"></div><span>'+data.created+'</span></div></div>';
+  return (ret);
 }, function (data){
-//console.log(data);
-var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">Objet : '+data.txt+' // Détails : <p class="user">';
-if (data.user_sender_info != null){
-  ret += 'nom ('+data.user_sender_info.nom+') / prénom ('+data.user_sender_info.prenom+') / type ('+data.user_sender_info.type+') / id_temporisation ('+data.id_temp+')';
-}
-ret += 'statut de la demande ('+data.request_state+')';
-ret += '</p><div class="corner"></div><span>'+data.created+'</span></div></div>';
-return (ret);
+  //console.log(data);
+  var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">Objet : '+data.txt+' // Détails : <p class="user">';
+  if (data.user_sender_info != null){
+    ret += 'nom ('+data.user_sender_info.nom+') / prénom ('+data.user_sender_info.prenom+') / type ('+data.user_sender_info.type+') / id_temporisation ('+data.id_temp+')';
+  }
+  ret += 'statut de la demande ('+data.request_state+')';
+  ret += '</p><div class="corner"></div><span>'+data.created+'</span></div></div>';
+  return (ret);
 });
 function get_events(hours, datePickerValTab){
 var start, end, datas = {};
