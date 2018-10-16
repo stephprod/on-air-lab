@@ -14,7 +14,7 @@ jobs:
           MYSQL_USER: root
           MYSQL_ALLOW_EMPTY_PASSWORD: true
           MYSQL_PASSWORD:
-      - image : circleci/mysql:8.0.4
+      - image : circleci/mysql:5
         environment:
           MYSQL_USER: root
           MYSQL_ALLOW_EMPTY_PASSWORD: true
@@ -31,7 +31,7 @@ jobs:
       - run: sudo apt-get update && sudo apt-get install -y mysql-server
       #- run: service mysql start
       #- run: mysql -h ${MYSQL_HOST} -u ${MYSQL_USER} -e "create database ${MYSQL_DB};"
-      - run: dockerize -wait tcp://127.0.0.1:3306 -timeout 1m
+      - run: dockerize -wait tcp://${MYSQL_HOST}:3306 -timeout 1m
       - restore_cache:
           keys:
           - v1-dependencies-{{ checksum "package.json" }}
