@@ -14,6 +14,7 @@ jobs:
           MYSQL_USER: root
           MYSQL_ALLOW_EMPTY_PASSWORD: true
           MYSQL_PASSWORD:
+          MYSQL_DB_FILE: starlife.sql
       - image : circleci/mysql:5
         environment:
           MYSQL_USER: root
@@ -28,23 +29,29 @@ jobs:
     steps:
       - checkout
       # Download and cache dependencies
-      - run: sudo apt-get update && sudo apt-get install -y mysql-server
-      - run: dockerize -wait tcp://${MYSQL_HOST}:3306 -timeout 1m
-      - run: mysql -h ${MYSQL_HOST} -u ${MYSQL_USER} -e "create database ${MYSQL_DB};"
+      - run: 
+          name: "Install and run DB"
+          command: |
+            sudo apt-get update && sudo apt-get install -y mysql-server
+            dockerize -wait tcp://${MYSQL_HOST}:3306 -timeout 1m
+            mysql -h ${MYSQL_HOST} -u ${MYSQL_USER} -e "create database ${MYSQL_DB};${MYSQL_DB} < ${MYSQL_DB_FILE};"
       - restore_cache:
           keys:
           - v1-dependencies-{{ checksum "package.json" }}
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
-
-      - run: yarn install 
+      - run: 
+          name: "Install app"
+          command: yarn install 
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
       # run tests!
-      - run: yarn test
-      #- run: xdg-open 172.20.0.3:4000/search
+      - run: 
+          name: "Run test"
+          command: |
+           yarn test
   #deployement
   #deploy:
   #  docker:
