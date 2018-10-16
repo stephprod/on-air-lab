@@ -1,7 +1,7 @@
-let express = require('express')
-let User = require('../models/req_user')
-let session = require('express-session');
-let router = express.Router()
+const express = require('express')
+const User = require('../models/req_user')
+const session = require('express-session');
+const router = express.Router()
 
 router.route('/action-in-module')
 	.get((request, response) => {
@@ -17,10 +17,12 @@ router.route('/action-in-module')
 	})
 	.post((request, response) => {
 		//console.log(request.body);
-		let table = [], ret = {}
+		const table = []
+		var ret = {}
 		ret.success = []
 		ret.global_msg = []
-		for (let prop in request.body){
+		ret.result = null
+		for (const prop in request.body){
 			table.push(request.body[prop])
 		}
 		//console.log(table)
@@ -29,6 +31,8 @@ router.route('/action-in-module')
 				User.get_accept_action_module(table[0], (result) =>{
 					if (result.length > 0){
 						//console.log(result)
+						const len = result.length
+						//console.log(len)
 						for (k in result){
 							//Utilisation PROMISE A VENIR (FONCTION TEMPORAIRE)
 							setTimeout((function(k) {
@@ -42,10 +46,12 @@ router.route('/action-in-module')
 											ret.success.push(false)
 											ret.global_msg.push("erreur lors de l'action d'acceptation !")
 										}
+										if (k == len - 1){
+											//console.log(ret);
+											ret.result = "accept"
+											response.send(ret)
+										}
 									})
-									if (k == result.length - 1){
-										response.send(ret)
-									}
 								};
 							}) (k), 100)
 							//***********************************************//
@@ -61,6 +67,7 @@ router.route('/action-in-module')
 				User.get_deny_action_module(table[0], (result) =>{
 					if (result.length > 0){
 						//console.log(result)
+						const len = result.length
 						for (k in result){
 							//Utilisation PROMISE A VENIR (FONCTION TEMPORAIRE)
 							setTimeout((function(k) {
@@ -74,10 +81,11 @@ router.route('/action-in-module')
 											ret.success.push(false)
 											ret.global_msg.push("erreur lors de l'action de refus !")
 										}
+										if (k == len - 1){
+											ret.result = "deny"
+											response.send(ret)
+										}
 									})
-									if (k == result.length - 1){
-										response.send(ret)
-									}
 								};
 							}) (k), 100)
 							//***********************************************//
