@@ -49,7 +49,7 @@ jobs:
       # install database
       - run:
           name: Install Mysql database
-          command: sudo apt-get update -y mysql-client
+          command: sudo apt-get update mysql-client
       # run database
       - run:
           name: Mysql database
