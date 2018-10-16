@@ -5,10 +5,10 @@
 version: 2
 jobs:
   build:
-    docker:
-      - branches:
+    branches:
         only:
           - prod-tpm-centrale
+    docker:
       # specify the version you desire here
       - image: circleci/node:7.10-browsers
         environment:
