@@ -350,17 +350,32 @@
     	form_song.submit();
     }
     function on_socket_update_eventstypemessage(data){
-    	console.log("events_type_message");
-    	console.log(data);
+    	//console.log("events_type_message");
+    	//console.log(data);
     	var div = $("div[id-message='"+data.id_m+"']");
     	div.find("p.date_creneau").empty();
-    	var content = '';
+    	var content = '', content2 = '';
     	$.each(data.events, function(ind, val){
     		content += '<p style="background: #18457c;color: white;padding: 12px;">Début ('+val.start.substr(0,10)+') A ('+val.start.substr(11,5)+') </br>';
     		content += 'Fin ('+val.end.substr(0,10)+') A ('+val.end.substr(11,5)+') </p> ';
     	});
-    	content += 'statut demande ('+data.request_state+')';
     	div.find("p.date_creneau").append(content);
+    	if (data.request_state == 0 && data.user_receiver == userId){
+    		content = 'demande en attente de votre réponse';
+    		div.find("p.date_creneau").append(content);
+			content2 += '<a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a>';
+		}
+		else if (data.request_state == 1){
+			content2 += 'demande acceptée !';
+		}
+		else{
+			content = 'demande en attente de réponse du correspondant';
+    		div.find("p.date_creneau").append(content);
+		}
+		div.find("div.card-chat div.div-submi").empty();
+		div.find("div.card-chat div.div-submi").append(content2);
+		div.find("div.card-chat span").empty();
+		div.find("div.card-chat span").append(data.created);
     }
     function on_video_module_send_link_click(e){
     	e.preventDefault();
@@ -465,6 +480,39 @@
     	content += 'statut de la demande ('+data.request_state+')';
     	div.find("p.user").append(content);
     }
+    function on_module_accept_typeMessage_link_click(e){
+    	e.preventDefault();
+    	var datas = {};
+    	var div = $(e.target).parents("div[id-message]");
+    	datas.id_type_message = div.data("id-typeMessage");
+    	datas.action = "accept";
+    	console.log(div);
+    	console.log(datas);
+    	$.ajax({
+    		type: "POST",
+    		url: "/action-in-module",
+    		data: datas,
+    		success: function (data){
+    			console.log(data);
+    		}
+    	});
+    }
+    function on_module_deny_typeMessage_link_click(e){
+    	e.preventDefault();
+    	var datas = {};
+    	var div = $(e.target).parents("div[id-message]");
+    	datas.id_type_message = div.data("id-typeMessage");
+    	datas.action = "deny";
+    	console.log(datas);
+    	$.ajax({
+    		type: "POST",
+    		url: "/action-in-module",
+    		data: datas,
+    		success: function (data){
+    			console.log(data);
+    		}
+    	});
+    }
     var song_module_send_link = $("#song_up");
     var video_module_send_link = $("#video_up");
     var devis_module_send_link = $("#devis-send");
@@ -500,6 +548,9 @@
     $(document).on("click", "#song_up", on_song_module_send_link_click);
     $(document).on("click", "#video_up", on_video_module_send_link_click);
     $(document).on("click", "#devis-send", on_devis_module_send_link_click);
+    $(document).on("click", "#devis-send", on_devis_module_send_link_click);
+    $(document).on("click", ".div-submi .btn-accept", on_module_accept_typeMessage_link_click);
+    $(document).on("click", ".div-submi .btn-refus", on_module_deny_typeMessage_link_click);
     //check_in.on("click", on_reservation_link_click);
     //meet_up.on("click", on_reservation_link_click);
     //form_song.on("submit", on_form_song_submit);
@@ -548,44 +599,67 @@
 	});
 	actions.rdv.push(function (data){
 		//console.log(data);
-		var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de rendez-vous</h3><p class="date_creneau">'+data.txt+'';
+		var ret = '<div class="message" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de rendez-vous</h3><p class="date_creneau">';
 		$.each(data.events, function(ind, val){
 			ret += '<p style="background: #18457c;color: white;padding: 12px;">Début ('+val.start.substr(0,10)+') A ('+val.start.substr(11,5)+') </br>';
 			ret += 'Fin ('+val.end.substr(0,10)+') A ('+val.end.substr(11,5)+') </p> ';
 		});
-		ret += 'statut de la demande ('+data.request_state+')';
-		ret += '</p><div class="div-submi"><a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a></div></div><div class="corner"></div><span>'+data.created+'</span></div></div>';
+		if (data.events.length == 0){
+			ret += '</p><div class="div-submi" style="color: black;">demande refusée !</div><div class="corner"></div><span>'+data.created+'</span>';
+		}else{
+			ret += 'demande en attente de réponse du correspondant</p><div class="div-submi" style="color: black;"></div><div class="corner"></div><span>'+data.created+'</span>';
+		}
+		ret += '</div></div></div>';
+		//ret += 'statut de la demande ('+data.request_state+')</p></div></div></div>';
+		//ret += '</p><div class="div-submi"><a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a></div></div><div class="corner"></div><span>'+data.created+'</span></div></div>';
 		return (ret);
 	}, function (data){
 		//console.log(data);
-		var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de rendez-vous</h3><p class="date_creneau">'+data.txt+'';
+		var ret = '<div class="message right" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de rendez-vous</h3><p class="date_creneau">';
 		$.each(data.events, function(ind, val){
 			ret += '<p style="background: #18457c;color: white;padding: 12px;">Début ('+val.start.substr(0,10)+') A ('+val.start.substr(11,5)+') </br>';
 			ret += 'Fin ('+val.end.substr(0,10)+') A ('+val.end.substr(11,5)+') </p> ';
 		});
-		ret += 'statut de la demande ('+data.request_state+')';
-		ret += '</p><div class="div-submi"><a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a></div></div><div class="corner"></div><span>'+data.created+'</span></div></div>';
+		if (data.events.length == 0){
+			ret += '</p><div class="div-submi" style="color: black;">demande refusée !</div><div class="corner"></div><span>'+data.created+'</span>';
+		}else{
+			ret += 'demande en attente de votre réponse</p><div class="div-submi" style="color: black;"><a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a></div><div class="corner"></div><span>'+data.created+'</span>';
+		}
+		ret += '</div></div></div>';
+		//ret += 'statut de la demande ('+data.request_state+')</div>';
+		//console.log(data.request_state);
 		return (ret);
 	});
 	actions.booking.push(function (data){
 		//console.log(data);
-		var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de booking</h3><p class="date_creneau">'+data.txt+'';
+		var ret = '<div class="message" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de booking</h3><p class="date_creneau">';
 		$.each(data.events, function(ind, val){
 			ret += '<p style="background: #18457c;color: white;padding: 12px;">Début ('+val.start.substr(0,10)+') A ('+val.start.substr(11,5)+') </br>';
 			ret += 'Fin ('+val.end.substr(0,10)+') A ('+val.end.substr(11,5)+') </p> ';
 		});
-		ret += 'statut de la demande ('+data.request_state+')';
-		ret += '</p><div class="div-submi"><a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a></div></div><div class="corner"></div><span>'+data.created+'</span></div></div>';
+		if (data.events.length == 0){
+			ret += '</p><div class="div-submi" style="color: black;">demande refusée !</div><div class="corner"></div><span>'+data.created+'</span>';
+		}else{
+			ret += 'demande en attente de réponse du correspondant</p><div class="div-submi" style="color: black;"></div><div class="corner"></div><span>'+data.created+'</span>';
+		}
+		ret += '</div></div></div>';
+		//ret += 'statut de la demande ('+data.request_state+')</div>';
+		//ret += '</p><div class="div-submi"><a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a></div></div><div class="corner"></div><span>'+data.created+'</span></div></div>';
 		return (ret);
 	}, function (data){
 		//console.log(data);
-		var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de booking</h3><p class="date_creneau">'+data.txt+'';
+		var ret = '<div class="message right" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de booking</h3><p class="date_creneau">';
 		$.each(data.events, function(ind, val){
 			ret += '<p style="background: #18457c;color: white;padding: 12px;">Début ('+val.start.substr(0,10)+') A ('+val.start.substr(11,5)+') </br>';
 			ret += 'Fin ('+val.end.substr(0,10)+') A ('+val.end.substr(11,5)+') </p> ';
 		});
-		ret += 'statut de la demande ('+data.request_state+')';
-		ret += '</p><div class="div-submi"><a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a></div></div><div class="corner"></div><span>'+data.created+'</span></div></div>';
+		if (data.events.length == 0){
+			ret += '</p><div class="div-submi" style="color: black;">demande refusée !</div><div class="corner"></div><span>'+data.created+'</span>';
+		}else{
+			ret += 'demande en attente de votre réponse</p><div class="div-submi" style="color: black;"><a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a></div><div class="corner"></div><span>'+data.created+'</span>';
+		}
+		ret += '</div></div></div>';
+		//ret += 'statut de la demande ('+data.request_state+')</div>';
 		return (ret);
 	});
 	actions.video.push(function (data){

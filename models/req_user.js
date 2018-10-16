@@ -983,7 +983,7 @@ class User{
                 console.log(r.sql)
                 throw err
             }
-            cb(result.affectedRows)
+            cb(res.affectedRows)
         })
     }
     static delete_etablissement(tab, cb){
@@ -992,7 +992,7 @@ class User{
                 console.log(r.sql)
                 throw err
             }
-            cb(result.affectedRows)
+            cb(res.affectedRows)
         }) 
     }
     static delete_user(tab, cb){
@@ -1001,7 +1001,34 @@ class User{
                 console.log(r.sql)
                 throw err
             }
-            cb(result.affectedRows)
+            cb(res.affectedRows)
+        })
+    }
+    static get_accept_action_module(tab, cb){
+        let r = db.query('SELECT action_ok FROM `temp` WHERE id_type_message=?', [tab], (err, res)=>{
+            if (err){
+                console.log(r.sql)
+                throw err
+            }
+            cb(res)
+        })
+    }
+    static get_deny_action_module(tab, cb){
+        let r = db.query('SELECT action_ko FROM `temp` WHERE id_type_message=?', [tab], (err, res)=>{
+            if (err){
+                console.log(r.sql)
+                throw err
+            }
+            cb(res)
+        })
+    }
+    static do_action_in_module(req, cb){
+        let r = db.query(req, (err, res)=>{
+            if (err){
+                console.log(r.sql)
+                throw err
+            }
+            cb(res)
         })
     }
 }
