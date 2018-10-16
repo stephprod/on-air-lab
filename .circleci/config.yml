@@ -35,7 +35,7 @@ jobs:
           command: |
             sudo apt-get update && sudo apt-get install -y mysql-server
             dockerize -wait tcp://${MYSQL_HOST}:3306 -timeout 1m
-            mysql -h ${MYSQL_HOST} -u ${MYSQL_USER} -e "create database ${MYSQL_DB};use ${MYSQL_DB};source ${MYSQL_DB_FILE};"
+            mysql -h ${MYSQL_HOST} -u ${MYSQL_USER} -e "create database ${MYSQL_DB};use ${MYSQL_DB};source ${MYSQL_DB_FILE};SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
       - restore_cache:
           keys:
           - v1-dependencies-{{ checksum "package.json" }}
