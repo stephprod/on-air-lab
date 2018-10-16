@@ -29,9 +29,8 @@ jobs:
       - checkout
       # Download and cache dependencies
       - run: sudo apt-get update && sudo apt-get install -y mysql-server
-      #- run: service mysql start
-      #- run: mysql -h ${MYSQL_HOST} -u ${MYSQL_USER} -e "create database ${MYSQL_DB};"
       - run: dockerize -wait tcp://${MYSQL_HOST}:3306 -timeout 1m
+      - run: mysql -h ${MYSQL_HOST} -u ${MYSQL_USER} -e "create database ${MYSQL_DB};"
       - restore_cache:
           keys:
           - v1-dependencies-{{ checksum "package.json" }}
