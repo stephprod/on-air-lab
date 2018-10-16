@@ -37,14 +37,14 @@ jobs:
           - v1-dependencies-
 
       - run: yarn install
-
+      - run: apt-get install mysql-server
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
       # run tests!
       - run: yarn test
-      #- run: xdg-open 172.24.0.3:4000/search
+      #- run: xdg-open 172.20.0.3:4000/search
   #deployement
   #deploy:
   #  docker:
