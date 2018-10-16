@@ -71,6 +71,7 @@ workflows:
             branches: 
               only:
                 - prod-tpm-centrale
+                - /prod-tpm-.*/
     #  - deploy:
     #      requires:
     #        - build
