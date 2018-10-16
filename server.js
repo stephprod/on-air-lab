@@ -39,6 +39,7 @@ let w_search = require('./route/widget_search')
 let devis_request = require('./route/devis_request')
 let logout = require('./route/logout')
 let delete_account = require('./route/delete_account')
+let module_actions = require('./route/action_in_module')
 /*Modeles*/
 let User = require('./models/req_user')
 // SECURE HTTP POUR SOCKET IO
@@ -103,6 +104,7 @@ app.use('/', w_search)
 app.use('/', devis_request)
 app.use('/', logout)
 app.use('/', delete_account)
+app.use('/', module_actions)
 app.get('/', (request, response) => {
 	//console.log(request.session)
 	response.render('pages/index')
