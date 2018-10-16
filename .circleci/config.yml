@@ -66,11 +66,11 @@ workflows:
   version: 2
   build-deploy:
     jobs:
-      - build
-        filters:
-          branches: 
-            only:
-              - prod-tpm-centrale
+      - build:
+          filters:
+            branches: 
+              only:
+                - prod-tpm-centrale
     #  - deploy:
     #      requires:
     #        - build
