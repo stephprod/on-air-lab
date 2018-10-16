@@ -309,11 +309,13 @@ class User{
     }
     static getAllEtablissement(ind, cb){
     	let q=db.query('SELECT `etablissement`.`id`, `etablissement`.`nom`, `etablissement`.`adresse`, `etablissement`.`cp`, '+
-            ' `etablissement`.`descr`, `etablissement`.`path_img`, `profil`.`id_user`, `tarification`.`prix_h`, `profil`.`type_service` ,'+
+            ' `etablissement`.`descr`, `etablissement`.`path_img`, `profil`.`id_user`, `tarification`.`prix_h`, `service`.`type_service` ,'+
             '`villes_france_free`.`ville_longitude_deg`, `villes_france_free`.`ville_latitude_deg` '+
             'FROM `etablissement` INNER JOIN `profil` ON `profil`.`id_etablissement`=`etablissement`.`id` '+
             'INNER JOIN `tarification` ON `tarification`.`id_tarification`=`profil`.`id_tarification` '+
-            'LEFT JOIN `villes_france_free` ON `etablissement`.`cp`=`villes_france_free`.`ville_code_commune` '+
+            'INNER JOIN `appartenir` ON `appartenir`.`id_user`=`profil`.`id_user` '+
+            'INNER JOIN `service` ON `service`.`id_service`=`appartenir`.`id_service` '+
+            'LEFT JOIN `villes_france_free` ON `etablissement`.`cp`=`villes_france_free`.`ville_code_postal` '+
             'WHERE `etablissement`.`id` > '+ind+' GROUP BY `etablissement`.`id`, `profil`.`id_user` LIMIT 800', (err, result, fields) =>{
 			if (err) 
 			{
