@@ -314,7 +314,7 @@ class User{
             'FROM `etablissement` INNER JOIN `profil` ON `profil`.`id_etablissement`=`etablissement`.`id` '+
             'INNER JOIN `tarification` ON `tarification`.`id_tarification`=`profil`.`id_tarification` '+
             'LEFT JOIN `villes_france_free` ON `etablissement`.`cp`=`villes_france_free`.`ville_code_commune` '+
-            'WHERE `etablissement`.`id` > '+ind+' GROUP BY `etablissement`.`id` LIMIT 800', (err, result, fields) =>{
+            'WHERE `etablissement`.`id` > '+ind+' GROUP BY `etablissement`.`id`, `profil`.`id_user` LIMIT 800', (err, result, fields) =>{
 			if (err) 
 			{
 				console.log(q.sql)
