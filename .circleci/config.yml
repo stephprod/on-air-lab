@@ -15,8 +15,7 @@ jobs:
           MYSQL_ALLOW_EMPTY_PASSWORD: true
           MYSQL_PASSWORD:
       - image : circleci/mysql:8.0.4
-        command: [mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_bin --innodb-large-prefix=true --innodb-file-format=Barracuda,
-                  mysql -h 127.0.0.1 -u root -e "create database circleci;"]
+        command: [mysql -h 127.0.0.1 -u root -e "create database circleci;"]
         environment:
           MYSQL_USER: root
           MYSQL_ALLOW_EMPTY_PASSWORD: true
@@ -36,8 +35,7 @@ jobs:
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
 
-      - run: yarn install
-      - run: apt-get install mysql-server
+      - run: yarn install 
       - save_cache:
           paths:
             - node_modules
