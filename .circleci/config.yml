@@ -33,7 +33,9 @@ jobs:
 
     steps:
       - checkout
-
+      - add_ssh_keys:
+        fingerprints:
+          - "b0:4d:2e:5e:f6:e6:9c:39:86:37:d7:fe:58:3d:4b:af"
       # Download and cache dependencies
       - restore_cache:
           keys:
