@@ -53,6 +53,7 @@ jobs:
           name: "Run test"
           command: |
            yarn test
+           curl localhost:8080/search
   #deployement
   #deploy:
   #  docker:
