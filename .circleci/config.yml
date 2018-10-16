@@ -19,7 +19,8 @@ jobs:
           MYSQL_ALLOW_EMPTY_PASSWORD: true
           MYSQL_PASSWORD:
       - image : circleci/mysql:8.0.4
-        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_bin --innodb-large-prefix=true --innodb-file-format=Barracuda
+        command: [mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_bin --innodb-large-prefix=true --innodb-file-format=Barracuda,
+                  mysql -h 127.0.0.1 -u root -e "create database circleci;"]
         environment:
           MYSQL_USER: root
           MYSQL_ALLOW_EMPTY_PASSWORD: true
@@ -46,14 +47,6 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-      # install database
-      - run:
-          name: Install Mysql database
-          command: sudo apt-get update
-      # run database
-      - run:
-          name: Mysql database
-          command: mysql -h 127.0.0.1 -u root -e "create database circleci;"
       # run tests!
       - run: yarn test
 
