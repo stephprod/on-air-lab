@@ -55,6 +55,7 @@ jobs:
            yarn test
            curl localhost:4000/search
            exit 0
+           yarn stop
   #deployement
   #deploy:
   #  docker:
