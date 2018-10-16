@@ -52,9 +52,9 @@ jobs:
       - run: 
           name: "Run test"
           command: |
-           yarn test
+           npm test
            curl localhost:4000/search
-           yarn stop
+           npm stop
   #deployement
   #deploy:
   #  docker:
