@@ -32,9 +32,6 @@ jobs:
     working_directory: ~/on-air-lab
 
     steps:
-      - add_ssh_keys:
-        fingerprints:
-          ["b0:4d:2e:5e:f6:e6:9c:39:86:37:d7:fe:58:3d:4b:af"]
       - checkout
       # Download and cache dependencies
       - restore_cache:
@@ -51,4 +48,8 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
       # run tests!
       - run: yarn test
+      #deploy
+      - add_ssh_keys:
+        fingerprints:
+          - "b0:4d:2e:5e:f6:e6:9c:39:86:37:d7:fe:58:3d:4b:af"
 
