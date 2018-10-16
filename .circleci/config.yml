@@ -5,9 +5,6 @@
 version: 2
 jobs:
   build:
-    branches:
-        only:
-          - prod-tpm-centrale
     docker:
       # specify the version you desire here
       - image: circleci/node:7.10-browsers
@@ -70,6 +67,10 @@ workflows:
   build-deploy:
     jobs:
       - build
+        filters:
+          branches: 
+            only:
+              - prod-tpm-centrale
     #  - deploy:
     #      requires:
     #        - build
