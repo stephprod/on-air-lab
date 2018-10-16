@@ -23,6 +23,10 @@ jobs:
     steps:
       - checkout
 
+      # run database
+      - run:
+        name: Wait for MYSQL-DB
+        command: dockerize -wait tcp://127.0.0.1:3306 -timeout 120s
       # Download and cache dependencies
       - restore_cache:
           keys:
@@ -34,10 +38,6 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-      # run database
-      - run:
-        name: Wait for MYSQL-DB
-        command: dockerize -wait tcp://127.0.0.1:3306 -timeout 120s
       # install app
       - run: yarn install
       # run tests!
