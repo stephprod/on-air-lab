@@ -486,14 +486,18 @@
     	var div = $(e.target).parents("div[id-message]");
     	datas.id_type_message = div.data("id-typeMessage");
     	datas.action = "accept";
-    	console.log(div);
-    	console.log(datas);
+    	//console.log(div);
+    	//console.log(datas);
     	$.ajax({
     		type: "POST",
     		url: "/action-in-module",
     		data: datas,
     		success: function (data){
-    			console.log(data);
+    			if (data.success[0]){
+					const content = 'demande acceptée !';
+					div.find("div.card-chat div.div-submi").empty();
+					div.find("div.card-chat div.div-submi").append(content);
+    			}
     		}
     	});
     }
@@ -503,13 +507,18 @@
     	var div = $(e.target).parents("div[id-message]");
     	datas.id_type_message = div.data("id-typeMessage");
     	datas.action = "deny";
-    	console.log(datas);
+    	//console.log(datas);
     	$.ajax({
     		type: "POST",
     		url: "/action-in-module",
     		data: datas,
     		success: function (data){
-    			console.log(data);
+    			//console.log(data);
+    			if (data.success[0]){
+					const content = 'demande refusée !';
+					div.find("div.card-chat div.div-submi").empty();
+					div.find("div.card-chat div.div-submi").append(content);
+    			}
     		}
     	});
     }
