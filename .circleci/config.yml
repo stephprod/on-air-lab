@@ -36,11 +36,13 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-      # run database
+      # run install/run database
+      - run:
+          name: Bundle install
+          command: bundle install
       - run:
         name: Wait for MYSQL-DB
         command: dockerize -wait tcp://127.0.0.1:3306 -timeout 120s 
       # run tests!
       - run: yarn test
-
 
