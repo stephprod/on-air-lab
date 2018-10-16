@@ -316,7 +316,7 @@ class User{
             'INNER JOIN `appartenir` ON `appartenir`.`id_user`=`profil`.`id_user` '+
             'INNER JOIN `service` ON `service`.`id_service`=`appartenir`.`id_service` '+
             'LEFT JOIN `villes_france_free` ON `etablissement`.`cp`=`villes_france_free`.`ville_code_postal` '+
-            'WHERE `etablissement`.`id` > '+ind+' GROUP BY `etablissement`.`id`, `profil`.`id_user` LIMIT 800', (err, result, fields) =>{
+            'WHERE `etablissement`.`id` > '+ind+' GROUP BY `etablissement`.`id`, `profil`.`id_user`, `service`.`type_service` LIMIT 800', (err, result, fields) =>{
 			if (err) 
 			{
 				console.log(q.sql)
