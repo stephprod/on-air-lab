@@ -4,6 +4,8 @@ let bodyParser = require('body-parser')
 let session = require('express-session')
 let db = require('./db_start_engine')
 let sass = require('node-sass')
+var os = require('os');
+var interfaces = os.networkInterfaces();
 /*Variables routes*/
 let register = require('./route/register')
 let login = require('./route/login')
@@ -937,6 +939,16 @@ RECUPERATION DE LA VUE CHAT DESIGN ET FRONT NOTIF
 RECUPERATION DE L'AJAX DU CHAT
 DEMANDER UNE AUTORISATION D'ACCES AU CHAT AU USER DE NIVEAU 2 AVEC UN CHANPS 0/1
 */
+var addresses = [];
+for (var k in interfaces) {
+    for (var k2 in interfaces[k]) {
+        var address = interfaces[k][k2];
+        if (address.family === 'IPv4' && !address.internal) {
+            addresses.push(address.address);
+        }
+    }
+}
+console.log(addresses);
 http.listen(4000, function(){
   console.log('listening on :4000 jai secure en http')
 })
