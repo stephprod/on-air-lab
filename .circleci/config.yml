@@ -24,22 +24,26 @@ executors:
     working_directory: ~/on-air-lab
 jobs:
   build:
-    executor: my-executor-for-build-run
+    executors: my-executor-for-build-run
     steps:
       - checkout
-      - setup_remote_docker
+      - setup_remote_docker:
+        docker_layer_caching: true 
       - run:
           name: "Install/Run MysqlDB"
           command: |
             sudo apt-get update && sudo apt-get install -y mysql-server
             dockerize -wait tcp://${MYSQL_HOST}:3306 -timeout 1m
             sudo mysql -h ${MYSQL_HOST} -u ${MYSQL_USER} -e "create database ${MYSQL_DB};use ${MYSQL_DB};source ${MYSQL_DB_FILE};SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
+            docker build .
    #   - run:
    #       name: "Do the docker build"
    #       command: |
    #         sudo docker build .
    #         mkdir -p ${MYSQL_ENV_FOLDER}
    #         sudo docker save -o ${MYSQL_ENV_FOLDER}/built-image.tar
+      - store_artifacts:
+          path: ${MYSQL_ENV_FOLDER}
       - save_cache:
           paths:
             - ${MYSQL_ENV_FOLDER}
@@ -52,7 +56,8 @@ jobs:
       #- run: 
       #    name: "Run simple mocha test"
       #    command: npm test
-      - setup_remote_docker 
+      - setup_remote_docker:
+        docker_layer_caching: true 
       - restore_cache:
           paths:
             - ${MYSQL_ENV_FOLDER}
