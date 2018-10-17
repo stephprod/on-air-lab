@@ -49,9 +49,9 @@ jobs:
       - run:
           name: "Do the docker build"
           command: |
-            docker build -f Dockerfile.static -t origin/app:$CIRCLE_BRANCH .
+            sudo docker build -f Dockerfile.static .
             mkdir -p ${MYSQL_ENV_FOLDER}
-            docker save -o ${MYSQL_ENV_FOLDER}/built-image.tar origin/app:$CIRCLE_BRANCH
+            sudo docker save -o ${MYSQL_ENV_FOLDER}/built-image.tar
       - save_cache:
           paths:
             - ${MYSQL_ENV_FOLDER}
@@ -64,7 +64,7 @@ jobs:
       #- run: 
       #    name: "Run simple mocha test"
       #    command: npm test
-      - setup_remote_docker
+      - setup_remote_dockersudo 
       - restore_cache:
           paths:
             - ${MYSQL_ENV_FOLDER}
