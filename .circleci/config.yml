@@ -66,6 +66,9 @@ jobs:
           environment:
             MOCHA_FILE: ~/junit/test-results.xml
           when: always
+      - run:
+          name: Stop Database (MySql) Services
+          command: sudo mysqld stop
       - store_test_results:
           path: ~/junit
       - store_artifacts:
