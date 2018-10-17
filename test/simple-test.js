@@ -36,13 +36,11 @@ describe('List of simple mocha tests', function() {
 	    	// runs before each test in this block
 	    	//nock('http://'+addresses[0]+':4000');
 		});
-		it('expecting 200', (done) => {
+		it('expecting 200', () => {
 			return testSearchHttpRequest('http://'+addresses[0]+':4000/search').then(response =>{
 				expect(response.status).to.equals(200);
-				done();
 			}).catch(error => {
 				console.log(error);
-				done();
 			});
 		});
 	});
