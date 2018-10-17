@@ -956,7 +956,7 @@ http.listen(4000, function(){
 //EXPORT FOR APP TESTING
 module.exports = { httpRequest: function(path){
                             return axios.get(path)
-                            .then((req, res) => res)
+                            .then((res) => res)
                         },
                     host: addresses,
                     server: http 
