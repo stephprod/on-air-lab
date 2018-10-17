@@ -23,54 +23,7 @@ my-executor-for-build-run: &my-executor-for-build-run
   working_directory: ~/on-air-lab
 jobs:
   # run tests!
-  build-run-prod-temp-cpy:
-    <<: *my-executor-for-build-run
-    steps:
-      - checkout
-      #- run: 
-      #    name: "Run simple mocha test"
-      #    command: npm test
-      #- setup_remote_docker 
-      - restore_cache:
-          paths:
-            - ${MYSQL_ENV_FOLDER}
-          keys:
-            # Find a cache corresponding to this specific package-lock.json checksum
-            # when this file is changed, this key will fail 
-            - ${MYSQL_ENV_FILE}-{{ checksum "package.json" }}
-            # Find the most recently generated cache used from any branch
-            - ${MYSQL_ENV_FILE}
-      - run:
-          name: "Install/Run Mysql Server"
-          command: |
-            sudo apt-get update && sudo apt-get install -y mysql-server
-      - run:
-          name: "Creating Database !"
-          command: sudo mysql -h ${MYSQL_HOST} -u ${MYSQL_USER} -e "create database ${MYSQL_DB};use ${MYSQL_DB};source ${MYSQL_DB_FILE};SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
-      #Install app testing env
-      #Axios : A Promise based HTTP client for the browser and node.js
-      #Mocha : A popular Node.js testing framework.
-      #Chai : A BDD / TDD assertion library for Node.js
-      #Nocha : A HTTP mocking and expectations library for Node.js
-      - run: 
-          name: "Install App testing env."
-          command: |
-            sudo npm i --global axios
-            sudo npm i --global mocha
-            sudo npm i --global chai nock
-            sudo npm i
-      - run: mkdir ~/junit
-      - run:
-          name: "Run simple Mocha test and Store the result"
-          command: mocha test --exit
-          environment:
-            MOCHA_FILE: ~/junit/test-results.xml
-          no_output_timeout: 30s
-      - store_test_results:
-          path: ~/junit
-      - store_artifacts:
-          path: ~/junit
-  build-run-prod-temp:
+  build-run:
     <<: *my-executor-for-build-run
     steps:
       - checkout
@@ -130,27 +83,18 @@ workflows:
   version: 2
   build-run-deploy:
     jobs:
-      - build-run-prod-temp-cpy:
+      - build-run:
           filters:
-            tags: 
+            tags:
               only:
-                - /pt-.*-branch/s
-                - /.*branch/s
-            branches:
-              only: 
-                - /pt-.*-branch/s
-                - /.*branch/s
-      - build-run-prod-temp:
-          filters:
-            tags: 
-              only:
-                - prod-tpm-centrale
-                - /prod-tpm-.*/s
-            branches:
-              only:
-                - prod-tpm-centrale
-                - /prod-tpm-.*/s
-    #  - deploy:
-    #      requires:
-    #        - build
+                - /.*/s
+#     - deploy:
+#          tags:
+#              only:
+#                - /.*/s
+#          branches:
+#              only:
+#                - master
+#          requires:
+#             - build-run
 
