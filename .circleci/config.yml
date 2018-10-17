@@ -35,7 +35,7 @@ jobs:
           name: "Install app"
           command: |
             sudo npm install --global mocha
-            sudo npm install -g mocha-junit-reporter
+          #  sudo npm install -g mocha-junit-reporter
             sudo npm install
       - save_cache:
           paths:
@@ -48,7 +48,7 @@ jobs:
       - run: mkdir ~/junit
       - run:
           name: "Run simple Mocha test and Store the result"
-          command: mocha test --reporter mocha-junit-reporter
+          command: mocha test
           environment:
             MOCHA_FILE: junit/test-results.xml
           when: always
