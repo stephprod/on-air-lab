@@ -14,6 +14,8 @@ executors:
           MYSQL_ALLOW_EMPTY_PASSWORD: true
           MYSQL_PASSWORD:
           MYSQL_DB_FILE: starlife.sql
+          MYSQL_ENV_FOLDER: env
+          MYSQL_ENV_FILE: v1-dependencies
       - image : circleci/mysql:5
         environment:
           command: mysqld --sql-mode=IGNORE_SPACE,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION,NO_AUTO_VALUE_ON_ZERO
@@ -21,10 +23,11 @@ executors:
           MYSQL_ALLOW_EMPTY_PASSWORD: true
     working_directory: ~/on-air-lab
 jobs:
-  build-run:
+  build:
     executor: my-executor-for-build-run
     steps:
       - checkout
+      - setup_remote_docker
       - run:
           name: "Install/Run MysqlDB"
           command: |
@@ -43,14 +46,38 @@ jobs:
             sudo npm i --global mocha
             sudo npm i --global chai nock
             sudo npm i
+      - run:
+          name: "Do the docker build"
+          command: |
+            docker build -f Dockerfile.static -t origin/app:$CIRCLE_BRANCH .
+            mkdir -p ${MYSQL_ENV_FOLDER}
+            docker save -o ${MYSQL_ENV_FOLDER}/built-image.tar origin/app:$CIRCLE_BRANCH
       - save_cache:
           paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+            - ${MYSQL_ENV_FOLDER}
+          key: ${MYSQL_ENV_FILE}-{{ checksum "package.json" }}
       # run tests!
+  run-test:
+    executor: my-executor-for-build-run
+    steps:
+      - checkout
       #- run: 
       #    name: "Run simple mocha test"
       #    command: npm test
+      - restore-docker-cache
+      - restore_cache:
+          paths:
+            - ${MYSQL_ENV_FOLDER}
+          keys:
+            # Find a cache corresponding to this specific package-lock.json checksum
+            # when this file is changed, this key will fail 
+            - ${MYSQL_ENV_FILE}-{{ checksum "package.json" }}
+            # Find the most recently generated cache used from any branch
+            - ${MYSQL_ENV_FILE}
+      - run:
+          name: Load Docker from cache
+          command: |
+            docker load < ${MYSQL_ENV_FOLDER}/built-image.tar
       - run: mkdir ~/junit
       - run:
           name: "Run simple Mocha test and Store the result"
@@ -75,12 +102,18 @@ workflows:
   version: 2
   build-run-deploy:
     jobs:
-      - build-run:
+      - build:
           filters:
             tags: 
               only:
-                - prod-tpm-centrale
-                - /prod-tpm-.*/
+                - /pt-*-branch/
+      - run-test:
+          filters:
+            tags: 
+              only:
+                - /pt-*-branch/
+          requires:
+            - build
     #  - deploy:
     #      requires:
     #        - build
