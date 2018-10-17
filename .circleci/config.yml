@@ -27,21 +27,19 @@ jobs:
     executors: my-executor-for-build-run
     steps:
       - checkout
-      - setup_remote_docker:
-        docker_layer_caching: true 
+      - setup_remote_docker 
       - run:
           name: "Install/Run MysqlDB"
           command: |
             sudo apt-get update && sudo apt-get install -y mysql-server
             dockerize -wait tcp://${MYSQL_HOST}:3306 -timeout 1m
             sudo mysql -h ${MYSQL_HOST} -u ${MYSQL_USER} -e "create database ${MYSQL_DB};use ${MYSQL_DB};source ${MYSQL_DB_FILE};SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
-            docker build .
-   #   - run:
-   #       name: "Do the docker build"
-   #       command: |
-   #         sudo docker build .
-   #         mkdir -p ${MYSQL_ENV_FOLDER}
-   #         sudo docker save -o ${MYSQL_ENV_FOLDER}/built-image.tar
+     - run:
+         name: "Do the docker build"
+         command: |
+           sudo docker build .
+           mkdir -p ${MYSQL_ENV_FOLDER}
+           sudo docker save -o ${MYSQL_ENV_FOLDER}/built-image.tar
       - store_artifacts:
           path: ${MYSQL_ENV_FOLDER}
       - save_cache:
@@ -56,8 +54,7 @@ jobs:
       #- run: 
       #    name: "Run simple mocha test"
       #    command: npm test
-      - setup_remote_docker:
-        docker_layer_caching: true 
+      - setup_remote_docker 
       - restore_cache:
           paths:
             - ${MYSQL_ENV_FOLDER}
@@ -67,10 +64,10 @@ jobs:
             - ${MYSQL_ENV_FILE}-{{ checksum "package.json" }}
             # Find the most recently generated cache used from any branch
             - ${MYSQL_ENV_FILE}
-     #  - run:
-     #      name: Load Docker from cache
-     #      command: |
-     #        docker load < ${MYSQL_ENV_FOLDER}/built-image.tar
+      - run:
+          name: Load Docker from cache
+          command: |
+            docker load < ${MYSQL_ENV_FOLDER}/built-image.tar
       #Install app testing env
       #Axios : A Promise based HTTP client for the browser and node.js
       #Mocha : A popular Node.js testing framework.
