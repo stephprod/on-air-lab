@@ -44,21 +44,15 @@ jobs:
           command: |
             sudo apt-get update && sudo apt-get install -y mysql-server
       - run:
-          name: "Variable Environnements update"
+          name: "Variable Environnements update/Creating Database !"
           command: |
             echo $CIRCLE_BRANCH
             if [[ "$CIRCLE_BRANCH" == *"pt"* || "$CIRCLE_BRANCH" == *"prod"* ]]
             then
               export MYSQL_DB=circleci
-              echo "pt/prod"
             else
               export MYSQL_DB=starlife
-              echo "else"
-              echo $MYSQL_DB
             fi
-      - run:
-          name: "Creating Database !"
-          command: |
             echo $MYSQL_DB
             sudo mysql -h ${MYSQL_HOST} -u ${MYSQL_USER} -e "create database $MYSQL_DB;use $MYSQL_DB;source ${MYSQL_DB_FILE};SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
       #Install app testing env
