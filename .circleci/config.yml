@@ -48,7 +48,8 @@ jobs:
           key: ${MYSQL_ENV_FILE}-{{ checksum "package.json" }}
       # run tests!
   run-test:
-    executor: my-executor-for-build-run
+    machine:
+      enabled: true
     steps:
       - checkout
       #- run: 
