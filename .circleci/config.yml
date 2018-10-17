@@ -28,8 +28,7 @@ jobs:
       # Download and cache dependencies
       - run: 
           name: "Install MYSQL SERVER"
-          command: |
-            sudo apt-get update && sudo apt-get install -y mysql-server
+          command: sudo apt-get update && sudo apt-get install -y mysql-server
       - save_cache:
           paths:
             - node_modules
