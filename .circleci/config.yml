@@ -135,16 +135,9 @@ workflows:
             tags: 
               only:
                 - /.*branch/s
-            branches:
-              only:
-                - /.*branch/s
       - build-run-prod-temp:
           filters:
             tags: 
-              only:
-                - prod-tpm-centrale
-                - /prod-tpm-.*/s
-            branches:
               only:
                 - prod-tpm-centrale
                 - /prod-tpm-.*/s
