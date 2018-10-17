@@ -47,6 +47,7 @@ describe('List of simple mocha tests', function() {
 
 	after(function() {
 	    // runs after all tests in this block
+	    console.log("Sopping the server hanging !");
 	    server.close();
 	});
 

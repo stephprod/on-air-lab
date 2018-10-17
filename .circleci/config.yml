@@ -39,9 +39,9 @@ jobs:
       - run: 
           name: "Install App testing env."
           command: |
-            sudo npm install --global axios
-            sudo npm install --global mocha chai nock
-            sudo npm install
+            sudo npm i --save-dev axios
+            sudo npm i --save-dev mocha chai nock
+            sudo npm i
       - save_cache:
           paths:
             - node_modules
