@@ -64,7 +64,7 @@ jobs:
       #- run: 
       #    name: "Run simple mocha test"
       #    command: npm test
-      - setup_remote_dockersudo 
+      - setup_remote_docker 
       - restore_cache:
           paths:
             - ${MYSQL_ENV_FOLDER}
