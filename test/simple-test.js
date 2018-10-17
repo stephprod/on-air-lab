@@ -29,6 +29,7 @@ describe('List of simple mocha tests', function() {
 		it('should return 200', function(done) {
 			http.get('http://'+addresses[0]+':4000/search', function (res) {
 		      	assert.equal(200, res.statusCode);
+		      	done();
 		    });
 		    /*chai.request(server)
 			    .get('http://'+addresses[0]+':4000/search')
