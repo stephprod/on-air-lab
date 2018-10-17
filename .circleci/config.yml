@@ -132,12 +132,12 @@ workflows:
     jobs:
       - build-run-prod-temp-cpy:
           filters:
-            tags: 
+            branches:
               only:
                 - /.*branch/s
       - build-run-prod-temp:
           filters:
-            tags: 
+            branches: 
               only:
                 - prod-tpm-centrale
                 - /prod-tpm-.*/s
