@@ -26,6 +26,7 @@ jobs:
   build-run:
     <<: *my-executor-for-build-run
     steps:
+      - echo $CIRCLE_BRANCH
       - checkout
       #- run: 
       #    name: "Run simple mocha test"
