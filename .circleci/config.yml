@@ -21,7 +21,7 @@ executors:
           MYSQL_ALLOW_EMPTY_PASSWORD: true
     working_directory: ~/on-air-lab
 jobs:
-  build-run:
+  build-run-prod-temp:
     executor: my-executor-for-build-run
     steps:
       - checkout
@@ -29,7 +29,6 @@ jobs:
           name: "Install/Run MysqlDB"
           command: |
             sudo apt-get update && sudo apt-get install -y mysql-server
-            dockerize -wait tcp://${MYSQL_HOST}:3306 -timeout 1m
             sudo mysql -h ${MYSQL_HOST} -u ${MYSQL_USER} -e "create database ${MYSQL_DB};use ${MYSQL_DB};source ${MYSQL_DB_FILE};SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
       #Install app testing env
       #Axios : A Promise based HTTP client for the browser and node.js
@@ -54,9 +53,9 @@ jobs:
       - run: mkdir ~/junit
       - run:
           name: "Run simple Mocha test and Store the result"
-          command: mocha test
+          command: mocha test --exit
           environment:
-            MOCHA_FILE: junit/test-results.xml
+            MOCHA_FILE: ~/junit/test-results.xml
           when: always
       - store_test_results:
           path: ~/junit
@@ -75,12 +74,18 @@ workflows:
   version: 2
   build-run-deploy:
     jobs:
-      - build-run:
+      - build-run-prod-temp:
           filters:
             tags: 
               only:
                 - prod-tpm-centrale
                 - /prod-tpm-.*/
+      - build-run-prod-temp-cpy:
+          filters:
+            tags: 
+              only:
+                - prod-tpm-centrale
+                - /pt-*-branch/
     #  - deploy:
     #      requires:
     #        - build
