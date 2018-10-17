@@ -3,7 +3,7 @@
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
 version: 2.1
-defaults: &my-executor-for-build-run:
+my-executor-for-build-run: &my-executor-for-build-run
   docker:
     - image: circleci/node:7.10-browsers
       environment:
@@ -23,7 +23,7 @@ defaults: &my-executor-for-build-run:
   working_directory: ~/on-air-lab
 jobs:
   build:
-    <<: *defaults
+    <<: *my-executor-for-build-run
     steps:
       - checkout
       - setup_remote_docker 
@@ -55,7 +55,7 @@ jobs:
             - ${MYSQL_ENV_FILE}-{{ checksum "package.json" }}
   # run tests!
   run-test:
-    <<: *defaults
+    <<: *my-executor-for-build-run
     steps:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
