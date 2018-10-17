@@ -134,7 +134,10 @@ workflows:
           filters:
             tags: 
               only:
-                - /pt-*-branch/
+                - /pt-.*-branch/s
+            branches:
+              only: 
+                - /pt-.*-branch/s
       - build-run-prod-temp:
           filters:
             tags: 
