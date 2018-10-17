@@ -24,9 +24,6 @@ my-executor-for-prod: &my-executor-for-prod
   branches:
     only:
       - /^(pt|prod).*$/s
-  tags:
-    only:
-      - /.*/s
 my-executor-for-dev: &my-executor-for-dev
   docker:
     - image: circleci/node:7.10-browsers
@@ -48,9 +45,6 @@ my-executor-for-dev: &my-executor-for-dev
   branches:
     only:
       - /^.*branch$/s
-  tags:
-    only:
-      - /.*/s
 jobs:
   # run tests!
   build-run-prod:
