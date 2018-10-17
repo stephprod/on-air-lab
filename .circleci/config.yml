@@ -59,6 +59,7 @@ jobs:
           MYSQL_DB_FILE: starlife.sql
           MYSQL_ENV_FOLDER: env
           MYSQL_ENV_FILE: v1-dependencies
+    working_directory: ~/on-air-lab
     steps:
       #- checkout
       #- run: 
