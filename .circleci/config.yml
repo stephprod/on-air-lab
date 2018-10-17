@@ -76,8 +76,7 @@ jobs:
             - ${MYSQL_ENV_FILE}
       - run:
           name: Load Docker from cache
-          command: |
-            docker load < ${MYSQL_ENV_FOLDER}/built-image.tar
+          command: docker load < ${MYSQL_ENV_FOLDER}/built-image.tar
       #Install app testing env
       #Axios : A Promise based HTTP client for the browser and node.js
       #Mocha : A popular Node.js testing framework.
@@ -95,7 +94,7 @@ jobs:
           name: "Run simple Mocha test and Store the result"
           command: mocha test
           environment:
-            MOCHA_FILE: junit/test-results.xml
+            MOCHA_FILE: ~/junit/test-results.xml
           when: always
       - store_test_results:
           path: ~/junit
