@@ -74,8 +74,8 @@ jobs:
             # Find the most recently generated cache used from any branch
             - ${MYSQL_ENV_FILE}
       - run:
-        name: "Creating Database !"
-        command: sudo mysql -h ${MYSQL_HOST} -u ${MYSQL_USER} -e "create database ${MYSQL_DB};use ${MYSQL_DB};source ${MYSQL_DB_FILE};SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
+          name: "Creating Database !"
+          command: sudo mysql -h ${MYSQL_HOST} -u ${MYSQL_USER} -e "create database ${MYSQL_DB};use ${MYSQL_DB};source ${MYSQL_DB_FILE};SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
 #      - run:
 #          name: Load Docker from cache
 #          command: docker load < ${MYSQL_ENV_FOLDER}/built-image.tar
