@@ -25,32 +25,24 @@ describe('List of simple mocha tests', function() {
 		});*/
 		console.log('host : '+addresses[0]);
 	});
-	describe('#indexOf()', function() {
-		it('should return -1 when the value is not present', function(done) {
+	describe('#INDEX OF()', function() {
+		it('expecting -1 when the value 4 is not present in (1, 2, 3)', function(done) {
 		  assert.equal([1,2,3].indexOf(4), -1);
 		  done();
 		});
-		describe('HTTP REQUEST', function() {
-			beforeEach(() =>{
-		    	// runs before each test in this block
-		    	//nock('http://'+addresses[0]+':4000');
-			});
-			it('should return 200', () => {
-				return testSearchHttpRequest('http://'+addresses[0]+':4000/search').then(response =>{
-					expect(response.status).to.equals(200);
-				}).catch(error => {
-					console.log(error);
-				});
-				/*http.get('http://'+addresses[0]+':4000/search', function (res, err, done) {
-			      	assert.equal(200, res.statusCode);
-			      	done();
-			    });*/
-			    /*chai.request(server)
-				    .get('http://'+addresses[0]+':4000/search')
-				    .end(function(err, res){
-				      res.should.have.status(200);
-				      done();
-				});*/
+	});
+	describe('#HTTP REQUEST SEARCH', function() {
+		beforeEach(() =>{
+	    	// runs before each test in this block
+	    	//nock('http://'+addresses[0]+':4000');
+		});
+		it('expecting 200', (done) => {
+			return testSearchHttpRequest('http://'+addresses[0]+':4000/search').then(response =>{
+				expect(response.status).to.equals(200);
+				done();
+			}).catch(error => {
+				console.log(error);
+				done();
 			});
 		});
 	});
