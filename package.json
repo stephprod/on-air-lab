@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "cd node_module && mocha",
+    "test": "node_modules/.bin/mocha",
     "start": "nodemon server.js",
     "scss": "node-sass -w public/scss -o public/css",
     "stop": "kill %1"
