@@ -65,7 +65,7 @@ jobs:
           command: mocha test
           environment:
             MOCHA_FILE: ~/junit/test-results.xml
-          when: always
+          no_output_timeout: 30s
       - run:
           name: Stop Database (MySql) Services
           command: sudo mysqld stop
