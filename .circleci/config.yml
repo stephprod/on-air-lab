@@ -57,13 +57,14 @@ jobs:
   run-test:
     <<: *my-executor-for-build-run
     steps:
+      - checkout
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
           at: ${MYSQL_ENV_FOLDER}
       #- run: 
       #    name: "Run simple mocha test"
       #    command: npm test
-      - setup_remote_docker 
+      #- setup_remote_docker 
       - restore_cache:
           paths:
             - ${MYSQL_ENV_FOLDER}
