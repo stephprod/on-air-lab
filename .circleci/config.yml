@@ -49,9 +49,9 @@ jobs:
             echo $CIRCLE_BRANCH
             if [[ "$CIRCLE_BRANCH" == *"pt"* || "$CIRCLE_BRANCH" == *"prod"* ]]
             then
-              export MYSQL_DB=circleci
+              export $MYSQL_DB=circleci
             else
-              export MYSQL_DB=starlife
+              export $MYSQL_DB=starlife
             fi
       - run:
           name: "Creating Database !"
