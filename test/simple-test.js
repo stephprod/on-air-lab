@@ -22,10 +22,9 @@ describe('List of simple mocha tests', function() {
 		});
 	});
 	describe('#test connection to the app on search page', function() {
-		it('should return 200', function(done) {
+		it('should return 200', function() {
 			http.get('http://'+addresses[0]+':4000/search', function (res) {
 		      	assert.equal(200, res.statusCode);
-		      	done();
 		    });
 		});
 	});
