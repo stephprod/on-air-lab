@@ -1,8 +1,12 @@
 var assert = require('assert');
-var server = require('../server').server;
+//var server = require('../server').server;
 var addresses = require('../server').host;
-var app = require('../server').application;
-var http = require('http');
+//var app = require('../server').application;
+const expect = require('chai').expect;
+const nock = require('nock');
+
+const testSearchHttpRequest = require('../server').httpRequest;
+//var http = require('http');
 //var chai = require('chai');
 //var chaiHttp = require('chai-http');
 //var should = chai.should();
@@ -26,26 +30,32 @@ describe('List of simple mocha tests', function() {
 		  assert.equal([1,2,3].indexOf(4), -1);
 		  done();
 		});
-		it('should return 200', function(done) {
-			http.get('http://'+addresses[0]+':4000/search', function (res, err, done) {
-		      	assert.equal(200, res.statusCode);
-		      	done();
-		    });
-		    /*chai.request(server)
-			    .get('http://'+addresses[0]+':4000/search')
-			    .end(function(err, res){
-			      res.should.have.status(200);
-			      done();
-			});*/
+		describe('HTTP REQUEST', function() {
+			beforeEach(() =>{
+		    	// runs before each test in this block
+		    	nock('http://'+addresses[0]+':4000');
+			});
+			it('should return 200', () => {
+				return testSearchHttpRequest('/search').then((response) =>{
+					expect(response.statusCode).to.equals(200);
+				});
+				/*http.get('http://'+addresses[0]+':4000/search', function (res, err, done) {
+			      	assert.equal(200, res.statusCode);
+			      	done();
+			    });*/
+			    /*chai.request(server)
+				    .get('http://'+addresses[0]+':4000/search')
+				    .end(function(err, res){
+				      res.should.have.status(200);
+				      done();
+				});*/
+			});
 		});
 	});
 
 	after(function() {
 	    // runs after all tests in this block
 	    server.close();
-	});
-	beforeEach(function() {
-    	// runs before each test in this block
 	});
 
 	afterEach(function() {

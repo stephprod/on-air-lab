@@ -47,7 +47,8 @@ let User = require('./models/req_user')
 // SECURE HTTP POUR SOCKET IO
 let http = require('http').Server(app)
 let io = require('socket.io')(http)
-
+//PROMISE http client
+const axios = require('axios');
 //NOTRE MOTEUR DE TEMPLATE
 app.set('view engine', 'ejs')
 
@@ -952,6 +953,11 @@ for (var k in interfaces) {
 http.listen(4000, function(){
   console.log('listening on :4000 jai secure en http')
 })
-// FOR APP TESTING
-module.exports = { server: http,
-                    host: addresses }
+//EXPORT FOR APP TESTING
+module.exports = { httpRequest: function(path){
+                            return axios.get(path)
+                            .then(res => res.data)
+                            .catch(error => console.log(error))
+                        },
+                    host: addresses 
+                }

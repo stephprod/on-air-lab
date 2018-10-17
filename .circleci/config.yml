@@ -31,10 +31,16 @@ jobs:
             sudo apt-get update && sudo apt-get install -y mysql-server
             dockerize -wait tcp://${MYSQL_HOST}:3306 -timeout 1m
             sudo mysql -h ${MYSQL_HOST} -u ${MYSQL_USER} -e "create database ${MYSQL_DB};use ${MYSQL_DB};source ${MYSQL_DB_FILE};SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
+      #Install app testing env
+      #Axios : A Promise based HTTP client for the browser and node.js
+      #Mocha : A popular Node.js testing framework.
+      #Chai : A BDD / TDD assertion library for Node.js
+      #Nocha : A HTTP mocking and expectations library for Node.js
       - run: 
-          name: "Install app"
+          name: "Install App testing env."
           command: |
-            sudo npm install --global mocha
+            sudo npm install --global axios
+            sudo npm install --global mocha chai nock
             sudo npm install
       - save_cache:
           paths:
