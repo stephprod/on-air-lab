@@ -135,15 +135,21 @@ workflows:
             tags: 
               only:
                 - /pt-.*-branch/s
+                - /.*branch/s
             branches:
               only: 
                 - /pt-.*-branch/s
+                - /.*branch/s
       - build-run-prod-temp:
           filters:
             tags: 
               only:
                 - prod-tpm-centrale
-                - /prod-tpm-.*/
+                - /prod-tpm-.*/s
+            branches:
+              only:
+                - prod-tpm-centrale
+                - /prod-tpm-.*/s
     #  - deploy:
     #      requires:
     #        - build
