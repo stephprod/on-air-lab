@@ -28,7 +28,9 @@ jobs:
       # Download and cache dependencies
       - run: 
           name: "Install MYSQL SERVER"
-          command: sudo apt-get update && sudo apt-get install -y mysql-server
+          command: |
+            sudo apt-get update && sudo apt-get install -y mysql-server
+            sudo mysql -h ${MYSQL_HOST} -u ${MYSQL_USER} -e "create database ${MYSQL_DB};use ${MYSQL_DB};source ${MYSQL_DB_FILE};SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
       - save_cache:
           paths:
             - node_modules
@@ -39,10 +41,8 @@ jobs:
     steps:
       - checkout
       - run:
-        name: "RUN MYSQL SERVER"
-        command: |
-          sudo mysql -h ${MYSQL_HOST} -u ${MYSQL_USER} -e "create database ${MYSQL_DB};use ${MYSQL_DB};source ${MYSQL_DB_FILE};SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
-          dockerize -wait tcp://${MYSQL_HOST}:3306 -timeout 1m
+          name: "Run MysqlDB"
+          command:  dockerize -wait tcp://${MYSQL_HOST}:3306 -timeout 1m
       - run: 
           name: "Install app"
           command: yarn install 
