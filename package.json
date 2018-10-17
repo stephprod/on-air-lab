@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "mocha",
+    "test": "node_modules/.bin/mocha",
     "start": "nodemon server.js",
     "scss": "node-sass -w public/scss -o public/css",
     "stop": "kill %1"
@@ -12,6 +12,7 @@
   "author": "SBLEMAND & YELUSUE",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.16.2",
     "ajax-request": "^1.2.3",
     "body-parser": "^1.18.3",
     "ejs": "^2.6.1",
@@ -24,5 +25,10 @@
     "rand-token": "^0.4.0",
     "shelljs": "^0.8.2",
     "socket.io": "^2.1.1"
+  },
+  "devDependencies": {
+    "chai": "^4.0.2",
+    "mocha": "^3.4.2",
+    "nock": "^9.0.13"
   }
 }

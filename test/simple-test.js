@@ -36,8 +36,10 @@ describe('List of simple mocha tests', function() {
 		    	nock('http://'+addresses[0]+':4000');
 			});
 			it('should return 200', () => {
-				return testSearchHttpRequest('/search').then((response) =>{
-					expect(response.statusCode).to.equals(200);
+				return testSearchHttpRequest('/search').then(response =>{
+					expect(response.status).to.equals(200);
+				}).catch(error => {
+					console.log(error);
 				});
 				/*http.get('http://'+addresses[0]+':4000/search', function (res, err, done) {
 			      	assert.equal(200, res.statusCode);
