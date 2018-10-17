@@ -50,6 +50,15 @@ jobs:
   run-test:
     docker:
       - image: circleci/node:7.10-browsers
+        environment:
+          MYSQL_HOST: 127.0.0.1
+          MYSQL_DB: circleci
+          MYSQL_USER: root
+          MYSQL_ALLOW_EMPTY_PASSWORD: true
+          MYSQL_PASSWORD:
+          MYSQL_DB_FILE: starlife.sql
+          MYSQL_ENV_FOLDER: env
+          MYSQL_ENV_FILE: v1-dependencies
     steps:
       - checkout
       #- run: 
