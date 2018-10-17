@@ -10,7 +10,7 @@ var http = require('http');
 //chai.use(chaiHttp);
 
 describe('List of simple mocha tests', function() {
-	this.setTimeout(15000);
+	this.timeout(15000);
 	before("Require all dependencies", function() {
 		// runs before all tests in this block
 		/*server.close();
