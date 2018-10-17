@@ -34,8 +34,9 @@ jobs:
       - run: 
           name: "Install app"
           command: |
-            npm install
-            npm install --save-dev mocha
+            sudo npm install --global mocha
+            sudo npm install -g mocha-junit-reporter
+            sudo npm install
       - save_cache:
           paths:
             - node_modules
