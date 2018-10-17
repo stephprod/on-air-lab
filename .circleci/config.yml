@@ -48,7 +48,7 @@ jobs:
           - v1-dependencies-
   #run test
   run-test: 
-    executor: my-executor-for-build
+    executor: my-executor-for-run
    
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
