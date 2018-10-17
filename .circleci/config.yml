@@ -46,6 +46,7 @@ jobs:
       - run:
           name: "Variable Environnements update"
           command: |
+            echo $CIRCLE_BRANCH
             if [[ "$CIRCLE_BRANCH" == *"pt"* || "$CIRCLE_BRANCH" == *"prod"* ]]
             then
               export MYSQL_DB=circleci
