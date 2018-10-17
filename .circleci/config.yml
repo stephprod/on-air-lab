@@ -48,8 +48,8 @@ jobs:
           key: ${MYSQL_ENV_FILE}-{{ checksum "package.json" }}
       # run tests!
   run-test:
-    machine:
-      image: circleci/classic:201808-01
+    docker:
+      - image: circleci/node:7.10-browsers
     steps:
       - checkout
       #- run: 
