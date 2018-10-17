@@ -22,13 +22,15 @@ describe('List of simple mocha tests', function() {
 		console.log('host : '+addresses[0]);
 	});
 	describe('#indexOf()', function() {
-		it('should return -1 when the value is not present', function() {
+		it('should return -1 when the value is not present', function(done) {
 		  assert.equal([1,2,3].indexOf(4), -1);
+		  done();
 		});
-		it('should return 200', function() {
-		http.get('http://'+addresses[0]+':4000/search', function (res) {
-	      	assert.equal(200, res.statusCode);
-	    });
+		it('should return 200', function(done) {
+			http.get('http://'+addresses[0]+':4000/search', function (res, err, done) {
+		      	assert.equal(200, res.statusCode);
+		      	done();
+		    });
 		    /*chai.request(server)
 			    .get('http://'+addresses[0]+':4000/search')
 			    .end(function(err, res){
