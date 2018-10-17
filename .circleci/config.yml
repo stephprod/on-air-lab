@@ -43,7 +43,7 @@ jobs:
           name: "Run test"
           command: |
             npm test
-            curl localhost:4000/search
+            echo $(curl localhost:4000/search)
             npm stop
   #deployement
   #deploy:
