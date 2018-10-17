@@ -40,7 +40,7 @@ jobs:
           name: "Install App testing env."
           command: |
             sudo npm i --save-dev axios
-            sudo npm i --golbal mocha
+            sudo npm i --global mocha
             sudo npm i --save-dev chai nock
             sudo npm i
       - save_cache:
