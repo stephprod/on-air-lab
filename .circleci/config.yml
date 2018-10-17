@@ -24,7 +24,7 @@ executors:
     working_directory: ~/on-air-lab
 jobs:
   build:
-    executors: my-executor-for-build-run
+    executor: my-executor-for-build-run
     steps:
       - checkout
       - setup_remote_docker 
