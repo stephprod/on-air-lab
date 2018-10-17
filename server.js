@@ -957,7 +957,6 @@ http.listen(4000, function(){
 module.exports = { httpRequest: function(path){
                             return axios.get(path)
                             .then((req, res) => res)
-                            .catch(error => throw error)
                         },
                     host: addresses 
                 }
