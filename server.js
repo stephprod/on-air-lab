@@ -958,5 +958,6 @@ module.exports = { httpRequest: function(path){
                             return axios.get(path)
                             .then((req, res) => res)
                         },
-                    host: addresses 
+                    host: addresses,
+                    server: http 
                 }

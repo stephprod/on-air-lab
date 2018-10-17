@@ -1,5 +1,5 @@
 var assert = require('assert');
-//var server = require('../server').server;
+var server = require('../server').server;
 var addresses = require('../server').host;
 //var app = require('../server').application;
 const expect = require('chai').expect;
@@ -33,10 +33,10 @@ describe('List of simple mocha tests', function() {
 		describe('HTTP REQUEST', function() {
 			beforeEach(() =>{
 		    	// runs before each test in this block
-		    	nock('http://'+addresses[0]+':4000');
+		    	//nock('http://'+addresses[0]+':4000');
 			});
 			it('should return 200', () => {
-				return testSearchHttpRequest('/search').then(response =>{
+				return testSearchHttpRequest('http://'+addresses[0]+':4000/search').then(response =>{
 					expect(response.status).to.equals(200);
 				}).catch(error => {
 					console.log(error);
