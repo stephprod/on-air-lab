@@ -55,7 +55,9 @@ jobs:
             fi
       - run:
           name: "Creating Database !"
-          command: sudo mysql -h ${MYSQL_HOST} -u ${MYSQL_USER} -e "create database ${MYSQL_DB};use ${MYSQL_DB};source ${MYSQL_DB_FILE};SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
+          command: |
+            echo $MYSQL_DB
+            sudo mysql -h ${MYSQL_HOST} -u ${MYSQL_USER} -e "create database ${MYSQL_DB};use ${MYSQL_DB};source ${MYSQL_DB_FILE};SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
       #Install app testing env
       #Axios : A Promise based HTTP client for the browser and node.js
       #Mocha : A popular Node.js testing framework.
