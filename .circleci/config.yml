@@ -34,16 +34,27 @@ jobs:
       - run: 
           name: "Install app"
           command: |
-            yarn install
+            npm install
             npm install --save-dev mocha
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
       # run tests!
-      - run: 
-          name: "Run simple mocha test"
-          command: npm test
+      #- run: 
+      #    name: "Run simple mocha test"
+      #    command: npm test
+      - run: mkdir ~/junit
+      - run:
+          name: "Run simple Mocha test and Store the result"
+          command: mocha test --reporter mocha-junit-reporter
+          environment:
+            MOCHA_FILE: junit/test-results.xml
+          when: always
+      - store_test_results:
+          path: ~/junit
+      - store_artifacts:
+          path: ~/junit
   #deployement
   #deploy:
   #  docker:
