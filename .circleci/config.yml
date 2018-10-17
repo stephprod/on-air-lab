@@ -80,6 +80,7 @@ jobs:
 
     working_directory: ~/on-air-lab
     steps:
+      - checkout
       - run: 
           name: "Install app"
           command: yarn install 
