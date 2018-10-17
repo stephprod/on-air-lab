@@ -99,18 +99,18 @@ workflows:
   build-run-deploy:
     jobs:
       - build:
-        filters:
-          tags: 
-            only:
-              - prod-tpm-centrale
-              - /prod-tpm-.*/
+          filters:
+            tags: 
+              only:
+                - prod-tpm-centrale
+                - /prod-tpm-.*/
       - run-test:
-        filters:
-          tags: 
-            only:
-              - prod-tpm-centrale
-              - /prod-tpm-.*/
-        requires:
+          filters:
+            tags: 
+              only:
+                - prod-tpm-centrale
+                - /prod-tpm-.*/
+          requires:
           - build
     #  - deploy:
     #      requires:
