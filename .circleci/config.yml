@@ -140,7 +140,7 @@ workflows:
             branches: 
               only:
                 - prod-tpm-centrale
-                - /prod-tpm-.*/s
+                - /.*prod-tpm-.*/s
     #  - deploy:
     #      requires:
     #        - build
