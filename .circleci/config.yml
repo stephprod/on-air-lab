@@ -60,7 +60,7 @@ jobs:
           MYSQL_ENV_FOLDER: env
           MYSQL_ENV_FILE: v1-dependencies
     steps:
-      - checkout
+      #- checkout
       #- run: 
       #    name: "Run simple mocha test"
       #    command: npm test
