@@ -47,6 +47,7 @@ jobs:
     working_directory: ~/on-air-lab
 
     steps:
+      - checkout
       # Download and cache dependencies
       - run: 
           name: "Install and run DB"
