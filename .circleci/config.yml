@@ -103,6 +103,7 @@ workflows:
   build-run-deploy:
     jobs:
       - build:
+          type: approval
           filters:
             tags: 
               only:
