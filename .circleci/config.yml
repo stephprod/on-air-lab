@@ -64,10 +64,6 @@ workflows:
               only:
                 - prod-tpm-centrale
                 - /prod-tpm-.*/
-            branch: 
-              only:
-                - prod-tpm-centrale
-                - /prod-tpm-.*/
     #  - deploy:
     #      requires:
     #        - build
