@@ -4,7 +4,7 @@ var addresses = require('../server').host;
 var app = require('../server').application;
 var http = require('http');
 describe('List of simple mocha tests', function() {
-	this.timeout(1500);
+	this.timeout(15000);
 	before("Require all dependencies", function() {
 		// runs before all tests in this block
 		server.close();
@@ -22,9 +22,8 @@ describe('List of simple mocha tests', function() {
 	});
 	describe('#test connection to the app on search page', function() {
 		it('should return 200', function(done) {
-			this.timeout(500);
 			http.get('http://'+addresses[0]+':8080/search', function (res) {
-		      assert.equal(200, res.statusCode);
+		      	assert.equal(200, res.statusCode);
     			setTimeout(done, 500);
 		    });
 		});
