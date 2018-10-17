@@ -88,8 +88,6 @@ workflows:
             tags: 
               only:
                 - /pt-*-branch/
-          requires:
-            - build
     #  - deploy:
     #      requires:
     #        - build
