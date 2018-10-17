@@ -34,12 +34,12 @@ jobs:
             sudo apt-get update && sudo apt-get install -y mysql-server
             dockerize -wait tcp://${MYSQL_HOST}:3306 -timeout 1m
             sudo mysql -h ${MYSQL_HOST} -u ${MYSQL_USER} -e "create database ${MYSQL_DB};use ${MYSQL_DB};source ${MYSQL_DB_FILE};SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
-     - run:
-         name: "Do the docker build"
-         command: |
-           sudo docker build .
-           mkdir -p ${MYSQL_ENV_FOLDER}
-           sudo docker save -o ${MYSQL_ENV_FOLDER}/built-image.tar
+      - run:
+        name: "Do the docker build"
+        command: |
+          sudo docker build .
+          mkdir -p ${MYSQL_ENV_FOLDER}
+          sudo docker save -o ${MYSQL_ENV_FOLDER}/built-image.tar
       - store_artifacts:
           path: ${MYSQL_ENV_FOLDER}
       - save_cache:
