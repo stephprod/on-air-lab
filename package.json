@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "nodemon server.js localhost 8080",
+    "test": "mocha",
     "start": "nodemon server.js",
     "scss": "node-sass -w public/scss -o public/css",
     "stop": "kill %1"

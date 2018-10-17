@@ -33,23 +33,17 @@ jobs:
             sudo mysql -h ${MYSQL_HOST} -u ${MYSQL_USER} -e "create database ${MYSQL_DB};use ${MYSQL_DB};source ${MYSQL_DB_FILE};SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
       - run: 
           name: "Install app"
-          command: yarn install
+          command: |
+            yarn install
+            npm install --save-dev mocha
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
       # run tests!
       - run: 
-          name: "Run test"
+          name: "Run simple test"
           command: npm test
-      - run: 
-          name: "Show result"
-          command: echo $(curl localhost:4000/search)
-      - run: 
-          name: "Stop server"
-          command: |
-            cd ~/on-air-lab
-            npm stop
   #deployement
   #deploy:
   #  docker:
