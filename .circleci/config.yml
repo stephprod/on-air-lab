@@ -49,7 +49,7 @@ jobs:
       - run:
           name: "Do the docker build"
           command: |
-            sudo docker build -f Dockerfile.static .
+            sudo docker build .
             mkdir -p ${MYSQL_ENV_FOLDER}
             sudo docker save -o ${MYSQL_ENV_FOLDER}/built-image.tar
       - save_cache:
