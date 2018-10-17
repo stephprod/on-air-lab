@@ -948,7 +948,10 @@ for (var k in interfaces) {
         }
     }
 }
-console.log(addresses);
+//console.log(addresses);
 http.listen(4000, function(){
   console.log('listening on :4000 jai secure en http')
 })
+// FOR APP TESTING
+module.exports = { server: http,
+                    host: addresses }
