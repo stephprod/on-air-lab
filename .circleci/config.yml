@@ -2,11 +2,10 @@
 #
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
-version: 1.0
-jobs:
-  build:
+version: 2.1
+executors:
+  my-executor-for-run:
     docker:
-      # specify the version you desire here
       - image: circleci/node:7.10-browsers
         environment:
           MYSQL_HOST: 127.0.0.1
@@ -15,11 +14,17 @@ jobs:
           MYSQL_ALLOW_EMPTY_PASSWORD: true
           MYSQL_PASSWORD:
           MYSQL_DB_FILE: starlife.sql
+  my-executor-for-build:
+    docker:
       - image : circleci/mysql:5
         environment:
           command: mysqld --sql-mode=IGNORE_SPACE,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION,NO_AUTO_VALUE_ON_ZERO
           MYSQL_USER: root
           MYSQL_ALLOW_EMPTY_PASSWORD: true
+jobs:
+  build:
+    executor: my-executor-for-build
+   
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
@@ -41,6 +46,17 @@ jobs:
           - v1-dependencies-{{ checksum "package.json" }}
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
+  #run test
+  run-test: 
+    executor: my-executor-for-build
+   
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # - image: circleci/mongo:3.4.4
+
+    working_directory: ~/on-air-lab
+    steps:
       - run: 
           name: "Install app"
           command: yarn install 
@@ -65,15 +81,23 @@ jobs:
   #        command: |
   #          ssh $SSH_USER@$SSH_HOST "<remote deploy command>"
 workflows:
-  version: 1.0
-  build-deploy:
+  version: 2.1 
+  build-run-deploy:
     jobs:
       - build:
-          filters:
-            tags: 
-              only:
-                - prod-tpm-centrale
-                - /prod-tpm-.*/
+        filters:
+          tags: 
+            only:
+              - prod-tpm-centrale
+              - /prod-tpm-.*/
+      - run-test:
+        filters:
+          tags: 
+            only:
+              - prod-tpm-centrale
+              - /prod-tpm-.*/
+        requires:
+          - build
     #  - deploy:
     #      requires:
     #        - build
