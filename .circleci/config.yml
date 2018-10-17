@@ -49,7 +49,7 @@ jobs:
       # run tests!
   run-test:
     machine:
-      enabled: true
+      image: circleci/classic:201808-01
     steps:
       - checkout
       #- run: 
