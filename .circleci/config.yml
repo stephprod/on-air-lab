@@ -21,6 +21,12 @@ my-executor-for-prod: &my-executor-for-prod
         MYSQL_USER: root
         MYSQL_ALLOW_EMPTY_PASSWORD: true
   working_directory: ~/on-air-lab
+  branches:
+    only:
+      - /^(pt|prod).*$/s
+  tags:
+    only:
+      - /.*/s
 my-executor-for-dev: &my-executor-for-dev
   docker:
     - image: circleci/node:7.10-browsers
@@ -39,6 +45,12 @@ my-executor-for-dev: &my-executor-for-dev
         MYSQL_USER: root
         MYSQL_ALLOW_EMPTY_PASSWORD: true
   working_directory: ~/on-air-lab
+  branches:
+    only:
+      - /^.*branch$/s
+  tags:
+    only:
+      - /.*/s
 jobs:
   # run tests!
   build-run-prod:
@@ -148,22 +160,8 @@ workflows:
   version: 2
   build-run-deploy:
     jobs:
-      - build-run-prod:
-          filters:
-            branches:
-              only:
-                - /^(pt|prod).*$/s
-            tags:
-              only:
-                - /.*/s
-      - build-run-dev:
-          filters:
-            branches:
-              only:
-                - /^.*branch$/s
-            tags:
-              only:
-                - /.*/s
+      - build-run-prod
+      - build-run-dev
 #     - deploy:
 #          tags:
 #              only:
