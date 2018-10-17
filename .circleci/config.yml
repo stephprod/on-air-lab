@@ -41,9 +41,14 @@ jobs:
       # run tests!
       - run: 
           name: "Run test"
+          command: npm test
+      - run: 
+          name: "Show result"
+          command: echo $(curl localhost:4000/search)
+      - run: 
+          name: "Stop server"
           command: |
-            npm test
-            echo $(curl localhost:4000/search)
+            cd ~/on-air-lab
             npm stop
   #deployement
   #deploy:
