@@ -46,12 +46,12 @@ jobs:
             sudo npm i --global mocha
             sudo npm i --global chai nock
             sudo npm i
-      - run:
-          name: "Do the docker build"
-          command: |
-            sudo docker build .
-            mkdir -p ${MYSQL_ENV_FOLDER}
-            sudo docker save -o ${MYSQL_ENV_FOLDER}/built-image.tar
+   #   - run:
+   #       name: "Do the docker build"
+   #       command: |
+   #         sudo docker build .
+   #         mkdir -p ${MYSQL_ENV_FOLDER}
+   #         sudo docker save -o ${MYSQL_ENV_FOLDER}/built-image.tar
       - save_cache:
           paths:
             - ${MYSQL_ENV_FOLDER}
