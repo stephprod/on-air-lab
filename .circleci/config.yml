@@ -2,8 +2,8 @@
 #
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
-version: 2.1
-my-executor-for-build-run: &my-executor-for-build-run
+version: 2
+my-executor: &my-executor
   docker:
     - image: circleci/node:7.10-browsers
       environment:
@@ -22,9 +22,8 @@ my-executor-for-build-run: &my-executor-for-build-run
         MYSQL_ALLOW_EMPTY_PASSWORD: true
   working_directory: ~/on-air-lab
 jobs:
-  # run tests!
   build-run:
-    <<: *my-executor-for-build-run
+    <<: *my-executor
     steps:
       - checkout
       #- run: 
@@ -45,8 +44,17 @@ jobs:
           command: |
             sudo apt-get update && sudo apt-get install -y mysql-server
       - run:
-          name: "Creating Database !"
-          command: sudo mysql -h ${MYSQL_HOST} -u ${MYSQL_USER} -e "create database ${MYSQL_DB};use ${MYSQL_DB};source ${MYSQL_DB_FILE};SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
+          name: "Variable Environnements update/Creating Database !"
+          command: |
+            echo $CIRCLE_BRANCH
+            if [[ "$CIRCLE_BRANCH" == *"pt"* || "$CIRCLE_BRANCH" == *"prod"* ]]
+            then
+              export MYSQL_DB=circleci
+            else
+              export MYSQL_DB=starlife
+            fi
+            echo $MYSQL_DB
+            sudo mysql -h ${MYSQL_HOST} -u ${MYSQL_USER} -e "create database $MYSQL_DB;use $MYSQL_DB;source ${MYSQL_DB_FILE};SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
       #Install app testing env
       #Axios : A Promise based HTTP client for the browser and node.js
       #Mocha : A popular Node.js testing framework.
@@ -83,11 +91,7 @@ workflows:
   version: 2
   build-run-deploy:
     jobs:
-      - build-run:
-          filters:
-            tags:
-              only:
-                - /.*/s
+      - build-run
 #     - deploy:
 #          tags:
 #              only:
