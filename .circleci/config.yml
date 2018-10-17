@@ -22,44 +22,11 @@ my-executor-for-build-run: &my-executor-for-build-run
         MYSQL_ALLOW_EMPTY_PASSWORD: true
   working_directory: ~/on-air-lab
 jobs:
-  build:
-    <<: *my-executor-for-build-run
-    steps:
-      - checkout
-      - setup_remote_docker 
-      - run:
-          name: "Install/Run MysqlDB"
-          command: |
-            sudo apt-get update && sudo apt-get install -y mysql-server
-            dockerize -wait tcp://${MYSQL_HOST}:3306 -timeout 1m
-      - run:
-          name: "Do the docker build"
-          command: |
-            sudo docker build .
-            mkdir -p ${MYSQL_ENV_FOLDER}
-            sudo docker save -o ${MYSQL_ENV_FOLDER}/built-image.tar
-      - store_artifacts:
-          path: ${MYSQL_ENV_FOLDER}
-      - save_cache:
-          paths:
-            - ${MYSQL_ENV_FOLDER}
-          key: ${MYSQL_ENV_FILE}-{{ checksum "package.json" }}
-      # Persist the specified paths (workspace/echo-output) into the workspace for use in downstream job. 
-      - persist_to_workspace:
-        # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is 
-        # taken to be the root directory of the workspace.
-          root: /
-          # Must be relative path from root
-          paths:
-            - env/${MYSQL_ENV_FILE}-{{ checksum "package.json" }}
   # run tests!
   run-test:
     <<: *my-executor-for-build-run
     steps:
       - checkout
-      - attach_workspace:
-          # Must be absolute path or relative path from working_directory
-          at: ${MYSQL_ENV_FOLDER}
       #- run: 
       #    name: "Run simple mocha test"
       #    command: npm test
@@ -74,11 +41,12 @@ jobs:
             # Find the most recently generated cache used from any branch
             - ${MYSQL_ENV_FILE}
       - run:
+          name: "Install/Run Mysql Server"
+          command: |
+            sudo apt-get update && sudo apt-get install -y mysql-server
+      - run:
           name: "Creating Database !"
           command: sudo mysql -h ${MYSQL_HOST} -u ${MYSQL_USER} -e "create database ${MYSQL_DB};use ${MYSQL_DB};source ${MYSQL_DB_FILE};SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
-#      - run:
-#          name: Load Docker from cache
-#          command: docker load < ${MYSQL_ENV_FOLDER}/built-image.tar
       #Install app testing env
       #Axios : A Promise based HTTP client for the browser and node.js
       #Mocha : A popular Node.js testing framework.
@@ -115,12 +83,6 @@ workflows:
   version: 2
   build-run-deploy:
     jobs:
-      - build:
-          type: approval
-          filters:
-            tags: 
-              only:
-                - /pt-*-branch/
       - run-test:
           filters:
             tags: 
