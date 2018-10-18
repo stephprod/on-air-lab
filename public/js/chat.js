@@ -92,7 +92,7 @@
 			$('#devis-modal').find("a#devis-send span").empty();
 			$('#devis-modal').find("a#devis-send span").append("Envoyer la demande");
 		}
-		switchRoom($(this).data("room"), $(this).data("coresp"), name.split(" ")[0], name.split(" ")[1], $(this).data('coresp-type'), user);
+		switchRoom($(this).data("room"), $(this).data("coresp"), name.split(" ")[0], name.split(" ")[1], $(this).data('coresp-type'), $(this).data('coresp-payment'), user);
 	});
 	function on_socket_update_rooms(rooms, current_room, coresp){
 		//console.log("updateroom");
@@ -100,7 +100,7 @@
 		//console.log(rooms);
 		$("div#friends").empty();
 		for (var i = 0; i < rooms.length; i++){
-			$("div#friends").append('<div class="friend" data-coresp="'+rooms[i][0]+'" data-coresp-type="'+rooms[i][4]+'" data-room="'+rooms[i][1]+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><p><strong>'+rooms[i][2]+' '+rooms[i][3]+'</strong><span>'+rooms[i][5]+'</span><p class="preview">'+rooms[i][7]+'</p></p><div class="status available"></div></div>');
+			$("div#friends").append('<div class="friend" data-coresp="'+rooms[i][0]+'" data-coresp-type="'+rooms[i][4]+'" data-room="'+rooms[i][1]+'" data-coresp-payment="'+rooms[i][6]+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><p><strong>'+rooms[i][2]+' '+rooms[i][3]+'</strong><span>'+rooms[i][5]+'</span><p class="preview">'+rooms[i][8]+'</p></p><div class="status available"></div></div>');
 		}
 	}
 	function on_socket_connect(id){
@@ -488,18 +488,39 @@
     	datas.action = "accept";
     	//console.log(div);
     	//console.log(datas);
-    	$.ajax({
-    		type: "POST",
-    		url: "/action-in-module",
-    		data: datas,
-    		success: function (data){
-    			if (data.success[0]){
-					const content = 'demande acceptée !';
-					div.find("div.card-chat div.div-submi").empty();
-					div.find("div.card-chat div.div-submi").append(content);
-    			}
-    		}
-    	});
+    	if (user_receiv.payment_module == 0 && user.type == 4){
+    		//Demande de confirmation du choix de validation/Récapitulatif
+	    	/*$.ajax({
+	    		type: "POST",
+	    		url: "/action-in-module",
+	    		data: datas,
+	    		success: function (data){
+	    			if (data.success[0]){
+						const content = 'demande acceptée !';
+						div.find("div.card-chat div.div-submi").empty();
+						div.find("div.card-chat div.div-submi").append(content);
+	    			}
+	    			// Envoi de mail contenant le lien d'acccepation d'une demande
+	    		}
+	    	});*/
+	    	//Securisation du lien vers la page
+	       $.ajax({
+	            type : "POST",
+	            url : "/secure_profile",
+	            data: {"temp": user_receiv.id_coresp},
+	            success: function(data) {
+	                //AFFICHER LES SERVICES ISSUS DE LA BASE DE DONNEES
+	                //console.log(data)
+	                window.document.location.href = '/payment-recap/'+user_receiv.id_coresp;
+	            }   
+	        });
+	    }else if (user_receiv.payment_module == 1 && user.type == 4){
+	    	//Récapitulatif - Redirection vers module de paiement
+	    	window.document.location.href = "/module-payment-recap/"+user_receiv.id_coresp
+	    }else{
+	    	//Envoi de mail à l'artiste indiquant une demande acceptée
+
+	    }
     }
     function on_module_deny_typeMessage_link_click(e){
     	e.preventDefault();
@@ -521,6 +542,7 @@
     			}
     		}
     	});
+    	// Envoi de mail contenant le lien de refus d'une demande
     }
     var song_module_send_link = $("#song_up");
     var video_module_send_link = $("#video_up");
@@ -852,7 +874,7 @@ function put_in_n_digits_minutes(ref, n){
 function updateUserReceived(data){
     user_receiv = data;
 }
-function switchRoom(room, id_coresp, nom, prenom, type, usr){
+function switchRoom(room, id_coresp, nom, prenom, type, paymentModule, usr){
 	//console.log("switch room");
 	//console.log(usr);
 	var coresp= {};
@@ -860,6 +882,9 @@ function switchRoom(room, id_coresp, nom, prenom, type, usr){
     coresp.prenom = prenom;
     coresp.id_coresp = id_coresp;
     coresp.type = type;
+    if (type != 4 && type != 1){
+    	coresp.payment_module = paymentModule;
+    }
     //console.log(coresp);
     updateUserReceived(coresp);
     roomDisplay = room;

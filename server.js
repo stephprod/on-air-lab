@@ -42,6 +42,7 @@ let devis_request = require('./route/devis_request')
 let logout = require('./route/logout')
 let delete_account = require('./route/delete_account')
 let module_actions = require('./route/action_in_module')
+let payment_recap = require('./route/payment_recap')
 /*Modeles*/
 let User = require('./models/req_user')
 // SECURE HTTP POUR SOCKET IO
@@ -108,6 +109,7 @@ app.use('/', devis_request)
 app.use('/', logout)
 app.use('/', delete_account)
 app.use('/', module_actions)
+app.use('/', payment_recap)
 app.get('/', (request, response) => {
 	//console.log(request.session)
 	response.render('pages/index')
@@ -193,6 +195,7 @@ io.sockets.on('connection', function (socket) {
                             room.push(result[k].prenom)
                             room.push(result[k].id_user_type)
                             room.push(result[k].libelle)
+                            room.push(result[k].payment_module)
                             //FONCTION DE CLOSURE POUR PERMETTRE LA RECUPERATION DES RSLT AVANT ITERATION DE LA BOUCLE
                             setTimeout((function(k, room){
                                 return function(){
@@ -284,6 +287,7 @@ io.sockets.on('connection', function (socket) {
                             room.push(result[k].prenom)
                             room.push(result[k].id_user_type)
                             room.push(result[k].libelle)
+                            room.push(result[k].payment_module)
                             //FONCTION DE CLOSURE POUR PERMETTRE LA RECUPERATION DES RSLT AVANT ITERATION DE LA BOUCLE
                             setTimeout((function(k, room){
                                 return function(){
