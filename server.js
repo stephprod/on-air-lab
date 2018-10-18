@@ -962,6 +962,10 @@ module.exports = { httpRequest: function(path){
                             return axios.get(path)
                             .then((res) => res)
                         },
+                    httpPostRequest: function(path, params){
+                            return axios.post(path, params)
+                            .then((res) => res)
+                        },
                     host: addresses,
                     server: http 
                 }

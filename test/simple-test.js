@@ -4,14 +4,10 @@ var addresses = require('../server').host;
 //var app = require('../server').application;
 const expect = require('chai').expect;
 const nock = require('nock');
-const testHttpRequest = require('../server').httpRequest;
+const testHttpRequest = require('../server').httpRequest
 const User = require('../models/req_user')
-//var http = require('http');
-//var chai = require('chai');
-//var chaiHttp = require('chai-http');
-//var should = chai.should();
-
-//chai.use(chaiHttp);
+//const axios = require('axios')
+const testHttpRequestInPost = require('../server').httpPostRequest
 
 describe('List of simple mocha tests', function() {
 	this.timeout(15000);
@@ -40,14 +36,28 @@ describe('List of simple mocha tests', function() {
 			return testHttpRequest('http://'+addresses[0]+':4000/search').then(response =>{
 				expect(response.status).to.equals(200);
 			}).catch(error => {
-				console.log(error);
+				//console.log(error);
 			});
 		});
 		it('expecting 404 - non secure payment-recap request', () => {
 			return testHttpRequest('http://'+addresses[0]+':4000/payment-recap/18').then(response =>{
 				expect(response.status).to.equals(404);
 			}).catch(error => {
-				console.log(error.data);
+				//console.log(error);
+			});
+		});
+		it('expecting true - call secure profile post request', () => {
+			return testHttpRequestInPost('http://'+addresses[0]+':4000/secure_profile', {id_u: 18}).then(response =>{
+				expect(response.data.success).to.equals(true);
+			}).catch(error => {
+				//console.log(error);
+			});
+		});
+		it('expecting 200 - secure payment-recap request', () => {
+			return testHttpRequest('http://'+addresses[0]+':4000/payment-recap/18').then(response =>{
+				expect(response.status).to.equals(200);
+			}).catch(error => {
+				//console.log(error);
 			});
 		});
 	});
@@ -57,14 +67,14 @@ describe('List of simple mocha tests', function() {
 	    	// runs before each test in this block
 	    	//nock('http://'+addresses[0]+':4000');
 		});
-		it('expecting at list one row', (done) => {
+		it('expecting at list one row - getRoomForArt whith id 21', (done) => {
 			return User.getRoomForArt('`rooms`.`userid`=21 GROUP BY `rooms`.`id_room`', (result) =>{
 				expect(result.length).to.be.at.least(1);
 				expect(result).to.be.an.instanceof(Array);
 				done();
 			});
 		});
-		it('expecting at list one row', (done) => {
+		it('expecting at list one row - getRoomForPro whith id 1', (done) => {
 			return User.getRoomForPro('`rooms`.`userid`=1 GROUP BY `rooms`.`id_room`', (result) =>{
 				expect(result.length).to.be.at.least(1);
 				expect(result).to.be.an.instanceof(Array);
