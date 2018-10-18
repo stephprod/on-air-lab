@@ -8,4 +8,4 @@ let connection = mysql.createConnection({
 	database : 'starlife'
 })
 
-module.exports = connection
+module.exports = connection 
