@@ -508,7 +508,19 @@
 		    	window.document.location.href = "/module-payment-recap/"+user_receiv.id_coresp
 		    }else{
 		    	//Envoi de mail à l'artiste indiquant une demande acceptée
-
+		    	$.ajax({
+		            type : "POST",
+		            url : "/mail",
+		            data: {"receiver": user_receiv.id_coresp},
+		            success: function(data) {
+		                if (data.success[0]){
+							const content = 'demande acceptée !';
+							div.find("div.card-chat div.div-submi").empty();
+							div.find("div.card-chat div.div-submi").append(content);
+		    			}
+		                console.log(data)
+		            }   
+		        });
 		    }
 		}else{
 			$.ajax({
@@ -516,12 +528,20 @@
 	    		url: "/action-in-module",
 	    		data: datas,
 	    		success: function (data){
-	    			if (data.success[0]){
-						const content = 'demande acceptée !';
-						div.find("div.card-chat div.div-submi").empty();
-						div.find("div.card-chat div.div-submi").append(content);
-	    			}
 	    			// Envoi de mail contenant le lien d'acccepation d'une demande
+	    			$.ajax({
+			            type : "POST",
+			            url : "/mail",
+			            data: {"receiver": user_receiv.id_coresp},
+			            success: function(data) {
+			            	if (data.success[0]){
+								const content = 'demande acceptée !';
+								div.find("div.card-chat div.div-submi").empty();
+								div.find("div.card-chat div.div-submi").append(content);
+			    			}
+					        console.log(data)
+			            }   
+			        });
 	    		}
 	    	});
 		}

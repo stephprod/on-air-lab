@@ -5,7 +5,7 @@ let session = require('express-session')
 let db = require('./db_start_engine')
 let sass = require('node-sass')
 var os = require('os');
-var interfaces = os.networkInterfaces();
+var interfaces = os.networkInterfaces()
 /*Variables routes*/
 let register = require('./route/register')
 let login = require('./route/login')
@@ -43,6 +43,7 @@ let logout = require('./route/logout')
 let delete_account = require('./route/delete_account')
 let module_actions = require('./route/action_in_module')
 let payment_recap = require('./route/payment_recap')
+const mailer = require('./route/send_mail')
 /*Modeles*/
 let User = require('./models/req_user')
 // SECURE HTTP POUR SOCKET IO
@@ -110,6 +111,8 @@ app.use('/', logout)
 app.use('/', delete_account)
 app.use('/', module_actions)
 app.use('/', payment_recap)
+app.use('/', mailer)
+
 app.get('/', (request, response) => {
 	//console.log(request.session)
 	response.render('pages/index')

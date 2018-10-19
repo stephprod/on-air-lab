@@ -82,6 +82,31 @@ describe('List of simple mocha tests', function() {
 			});
 		});
 	});
+	describe('#MAILS SEND', function() {
+		beforeEach(() =>{
+	    	// runs before each test in this block
+	    	//nock('http://'+addresses[0]+':4000');
+		});
+		it('expecting false - call send mail request to unknown user', () => {
+			return testHttpRequestInPost('http://'+addresses[0]+':4000/mail', {receiver: 69}).then(response =>{
+				//console.log(response.data);
+				expect(response.data.success).to.be.an.instanceof(Array);
+				expect(response.data.success[0]).to.be.false;
+			}).catch(error => {
+				//console.log(error);
+			});
+		});
+		it('expecting true - call send mail resuest to known user', () => {
+			return testHttpRequestInPost('http://'+addresses[0]+':4000/mail', {receiver: 19}).then(response =>{
+				//console.log(response.data);
+				expect(response.data.success).to.be.an.instanceof(Array);
+				expect(response.data.success[0]).to.be.true;
+			}).catch(error => {
+				//console.log(error);
+			});
+		});
+	});
+
 	after(function() {
 	    // runs after all tests in this block
 	    console.log("Sopping the server hanging !");
