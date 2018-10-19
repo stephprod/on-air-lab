@@ -51,7 +51,7 @@ class User{
 	}
 	static getRoomForArt(clause, cb){
 		let q = db.query('SELECT `rooms`.`id_room`, `rooms`.`userid`, `rooms`.`with_userid`, `user`.`id` '+
-			', `user`.`nom`, `user`.`prenom`, '+
+			', `user`.`nom`, `user`.`prenom`, `user`.`payment_module`, '+
             '`user_type`.`id_user_type`, `user_type`.`libelle` '+
             'FROM `rooms` '+
             'INNER JOIN `user` ON `user` .`id`=`rooms`.`with_userid` '+
@@ -66,7 +66,7 @@ class User{
 	}
 	static getRoomForPro(clause, cb){
 		let q=db.query('SELECT `rooms`.`id_room`, `rooms`.`userid`, `rooms`.`with_userid`, `user`.`id`, '+
-			'`user`.`nom`, `user`.`prenom`, '+
+			'`user`.`nom`, `user`.`prenom`, `user`.`payment_module`, '+
             '`user_type`.`id_user_type`, `user_type`.`libelle` '+
             ' FROM `rooms` '+
             'INNER JOIN `user` ON `user` .`id`=`rooms`.`userid` '+
