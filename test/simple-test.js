@@ -4,7 +4,7 @@ var addresses = require('../server').host;
 //var app = require('../server').application;
 const expect = require('chai').expect;
 const nock = require('nock');
-const testHttpRequest = require('../server').httpRequest
+const testHttpRequestInGet = require('../server').httpGetRequest
 const User = require('../models/req_user')
 //const axios = require('axios')
 const testHttpRequestInPost = require('../server').httpPostRequest
@@ -33,14 +33,14 @@ describe('List of simple mocha tests', function() {
 	    	//nock('http://'+addresses[0]+':4000');
 		});
 		it('expecting 200 - search request', () => {
-			return testHttpRequest('http://'+addresses[0]+':4000/search').then(response =>{
+			return testHttpRequestInGet('http://'+addresses[0]+':4000/search').then(response =>{
 				expect(response.status).to.equals(200);
 			}).catch(error => {
 				//console.log(error);
 			});
 		});
 		it('expecting 404 - non secure payment-recap request', () => {
-			return testHttpRequest('http://'+addresses[0]+':4000/payment-recap/18').then(response =>{
+			return testHttpRequestInGet('http://'+addresses[0]+':4000/payment-recap/18').then(response =>{
 				expect(response.status).to.equals(404);
 			}).catch(error => {
 				//console.log(error);
@@ -54,7 +54,7 @@ describe('List of simple mocha tests', function() {
 			});
 		});
 		it('expecting 200 - secure payment-recap request', () => {
-			return testHttpRequest('http://'+addresses[0]+':4000/payment-recap/18').then(response =>{
+			return testHttpRequestInGet('http://'+addresses[0]+':4000/payment-recap/18').then(response =>{
 				expect(response.status).to.equals(200);
 			}).catch(error => {
 				//console.log(error);
