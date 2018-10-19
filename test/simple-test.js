@@ -97,7 +97,7 @@ describe('List of simple mocha tests', function() {
 			});
 		});
 		it('expecting true - call send mail resuest to known user', () => {
-			return testHttpRequestInPost('http://'+addresses[0]+':4000/mail', {receiver: 19}).then(response =>{
+			return testHttpRequestInPost('http://'+addresses[0]+':4000/mail', {receiver: 21}).then(response =>{
 				//console.log(response.data);
 				expect(response.data.success).to.be.an.instanceof(Array);
 				expect(response.data.success[0]).to.be.true;
