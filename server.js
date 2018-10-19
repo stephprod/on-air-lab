@@ -958,7 +958,7 @@ http.listen(4000, function(){
   console.log('listening on :4000 jai secure en http')
 })
 //EXPORT FOR APP TESTING
-module.exports = { httpRequest: function(path){
+module.exports = { httpGetRequest: function(path){
                             return axios.get(path)
                             .then((res) => res)
                         },

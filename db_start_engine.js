@@ -1,5 +1,5 @@
 let mysql = require('mysql')
-//database link to the CI (integration continue)
+//database link to the CI (intégration continue)
 let connection = mysql.createConnection({
 	host	 : '127.0.0.1',
 	port	 : '3306',
@@ -8,4 +8,4 @@ let connection = mysql.createConnection({
 	database : 'circleci'
 })
 
-module.exports = connection 
+module.exports = connection   
