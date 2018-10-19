@@ -29,15 +29,31 @@ router.route('/mail')
 		}
 		//console.log(table)
 		if (table.length > 0){
+			let subject = '', text = '', html = ''
 			User.getUser("id="+table[0], (result) => {
 				if (result !== undefined){
+					switch(table[1]){
+						case "booking":
+							subject = "Demande de booking !"
+							break;
+						case "rdv":
+							subject = "Demande de rendez-vous !"
+							break;
+					}
+					if (table[3] == "accept"){
+						subject += ' ✔';
+					}else{
+						subject += ' X'
+					}
+					text = createMessagePlainText(table[2], result, table[3], table[1])
+					html = createMessageHtmlText(table[2], result, table[3], table[1])
 					// setup email data with unicode symbols
 					let mailOptions = {
 					    from: '"Automate 👻" <nepasrepondre@label-onair.com>', // sender address
 					    to: '"'+result.nom+' '+result.prenom+'" <'+result.email+'>, <ijv6lvrhtrfvwaqq@ethereal.email>', // list of receivers
-					    subject: 'Hello ✔', // Subject line
-					    text: 'Hello world?', // plain text body
-					    html: '<b>Hello world?</b>' // html body
+					    subject: subject, // Subject line
+					    text: text, // plain text body
+					    html: html // html body
 					};
 					//console.log(result[0].email);
 					ret.res = result.email
@@ -70,4 +86,50 @@ router.route('/mail')
 			res.send(ret)
 		}
 })
+function createMessagePlainText(events, userInfo, action, typeMessage){
+	let ret = 'Salut '+userInfo.prenom+' '+userInfo.nom+', \n'
+	if (typeMessage == "rdv"){
+		if (action == "accept")
+			ret += 'Ta demande de rendez-vous a été acceptée !' + '\n'
+		else
+			ret += 'Ta demande de rendez-vous a été refusée !' + '\n'
+	}else{
+		if (action == "accept")
+			ret += 'Ta demande de booking a été acceptée !' + '\n'
+		else
+			ret += 'Ta demande de booking a été refusée !' + '\n'
+	}
+	if (action == "accept"){
+		ret += 'Dates : \n'
+		for (var k in events){
+			ret += 'Début : '+events[k].start+ ' Fin : '+events[k].end+'\n'
+		}
+	}
+	ret += 'Bien cordialement, \n'
+	ret += "LabelOnAir"
+	return ret;
+}
+function createMessageHtmlText(events, userInfo, action, typeMessage){
+	let ret = '<p>Salut <b>'+userInfo.prenom+' '+userInfo.nom+', </b></p>'
+	if (typeMessage == "rdv"){
+		if (action == "accept")
+			ret += '<p>Ta demande de rendez-vous a été acceptée !</p>'
+		else
+			ret += '<p>Ta demande de rendez-vous a été refusée !</p>'
+	}else{
+		if (action == "accept")
+			ret += '<p>Ta demande de booking a été acceptée !</p>'
+		else
+			ret += '<p>Ta demande de booking a été refusée !</p>'
+	}
+	if (action == "accept"){
+		ret += '<p>Dates : </p>'
+		for (k in events){
+			ret += '<p>Début : '+events[k].start+ ' Fin : '+events[k].end+'</p>'
+		}
+	}
+	ret += '<p>Bien cordialement, </p>'
+	ret += "<p>LabelOnAir</p>"
+	return ret;	
+}
 module.exports = router;

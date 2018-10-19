@@ -88,7 +88,11 @@ describe('List of simple mocha tests', function() {
 	    	//nock('http://'+addresses[0]+':4000');
 		});
 		it('expecting false - call send mail request to unknown user', () => {
-			return testHttpRequestInPost('http://'+addresses[0]+':4000/mail', {receiver: 69}).then(response =>{
+			var events = []
+			events.push({id_event: 1, id_pro: 18, id_artist: 21, start:"2018-05-14T08:30:00", end: "2018-05-14T09:30:00", title: 'event-work'})
+			events.push({id_event: 1, id_pro: 18, id_artist: 21, start:"2018-05-14T11:30:00", end: "2018-05-14T12:30:00", title: 'event-work'})
+			events.push({id_event: 1, id_pro: 18, id_artist: 21, start:"2018-05-14T15:30:00", end: "2018-05-14T17:30:00", title: 'event-work'})
+			return testHttpRequestInPost('http://'+addresses[0]+':4000/mail', {receiver: 69, typeMessage: "bookink", events: events, action: "accept"}).then(response =>{
 				//console.log(response.data);
 				expect(response.data.success).to.be.an.instanceof(Array);
 				expect(response.data.success[0]).to.be.false;
@@ -97,7 +101,11 @@ describe('List of simple mocha tests', function() {
 			});
 		});
 		it('expecting true - call send mail resuest to known user', () => {
-			return testHttpRequestInPost('http://'+addresses[0]+':4000/mail', {receiver: 21}).then(response =>{
+			var events = []
+			events.push({id_event: 1, id_pro: 18, id_artist: 21, start:"2018-05-14T08:30:00", end: "2018-05-14T09:30:00", title: 'event-meet'})
+			events.push({id_event: 1, id_pro: 18, id_artist: 21, start:"2018-05-14T11:30:00", end: "2018-05-14T12:30:00", title: 'event-meet'})
+			events.push({id_event: 1, id_pro: 18, id_artist: 21, start:"2018-05-14T15:30:00", end: "2018-05-14T17:30:00", title: 'event-meet'})
+			return testHttpRequestInPost('http://'+addresses[0]+':4000/mail', {receiver: 21, typeMessage: "rdv", events: events, action: "deny"}).then(response =>{
 				//console.log(response.data);
 				expect(response.data.success).to.be.an.instanceof(Array);
 				expect(response.data.success[0]).to.be.true;
@@ -109,7 +117,7 @@ describe('List of simple mocha tests', function() {
 
 	after(function() {
 	    // runs after all tests in this block
-	    console.log("Sopping the server hanging !");
+	    console.log("Stopping the server hanging !");
 	    server.close();
 	});
 
