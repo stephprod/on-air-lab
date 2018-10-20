@@ -21,7 +21,7 @@ router.route('/action-in-module')
 		var ret = {}
 		ret.success = []
 		ret.global_msg = []
-		ret.result = null
+		ret.result = {}
 		for (const prop in request.body){
 			table.push(request.body[prop])
 		}
@@ -48,8 +48,13 @@ router.route('/action-in-module')
 										}
 										if (k == len - 1){
 											//console.log(ret);
-											ret.result = "accept"
-											response.send(ret)
+											User.getEventsInTypeMessage(table[0], (result3)=>{
+												if (result3.length > 0){
+													ret.result.events = result3
+												}
+												ret.result.libelle = "accept"
+												response.send(ret)
+											})
 										}
 									})
 								};
@@ -82,7 +87,8 @@ router.route('/action-in-module')
 											ret.global_msg.push("erreur lors de l'action de refus !")
 										}
 										if (k == len - 1){
-											ret.result = "deny"
+											ret.result.libelle = "deny"
+											ret.result.events = []
 											response.send(ret)
 										}
 									})
