@@ -87,12 +87,12 @@ describe('List of simple mocha tests', function() {
 	    	// runs before each test in this block
 	    	//nock('http://'+addresses[0]+':4000');
 		});
-		it('expecting false - call send mail request to unknown user', () => {
+		it('expecting false - call send test mail request to unknown user https://ethereal.email/', () => {
 			var events = []
 			events.push({id_event: 1, id_pro: 18, id_artist: 21, start:"2018-05-14T08:30:00", end: "2018-05-14T09:30:00", title: 'event-work'})
 			events.push({id_event: 1, id_pro: 18, id_artist: 21, start:"2018-05-14T11:30:00", end: "2018-05-14T12:30:00", title: 'event-work'})
 			events.push({id_event: 1, id_pro: 18, id_artist: 21, start:"2018-05-14T15:30:00", end: "2018-05-14T17:30:00", title: 'event-work'})
-			return testHttpRequestInPost('http://'+addresses[0]+':4000/mail', {receiver: 69, typeMessage: "bookink", events: events, action: "accept"}).then(response =>{
+			return testHttpRequestInPost('http://'+addresses[0]+':4000/mail', {receiver: 69, typeMessage: "bookink", events: events, action: "deny"}).then(response =>{
 				//console.log(response.data);
 				expect(response.data.success).to.be.an.instanceof(Array);
 				expect(response.data.success[0]).to.be.false;
@@ -100,12 +100,12 @@ describe('List of simple mocha tests', function() {
 				//console.log(error);
 			});
 		});
-		it('expecting true - call send mail resuest to known user', () => {
+		it('expecting true - call send test mail resuest to known user https://ethereal.email/', () => {
 			var events = []
 			events.push({id_event: 1, id_pro: 18, id_artist: 21, start:"2018-05-14T08:30:00", end: "2018-05-14T09:30:00", title: 'event-meet'})
 			events.push({id_event: 1, id_pro: 18, id_artist: 21, start:"2018-05-14T11:30:00", end: "2018-05-14T12:30:00", title: 'event-meet'})
 			events.push({id_event: 1, id_pro: 18, id_artist: 21, start:"2018-05-14T15:30:00", end: "2018-05-14T17:30:00", title: 'event-meet'})
-			return testHttpRequestInPost('http://'+addresses[0]+':4000/mail', {receiver: 21, typeMessage: "rdv", events: events, action: "deny"}).then(response =>{
+			return testHttpRequestInPost('http://'+addresses[0]+':4000/mail', {receiver: 21, typeMessage: "rdv", events: events, action: "accept"}).then(response =>{
 				//console.log(response.data);
 				expect(response.data.success).to.be.an.instanceof(Array);
 				expect(response.data.success[0]).to.be.true;

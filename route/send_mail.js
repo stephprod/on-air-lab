@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer')
 const express = require('express')
 const User = require('../models/req_user')
+const Mail = require('../models/mail_generator')
 const router = express.Router()
 // create reusable transporter object using the default SMTP transport
 const transporter = nodemailer.createTransport({
@@ -27,7 +28,6 @@ router.route('/mail')
 		for (k in req.body){
 			table.push(req.body[k])
 		}
-		//console.log(table)
 		if (table.length > 0){
 			let subject = '', text = '', html = ''
 			User.getUser("id="+table[0], (result) => {
@@ -46,34 +46,37 @@ router.route('/mail')
 						subject += ' X'
 					}
 					text = createMessagePlainText(table[2], result, table[3], table[1])
-					html = createMessageHtmlText(table[2], result, table[3], table[1])
-					// setup email data with unicode symbols
-					let mailOptions = {
-					    from: '"Automate 👻" <nepasrepondre@label-onair.com>', // sender address
-					    to: '"'+result.nom+' '+result.prenom+'" <'+result.email+'>, <ijv6lvrhtrfvwaqq@ethereal.email>', // list of receivers
-					    subject: subject, // Subject line
-					    text: text, // plain text body
-					    html: html // html body
-					};
-					//console.log(result[0].email);
-					ret.res = result.email
-					// send mail with defined transport object
-					transporter.sendMail(mailOptions, (error, info) => {
-					    if (error) {
-					    	ret.success.push(false)
-					    	ret.global_msg.push("Erreur lors de l'envoi du message !")
-					       	console.log(error);
-					    }else{
-					    	ret.success.push(true)
-							ret.global_msg.push("Message sent: "+info.messageId, "Preview URL: "+nodemailer.getTestMessageUrl(info))
-					    	//console.log('Message sent: %s', info.messageId);
-						    // Preview only available when sending through an Ethereal account
-						    //console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));		    
-					    }
-					    res.send(ret)
-					    // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-					    // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+					Mail.generateClassicHtmlTemplate(table[2], result, table[3], table[1], 'http://'+req.hostname+':4000', subject)
+					.then((result2) =>{
+						//console.log(result2.data)
+						html = result2.data
+						// setup email data with unicode symbols
+						ret.res = result.email
+						let mailOptions = {
+						    from: '"Automate 👻" <nepasrepondre@label-onair.com>', // sender address
+						    to: '"'+result.nom+' '+result.prenom+'" <'+result.email+'>, <ijv6lvrhtrfvwaqq@ethereal.email>', // list of receivers
+						    subject: subject, // Subject line
+						    text: text, // plain text body
+						    html: html // html body
+						};
+						transporter.sendMail(mailOptions, (error, info) => {
+						    if (error) {
+						    	ret.success.push(false)
+						    	ret.global_msg.push("Erreur lors de l'envoi du message !")
+						       	console.log(error);
+						    }else{
+						    	ret.success.push(true)
+								ret.global_msg.push("Message sent: "+info.messageId, "Preview URL: "+nodemailer.getTestMessageUrl(info))
+						    	//console.log('Message sent: %s', info.messageId);
+							    // Preview only available when sending through an Ethereal account
+							    //console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));		    
+						    }
+						    res.send(ret)
+						    // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+						    // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+						})
 					})
+					.catch((error) => console.log(error))
 				}else{
 					ret.success.push(false)
 					ret.global_msg.push("Utilisateur introuvable !")
@@ -109,7 +112,7 @@ function createMessagePlainText(events, userInfo, action, typeMessage){
 	ret += "LabelOnAir"
 	return ret;
 }
-function createMessageHtmlText(events, userInfo, action, typeMessage){
+/*function createMessageHtmlText(events, userInfo, action, typeMessage){
 	let ret = '<p>Salut <b>'+userInfo.prenom+' '+userInfo.nom+', </b></p>'
 	if (typeMessage == "rdv"){
 		if (action == "accept")
@@ -131,5 +134,5 @@ function createMessageHtmlText(events, userInfo, action, typeMessage){
 	ret += '<p>Bien cordialement, </p>'
 	ret += "<p>LabelOnAir</p>"
 	return ret;	
-}
+}*/
 module.exports = router;

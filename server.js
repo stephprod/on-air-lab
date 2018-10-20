@@ -44,6 +44,7 @@ let delete_account = require('./route/delete_account')
 let module_actions = require('./route/action_in_module')
 let payment_recap = require('./route/payment_recap')
 const mailer = require('./route/send_mail')
+const mail_template_generator = require('./route/generate_mail')
 /*Modeles*/
 let User = require('./models/req_user')
 // SECURE HTTP POUR SOCKET IO
@@ -112,7 +113,7 @@ app.use('/', delete_account)
 app.use('/', module_actions)
 app.use('/', payment_recap)
 app.use('/', mailer)
-
+app.use('/', mail_template_generator)
 app.get('/', (request, response) => {
 	//console.log(request.session)
 	response.render('pages/index')
@@ -960,15 +961,15 @@ for (var k in interfaces) {
 http.listen(4000, function(){
   console.log('listening on :4000 jai secure en http')
 })
-//EXPORT FOR APP TESTING
+//EXPORT FOR APP TESTING AND MAILING
 module.exports = { httpGetRequest: function(path){
-                            return axios.get(path)
-                            .then((res) => res)
-                        },
-                    httpPostRequest: function(path, params){
-                            return axios.post(path, params)
-                            .then((res) => res)
-                        },
-                    host: addresses,
-                    server: http 
-                }
+            return axios.get(path)
+            .then((res) => res)
+        },
+    httpPostRequest: function(path, params){
+            return axios.post(path, params)
+            .then((res) => res)
+        },
+    host: addresses,
+    server: http 
+}
