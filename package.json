@@ -6,8 +6,7 @@
   "scripts": {
     "test": "node_modules/.bin/mocha",
     "start": "nodemon server.js",
-    "scss": "node-sass -w public/scss -o public/css",
-    "stop": "kill %1"
+    "scss": "node-sass -w public/scss -o public/css"
   },
   "author": "SBLEMAND & YELUSUE",
   "license": "ISC",
@@ -22,6 +21,7 @@
     "mysql": "^2.15.0",
     "node-sass": "^4.9.0",
     "nodemon": "^1.17.5",
+    "nodemailer": "^4.6.8",
     "rand-token": "^0.4.0",
     "shelljs": "^0.8.2",
     "socket.io": "^2.1.1"

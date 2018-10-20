@@ -9,7 +9,7 @@ let router = express.Router()
 
 router.param('id', (req, res, next, token) => {
 	req.session.id_u = token
-	console.log(req.session.id_u_temp)
+	//console.log(req.session.id_u_temp)
 	if (req.session.id_u == req.session.id_u_temp){
 		User.getUser("id='"+token+"'", (res) => {
 			if (res !== undefined && res){
@@ -42,8 +42,8 @@ router.route('/payment-recap/:id')
        // 	paymentObj = result
 			res.render('pages/payment_recap', {page: "payment-recap"})
         //})
-        console.log("ID du GARS "+req.session.userId)
-        console.log("NOM du GARS "+req.session.userName)
+        //console.log("ID du GARS "+req.session.userId)
+        //console.log("NOM du GARS "+req.session.userName)
     })
 	.post((req, res) => {
 		//console.log(req.session.id_u)
