@@ -1,64 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<!-- Mirrored from apartment-html.chart.civ.pl/my-profile.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 21 Aug 2018 17:53:41 GMT -->
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-	<title>Label - ON-AIR</title>
-	<meta name="keywords" content="studio, enregistrement, clip, video, realisateur, beatmaker" />
-	<meta name="description" content="Plateforme de services studio d'enregistrement et clip video pour les artistes" />
-	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-	<link rel="icon" href="favicon.ico" type="image/x-icon">
-
-    <!-- Bootstrap -->
-    <link rel="stylesheet" href="/asset/bootstrap/bootstrap.min.css">
-	<!-- Font awesome styles -->
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
-
-
-	<!-- Custom styles -->
-	<link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Roboto:400,400italic,300,300italic,500,500italic,700,700italic&amp;subset=latin,latin-ext'>
-	<link rel="stylesheet" type="text/css" href="/asset/css/plugins.css">
-    <link rel="stylesheet" type="text/css" href="/asset/css/apartment-layout.css">
-    <link id="skin" rel="stylesheet" type="text/css" href="/asset/css/navy.css">
-    <link rel="stylesheet" type="text/css" href="/asset/css/style.css">
-
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
-</head>
-<body>
-<div class="loader-bg"></div>
-<div id="wrapper">
-
-<!-- Page header -->
-	<header>
-		<div class="top-bar-wrapper">
-		<nav class="navbar main-menu-cont">
-			<div class="container">
-				<div class="navbar-header">
-					<a href="index-2.html" title="" class="navbar-brand">
-						<img src="/asset/images/logo-dark.png" alt="Apartment - Premium Real Estate Template" />
-					</a>
-				</div>
-				<div id="navbar" class="navbar-collapse collapse">
-					<ul class="nav navbar-nav navbar-right">
-						<li>
-							<a class="special-color" href="#login-modal" data-toggle="modal">
-								Sign in/Sing up <i class="fa fa-lock"></i>
-							</a>
-						</li>
-					</ul>
-				</div>
-			</div>
-		</nav>
-    </header>
-
+<% include header %>
 
     <section class="short-image no-padding blog-short-title">
 		<div class="container">
@@ -87,7 +27,7 @@
 								<p class="subtitle-margin">Agent</p>
 								<p class="">42 Estates</p>
 
-								<a href="#" class="logout-link margin-top-30"><i class="fas fa-lg fa-sign-out-alt"></i>Logout</a>
+								<a href="#logout-modal" data-toggle="modal" class="logout-link margin-top-30"><i class="fas fa-lg fa-sign-out-alt"></i>Logout</a>
 							</div>
 							<div class="clearfix"></div>
 						</div>
@@ -627,140 +567,8 @@
 			</div>
 		</div>
 	</section>
-	<footer class="small-cont">
-		<div class="container">
-			<div class="row">
-				<div class="col-xs-12 col-md-6 small-cont">
-					<img src="/asset/images/logo-light.png" alt="" class="img-responsive footer-logo" />
-				</div>
-				<div class="col-xs-12 col-md-6 footer-copyrights">
-					&copy; Copyright 2015 <a href="http://themeforest.net/user/johnnychaos?ref=johnnychaos" target="blank">Jan Skwara</a>. All rights reserved. Buy on <a href="http://themeforest.net/user/johnnychaos/portfolio?ref=johnnychaos" target="blank">Themeforest</a>.
-				</div>
-			</div>
-		</div>
-	</footer>
-</div>
-
-<!-- Move to top button -->
-
-<div class="move-top">
-	<div class="big-triangle-second-color"></div>
-	<div class="big-icon-second-color"><i class="jfont fa-lg">&#xe803;</i></div>
-</div>
-
-<!-- Login modal -->
-	<div class="modal fade apartment-modal" id="login-modal">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-body">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<div class="modal-title">
-						<h1>Login<span class="special-color">.</span></h1>
-						<div class="short-title-separator"></div>
-					</div>
-					<input name="login" type="email" class="input-full main-input" placeholder="Email" />
-					<input name="password" type="password" class="input-full main-input" placeholder="Your Password" />
-					<a href="my-profile.html" class="button-primary button-shadow button-full">
-						<span>Sing In</span>
-						<div class="button-triangle"></div>
-						<div class="button-triangle2"></div>
-						<div class="button-icon"><i class="fa fa-user"></i></div>
-					</a>
-					<a href="#" class="forgot-link pull-right">Forgot your password?</a>
-					<div class="clearfix"></div>
-					<p class="login-or">OR</p>
-					<a href="#" class="facebook-button">
-						<i class="fa fa-facebook"></i>
-						<span>Login with Facebook</span>
-					</a>
-					<a href="#" class="google-button margin-top-15">
-						<i class="fa fa-google-plus"></i>
-						<span>Login with Google</span>
-					</a>
-					<p class="modal-bottom">Don't have an account? <a href="#" class="register-link">REGISTER</a></p>
-				</div>
-			</div><!-- /.modal-content -->
-		</div><!-- /.modal-dialog -->
-	</div><!-- /.modal -->
-
-<!-- Register modal -->
-	<div class="modal fade apartment-modal" id="register-modal">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-body">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<div class="modal-title">
-						<h1>Register<span class="special-color">.</span></h1>
-						<div class="short-title-separator"></div>
-					</div>
-					<input name="first-name" type="text" class="input-full main-input" placeholder="Frist name" />
-					<input name="last-name" type="text" class="input-full main-input" placeholder="Last name" />
-					<input name="email" type="email" class="input-full main-input" placeholder="Email" />
-					<input name="password" type="password" class="input-full main-input" placeholder="Password" />
-					<input name="repeat-password" type="password" class="input-full main-input" placeholder="Repeat Password" />
-					<a href="my-profile.html" class="button-primary button-shadow button-full">
-						<span>Sing up</span>
-						<div class="button-triangle"></div>
-						<div class="button-triangle2"></div>
-						<div class="button-icon"><i class="fa fa-user"></i></div>
-					</a>
-					<div class="clearfix"></div>
-					<p class="login-or">OR</p>
-					<a href="#" class="facebook-button">
-						<i class="fa fa-facebook"></i>
-						<span>Sing Up with Facebook</span>
-					</a>
-					<a href="#" class="google-button margin-top-15">
-						<i class="fa fa-google-plus"></i>
-						<span>Sing Up with Google</span>
-					</a>
-					<p class="modal-bottom">Already registered? <a href="#" class="login-link">SING IN</a></p>
-				</div>
-			</div><!-- /.modal-content -->
-		</div><!-- /.modal-dialog -->
-	</div><!-- /.modal -->
-
-<!-- Forgotten password modal -->
-	<div class="modal fade apartment-modal" id="forgot-modal">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-body">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<div class="modal-title">
-						<h1>Forgot your password<span class="special-color">?</span></h1>
-						<div class="short-title-separator"></div>
-					</div>
-					<p class="negative-margin forgot-info">Instert your account email address.<br/>We will send you a link to reset your password.</p>
-					<input name="login" type="email" class="input-full main-input" placeholder="Your email" />
-					<a href="my-profile.html" class="button-primary button-shadow button-full">
-						<span>Reset password</span>
-						<div class="button-triangle"></div>
-						<div class="button-triangle2"></div>
-						<div class="button-icon"><i class="fa fa-user"></i></div>
-					</a>
-				</div>
-			</div><!-- /.modal-content -->
-		</div><!-- /.modal-dialog -->
-	</div><!-- /.modal -->
-
-<!-- jQuery  -->
-    <script type="text/javascript" src="/asset/js/jQuery/jquery.min.js"></script>
-	<script type="text/javascript" src="/asset/js/jQuery/jquery-ui.min.js"></script>
-
-<!-- Bootstrap-->
-    <script type="text/javascript" src="/asset/bootstrap/bootstrap.min.js"></script>
-
-<!-- Google Maps -->
-	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDfDCV5hXiPamCIT8_vwGXuzimLQ9MF76g&amp;sensor=false&amp;libraries=places"></script>
-
-<!-- plugins script -->
-	<script type="text/javascript" src="/asset/js/plugins.js"></script>
-							<!-- DEVIS -->
-	<script type="text/javascript" src="/asset/js/devis.js"></script>
-
-<!-- template scripts -->
-	<script type="text/javascript" src="/asset/mail/validate.js"></script>
-    <script type="text/javascript" src="/asset/js/apartment.js"></script>
+		<!-- DEVIS -->
+  <!-- <script type="text/javascript" src="/asset/js/devis.js"></script> -->
     <script type="module" src="/asset/js/info-pro.js"></script>
     <script type="text/javascript">
 	var servs = [];
@@ -773,18 +581,4 @@
 	sessionStorage.setItem("services", JSON.stringify(servs));
 	//console.log(JSON.stringify(servs));
     </script>
-    <script>
-    	var user = {};
-    	user.id = "<%- locals.session.userId != undefined ?
-    		locals.session.userId : "null" %>";
-    	user.nom = "<%- locals.session.userName ?
-    		locals.session.userName : "null" %>";
-    	user.type = "<%- locals.session.userType ?
-    		locals.session.userType : "null" %>";
-    	console.log(user);
-    	sessionStorage.setItem("user", JSON.stringify(user));
-    </script>
-	</body>
-
-<!-- Mirrored from apartment-html.chart.civ.pl/my-profile.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 21 Aug 2018 17:53:43 GMT -->
-</html>
+<% include footer %>
