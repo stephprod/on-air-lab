@@ -168,7 +168,7 @@ io.sockets.on('connection', function (socket) {
                         let room = []
                         tabCorresp = []
                         if (id != 1){
-                            room.push(1, 1, "Admin", "admin", 1, "Modérateur")
+                            room.push(1, 1, "Admin", "admin", 1, "Modérateur", 0)
                             setTimeout((function(room){
                                 return function(){
                                     getPreviousMsgAdmin(1, id, 1, (result2) => {
@@ -181,7 +181,7 @@ io.sockets.on('connection', function (socket) {
                                             room.push(null, 'Aucun message.')
                                         }
                                         tabCorresp.push(room)
-                                        socket.emit('updaterooms', tabCorresp, 1, null);
+                                        //socket.emit('updaterooms', tabCorresp, 1, null);
                                     })
                                 };
                             }) (room), 100);
@@ -219,7 +219,10 @@ io.sockets.on('connection', function (socket) {
                                         tabCorresp.push(room)
                                         //console.log(tabCorresp)
                                         //console.log("-----------------------------------------------")
-                                        socket.emit('updaterooms', tabCorresp, socket.room, null);
+                                        if (k == result.length - 1){
+                                            //console.log(tabCorresp)
+                                            socket.emit('updaterooms', tabCorresp, socket.room, null);
+                                        }
                                    })
                                 };
                             }) (k, room), 100);
@@ -260,7 +263,7 @@ io.sockets.on('connection', function (socket) {
                         let room = []
                         tabCorresp = []
                         if (id != 1){
-                            room.push(1, 1, "Admin", "admin", 1, "Modérateur")
+                            room.push(1, 1, "Admin", "admin", 1, "Modérateur", 0)
                             setTimeout((function(room){
                                 return function(){
                                     getPreviousMsgAdmin(1, id, 1, (result2) => {
@@ -273,7 +276,7 @@ io.sockets.on('connection', function (socket) {
                                             room.push(null, 'Aucun message.')
                                         }
                                         tabCorresp.push(room)
-                                        socket.emit('updaterooms', tabCorresp, 1, null);
+                                        //socket.emit('updaterooms', tabCorresp, 1, null);
                                     })
                                 };
                             }) (room), 100);
@@ -308,7 +311,10 @@ io.sockets.on('connection', function (socket) {
                                         tabCorresp.push(room)
                                         //console.log(tabCorresp)
                                         //console.log("-----------------------------------------------")
-                                        socket.emit('updaterooms', tabCorresp, socket.room, null);
+                                        if (k == result.length - 1){
+                                            console.log(tabCorresp)
+                                            socket.emit('updaterooms', tabCorresp, socket.room, null);
+                                        }
                                    })
                                 };
                             }) (k, room), 100);

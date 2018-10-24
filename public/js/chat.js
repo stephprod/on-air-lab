@@ -559,14 +559,13 @@
     	glob_datas.action = "accept";
     	//console.log(user);
     	//console.log(user_receiv);
-    	return (0);
     	//console.log(glob_datas);
     	if (type_message_libelle == 'booking'){
-	    	if (user_receiv.payment_module == 0 && user.type == 4){
+	    	/*if (user_receiv.payment_module == 0 && user.type == 4){
 	    		//Dead Code
 	    		//Demande de confirmation du choix de validation/Récapitulatif
 		    	//Securisation du lien vers la page
-		       /*$.ajax({
+		       $.ajax({
 		            type : "POST",
 		            url : "/secure_profile",
 		            data: {"temp": user_receiv.id_coresp},
@@ -583,11 +582,11 @@
 		                iframe.location = '/payment-recap/'+user_receiv.id_coresp + '?' + query;
 	                	//window.document.location.href = '/payment-recap/'+user_receiv.id_coresp;
 		            }   
-		        });*/
+		        });
 		    }else if (user_receiv.payment_module == 1 && user.type == 4){
 		    	//Dead Case
 		    	//window.document.location.href = "/module-payment-recap/"+user_receiv.id_coresp
-		    }else{
+		    }else{*/
 		    	$.ajax({
 		    		type: "POST",
 		    		url: "/action-in-module",
@@ -612,26 +611,29 @@
 				        });
 					}
 				});
-		    }
+		    //}
 		}else if(type_message_libelle == 'devis'){
-			//Securisation du lien vers la page
-	       $.ajax({
-	            type : "POST",
-	            url : "/secure_profile",
-	            data: {"temp": user_receiv.id_coresp},
-	            success: function(data) {
-					var datas = {};
-					datas.type = "devis";
-					datas.from = "accept-devis";
-					datas.id_pro = user_receiv.id_coresp
-					datas.id_type = glob_datas.id_type_message;
-					//datas.events = global_datas.events;
-		            console.log(datas);
-		            query = serialize(datas);
-		            console.log(query);
-		            iframe.location = '/payment-recap/'+user_receiv.id_coresp + '?' + query;
-            	}
-            });
+			if (user.type == 4){
+				//Securisation du lien vers la page
+		       $.ajax({
+		            type : "POST",
+		            url : "/secure_profile",
+		            data: {"temp": user_receiv.id_coresp},
+		            success: function(data) {
+						var datas = {};
+						datas.type = "devis";
+						datas.from = "accept-devis";
+						datas.id_pro = user_receiv.id_coresp;
+						datas.id_type = glob_datas.id_type_message;
+						datas.id_payment_module = user_receiv.payment_module
+						//datas.events = global_datas.events;
+			            console.log(datas);
+			            query = serialize(datas);
+			            console.log(query);
+			            iframe.location = '/payment-recap/'+user_receiv.id_coresp + '?' + query;
+	            	}
+	            });
+		   }
 			/*$.ajax({
 	    		type: "POST",
 	    		url: "/action-in-module",
