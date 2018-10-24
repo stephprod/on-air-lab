@@ -160,21 +160,23 @@
 <script type="text/javascript" src="/asset/js/isotop-v3.0.6.js"></script>
   <script type="text/javascript" src="/asset/js/apartment.js"></script>
 <script>
-  var user = {};
-  var session = {};
-  user.id = "<%- locals.session.userId != undefined ?
-    locals.session.userId : "null" %>";
-  user.nom = "<%- locals.session.userName ?
-    locals.session.userName : "null" %>";
-  user.type = "<%- locals.session.userType ?
-    locals.session.userType : "null" %>";
-  session.user = user;
-  sessionStorage.setItem("session", JSON.stringify(session));
+  <% if (locals.session) {%>
+    let user = {};
+    let session = {};
+    user.id = "<%- locals.session.userId != undefined ?
+      locals.session.userId : "null" %>";
+    user.nom = "<%- locals.session.userName ?
+      locals.session.userName : "null" %>";
+    user.type = "<%- locals.session.userType ?
+      locals.session.userType : "null" %>";
+    session.user = user;
+    sessionStorage.setItem("session", JSON.stringify(session));
+<%}%>
 </script>
 <script type="module" src="/asset/js/login.js"></script>
 <script type="text/javascript" src="/asset/js/forgottenPassword.js"></script>
 <script type="text/javascript" src="/asset/js/register.js"></script>
-  <script type="module" src="/asset/js/search.js"></script>
+  <script type="module" sr2c="/asset/js/search.js"></script>
   <script type="module" src="/asset/js/logout.js"></script>
 </body>
 </html>

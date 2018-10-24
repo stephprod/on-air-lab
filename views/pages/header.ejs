@@ -47,10 +47,16 @@
 				<div id="navbar" class="navbar-collapse collapse">
 					<ul class="nav navbar-nav navbar-right">
 						<li>
-							<% if (locals.session.userId == undefined){ %>
-							<a class="special-color" href="#login-modal" data-toggle="modal">
-								Sign in/Sign up <i class="fa fa-lock"></i>
-							</a>
+							<% if (locals.session !== undefined){
+										if(locals.session.userId == undefined){%>
+											<a class="special-color" href="#login-modal" data-toggle="modal">
+												Sign in/Sign up <i class="fa fa-lock"></i>
+											</a>
+										<% }else {%>
+											<a class="special-color" href="#logout-modal" data-toggle="modal">
+												Deconnecter <i class="fa fa-lock"></i>
+											</a>
+										<% } %>
 							<% }else {%>
 								<a class="special-color" href="#logout-modal" data-toggle="modal">
 									Deconnecter <i class="fa fa-lock"></i>
