@@ -291,7 +291,6 @@ header.header3 .top-bar-wrapper {
 }
 
 .navbar-brand {
-	padding-top: 30px;
 	padding-bottom: 30px;
 }
 
@@ -316,7 +315,7 @@ header.header3 .navbar-brand {
 }
 
 .navbar-brand img {
-	max-width: 226px;
+	max-width: 7.1em;
 }
 
 .navbar-toggle {
@@ -8176,5 +8175,9 @@ h4.neighbourhood-title {
 	.swiper2-text {
 		display: none;
 	}
-
+}
+@media only screen and (max-width: 1380px) {
+  .navbar-brand img {
+      max-width: 4.6em;
+  }
 }
