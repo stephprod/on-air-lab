@@ -32,7 +32,7 @@ let calendar_dow = require('./route/calendar_dow')
 let widget_book = require('./route/widget_calendar')
 let cities = require('./route/cities')
 let up_files = require('./route/upload_files')
-let delete_document = require('./route/delete_document') 
+let delete_document = require('./route/delete_document')
 let delete_in_serv = require('./route/delete_files_in_serv')
 let all_cp = require('./route/cp')
 let prestations = require('./route/prestas')
@@ -115,7 +115,6 @@ app.use('/', payment_recap)
 app.use('/', mailer)
 app.use('/', mail_template_generator)
 app.get('/', (request, response) => {
-	//console.log(request.session)
 	response.render('pages/index')
 })
 
@@ -193,7 +192,7 @@ io.sockets.on('connection', function (socket) {
                         //console.log(result.length > 0 ? result[0].id : "Aucun membre")
                         for(k in result){
                             room = []
-                            room.push(result[k].id)                            
+                            room.push(result[k].id)
                             room.push(result[k].id_room)
                             room.push(result[k].nom)
                             room.push(result[k].prenom)
@@ -249,7 +248,7 @@ io.sockets.on('connection', function (socket) {
                         //data.user_receiver = socket.user.userId
                         //socket.broadcast.to(socket.room).emit('updatechat', coresp, data);
                         //socket.emit('updaterooms', tabCorresp, socket.room, coresp);
-                        }  
+                        }
                     })
         }
         else if (type == 4){
@@ -288,7 +287,7 @@ io.sockets.on('connection', function (socket) {
                         //console.log(result.length > 0 ? result[0].id : "Aucun membre")
                         for(k in result){
                             room = []
-                            room.push(result[k].id)                            
+                            room.push(result[k].id)
                             room.push(result[k].id_room)
                             room.push(result[k].nom)
                             room.push(result[k].prenom)
@@ -340,7 +339,7 @@ io.sockets.on('connection', function (socket) {
                         //data.txt = id + ' has connected to this room'
                         //data.user_receiver = socket.user.userId
                         //socket.broadcast.to(socket.room).emit('updatechat', coresp, data);
-                        //socket.emit('updaterooms', tabCorresp, socket.room, coresp); 
+                        //socket.emit('updaterooms', tabCorresp, socket.room, coresp);
                     }
                 })
             }
@@ -379,7 +378,7 @@ io.sockets.on('connection', function (socket) {
                 }
                 for(k in result){
                     room = []
-                    room.push(result[k].id)                            
+                    room.push(result[k].id)
                     room.push(result[k].id_room)
                     room.push(result[k].nom)
                     room.push(result[k].prenom)
@@ -464,7 +463,7 @@ io.sockets.on('connection', function (socket) {
                 }
                 for(k in result){
                     room = []
-                    room.push(result[k].id)                            
+                    room.push(result[k].id)
                     room.push(result[k].id_room)
                     room.push(result[k].nom)
                     room.push(result[k].prenom)
@@ -588,7 +587,7 @@ io.sockets.on('connection', function (socket) {
                         })
                     })
                 }
-            }     
+            }
             //Si tu n'est pas l'administrateur
             if (userId != 1)
             {
@@ -695,7 +694,7 @@ io.sockets.on('connection', function (socket) {
             {
                 message = {
                     id_m: result[k].id_message,
-                    id_type_m : result[k].id_type_m, 
+                    id_type_m : result[k].id_type_m,
                     txt : result[k].message_txt,
                     created : result[k].created_at,
                     user_sender : result[k].iduser_send,
@@ -763,7 +762,7 @@ io.sockets.on('connection', function (socket) {
             {
                 message = {
                     id_m: result[k].id_message,
-                    id_type_m : result[k].id_type_m, 
+                    id_type_m : result[k].id_type_m,
                     txt : result[k].message_txt,
                     created : result[k].created_at,
                     user_sender : result[k].iduser_send,
@@ -840,9 +839,9 @@ io.sockets.on('connection', function (socket) {
                                         //console.log(message)
                                         io.sockets.in(socket.id).emit('update_contactstypemessage', message)
                                     }
-                                }) 
+                                })
                             };
-                        }) (message), 100)           
+                        }) (message), 100)
                     }
                 }
                 //console.log(message)
@@ -851,7 +850,7 @@ io.sockets.on('connection', function (socket) {
             //console.log("----------------------------------------------------")
         });
     });
-    
+
     socket.on('switchRoom', function(idUser, newroom, coresp){
         let data = {}
         //console.log("------------SwitchRoom---------------")
@@ -883,7 +882,7 @@ io.sockets.on('connection', function (socket) {
         //data.userId = idUser
         //socket.emit('updaterooms', tabCorresp, newroom, coresp);
     });
-    
+
     socket.on('update_services', function(idUser, room, coresp){
         let data = {}
         //console.log("------------UpdateServices---------------")
@@ -977,5 +976,5 @@ module.exports = { httpGetRequest: function(path){
             .then((res) => res)
         },
     host: addresses,
-    server: http 
+    server: http
 }
