@@ -154,7 +154,7 @@ io.sockets.on('connection', function (socket) {
         user.userId = id;
         user.userType = type;
         socket.user = user;
-        console.log("Socket ID du GARS "+socket.id);
+        //console.log("Socket ID du GARS "+socket.id);
         let p
         if (type == 2 || type == 1 || type == 3){
                 User.getRoomForPro('`rooms`.`with_userid`='+id+' GROUP BY `rooms`.`id_room`'
@@ -234,7 +234,7 @@ io.sockets.on('connection', function (socket) {
                         userInfos.socket = socket.id
                         userInfos.id_user = id
                         userGlobal.push(userInfos)
-                        console.log(userGlobal)
+                        //console.log(userGlobal)
                         // ENVOI DU CLIENT DANS LA ROOM 1
                         socket.join(socket.room)
                         // AFFICHE LE CLIENT CONNECTE
@@ -323,7 +323,7 @@ io.sockets.on('connection', function (socket) {
                         userInfos.socket = socket.id
                         userInfos.id_user = id
                         userGlobal.push(userInfos)
-                        console.log(userGlobal)
+                        //console.log(userGlobal)
                         // ENVOI DU CLIENT DANS LA ROOM 1
                         //socket.join(socket.room)
                         // AFFICHE LE CLIENT CONNECTE

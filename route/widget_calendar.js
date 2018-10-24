@@ -34,7 +34,7 @@ router.route('/widget_calendar')
 				table[table.length] = []
 				for(r in result)
 					table[table.length - 1].push(result[r].day, result[r].pause);
-				console.log(table)
+				//console.log(table)
 				response.send(table)
 			})
 		})

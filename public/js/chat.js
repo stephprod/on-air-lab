@@ -245,6 +245,27 @@
 
 		}
 	});
+	function getBody(content) 
+	{ 
+	   var x = content.indexOf("<html");
+	   x = content.indexOf(">", x);    
+	   var y = content.lastIndexOf("</html>"); 
+	   return content.slice(x + 1, y);
+	}
+	function serialize(obj, prefix) {
+	  var str = [],
+	    p;
+	  for (p in obj) {
+	    if (obj.hasOwnProperty(p)) {
+	      var k = prefix ? prefix + "[" + p + "]" : p,
+	        v = obj[p];
+	      str.push((v !== null && typeof v === "object") ?
+	        serialize(v, k) :
+	        encodeURIComponent(k) + "=" + encodeURIComponent(v));
+	    }
+	  }
+	  return str.join("&");
+	}
     function on_reservation_link_click(e){
     	e.preventDefault();
     	//console.log("Resa click !");
@@ -253,32 +274,81 @@
     	var datePickerVal = $(iframe).find(".datepicker input").val().replace(new RegExp("/", "g"), "-");
     	var datePickerValTab = datePickerVal.split("-");
     	var hours = $(iframe).find("#selectHours .sel");
-    	var datas = {};
-    	datas = get_events(hours, datePickerValTab);
+    	var global_datas = {};
+    	global_datas = get_events(hours, datePickerValTab);
     	if (user.type == 4){
-    		datas.id_art = user.id;
-			datas.id_pro = user_receiv.id_coresp;
+    		global_datas.id_art = user.id;
+			global_datas.id_pro = user_receiv.id_coresp;
     	}
 		else{
-			datas.id_art = user_receiv.id_coresp;
-			datas.id_pro = user.id;
+			global_datas.id_art = user_receiv.id_coresp;
+			global_datas.id_pro = user.id;
 		}
-		datas.user_receiv = user_receiv.id_coresp;
-		datas.user_sender = user.id;
-		datas.room = roomDisplay;
+		global_datas.user_receiv = user_receiv.id_coresp;
+		global_datas.user_sender = user.id;
+		global_datas.room = roomDisplay;
+		console.log(global_datas);
 		if ($(this).hasClass("meet-up-chat")){
-			datas.from = "rdv";
-			datas.title = "event-meet";
+			global_datas.from = "rdv";
+			global_datas.title = "event-meet";
+			$.ajax({
+				type: "POST",
+				url: "/check-in",
+				data: global_datas,
+				success: function (data){
+					//console.log(data);
+					if (data.result.type_r == "rdv")
+						update_front_with_msg(data, "msg-rdv");
+					else
+						update_front_with_msg(data, "msg-booking");
+					if (data.success[0]){
+						//Emission de la socket
+						//console.log("rdv envoyé !" +userId);
+	                    var rdv = {
+	                        type_m : data.result.type_r,
+	                        user_receiver : user_receiv,
+	                        txt : data.msg,
+	                        events: global_datas.events,
+	                        id_disp: data.result.id_dispos,
+	                        created: data.created,
+	                        request_state : 0
+	                    }
+	                    //console.log(rdv);
+	                    socket.emit('sendchat', rdv, userId, user_receiv, null);
+	                }
+	                else
+	                	update_front_with_errors(data.errors);
+				}
+			});
 		}
 		else{
-			datas.from = "booking";
-			datas.title = "event-work";
-		}
-		//console.log(datas);
-		$.ajax({
+			global_datas.from = "booking";
+			global_datas.title = "event-work";
+			//Récapitaulatif de paiement en cas de booking
+			$.ajax({
+	            type : "POST",
+	            url : "/secure_profile",
+	            data: {"temp": user_receiv.id_coresp},
+	            success: function(data) {
+	                //console.log(data);
+	                var datas = {},
+	                query = '';
+	                datas.type = "booking";
+	                datas.events = global_datas.events;
+	                datas.id_pro = global_datas.user_receiv;
+	                datas.from = "new-booking";
+	                //console.log(datas);
+	                query = serialize(datas);
+	                //console.log(query);
+	                //Récupération du nombre d'h de booking a faire
+	                iframe.location = '/payment-recap/'+user_receiv.id_coresp + '?' + query;
+	            }   
+	        });
+		}		
+		/*$.ajax({
 			type: "POST",
 			url: "/check-in",
-			data: datas,
+			data: global_datas,
 			success: function (data){
 				//console.log(data);
 				if (data.result.type_r == "rdv")
@@ -292,7 +362,7 @@
                         type_m : data.result.type_r,
                         user_receiver : user_receiv,
                         txt : data.msg,
-                        events: datas.events,
+                        events: global_datas.events,
                         id_disp: data.result.id_dispos,
                         created: data.created,
                         request_state : 0
@@ -303,7 +373,7 @@
                 else
                 	update_front_with_errors(data.errors);
 			}
-		});
+		});*/
     }
     /*Module sons*/
     function on_form_song_submit(e){
@@ -482,57 +552,87 @@
     }
     function on_module_accept_typeMessage_link_click(e){
     	e.preventDefault();
-    	var datas = {};
+    	var glob_datas = {};
     	var div = $(e.target).parents("div[id-message]");
     	var type_message_libelle = div.data("type-message-libelle")
-    	datas.id_type_message = div.data("id-typeMessage");
-    	datas.action = "accept";
-    	//console.log(div);
-    	//console.log(datas);
+    	glob_datas.id_type_message = div.data("id-typeMessage");
+    	glob_datas.action = "accept";
+    	//console.log(user);
+    	//console.log(user_receiv);
+    	return (0);
+    	//console.log(glob_datas);
     	if (type_message_libelle == 'booking'){
 	    	if (user_receiv.payment_module == 0 && user.type == 4){
+	    		//Dead Code
 	    		//Demande de confirmation du choix de validation/Récapitulatif
 		    	//Securisation du lien vers la page
-		       $.ajax({
+		       /*$.ajax({
 		            type : "POST",
 		            url : "/secure_profile",
 		            data: {"temp": user_receiv.id_coresp},
 		            success: function(data) {
-		                //AFFICHER LES SERVICES ISSUS DE LA BASE DE DONNEES
 		                //console.log(data)
-		                window.document.location.href = '/payment-recap/'+user_receiv.id_coresp;
+		                var datas = {},
+		                query = '';
+		                datas.type = "booking";
+		                //datas.events = global_datas.events;
+		                console.log(datas);
+		                query = serialize(datas);
+		                console.log(query);
+		                //Récupération du nombre d'h de booking a faire
+		                iframe.location = '/payment-recap/'+user_receiv.id_coresp + '?' + query;
+	                	//window.document.location.href = '/payment-recap/'+user_receiv.id_coresp;
 		            }   
-		        });
+		        });*/
 		    }else if (user_receiv.payment_module == 1 && user.type == 4){
-		    	//Récapitulatif - Redirection vers module de paiement
-		    	window.document.location.href = "/module-payment-recap/"+user_receiv.id_coresp
+		    	//Dead Case
+		    	//window.document.location.href = "/module-payment-recap/"+user_receiv.id_coresp
 		    }else{
 		    	$.ajax({
-	    		type: "POST",
-	    		url: "/action-in-module",
-	    		data: datas,
-	    		success: function (data){
-			    	//Envoi de mail à l'artiste indiquant une demande acceptée
-			    	$.ajax({
-			            type : "POST",
-			            url : "/mail",
-			            data: {"receiver": user_receiv.id_coresp,
-			        			"typeMessage": type_message_libelle,
-			        			"events", data.result.events,
-			        			"action": data.result.libelle},
-			            success: function(data) {
-			                if (data.success[0]){
-								const content = 'demande acceptée !';
-								div.find("div.card-chat div.div-submi").empty();
-								div.find("div.card-chat div.div-submi").append(content);
-			    			}
-			                console.log(data)
-			            }   
-			        });
-			    });
+		    		type: "POST",
+		    		url: "/action-in-module",
+		    		data: glob_datas,
+		    		success: function (data){
+				    	//Envoi de mail à l'artiste indiquant une demande acceptée
+				    	$.ajax({
+				            type : "POST",
+				            url : "/mail",
+				            data: {"receiver": user_receiv.id_coresp,
+				        			"typeMessage": type_message_libelle,
+				        			"events": data.result.events,
+				        			"action": data.result.libelle},
+				            success: function(data) {
+				                if (data.success[0]){
+									const content = 'demande acceptée !';
+									div.find("div.card-chat div.div-submi").empty();
+									div.find("div.card-chat div.div-submi").append(content);
+				    			}
+				                console.log(data);
+				            }   
+				        });
+					}
+				});
 		    }
-		}else{
-			$.ajax({
+		}else if(type_message_libelle == 'devis'){
+			//Securisation du lien vers la page
+	       $.ajax({
+	            type : "POST",
+	            url : "/secure_profile",
+	            data: {"temp": user_receiv.id_coresp},
+	            success: function(data) {
+					var datas = {};
+					datas.type = "devis";
+					datas.from = "accept-devis";
+					datas.id_pro = user_receiv.id_coresp
+					datas.id_type = glob_datas.id_type_message;
+					//datas.events = global_datas.events;
+		            console.log(datas);
+		            query = serialize(datas);
+		            console.log(query);
+		            iframe.location = '/payment-recap/'+user_receiv.id_coresp + '?' + query;
+            	}
+            });
+			/*$.ajax({
 	    		type: "POST",
 	    		url: "/action-in-module",
 	    		data: datas,
@@ -552,6 +652,31 @@
 								div.find("div.card-chat div.div-submi").append(content);
 			    			}
 					        console.log(data)
+			            }   
+			        });
+	    		}
+	    	});*/
+		}else{
+			$.ajax({
+	    		type: "POST",
+	    		url: "/action-in-module",
+	    		data: global_datas,
+	    		success: function (data){
+	    			// Envoi de mail contenant le lien d'acccepation d'une demande
+	    			$.ajax({
+			            type : "POST",
+			            url : "/mail",
+			            data: {"receiver": user_receiv.id_coresp,
+			        			"typeMessage": type_message_libelle,
+			        			"events": data.result.events,
+			        			"action": data.result.libelle},
+			            success: function(data) {
+			            	if (data.success[0]){
+								const content = 'demande acceptée !';
+								div.find("div.card-chat div.div-submi").empty();
+								div.find("div.card-chat div.div-submi").append(content);
+			    			}
+					        //console.log(data)
 			            }   
 			        });
 	    		}

@@ -31,19 +31,38 @@ router.param('id', (req, res, next, token) => {
 
 router.route('/payment-recap/:id')
 	.get((req, res) => {
-		let paymentObj = []
+		let paymentObj = {}
         let userIdSender = req.session.userId
 		let userIdReceiver = req.session.user_receiv.id_coresp
-        //console.log(req.session)
+        console.log(req.query)
         //res.locals.id_u = req.session.id_u
         res.locals.session = req.session
-		//User.displayPayment(userIdReceiver, (result) => {
-        	//console.log(result)
-       // 	paymentObj = result
-			res.render('pages/payment_recap', {page: "payment-recap"})
-        //})
+        // req.query.type
+        if (req.query.type !== undefined && req.query.from !== undefined){
+        	//console.log(req.query.type);
+        	//console.log(req.query.from);
+        	//Calcul du nombre d'h de booking reservées à faire
+        	if (req.query.from == 'new-booking'){
+        		paymentObj.type_service = req.query.type
+        		paymentObj.events = req.query.events
+        		User.getTarificationForDisplay(req.query.id_pro, (result)=>{
+        			if (result.length > 0){
+        				paymentObj.prix_h = result[0].prix_h
+        				paymentObj.prix_min = result[0].prix_min
+        				paymentObj.nbr_h_min = result[0].nbr_h_min
+        			}
+        			res.render('pages/payment_recap', {obj: paymentObj}) 
+        		})
+        	}else{
+
+        	}
+		//})
         //console.log("ID du GARS "+req.session.userId)
         //console.log("NOM du GARS "+req.session.userName)
+    	}
+    	else{
+    		res.status(404).send("NOT FOUND !")
+    	}
     })
 	.post((req, res) => {
 		//console.log(req.session.id_u)
