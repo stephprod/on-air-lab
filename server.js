@@ -115,6 +115,7 @@ app.use('/', payment_recap)
 app.use('/', mailer)
 app.use('/', mail_template_generator)
 app.get('/', (request, response) => {
+    response.locals.session = request.session
 	response.render('pages/index')
 })
 
