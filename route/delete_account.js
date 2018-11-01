@@ -1,11 +1,11 @@
-let express = require('express')
-let User = require('../models/req_user')
-let router = express.Router()
-let validator = require('../middlewares/valid_form').delete_account_form
+const express = require('express')
+const User = require('../models/req_user')
+const router = express.Router()
+const validator = require('../middlewares/valid_form').delete_account_form
 
 router.route('/delete-account')
 	.get((request, response) => {
-		
+
 	})
 	.post((request, response) => {
 		let table = [], ret = {}

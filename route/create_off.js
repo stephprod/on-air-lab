@@ -1,11 +1,11 @@
-let express = require('express')
-let User = require('../models/req_user')
-let validator = require('../middlewares/valid_form2').valid_offre
-let router = express.Router()
+const express = require('express')
+const User = require('../models/req_user')
+const validator = require('../middlewares/valid_form2').valid_offre
+const router = express.Router()
 
 router.route('/create_off')
 	.get((request, response) => {
-	
+
 	})
 	.post(validator, (request, response) => {
 		let table = []

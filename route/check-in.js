@@ -1,9 +1,9 @@
-let express = require('express')
-let User = require('../models/req_user')
-let router = express.Router()
+const express = require('express')
+const User = require('../models/req_user')
+const router = express.Router()
 let id_user
 router.route('/check-in')
-	.get((request, response) => {		
+	.get((request, response) => {
 	})
 	.post((request, response) => {
 		let table = [], tableD = [], tableT = [], tableTemp = [], tableE = [], tableM = []
@@ -42,13 +42,13 @@ router.route('/check-in')
 							ret.success.push(true)
 							ret.global_msg.push("Evènement envoyé !")
 							console.log("Success Insertion table calendar_event !")
-							
+
 						}
 						else
 						{
 							ret.success.push(false)
 							ret.global_msg.push("Erreur lors de l'enregistrement de l'évènement, contactez le support/modérateur !")
-							console.log("Echec Insertion table calendar_event !")	
+							console.log("Echec Insertion table calendar_event !")
 						}
 						if (k == len - 1){
 							//messages in chat

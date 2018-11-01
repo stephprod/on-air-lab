@@ -1,7 +1,7 @@
-let express = require('express')
-let User = require('../models/req_user')
+const express = require('express')
+const User = require('../models/req_user')
 
-let router = express.Router()
+const router = express.Router()
 
 router.route('/service')
 	.get((request, response) => {
@@ -21,7 +21,7 @@ router.route('/service')
 				for (k in table[1]){
 					let tableServ = [table[0], table[1][k]]
 					setTimeout((function(k) {
-						return function(){		
+						return function(){
 							User.addServForPro(tableServ, result =>{
 								if (result > 0)
 								{
@@ -52,7 +52,7 @@ router.route('/service')
 						for (k in table[1]){
 							let tableServ = [table[0], table[1][k]]
 							setTimeout((function(k) {
-								return function(){		
+								return function(){
 									User.addServForPro(tableServ, result =>{
 										if (result > 0)
 										{

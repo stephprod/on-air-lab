@@ -1,12 +1,12 @@
-let express = require('express')
-let User = require('../models/req_user')
-let fs = require('fs');
+const express = require('express')
+const User = require('../models/req_user')
+const fs = require('fs');
 //let fileUpload = require('express-fileupload')
-let router = express.Router()
+const router = express.Router()
 
 router.route('/delete-files')
 	.get((request, response) => {
-		
+
 	})
 	.post((request, response) => {
 		let table = [], ret = {}

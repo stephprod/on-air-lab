@@ -1,12 +1,12 @@
-let express = require('express')
-let User = require('../models/req_user')
-let fs = require('fs');
+const express = require('express')
+const User = require('../models/req_user')
+const fs = require('fs');
 //let fileUpload = require('express-fileupload')
-let router = express.Router()
+const router = express.Router()
 
 router.route('/delete-in-serv')
 	.get((request, response) => {
-		
+
 	})
 	.post((request, response) => {
 		let table = [], ret = {}
@@ -26,7 +26,7 @@ router.route('/delete-in-serv')
 									//console.log(file)
 									// Assuming that 'file' is a regular file.
 									fs.unlink(file, (err) => {
-									  if (err) 
+									  if (err)
 									  	throw err
 									  console.log(file+' was deleted');
 									})
@@ -45,6 +45,6 @@ router.route('/delete-in-serv')
 				ret.success = false
 				response.send(ret)
 			}
-		})	
+		})
 	})
 module.exports = router

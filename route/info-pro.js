@@ -1,8 +1,8 @@
-let express = require('express')
-let User = require('../models/req_user')
-let validator = require('../middlewares/valid_form2').valid_profile
+const express = require('express')
+const User = require('../models/req_user')
+const validator = require('../middlewares/valid_form2').valid_profile
 
-let router = express.Router()
+const router = express.Router()
 
 router.route('/info-pro')
 	.get((request, response) => {
@@ -55,7 +55,7 @@ router.route('/info-pro')
 								User.displayDevis(request.session.userId, (result) => {
 									devis = result
 									if (result.length > 0){
-										response.render('pages/info-pro2', {offObj : offr, etabObj: etab, allServObj: allServ, servObj: serv, devisObj: devis})	
+										response.render('pages/info-pro2', {offObj : offr, etabObj: etab, allServObj: allServ, servObj: serv, devisObj: devis})
 									}
 									else
 									{
@@ -151,7 +151,7 @@ router.route('/info-pro')
 										}
 										else{
 											ret.success.push(false)
-											ret.global_msg.push("Echec lors de la mise à jour des services, contactez support/modérateur !")					
+											ret.global_msg.push("Echec lors de la mise à jour des services, contactez support/modérateur !")
 										}
 										ret.result = finalResult
 										response.send(ret)

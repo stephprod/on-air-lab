@@ -1,8 +1,8 @@
-let express = require('express')
-let User = require('../models/req_user')
-let validator = require('../middlewares/valid_form').register_updatePassword
-let uid = require('rand-token').uid
-let router = express.Router()
+const express = require('express')
+const User = require('../models/req_user')
+const validator = require('../middlewares/valid_form').register_updatePassword
+const uid = require('rand-token').uid
+const router = express.Router()
 
 router.route('/register')
 	.get((request, response) => {

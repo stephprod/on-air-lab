@@ -1,7 +1,7 @@
-let express = require('express')
-let User = require('../models/req_user')
-let session = require('express-session');
-let router = express.Router()
+const express = require('express')
+const User = require('../models/req_user')
+const session = require('express-session');
+const router = express.Router()
 
 router.route('/chat')
 	.get((request, response) => {
