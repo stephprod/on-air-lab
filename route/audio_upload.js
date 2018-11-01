@@ -1,8 +1,8 @@
-let express = require('express')
-let User = require('../models/req_user')
-let validator = require('../middlewares/valid_form2').audio_file
-let router = express.Router()
-let fileUpload = require('express-fileupload')
+const express = require('express')
+const User = require('../models/req_user')
+const validator = require('../middlewares/valid_form2').audio_file
+const router = express.Router()
+const fileUpload = require('express-fileupload')
 
 router.use(fileUpload({
   limits: { fileSize: 50 * 1024 * 1024 }

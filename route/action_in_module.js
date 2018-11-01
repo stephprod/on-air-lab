@@ -5,15 +5,6 @@ const router = express.Router()
 
 router.route('/action-in-module')
 	.get((request, response) => {
-		/*//if (request.session.userId == undefined) {
-		//	response.render('pages/index', {name: "index"})
-		//}else{
-			console.log(request.url)
-			response.locals.session = request.session
-			response.render('pages/chat2')
-		//}
-		console.log("ID du GARS "+request.session.userId)
-        console.log("NOM du GARS "+request.session.userName)*/
 	})
 	.post((request, response) => {
 		//console.log(request.body);

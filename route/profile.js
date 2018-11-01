@@ -1,11 +1,6 @@
-let express = require('express')
-let User = require('../models/req_user')
-//let validator = require('../middlewares/valid_form2').valid_profile
-let router = express.Router()
-//let fileUpload = require('express-fileupload')
-//router.use(fileUpload({
-//	limits: { fileSize: 50 * 1024 * 1024 }
-//}))
+const express = require('express')
+const User = require('../models/req_user')
+const router = express.Router()
 
 router.param('id', (req, res, next, token) => {
 	req.session.id_u = token
@@ -131,10 +126,6 @@ router.route('/profile/:id')
 							res.send(ret)
 						}
 					})
-					/*User.createRoom(table, (userId) => {
-						console.log("ROOM CREE IMPEC!")
-						console.log("Entre "+userIdSender+" ET "+userIdReceiver)
-					})*/
 				}
 			})
 		}

@@ -1,7 +1,7 @@
-let express = require('express')
-let User = require('../models/req_user')
+const express = require('express')
+const User = require('../models/req_user')
 //let fileUpload = require('express-fileupload')
-let router = express.Router()
+const router = express.Router()
 
 router.route('/upload-files')
 	.get((request, response) => {
@@ -17,8 +17,6 @@ router.route('/upload-files')
 		}
 	})
 	.post((request, response) => {
-		//console.log(request.files)
-		//console.log(request.body)
 		let sampleFile = request.files.uploaded_file
 		// Use the mv() method to place the file somewhere on your server
 		let ret = {}

@@ -1,7 +1,7 @@
-let express = require('express')
-let User = require('../models/req_user')
+const express = require('express')
+const User = require('../models/req_user')
 
-let router = express.Router()
+const router = express.Router()
 
 router.route('/prestas')
 	.get((request, response) => {
@@ -20,7 +20,7 @@ router.route('/prestas')
 		if (isNaN(request.body["id_prestas[]"]))
 			tabRows = request.body["id_prestas[]"]
 		else
-			tabRows = [request.body["id_prestas[]"]]		
+			tabRows = [request.body["id_prestas[]"]]
 		for (k in tabRows){
 			tableP = []
 			setTimeout((function(k, tableP, body) {

@@ -1,13 +1,13 @@
-let express = require('express')
-let User = require('../models/req_user')
+const express = require('express')
+const User = require('../models/req_user')
 
-let router = express.Router()
+const router = express.Router()
 let id_user
 router.route('/widget_calendar')
 	.get((request, response) => {
 		//console.log(request.session)
 		response.locals.session = request.session
-		response.render('pages/widget_calendar', {page: request.query.page})		
+		response.render('pages/widget_calendar', {page: request.query.page})
 	})
 	.post((request, response) => {
 		let table = []
@@ -38,7 +38,7 @@ router.route('/widget_calendar')
 				response.send(table)
 			})
 		})
-		
+
 	})
 
 module.exports = router

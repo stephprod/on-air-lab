@@ -1,7 +1,7 @@
-let express = require('express')
-let User = require('../models/req_user')
+const express = require('express')
+const User = require('../models/req_user')
 
-let router = express.Router()
+const router = express.Router()
 
 router.route('/devis')
 	.get((request, response) => {
@@ -26,7 +26,7 @@ router.route('/devis')
 					//SI L'ID DU DEVIS EXISTE, MISE A JOUR DEVIS
 						User.update_devis("total_ht='"+table[2]+"', tva='"+table[3]+"', price_ttc='"+table[4]+"', name='"+table[5]+"' WHERE id_devis="+table[0], (result2) => {
 							if (result2 > 0){
-								ret.success.push(true) 
+								ret.success.push(true)
 								console.log("success mise à jour table devis")
 							}
 							else
@@ -48,7 +48,7 @@ router.route('/devis')
 							ret.devis_id = result
 							console.log("success insertion devis "+result)
 							tableP.push(result, request.session.userId)
-							User.insertPrestationEmpty(tableP, (result2)=>{ 
+							User.insertPrestationEmpty(tableP, (result2)=>{
 								if (result2 > 0){
 									ret.success.push(true)
 									ret.presta_id = result2
@@ -103,10 +103,10 @@ router.route('/devis')
 										ret.success.push(true)
 										ret.global_msg.push("Insertion du devis effectuée !")
 										console.log("success insertion devis "+result)
-										//tableP = [] 
+										//tableP = []
 										tableP.push(result, request.session.userId)
 										//console.log(request.session.userId)
-										User.insertPrestationEmpty(tableP, (result2)=>{ 
+										User.insertPrestationEmpty(tableP, (result2)=>{
 											if (result2 > 0){
 												//console.log(ret);
 												ret.success.push(true)

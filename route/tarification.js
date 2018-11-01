@@ -1,7 +1,7 @@
-let express = require('express')
-let User = require('../models/req_user')
+const express = require('express')
+const User = require('../models/req_user')
 
-let router = express.Router()
+const router = express.Router()
 
 router.route('/tarification')
 	.get((request, response) => {
@@ -23,7 +23,7 @@ router.route('/tarification')
 					if (result == 0){
 						console.log("echec")
 						ret.success.push(false)
-						ret.global_msg.push("Echec lors de l'insertion de la tarification, contactez le support/modérateur !")	
+						ret.global_msg.push("Echec lors de l'insertion de la tarification, contactez le support/modérateur !")
 						response.send(ret)
 						//response.render('pages/info-pro', {offObj: "vide"})
 					}

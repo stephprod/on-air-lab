@@ -1,55 +1,56 @@
-let express = require('express')
-let app = express()
-let bodyParser = require('body-parser')
-let session = require('express-session')
-let db = require('./db_start_engine')
-let sass = require('node-sass')
-var os = require('os');
-var interfaces = os.networkInterfaces()
+const express = require('express')
+const app = express()
+const bodyParser = require('body-parser')
+const session = require('express-session')
+const db = require('./db_start_engine')
+const sass = require('node-sass')
+const os = require('os');
+const interfaces = os.networkInterfaces()
 /*Variables routes*/
-let register = require('./route/register')
-let login = require('./route/login')
-let forgottenPassword = require('./route/forgottenPassword')
-let updatePassword = require('./route/updatePassword')
-let search = require('./route/search')
-let chat = require('./route/chat')
-let audio_upload = require('./route/audio_upload')
-let movie_module = require('./route/module_video')
-let profile = require('./route/profile')
-let infoPro = require('./route/info-pro')
-let footer = require('./route/footer')
-let rdv = require('./route/module_apointment')
-let offre = require('./route/create_off')
-let tarif = require('./route/tarification')
-let devis = require('./route/devis')
-let serv = require('./route/service')
-let img_upload = require('./route/image_upload')
-let profile_secure = require('./route/profil_security')
-let calendar = require('./route/calendar')
-let drop_calendar = require('./route/drop_event_calendar')
-let update_calendar = require('./route/update_event_calendar')
-let calendar_dow = require('./route/calendar_dow')
-let widget_book = require('./route/widget_calendar')
-let cities = require('./route/cities')
-let up_files = require('./route/upload_files')
-let delete_document = require('./route/delete_document')
-let delete_in_serv = require('./route/delete_files_in_serv')
-let all_cp = require('./route/cp')
-let prestations = require('./route/prestas')
-let check = require('./route/check-in')
-let w_search = require('./route/widget_search')
-let devis_request = require('./route/devis_request')
-let logout = require('./route/logout')
-let delete_account = require('./route/delete_account')
-let module_actions = require('./route/action_in_module')
-let payment_recap = require('./route/payment_recap')
+const register = require('./route/register')
+const login = require('./route/login')
+const forgottenPassword = require('./route/forgottenPassword')
+const updatePassword = require('./route/updatePassword')
+const search = require('./route/search')
+const chat = require('./route/chat')
+const audio_upload = require('./route/audio_upload')
+const movie_module = require('./route/module_video')
+const profile = require('./route/profile')
+const infoPro = require('./route/info-pro')
+const footer = require('./route/footer')
+const rdv = require('./route/module_apointment')
+const offre = require('./route/create_off')
+const tarif = require('./route/tarification')
+const devis = require('./route/devis')
+const serv = require('./route/service')
+const img_upload = require('./route/image_upload')
+const profile_secure = require('./route/profil_security')
+const calendar = require('./route/calendar')
+const drop_calendar = require('./route/drop_event_calendar')
+const update_calendar = require('./route/update_event_calendar')
+const calendar_dow = require('./route/calendar_dow')
+const widget_book = require('./route/widget_calendar')
+const cities = require('./route/cities')
+const up_files = require('./route/upload_files')
+const delete_document = require('./route/delete_document')
+const delete_in_serv = require('./route/delete_files_in_serv')
+const all_cp = require('./route/cp')
+const prestations = require('./route/prestas')
+const check = require('./route/check-in')
+const w_search = require('./route/widget_search')
+const devis_request = require('./route/devis_request')
+const logout = require('./route/logout')
+const delete_account = require('./route/delete_account')
+const module_actions = require('./route/action_in_module')
+const payment_recap = require('./route/payment_recap')
 const mailer = require('./route/send_mail')
+const payment = require('./route/payment')
 const mail_template_generator = require('./route/generate_mail')
 /*Modeles*/
-let User = require('./models/req_user')
+const User = require('./models/req_user')
 // SECURE HTTP POUR SOCKET IO
-let http = require('http').Server(app)
-let io = require('socket.io')(http)
+const http = require('http').Server(app)
+const io = require('socket.io')(http)
 //PROMISE http client
 const axios = require('axios');
 //NOTRE MOTEUR DE TEMPLATE
@@ -113,6 +114,7 @@ app.use('/', delete_account)
 app.use('/', module_actions)
 app.use('/', payment_recap)
 app.use('/', mailer)
+app.use('/', payment)
 app.use('/', mail_template_generator)
 app.get('/', (request, response) => {
 	response.render('pages/index')
@@ -323,202 +325,12 @@ io.sockets.on('connection', function (socket) {
                         userInfos.id_user = id
                         userGlobal.push(userInfos)
                         console.log(userGlobal)
-                        // ENVOI DU CLIENT DANS LA ROOM 1
-                        //socket.join(socket.room)
-                        // AFFICHE LE CLIENT CONNECTE
-                        //let data = { txt : 'you have connected to 1', user_sender: 'SERVER',
-                        //    user_receiver : socket.user.userId}
-                        //socket.emit('updatechat', coresp, data);
-                        // AFFICHE SI UN AUTRE CLIENT EST CO
-                        //data.txt = id + ' has connected to this room'
-                        //data.user_receiver = socket.user.userId
-                        //socket.broadcast.to(socket.room).emit('updatechat', coresp, data);
-                        //socket.emit('updaterooms', tabCorresp, socket.room, coresp);
                     }
                 })
             }
     });
-    /*socket.on('maj_coresp_art', function(id, id_r, coresp){
-        //socket.userId = id;
-        //console.log("Socket ID du GARS "+socket.id);
-        User.getRoomForArt('`rooms`.`userid`='+id+' GROUP BY `rooms`.`id_room`'
-            , (result) => {
-            if (result == undefined || !result){
-                console.log("--------------------------")
-                console.log("AUCUNE ROOM NE CORRESPOND")
-                console.log("--------------------------")
-            }
-            else{
-                tabCorresp = []
-                let room = []
-                if (id != 1){
-                    room.push(1, 1, "Admin", "admin", 1, "Modérateur")
-                    setTimeout((function(room){
-                        return function(){
-                            getPreviousMsgAdmin(1, id, 1, (result2) => {
-                                if (result2.length > 0){
-                                    room.push(result2[0].id_message)
-                                    room.push(result2[0].message_txt)
-                                }
-                                else
-                                {
-                                    room.push(null, 'Aucun message.')
-                                }
-                                tabCorresp.push(room)
-                                //socket.emit('updaterooms', tabCorresp, 1, null);
-                            })
-                        };
-                    }) (room), 100);
-                }
-                for(k in result){
-                    room = []
-                    room.push(result[k].id)
-                    room.push(result[k].id_room)
-                    room.push(result[k].nom)
-                    room.push(result[k].prenom)
-                    room.push(result[k].user_type_id)
-                    room.push(result[k].libelle)
-                    //FONCTION DE CLOSURE POUR PERMETTRE LA RECUPERATION DES RSLT AVANT ITERATION DE LA BOUCLE
-                    setTimeout((function(k, room){
-                        return function(){
-                            getPreviousMsg(1, socket.user.userType, result[k].id_room, (result2) => {
-                                //console.log(k)
-                                //console.log(room)
-                                //console.log(result2)
-                                if (result2.length > 0){
-                                    room.push(result2[0].id_message)
-                                    room.push(result2[0].message_txt)
-                                }
-                                else
-                                {
-                                    room.push(null, 'Aucun message.')
-                                }
-                                console.log("-------------Console TAB CORRESPONDANTS---------")
-                                //console.log(k)
-                                //console.log(result2)
-                                //console.log(room)
-                                tabCorresp.push(room)
-                                console.log(tabCorresp)
-                                console.log("-----------------------------------------------")
-                                socket.emit('updaterooms', tabCorresp, socket.room, coresp);
-                           })
-                        };
-                    }) (k, room), 100);
-                }
-                // AFFICHE LE CLIENT CONNECTE
-                let data = {}
-                data.user_sender = 'SERVER'
-                data.user_receiver = socket.user.userId
-                //socket.emit('updatechat', coresp, data);
-                // AFFICHE SI UN AUTRE CLIENT EST CO
-                data.txt = id + ' has connected to this room'
-                //data.user_receiver = coresp.id_coresp
-                socket.broadcast.to(id_r).emit('updatechat', coresp, data);
-                console.log("-------SWITCH ROOM-----------")
-                console.log(id_r)
-                console.log(coresp)
-                console.log(tabCorresp)
-                socket.emit('updaterooms', tabCorresp, id_r, null);
-                console.log("--------------------------")
-            }
-        })
-    });
-    socket.on('maj_coresp_pro', function(id, id_r, coresp){
-        //socket.userId = id;
-        //console.log("Socket ID du GARS "+socket.id);
-        User.getRoomForPro('`rooms`.`with_userid`='+id+' GROUP BY `rooms`.`id_room`'
-            , (result) => {
-            if (result == undefined || !result){
-                console.log("--------------------------")
-                console.log("AUCUNE ROOM NE CORRESPOND")
-                console.log("--------------------------")
-            }
-            else{
-                tabCorresp = []
-                let room = []
-                if (id != 1){
-                    room.push(1, 1, "Admin", "admin", 1, "Modérateur")
-                    setTimeout((function(room){
-                        return function(){
-                            getPreviousMsgAdmin(1, id, 1, (result2) => {
-                                if (result2.length > 0){
-                                    room.push(result2[0].id_message)
-                                    room.push(result2[0].message_txt)
-                                }
-                                else
-                                {
-                                    room.push(null, 'Aucun message.')
-                                }
-                                tabCorresp.push(room)
-                                socket.emit('updaterooms', tabCorresp, 1, null);
-                            })
-                        };
-                    }) (room), 100);
-                }
-                for(k in result){
-                    room = []
-                    room.push(result[k].id)
-                    room.push(result[k].id_room)
-                    room.push(result[k].nom)
-                    room.push(result[k].prenom)
-                    room.push(result[k].user_type_id)
-                    room.push(result[k].libelle)
-                    //FONCTION DE CLOSURE POUR PERMETTRE LA RECUPERATION DES RSLT AVANT ITERATION DE LA BOUCLE
-                    setTimeout((function(k, room){
-                        return function(){
-                            //let coresp = {}
-                            //coresp.nom = result[k].nom
-                            //coresp.prenom = result[k].prenom
-                            getPreviousMsg(1, socket.user.userType, result[k].id_room, (result2) => {
-                                //console.log(k)
-                                //console.log(room)
-                                //console.log(result2)
-                                if (result2.length > 0){
-                                    room.push(result2[0].id_message)
-                                    room.push(result2[0].message_txt)
-                                }
-                                else
-                                {
-                                    room.push(null, 'Aucun message.')
-                                }
-                                console.log("-------------Console TAB CORRESPONDANTS---------")
-                                //console.log(k)
-                                //console.log(result2)
-                                //console.log(room)
-                                tabCorresp.push(room)
-                                console.log(tabCorresp)
-                                console.log("-----------------------------------------------")
-                                //socket.emit('updaterooms', tabCorresp, socket.room, coresp);
-                           })
-                        };
-                    }) (k, room), 100);
-                }
-                // AFFICHE LE CLIENT CONNECTE
-                let data = {}
-                data.user_sender = 'SERVER'
-                data.user_receiver = socket.user.userId
-                //socket.emit('updatechat', coresp, data);
-                // AFFICHE SI UN AUTRE CLIENT EST CO
-                data.txt = id + ' has connected to this room'
-                //data.user_receiver = coresp.id_coresp
-                socket.broadcast.to(id_r).emit('updatechat', coresp, data);
-                console.log("-------SWITCH ROOM-----------")
-                console.log(id_r)
-                console.log(coresp)
-                console.log(tabCorresp)
-                socket.emit('updaterooms', tabCorresp, id_r, null);
-                console.log("--------------------------")
-            }
-        })
-    });*/
     // quand le client émet 'sendchat', cela écoute et exécute
     socket.on('sendchat', function (data, userId, user_receiver, context) {
-        // on dit au client d'exécuter 'updatechat' avec 2 paramètres
-        //console.log("-------NOUVEAU MESSAGE-----------")
-        //console.log(data)
-        //console.log(userId)
-        //console.log(user_receiver)
-        //console.log("---------------------------------")
         data.user_sender = userId
         data.user_receiver = user_receiver.id_coresp
         data.id_r = socket.room
@@ -530,9 +342,6 @@ io.sockets.on('connection', function (socket) {
         let tableM = [];
         //Table Type_Message
         let tableT = [];
-        //Table Calendrier
-        //let tableC = [];
-        //Table EventsInTypeMessage
         let tableE = [];
         //Si tu es sur la room admin
         if (socket.room == 1){
@@ -576,8 +385,6 @@ io.sockets.on('connection', function (socket) {
                             data.id_m = result
                             data.created  = created_date
                             io.sockets.in(socket.id).emit('updatechat', user_receiver, data, context)
-                            //console.log("ENVOI DU MESSAGE AUDIO AU CALME!")
-                            //console.log(result)
                         })
                     })
                 }
@@ -642,9 +449,6 @@ io.sockets.on('connection', function (socket) {
                 }
                 if (data.type_m != "rdv" && data.type_m != "booking" && data.type_m != "devis_request" && data.type_m != "contact"){
                     User.insertTypeM(tableT ,(result) => {
-                        //console.log("INSERTION DU TYPE DE MESSAGE "+data.type_m+" AU CALME!")
-                        //console.log(tableT)
-                        //console.log("id du type "+result)
                         tableM.push(userIdSender, userIdReceiver, data.txt, socket.room, result, created_date);
                         User.insertMessages(tableM, (result) => {
                             data.id_m = result
@@ -659,15 +463,10 @@ io.sockets.on('connection', function (socket) {
         }
     });
     socket.on('update_preview_in_room',  (data, context) =>{
-        //console.log("---------------UPDATE PREVIEW IN ROOM--------------")
-        //console.log(data)
-        //console.log("---------------------------------------------------")
         for (k in tabCorresp){
             if (tabCorresp[k][1] == data.id_r){
                 tabCorresp[k][6] = data.id_m
                 tabCorresp[k][7] = data.txt
-                //console.log(tabCorresp[k])
-                //SI ON N'EST PAS SUR LA ROOM ADMIN
                 if (data.id_r != 1)
                     io.sockets.in(data.id_r).emit('updatepreview', tabCorresp[k], context)
                 else
@@ -677,10 +476,6 @@ io.sockets.on('connection', function (socket) {
         }
     });
     socket.on('list_msg', (data, corespObj, type_user) => {
-        //console.log("--------------LIST MESSAGES-------------")
-        //console.log(corespObj)
-        //console.log(type_user)
-        //console.log(data)
         let message = []
         getPreviousMsg(15, type_user, data, (result) => {
             //CHARGEMENT DES MESSAGES DE LA BDD UNIQUEMENT SUR LE SWITCH DE LA ROOM
@@ -847,12 +642,6 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('switchRoom', function(idUser, newroom, coresp){
         let data = {}
-        //console.log("------------SwitchRoom---------------")
-        //console.log(coresp)
-        //console.log(idUser)
-        //console.log(newroom)
-        //console.log(socket.room)
-        //console.log("-------------------------------------")
         if (socket.room != newroom){
             socket.leave(socket.room);
             socket.join(newroom);
@@ -873,16 +662,10 @@ io.sockets.on('connection', function (socket) {
             data.txt = idUser+' has joined this room'
             socket.broadcast.to(newroom).emit('updatechat', coresp, data);
         }
-        //data.userId = idUser
-        //socket.emit('updaterooms', tabCorresp, newroom, coresp);
     });
 
     socket.on('update_services', function(idUser, room, coresp){
         let data = {}
-        //console.log("------------UpdateServices---------------")
-        //console.log(coresp)
-        //console.log(idUser)
-        //console.log("-----------------------------------------")
         User.get_servicesOfPro(coresp.id_coresp, (result) => {
             if (result.length > 0){
                 socket.emit('updateservicesfront', result);
@@ -892,10 +675,6 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('update_modeles_devis', function(idUser, room, coresp){
         let data = {}
-        //console.log("------------UpdateModeles---------------")
-        //console.log(coresp)
-        //console.log(idUser)
-        //console.log("-----------------------------------------")
         User.get_devisOfPro(idUser, (result) => {
             if (result.length > 0){
                 socket.emit('updatemodelesdevisfront', result);
@@ -933,20 +712,6 @@ io.sockets.on('connection', function (socket) {
     });
 });
 
-//FIN DE LA CONNECTION AU SOCKET USER ET ENVOI DE NOTIFICATION
-
-/*
-GENERE TABLE MESSAGE => OK
-GENERE SOCKET MESSAGE => OK
-GENERE TABLE NOTIF => OK
-GENERE SOCKET SEND MSG => OK
-RECUPERATION DU ROUTE CHAT => OK
-RECUPERATION DU MIDDLEWEAR AUTH POUR AUTHENTIFIER LA SESISON DU USER => OK
-RECUPERATION DU REQUETAGE (findProfile ...) => OK
-RECUPERATION DE LA VUE CHAT DESIGN ET FRONT NOTIF
-RECUPERATION DE L'AJAX DU CHAT
-DEMANDER UNE AUTORISATION D'ACCES AU CHAT AU USER DE NIVEAU 2 AVEC UN CHANPS 0/1
-*/
 var addresses = [];
 for (var k in interfaces) {
     for (var k2 in interfaces[k]) {

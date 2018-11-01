@@ -1,7 +1,7 @@
- let express = require('express');
-let router = express.Router();
-let session = require('express-session');
-let User = require('../models/req_user');
+ const express = require('express');
+const router = express.Router();
+const session = require('express-session');
+const User = require('../models/req_user');
 
 
 

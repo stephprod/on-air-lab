@@ -1,7 +1,7 @@
-let express = require('express')
-let User = require('../models/req_user')
+const express = require('express')
+const User = require('../models/req_user')
 //let fileUpload = require('express-fileupload')
-let router = express.Router()
+const router = express.Router()
 
 //router.use(fileUpload())
 

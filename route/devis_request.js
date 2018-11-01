@@ -1,7 +1,7 @@
-let express = require('express')
-let User = require('../models/req_user')
+const express = require('express')
+const User = require('../models/req_user')
 
-let router = express.Router()
+const router = express.Router()
 
 router.route('/devis-request')
 	.get((request, response) => {
@@ -25,7 +25,7 @@ router.route('/devis-request')
 			tableT.push('devis_request', null);
 			User.insertTypeM(tableT, (result)=>{
 				if (result > 0){
-					tableM.push(table[2], table[3], ret.msg, table[4], result, ret.created);                       
+					tableM.push(table[2], table[3], ret.msg, table[4], result, ret.created);
 					User.insertMessages(tableM, (result2)=>{
 						if (result2 > 0){
 							ret.id_message = result2

@@ -1,13 +1,13 @@
-let express = require('express')
-let validator = require('../middlewares/valid_form').module_video
-let User = require('../models/req_user')
-let router = express.Router()
+const express = require('express')
+const validator = require('../middlewares/valid_form').module_video
+const User = require('../models/req_user')
+const router = express.Router()
 
 router.route('/module_video')
 	.post(validator, (request, response) => {
 		console.log(request.body)
 		let table = []
-		for (let prop in request.body){		
+		for (let prop in request.body){
 			table.push(request.body[prop])
 		}
 		console.log(table)

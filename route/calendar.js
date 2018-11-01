@@ -1,8 +1,8 @@
-let express = require('express')
-let User = require('../models/req_user')
+const express = require('express')
+const User = require('../models/req_user')
 // const _ = require('lodash')
 
-let router = express.Router()
+const router = express.Router()
 let business = {}
 let table = []
 let lundi = {}
@@ -62,7 +62,7 @@ router.route('/agenda')
 						for(let k in business){table.push(business[k])}
 							console.log(table)
 				}
-				//EN LOCALS BUSINESS IS NOT DEFINED SHIIIIT	
+				//EN LOCALS BUSINESS IS NOT DEFINED SHIIIIT
 				User.get_calendar(request.session.userId, (result) => {
 					if (result.length >= 0){
 						let data = JSON.stringify(result)
