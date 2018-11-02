@@ -43,6 +43,9 @@ import {update_front_with_msg, update_front_with_errors, update_front_with_succe
 			type: "POST",
 			url: "/upload_image",
 			data: formData,
+			beforeSend: function (req){
+				req.setRequestHeader("x-access-token", token);
+			},
 			processData: false,  // indique à jQuery de ne pas traiter les données
   			contentType: false,  // indique à jQuery de ne pas configurer le contentType
 			success: function(data){
@@ -283,7 +286,7 @@ import {update_front_with_msg, update_front_with_errors, update_front_with_succe
 	  	}
 	});
 	var session = JSON.parse(sessionStorage.getItem('session'));
-	sessionStorage.clear();
+	//sessionStorage.clear();
 	var user = null;
 	var userId = null;
 	var token = null;

@@ -170,6 +170,7 @@
       locals.session.userName : "null" %>";
     user.type = "<%- locals.session.userType ?
       locals.session.userType : "null" %>";
+    //console.log(session);
     session.user = user;
     sessionStorage.setItem("session", JSON.stringify(session));
 <% } %>

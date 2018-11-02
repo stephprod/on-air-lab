@@ -4,16 +4,16 @@ var select_filter = $('.order-by-container select');
 var search_res = JSON.parse(sessionStorage.getItem('search_res'));
 //var session = JSON.parse(sessionStorage.getItem('session'));
 var select_audio,
-        select_audio_switcher,
-        radios_type_service_switcher,
-        select_video,
-        select_cities,
-        select_cp,
-        slider_distance,
-        datas = {},
-        panel_search_active,
-        pro_card_contact_link,
-        elems_in_a_page = 0;
+    select_audio_switcher,
+    radios_type_service_switcher,
+    select_video,
+    select_cities,
+    select_cp,
+    slider_distance,
+    datas = {},
+    panel_search_active,
+    pro_card_contact_link,
+    elems_in_a_page = 0;
 //console.log(pro_card_contact_link);
 //console.log($grid);
 //console.log(select_filter);
