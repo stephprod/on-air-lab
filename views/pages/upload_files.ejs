@@ -7,9 +7,9 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
-	<title>Apartment - Premium Real Estate HMTL Site Template</title>
+	<title>Label - ON-AIR</title>
 	<meta name="keywords" content="Download, Apartment, Premium, Real Estate, HMTL, Site Template, property, mortgage, CSS" />
-	<meta name="description" content="Download Apartment - Premium Real Estate HMTL Site Template" />
+	<meta name="description" content="Label - ON-AIR" />
 	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 	<link rel="icon" href="favicon.ico" type="image/x-icon">
 
@@ -505,9 +505,9 @@
 <!-- Bootstrap-->
     <script type="text/javascript" src="/asset/bootstrap/bootstrap.min.js"></script>
 
-<!-- Google Maps -->
+<!-- Google Maps 
 	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDfDCV5hXiPamCIT8_vwGXuzimLQ9MF76g&amp;sensor=false&amp;libraries=places"></script>
-	
+-->
 <!-- plugins script -->
 	<script type="text/javascript" src="/asset/js/plugins.js"></script>
 
@@ -530,14 +530,20 @@
 				type: "POST",
 				url: '/delete-in-serv',
 				data: datas,
+				beforeSend: function (req){
+					req.setRequestHeader("x-access-token", "<%- locals.session.token %>");
+				},
 				success: function(data){
-					console.log(`"SERV" - ${data.success}`);
+					//console.log(`"SERV" - ${data.success}`);
 					$.ajax({
 						type: "POST",
 						url: '/delete-files',
 						data: datas,
+						beforeSend: function (req){
+							req.setRequestHeader("x-access-token", "<%- locals.session.token %>");
+						},
 						success: function(data){
-							console.log(`"BDD" - ${data.success}`);
+							//console.log(`"BDD" - ${data.success}`);
 							$(files[0]).fileinput("upload");
 						}
 					})
@@ -565,6 +571,8 @@
     <script>
     	var user = {};
 		var session = {};
+		session.token = "<%- locals.session.token != undefined ? 
+			locals.session.token : "null" %>";
 		user.id = "<%- locals.session.userId != undefined ? 
 			locals.session.userId : "null" %>";
 		user.nom = "<%- locals.session.userName ? 

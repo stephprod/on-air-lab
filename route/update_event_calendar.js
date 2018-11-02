@@ -1,11 +1,9 @@
-let express = require('express')
-let User = require('../models/req_user')
+const express = require('express')
+const User = require('../models/req_user')
 
-let router = express.Router()
+const router = express.Router()
 
 router.route('/update_event_calendar')
-	.get((request, response) => {
-	})
 	.post((request, response) => {
 		let start = request.body.start;
 		let end = request.body.end;

@@ -162,7 +162,10 @@ function on_form_contact_submit(e){
 	 $.ajax({
       'type' : that.attr('method'),
       'url' : that.attr('action'),
-      'data': that.serializeArray(),
+	  'data': that.serializeArray(),
+	  'beforeSend': function (req){
+			req.setRequestHeader("x-access-token", token);
+	  },
       'success': function(data) {
       	//console.log(data);
       	//console.log(user);
@@ -290,10 +293,12 @@ var user_receiv = JSON.parse(sessionStorage.getItem('user_receiv'));
 var user = null;
 var userId = null;
 var page = null;
+var token = null;
 if (session != null && session.user != undefined){
 	user = session.user;
 	userId = user.id;
 	page = session.page;
+	token = session.token;
 }
 //console.log($(".cal"));
 /*$(iframe_cal1).on("click", ".timeSelect", on_click_dispo);

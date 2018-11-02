@@ -1,8 +1,8 @@
-let express = require('express')
-let User = require('../models/req_user')
+const express = require('express')
+const User = require('../models/req_user')
 // const _ = require('lodash')
 
-let router = express.Router()
+const router = express.Router()
 let business = {}
 let table = []
 let lundi = {}
@@ -60,9 +60,9 @@ router.route('/agenda')
 					}
 						business = {lundi,mardi,mercredi,jeudi,vendredi,samedi,dimanche,lundid,mardid,mercredid,jeudid,vendredid,samedid,dimanched}
 						for(let k in business){table.push(business[k])}
-							console.log(table)
+							//console.log(table)
 				}
-				//EN LOCALS BUSINESS IS NOT DEFINED SHIIIIT	
+				//EN LOCALS BUSINESS IS NOT DEFINED SHIIIIT
 				User.get_calendar(request.session.userId, (result) => {
 					if (result.length >= 0){
 						let data = JSON.stringify(result)
@@ -76,22 +76,26 @@ router.route('/agenda')
 		}
 	})
 	.post((request, response) => {
-		console.log(request.body)
-		let table = [];
-		for (let prop in request.body){
-			table.push(request.body[prop])
-		}
-		table.push(request.session.userId)
-		User.insertCalendar(table, (result) => {
-			if (result == 0) {
-				console.log("ca marche pas")
-			}else{
-				console.log("Envoi data au calme")
-				table.push(result)
-				response.send(table)
+		//console.log(request.body)
+		if (request.session.token == request.headers["x-access-token"]){
+			let table = [];
+			for (let prop in request.body){
+				table.push(request.body[prop])
 			}
+			table.push(request.session.userId)
+			User.insertCalendar(table, (result) => {
+				if (result == 0) {
+					console.log("ca marche pas")
+				}else{
+					console.log("Envoi data au calme")
+					table.push(result)
+					response.send(table)
+				}
 
-		})
+			})
+		}else{
+			response.send("Compromised token !")
+		}
 	})
 
 module.exports = router

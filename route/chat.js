@@ -1,19 +1,12 @@
-let express = require('express')
-let User = require('../models/req_user')
-let session = require('express-session');
-let router = express.Router()
+const express = require('express')
+const User = require('../models/req_user')
+const session = require('express-session');
+const router = express.Router()
 
 router.route('/chat')
 	.get((request, response) => {
-		//if (request.session.userId == undefined) {
-		//	response.render('pages/index', {name: "index"})
-		//}else{
-			//console.log(request.url)
-			response.locals.session = request.session
-			response.render('pages/chat2')
-		//}
-		//console.log("ID du GARS "+request.session.userId)
-        //console.log("NOM du GARS "+request.session.userName)
+		response.locals.session = request.session
+		response.render('pages/chat2')
 	})
 	.post((request, response) => {
 		//console.log(request.body);

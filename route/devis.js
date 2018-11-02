@@ -1,12 +1,9 @@
-let express = require('express')
-let User = require('../models/req_user')
+const express = require('express')
+const User = require('../models/req_user')
 
-let router = express.Router()
+const router = express.Router()
 
 router.route('/devis')
-	.get((request, response) => {
-
-	})
 	.post((request, response) => {
 		let table = []
 		let tableP = []
@@ -14,10 +11,11 @@ router.route('/devis')
 		let ret = {}
 		ret.global_msg = []
 		ret.success = []
+		if (request.session.token == request.headers["x-access-token"]){
 		for (let prop in request.body){
 			table.push(request.body[prop])
 		}
-		console.log(request.session)
+		//console.log(request.session)
 		//console.log(table)
 		if (table[1] == "display"){
 			User.getDevis(table[0], (result) => {
@@ -26,7 +24,7 @@ router.route('/devis')
 					//SI L'ID DU DEVIS EXISTE, MISE A JOUR DEVIS
 						User.update_devis("total_ht='"+table[2]+"', tva='"+table[3]+"', price_ttc='"+table[4]+"', name='"+table[5]+"' WHERE id_devis="+table[0], (result2) => {
 							if (result2 > 0){
-								ret.success.push(true) 
+								ret.success.push(true)
 								console.log("success mise à jour table devis")
 							}
 							else
@@ -48,7 +46,7 @@ router.route('/devis')
 							ret.devis_id = result
 							console.log("success insertion devis "+result)
 							tableP.push(result, request.session.userId)
-							User.insertPrestationEmpty(tableP, (result2)=>{ 
+							User.insertPrestationEmpty(tableP, (result2)=>{
 								if (result2 > 0){
 									ret.success.push(true)
 									ret.presta_id = result2
@@ -103,10 +101,10 @@ router.route('/devis')
 										ret.success.push(true)
 										ret.global_msg.push("Insertion du devis effectuée !")
 										console.log("success insertion devis "+result)
-										//tableP = [] 
+										//tableP = []
 										tableP.push(result, request.session.userId)
 										//console.log(request.session.userId)
-										User.insertPrestationEmpty(tableP, (result2)=>{ 
+										User.insertPrestationEmpty(tableP, (result2)=>{
 											if (result2 > 0){
 												//console.log(ret);
 												ret.success.push(true)
@@ -172,6 +170,11 @@ router.route('/devis')
 					response.send(ret)
 				})
 			}
+		}else{
+			ret.success.push(false)
+			ret.global_msg.push("Token compromised !")
+			response.send(ret)
+		}
 })
 
 module.exports = router

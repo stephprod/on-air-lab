@@ -17,37 +17,37 @@
     font-size: 14px;
     font-family: 'Roboto', sans-serif;
     }
-    
+
     #wrap {
         width: 1100px;
         margin: 0 auto;
     }
-        
+
     #external-events {
         float: left;
         width: 199px;
         padding: 0 10px;
         text-align: center;
     }
-        
+
     #external-events h4 {
         font-size: 16px;
         margin-top: 0;
         padding-top: 1em;
     }
-        
+
     #external-events .fc-event {
         margin: 10px 0;
         cursor: pointer;
     }
-        
+
     #external-events input {
         margin: 0;
         vertical-align: middle;
     }
 
   #calendar {
-    float: right; 
+    float: right;
         margin: 0 auto;
     width: 900px;
     background-color: #FFFFFF;
@@ -122,37 +122,37 @@ input[type="checkbox"]:checked + label:before {
 			var pause;
 
     /*  className colors
-    
+
     className: default(transparent), important(red), chill(pink), success(green), info(blue)
-    
+
     */
-      
+
     /* initialize the external events
     -----------------------------------------------------------------*/
-  
+
     $('#external-events div.external-event').each(function() {
-    
+
       // create an Event Object (http://arshaw.com/fullcalendar/docs/event_data/Event_Object/)
       // it doesn't need to have a start or end
       var eventObject = {
         title: $.trim($(this).text()) // use the element's text as the event title
       };
-      
+
       // store the Event Object in the DOM element so we can get to it later
       var t = $(this).data('eventObject', eventObject);
-      
+
       // make the event draggable using jQuery UI
       $(this).draggable({
         zIndex: 999,
         revert: true,      // will cause the event to go back to its
         revertDuration: 0  //  original position after the drag
       });
-      
+
     });
-   
+
     /* initialize the calendar
     -----------------------------------------------------------------*/
-    
+
     var calendar =  $('#calendar').fullCalendar({
       header: {
         left: 'title',
@@ -171,7 +171,7 @@ input[type="checkbox"]:checked + label:before {
         agenda: {
           eventLimit: 4 // adjust to 6 only for agendaWeek/agendaDay
         },
-      },  	
+      },
       selectHelper: true,
       selectConstraint: "businessHours",
 		select: function(start, end, allDay) {
@@ -213,25 +213,25 @@ input[type="checkbox"]:checked + label:before {
       droppable: true, // this allows things to be dropped onto the calendar !!!
       dragRevertDuration: 0,
       eventDrop: function(event, date, allDay) { // this function is called when something is dropped
-      
+
         //retrieve the dropped element's stored Event Object
         var originalEventObject = $(this).data('eventObject');
-        
+
         // we need to copy it, so that multiple events don't have a reference to the same object
         var copiedEventObject = $.extend({}, originalEventObject);
-        
+
         // assign it the date that was reported
         copiedEventObject.start = date;
         copiedEventObject.allDay = allDay;
         // render the event on the calendar
         // the last `true` argument determines if the event "sticks" (http://arshaw.com/fullcalendar/docs/event_rendering/renderEvent/)
-        
+
         // is the "remove after drop" checkbox checked?
         if ($('#drop-remove').is(':checked')) {
           // if so, remove the element from the "Draggable Events" list
           $(this).remove();
         }
-        
+
       },
 		eventDragStop: function( event, jsEvent, ui, view ) {
 		    if(isEventOverDiv(jsEvent.clientX, jsEvent.clientY)) {
@@ -416,10 +416,6 @@ input[type="checkbox"]:checked + label:before {
 <div id="dishoraire"></div>
 <button class="savecal btn-primary">Sauvegarder</button>
 <div style='clear:both'></div>
-<p>ca c les event dans le calandar</p>
-<p><%- locals.eventObj %></p>
-<p>ca cest les horaire d'ouverture</p>
-<p><%- locals.dow %></p>
 </div>
 <script src='asset/js/fullcalendar/lib/moment.min.js'></script>
 <script src='asset/js/fullcalendar/locale/fr.js'></script>

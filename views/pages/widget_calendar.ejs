@@ -73,6 +73,9 @@ $(document).ready(function() {
 			url: '/widget_calendar',
 			data: datas,
 			type: 'POST',
+			beforeSend: function (req){
+				req.setRequestHeader("x-access-token", "<%- locals.session.token %>")
+			},
 			success: function(data) {
 				console.log(data);
 				var dow = data[data.length - 1][0];

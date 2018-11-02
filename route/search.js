@@ -1,8 +1,8 @@
-let express = require('express')
-let User = require('../models/req_user')
-let validator = require('../middlewares/valid_form').search
+const express = require('express')
+const User = require('../models/req_user')
+const validator = require('../middlewares/valid_form').search
 
-let router = express.Router()
+const router = express.Router()
 
 router.route('/search')
 	.get((request, response) => {
@@ -47,10 +47,10 @@ router.route('/search')
 					response.locals.listEtab = tableEtab
 				}
 				response.render('pages/search2')
-			}) 
+			})
 		} else {
 			response.render('pages/index')
-		}		
+		}
         //console.log("ID du GARS "+request.session.userId)
         //console.log("NOM du GARS "+request.session.userName)
 	})
@@ -101,7 +101,7 @@ router.route('/search')
 								User.getAllFrenchCp((res) =>{
 									ret.cp = res
 									//console.log(ret)
-									response.send(ret)	
+									response.send(ret)
 								})
 							}
 							else
@@ -141,11 +141,6 @@ router.route('/search')
 						clauseTarif = "`tarification`.`prix_h` >= "+parseInt(tarif[0])+" AND "+
 							"`tarification`.`prix_h` <= "+parseInt(tarif[1])
 				}
-				//if (k == "filtre_ville[]"){
-				//	let ville = request.body[k]
-				//	if (ville != "")
-				//		clauseVille = "`villes_france_free`.`ville_id` = "+ville[0]
-				//}
 				if (k == "filtre_code_postal" && request.body["filtre_distance"] == ""){
 					let code_postal = request.body[k]
 					if (code_postal != "")
@@ -194,11 +189,6 @@ router.route('/search')
 						lonB = result[k].ville_longitude_deg
 						latB = result[k].ville_latitude_deg
 						distance = getDistance(lonA, lonB, latA, latB)
-						//console.log("lonA "+lonA+" - latA "+latA)
-						//console.log("lonB "+lonB+" - latB "+latB)
-						//console.log("villeA "+request.body["filtre_ville[]"][0])
-						//console.log("villeB "+result[k].ville_nom)
-						//console.log("Distance "+distance)
 						if (distance >= clauseDistance[0] && distance <= clauseDistance[1]){
 							result[k].distance = distance
 							res.push(result[k])
@@ -211,11 +201,6 @@ router.route('/search')
 						lonB = result[k].ville_longitude_deg
 						latB = result[k].ville_latitude_deg
 						distance = getDistance(lonA, lonB, latA, latB)
-						//console.log("lonA "+lonA+" - latA "+latA)
-						//console.log("lonB "+lonB+" - latB "+latB)
-						//console.log("villeA SCEAUX")
-						//console.log("villeB "+result[k].ville_nom)
-						//console.log("Distance "+distance)
 						result[k].distance = distance
 					}
 					ret.listEtab = result
@@ -231,20 +216,9 @@ function getDistance(lonA, lonB, latA, latB){
 	let lonA_rad = parseFloat(lonA) * Math.PI / 180
 	let latA_rad = parseFloat(latA) * Math.PI / 180
 	let delta = latB_rad - latA_rad
-	let acos = Math.acos((Math.sin(latA_rad) * Math.sin(latB_rad)) + 
+	let acos = Math.acos((Math.sin(latA_rad) * Math.sin(latB_rad)) +
 		(Math.cos(latA_rad) * Math.cos(latB_rad) * Math.cos(delta)))
 	let earth_radius = 6378137
-	//console.log(lonA)
-	//console.log(lonB)
-	//console.log(latA)
-	//console.log(latB)
-	//console.log(lonA_rad)
-	//console.log(lonB_rad)
-	//console.log(latA_rad)
-	//console.log(latB_rad)
-	//console.log(delta)
-	//console.log(acos * earth_radius)
-	//console.log("-")
 	return isNaN((acos * earth_radius) / 1000) ? 99999 : (acos * earth_radius) //6378137 plus ou moins rayon de la terre (possibilités d'être plus précis)
 }
 module.exports = router

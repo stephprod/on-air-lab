@@ -1,22 +1,20 @@
-let express = require('express')
-let User = require('../models/req_user')
-let validator = require('../middlewares/valid_form2').forgottenPassword
-let uid = require('rand-token').uid
-let router = express.Router()
+const express = require('express')
+const User = require('../models/req_user')
+const validator = require('../middlewares/valid_form2').forgottenPassword
+const uid = require('rand-token').uid
+const router = express.Router()
 
 router.route('/forgottenPassword')
-	.get((request, response) => {
-	})
 	.post(validator, (request, response) => {
 		let table = []
-		for (let prop in request.body){		
+		let ret = {}
+		ret.success = []
+		ret.global_msg = []
+		let errors = {}
+		for (let prop in request.body){
 			table.push(request.body[prop])
 		}
 		User.getUser("email='"+table[0]+"'", (res) => {
-			let ret = {}
-			ret.success = []
-			ret.global_msg = []
-			let errors = {}
 			if (res !== undefined && res)
 			{
 				//MISE A JOUR DU JETON UTILISATEUR
@@ -26,7 +24,7 @@ router.route('/forgottenPassword')
 					{
 						ret.success.push(false);
 						ret.global_msg.push('Erreur lors de la mise à jour de l\'utilisateur, veuillez contacter le support/modérateur !')
-						errors.login = ['Une erreur technique est survenue lors de l\'envoi du mail de modification du mot de passe !']		
+						errors.login = ['Une erreur technique est survenue lors de l\'envoi du mail de modification du mot de passe !']
 						ret.errors = errors
 					}
 					else

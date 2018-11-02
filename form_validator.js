@@ -60,7 +60,7 @@ class Form_validator {
         if (!(input != null)) {
             return false;
         } else {
-            return input.match(/^[0-9]+$/);
+            return input.match(/^[0-9\.]+$/);
         }
     }
 

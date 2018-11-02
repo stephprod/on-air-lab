@@ -1,7 +1,7 @@
 import {update_front_with_msg, update_front_with_errors, update_front_with_success} from './front-update.js';
 	function on_offre_valid_link_click(event){
 		event.preventDefault();
-		console.log($(event.target).parents("a[data-action='offre']"));
+		//console.log($(event.target).parents("a[data-action='offre']"));
 		var link = $(event.target).parents("a[data-action='offre']");
 		var datas = {};
 		//console.log(link);
@@ -18,8 +18,11 @@ import {update_front_with_msg, update_front_with_errors, update_front_with_succe
 			type: div.attr("method"),
 			url: "/create_off",
 			data: datas,
+			beforeSend: function(req){
+				req.setRequestHeader("x-access-token", token);
+			},
 			success: function(data){
-				console.log(data);
+				//console.log(data);
 				//localStorage.setItem("datas", JSON.stringify(data));
 				//document.location = "/info-pro";
 				update_front_with_msg(data, "msg-tab");
@@ -55,7 +58,7 @@ import {update_front_with_msg, update_front_with_errors, update_front_with_succe
 		//console.log(datas);
 		$.ajax({
 	        type : "POST",
-	        url : "http://localhost:4000/get_cities_in_cp",
+	        url : "/get_cities_in_cp",
 	        data:  d,
 	        success: function(data) {
 				//AFFICHER LES VILLES ISSUS DE LA BASE DE DONNEES
@@ -84,6 +87,9 @@ import {update_front_with_msg, update_front_with_errors, update_front_with_succe
 			type: "POST",
 			url: "/info-pro",
 			data: datas,
+			beforeSend: function (req){
+				req.setRequestHeader("x-access-token", token);
+			},
 			success: function (data){
 				//localStorage.setItem("datas", JSON.stringify(data));
 				//document.location = "/info-pro";
@@ -116,6 +122,9 @@ import {update_front_with_msg, update_front_with_errors, update_front_with_succe
 			type: "POST",
 			url: "/tarification",
 			data: datas,
+			beforeSend: function (req){
+				req.setRequestHeader("x-access-token", token);
+			},
 			success: function (data){
 				update_front_with_msg(data, "msg-tab");
 				if (!data.success[0])
@@ -146,6 +155,9 @@ import {update_front_with_msg, update_front_with_errors, update_front_with_succe
 			type: "POST",
 			url: "/info-pro",
 			data: datas,
+			beforeSend: function (req){
+				req.setRequestHeader("x-access-token", token);
+			},
 			success: function (data){
 				//console.log(data)
 				update_front_with_msg(data, "msg-profile");
@@ -170,6 +182,9 @@ import {update_front_with_msg, update_front_with_errors, update_front_with_succe
 			type: "POST",
 			url: "/create_off",
 			data: datas,
+			beforeSend: function (req){
+				req.setRequestHeader("x-access-token", token);
+			},
 			success: function (data){
 				update_front_with_msg(data, "msg-tab");
 				//console.log(that.parents(".grid-offer-col"));
@@ -267,6 +282,16 @@ import {update_front_with_msg, update_front_with_errors, update_front_with_succe
 	  		slider.slider("value", newNumber);
 	  	}
 	});
+	var session = JSON.parse(sessionStorage.getItem('session'));
+	sessionStorage.clear();
+	var user = null;
+	var userId = null;
+	var token = null;
+	if (session != null && session.user != undefined){
+		user = session.user;
+		userId = user.id;
+		token = session.token;
+	}
 	/*var offre_add_card = '<div class="grid-offer-col" style="width: 265px;display: inline-flex;"><div class="grid-offer"><div class="grid-offer-front"><div class="grid-offer-photo"><img src="/asset/images/grid-offer1.jpg" alt="" /><div class="type-container"><div class="etiquette-name">...</div></div></div><div class="grid-offer-text"><i class="fas fa-map-marker grid-offer-localization"></i><div class="grid-offer-h4"><h4 class="grid-offer-title">..., FRANCE</h4></div><div class="clearfix"></div><p>...</p><div class="clearfix"></div></div><div class="price-grid-cont"><div class="grid-price-label pull-left">Price:</div><div class="grid-price pull-right">€ ...</div>'+
 		'<div class="clearfix"></div></div><div class="grid-offer-params"><div class="grid-area"><img src="/asset/images/area-icon.png" alt="" />54m<sup>2</sup></div><div class="grid-rooms"><img src="/asset/images/rooms-icon.png" alt="" />3</div><div class="grid-baths"><img src="/asset/images/bathrooms-icon.png" alt="" />1</div></div></div><div class="grid-offer-back"><div id="offer-form-0" method="post" action="#" data-profil="0"><div class="title-separator-primary"></div><h3 class="sidebar-title" style="margin: 14px;">Ajout<span class="special-color">.</span></h3><input type="text" name="title" class="main-input required,all" placeholder="titre"><textarea name="spe_off" class="main-input required,all" placeholder="description"></textarea>'+
 		'<div class="adv-search-range-cont"><label for="slider-o-price99-value" class="adv-search-label">Prix offre:</label><span>€</span><input type="text" id="slider-o-price99-value" class="adv-search-amount"><div class="clearfix"></div><div id="slider-o-price99" data-val="0" data-min="0" data-max="10000" class="slider" name="prix_off"></div></div></div><div class="button"><a href="#" class="button-primary" data-action="offre" data-form="offer-form-0"><span>ajouter</span><div class="button-triangle"></div><div class="button-triangle2"></div><div class="button-icon"><i class="far fa-user-circle"></i></div></a></div></div></div></div>';*/

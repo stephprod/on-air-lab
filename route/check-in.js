@@ -1,70 +1,75 @@
-let express = require('express')
-let User = require('../models/req_user')
-let router = express.Router()
+const express = require('express')
+const User = require('../models/req_user')
+const router = express.Router()
 let id_user
 router.route('/check-in')
-	.get((request, response) => {		
-	})
 	.post((request, response) => {
-		let table = [], tableD = [], tableT = [], tableTemp = [], tableE = [], tableM = []
-		let start, end, title, id_pro, id_art, ret = {}
-		let len
-		let req_ok = '', req_ko = ''
+		let ret = {}
 		ret.success = []
 		ret.global_msg = []
 		ret.result = {}
 		ret.msg = request.body.from == "rdv" ? "Demande de rendez-vous !" : "Demande de booking !"
 		ret.created = new Date()
-		id_sender = request.body.user_sender
-		title = request.body.title
-		id_receiv = request.body.user_receiv
-		id_pro = request.body.id_pro
-		id_art = request.body.id_art
-		console.log(request.body)
-		for (k in request.body){
-			table.push(request.body[k])
-		}
-		console.log(table)
-		len = (table.length - 7) / 2 ;
-		//INSERTION EVENNEMENT
-		for (var k=0; k < len; k++){
-			ret.result.id_dispos = []
-			setTimeout((function(k) {
-				return function(){
-					tableD = []
-					tableTemp = []
-					start = request.body["events["+k+"][start]"]
-					end = request.body["events["+k+"][end]"]
-					tableD.push(id_pro, id_art, start, end, title, 0)
-					User.insertDisponibiliteTemp(tableD, (result)=>{
-						if (result > 0){
-							ret.result.id_dispos.push(result)
-							ret.success.push(true)
-							ret.global_msg.push("Evènement envoyé !")
-							console.log("Success Insertion table calendar_event !")
-							
-						}
-						else
-						{
-							ret.success.push(false)
-							ret.global_msg.push("Erreur lors de l'enregistrement de l'évènement, contactez le support/modérateur !")
-							console.log("Echec Insertion table calendar_event !")	
-						}
-						if (k == len - 1){
-							//messages in chat
-							ret.result.type_r = request.body.from
-							insert_message(request, response, ret.result.id_dispos, ret);
-							//response.send(ret)
-						}
-					})
-				};
-			}) (k), 100)
-		}
-		if (len == 0){
-			//Aucune date select
+		if (request.session.token == request.headers["x-access-token"]){
+			let table = [], tableD = [], tableT = [], tableTemp = [], tableE = [], tableM = []
+			let start, end, title, id_pro, id_art
+			let len
+			let req_ok = '', req_ko = ''
+			id_sender = request.body.user_sender
+			title = request.body.title
+			id_receiv = request.body.user_receiv
+			id_pro = request.body.id_pro
+			id_art = request.body.id_art
+			console.log(request.body)
+			for (k in request.body){
+				table.push(request.body[k])
+			}
+			console.log(table)
+			len = (table.length - 7) / 2 ;
+			//INSERTION EVENNEMENT
+			for (var k=0; k < len; k++){
+				ret.result.id_dispos = []
+				setTimeout((function(k) {
+					return function(){
+						tableD = []
+						tableTemp = []
+						start = request.body["events["+k+"][start]"]
+						end = request.body["events["+k+"][end]"]
+						tableD.push(id_pro, id_art, start, end, title, 0)
+						User.insertDisponibiliteTemp(tableD, (result)=>{
+							if (result > 0){
+								ret.result.id_dispos.push(result)
+								ret.success.push(true)
+								ret.global_msg.push("Evènement envoyé !")
+								console.log("Success Insertion table calendar_event !")
+
+							}
+							else
+							{
+								ret.success.push(false)
+								ret.global_msg.push("Erreur lors de l'enregistrement de l'évènement, contactez le support/modérateur !")
+								console.log("Echec Insertion table calendar_event !")
+							}
+							if (k == len - 1){
+								//messages in chat
+								ret.result.type_r = request.body.from
+								insert_message(request, response, ret.result.id_dispos, ret);
+								//response.send(ret)
+							}
+						})
+					};
+				}) (k), 100)
+			}
+			if (len == 0){
+				//Aucune date select
+				ret.success.push(false)
+				ret.global_msg.push("Aucun créneau horaire sélectionné !")
+				console.log("Echec select event !")
+				response.send(ret)
+			}
+		}else{
 			ret.success.push(false)
-			ret.global_msg.push("Aucun créneau horaire sélectionné !")
-			console.log("Echec select event !")
+			ret.global_msg.push("Token compromised !")
 			response.send(ret)
 		}
 	})

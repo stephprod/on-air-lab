@@ -1,8 +1,8 @@
-let express = require('express')
-let User = require('../models/req_user')
-let validator = require('../middlewares/valid_form2').login
+const express = require('express')
+const User = require('../models/req_user')
+const validator = require('../middlewares/valid_form2').login
 
-let router = express.Router()
+const router = express.Router()
 
 router.route('/login')
 	.get((request, response) => {
@@ -44,6 +44,7 @@ router.route('/login')
 					userSess.userName = result.nom
 					userSess.userFirstName = result.prenom
 					userSess.userType = result.type
+					userSess.token = result.jeton
 					console.log('Tu est connecter avec id bdd ' +userSess.userId)
 					console.log('Tu est connecter avec le nom '+userSess.userName)
 					User.updateUser("disponibilite='1' WHERE id='"+result.id+"'"

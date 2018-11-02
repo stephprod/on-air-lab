@@ -1,26 +1,30 @@
-let express = require('express')
-let User = require('../models/req_user')
-let fs = require('fs');
+const express = require('express')
+const User = require('../models/req_user')
+const fs = require('fs');
 //let fileUpload = require('express-fileupload')
-let router = express.Router()
+const router = express.Router()
 
 router.route('/delete-files')
-	.get((request, response) => {
-		
-	})
 	.post((request, response) => {
 		let table = [], ret = {}
-		console.log(request.body)
-		table.push(request.body.file_profileId)
-		User.delete_document(table, (res) => {
-			if (res > 0){
-				ret.success = true
-			}
-			else
-			{
-				ret.success = false
-			}
-			response.send(ret)
-		})
+		ret.success = []
+		ret.global_msg = []
+		//console.log(request.body)
+		if (request.session.token == request.headers["x-access-token"]){
+			table.push(request.body.file_profileId)
+			User.delete_document(table, (res) => {
+				if (res > 0){
+					ret.success.push(true)
+				}
+				else
+				{
+					ret.success.push(false)
+				}
+				response.send(ret)
+			})
+		}else{
+			ret.success.push(false)
+			ret.global_msg.push("Compromised token !")
+		}
 	})
 module.exports = router

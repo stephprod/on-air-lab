@@ -1,7 +1,7 @@
-let express = require('express')
-let User = require('../models/req_user')
+const express = require('express')
+const User = require('../models/req_user')
 
-let router = express.Router()
+const router = express.Router()
 
 router.route('/logout')
 	.get((request, response) => {
@@ -12,20 +12,26 @@ router.route('/logout')
 		let table = [], ret = {}
 		ret.global_msg = []
 		ret.success = []
-		for (let prop in request.body){
-			table.push(request.body[prop])
-		}
-		if (table.length > 0){
-			request.session.userId = null
-			request.session.userName = null
-			request.session.userFirstName = null
-			request.session.userType = null
-			ret.success.push(true)
-			ret.global_msg.push('Session clos !')
+		if (request.session.token == request.headers["x-access-token"]){
+			for (let prop in request.body){
+				table.push(request.body[prop])
+			}
+			if (table.length > 0){
+				request.session.userId = null
+				request.session.userName = null
+				request.session.userFirstName = null
+				request.session.userType = null
+				ret.success.push(true)
+				ret.global_msg.push('Session clos !')
+			}else{
+				ret.success.push(false)
+				ret.global_msg.push('Erreur lors de la deconnexion de l\'utilisateur, contactez le support/modérateur !')
+			}
+			response.send(ret)
 		}else{
 			ret.success.push(false)
-			ret.global_msg.push('Erreur lors de la deconnexion de l\'utilisateur, contactez le support/modérateur !')
+			ret.global_msg.push("Token compromised !")
+			response.send(ret)
 		}
-		response.send(ret)
 })
 module.exports = router

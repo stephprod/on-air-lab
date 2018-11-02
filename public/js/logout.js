@@ -9,16 +9,19 @@ function logout_link_click(e){
 		type : "POST",
 		url: "/logout",
 		data: datas,
+		beforeSend: function (req){
+			req.setRequestHeader("x-access-token", token);
+		},
 		success: function (data){
 			//console.log(data);
 			update_front_with_msg(data, "logout-msg");
-			if (data.errors !== undefined){
+			if (!data.success[0]){
 				update_front_with_errors(data.errors);
 			}
 			else{
 				update_front_with_success();
+				document.location.reload();
 			}
-			document.location.reload();
 		}
 	});
 }
@@ -35,10 +38,12 @@ sessionStorage.clear();
 //console.log(user);
 var userId = null;
 var page = null;
+var token = null;
 if (session != null){
 	user = session.user;
 	if (user != null && user.id != null && user.id != "null"){
 		userId = user.id;
 	}
+	token = session.token;
 }
 $(document).on("ready", on_document_ready);

@@ -1,5 +1,14 @@
 import {update_front_with_msg, update_front_with_errors, update_front_with_success} from './front-update.js';
 var servs = JSON.parse(sessionStorage.getItem('services'));
+var session = JSON.parse(sessionStorage.getItem('session'));
+var token = null;
+var user = null;
+var userId = null;
+if (session.user !== undefined && session.user != null){
+  user = session.user;
+  userId = session.userId;
+  token = session.token;
+}
 //console.log(sessionStorage.getItem('services'));
 //console.log(servs);
 //sessionStorage.clear();
@@ -235,9 +244,12 @@ function insert_services(id, ind){
     $.ajax({
     	type: "POST",
     	url: "/devis",
-    	data: datas,
+      data: datas,
+      beforeSend: function (req){
+        req.setRequestHeader("x-access-token", token);
+      },
     	success: function (data){
-    		console.log(data);
+    		//console.log(data);
     		//console.log(allServ);
     		var total = 0.0
     		$(".items_title").empty();
@@ -303,10 +315,13 @@ function insert_services(id, ind){
 		datas.totalHT = parseFloat($("#subtotal").text().replace("€", ""));
 		datas.id_devis = parseInt($("table#items").data("devis"));
 		datas.tva = parseFloat($("table#items").data("tva"));
-		console.log(datas);
+		//console.log(datas);
 		$.ajax({
 			type: "POST",
-			url: "/prestas",
+      url: "/prestas",
+      beforeSend: function (req){
+				req.setRequestHeader("x-access-token", token);
+			},
 			data: datas,
 			success: function (data){
         //localStorage.setItem("datas", JSON.stringify(data));
@@ -341,7 +356,10 @@ function insert_services(id, ind){
 		$.ajax({
 			type: "POST",
 			url: "/devis",
-			data: datas,
+      data: datas,
+      beforeSend: function (req){
+        req.setRequestHeader("x-acces-token", token);
+      },
 			success: function (data){
         //console.log(data);
         //localStorage.setItem("datas", JSON.stringify(data));
@@ -387,7 +405,10 @@ function insert_services(id, ind){
   	$.ajax({
   		type: "POST",
   		url: "/devis",
-  		data: datas,
+      data: datas,
+      beforeSend: function (req){
+        req.setRequestHeader("x-access-token", token);
+      },
   		success: function (data){
         //console.log(data);
   			//localStorage.setItem("datas", JSON.stringify(data));

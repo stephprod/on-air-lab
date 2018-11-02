@@ -5,9 +5,9 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<title>Recherche - ON-AIR</title>
+	<title>Label - ON-AIR</title>
 	<meta name="keywords" content="Download, Apartment, Premium, Real Estate, HMTL, Site Template, property, mortgage, CSS" />
-	<meta name="description" content="Download Apartment - Premium Real Estate HMTL Site Template" />
+	<meta name="description" content="Label - ON-AIR" />
 	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 	<link rel="icon" href="favicon.ico" type="image/x-icon">
 
@@ -27,7 +27,8 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 	<!-- Socket IO JS -->
-    <!-- <script src=/socket.io/socket.io.js"></script> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script> -->
+    <script src="http://localhost:4000/socket.io/socket.io.js"></script>
 </head>
 <body>
 <div id="wrapper">
@@ -105,7 +106,7 @@
 		            <span>Artiste</span>
 		            <div class="box-module">
 		            	<a class="module" href="#booking-modal" data-toggle="modal">booking</a>
-		            	<a class="module" href="#devis-modal" data-toggle="modal">devis</a>
+		            	<!-- <a class="module" href="#devis-modal" data-toggle="modal">devis</a> -->
 		            	<a class="module" href="#rdv-modal" data-toggle="modal">rdv</a>
 		            	<a class="module" href="#paiement-modal" data-toggle="modal">paiement</a>
 		            	<a class="module" href="#son-modal" data-toggle="modal">son</a>
@@ -118,8 +119,7 @@
 		            <div class="message">
 		            	<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" />
 		                <div class="bubble">
-		                	Really cool stuff!
-		                    <div class="corner"></div>
+<div class="card-chat"><div class="picture "></div><div class="navigation"><div class="nav_btns"><i class=" icon-home" aria-hidden="true"></i><i class="nav_btn icon-magnifier" aria-hidden="true"></i><i class="nav_btn_r icon-bell" aria-hidden="true"></i><i class="nav_btn icon-user" aria-hidden="true"></i></div><div id="plusButton" class="plus"><div class="plusHor"></div><div class="plusVer "></div></div></div><div class="options"><i class=" icon-camera" aria-hidden="true"></i><i class=" icon-picture" aria-hidden="true"></i><i class=" icon-camrecorder" aria-hidden="true"></i></div></div><div class="corner"></div>
 		                    <span>3 min</span>
 		                </div>
 		            </div>
@@ -321,34 +321,31 @@
 <!-- Bootstrap-->
     <script type="text/javascript" src="/asset/bootstrap/bootstrap.min.js"></script>
 
-<!-- Google Maps -->
-	<!-- <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDfDCV5hXiPamCIT8_vwGXuzimLQ9MF76g&amp;sensor=false&amp;libraries=places"></script> -->
+<!-- Google Maps 
+	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDfDCV5hXiPamCIT8_vwGXuzimLQ9MF76g&amp;sensor=false&amp;libraries=places"></script>-->
 
 <!-- plugins script -->
-	 <script type="text/javascript" src="/asset/js/plugins.js"></script>
-	<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.2/js/bootstrap-select.min.js"></script> -->
+	<script type="text/javascript" src="/asset/js/plugins.js"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/i18n/defaults-fr_FR.min.js"></script>
 <!-- template scripts -->
 	<script type="text/javascript" src="/asset/mail/validate.js"></script>
-    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script>
     	var user = {};
     	var session = {};
     	session.page = <%- locals.page !== undefined ? '"'+ locals.page+ '"' : "null" %>;
     	session.id_u = <%- locals.session.id_u !== undefined ? '"'+locals.session.id_u +'"' : "null" %>;
-    	session.id_coresp = <%- locals.session.id_coresp !== undefined ? locals.session.id_coresp : "null" %>;
+		session.id_coresp = <%- locals.session.id_coresp !== undefined ? locals.session.id_coresp : "null" %>;
+		session.token = <%- locals.session.token !== undefined ? '"'+ locals.session.token +'"' : "null" %>;
     	user.id = "<%- locals.session.userId != undefined ?
     		locals.session.userId : "null" %>";
     	user.nom = "<%- locals.session.userName ?
     		locals.session.userName : "null" %>";
     	user.type = "<%- locals.session.userType ?
     		locals.session.userType : "null" %>";
-    	session.user = user;
     	//console.log(session);
+    	session.user = user;
     	sessionStorage.setItem("session", JSON.stringify(session));
     </script>
-    <!-- <script type="module" src="/asset/js/events.js"></script>
-    <script type="module" src="/asset/js/socket_modules.js"></script> -->
     <script type="module" src="/asset/js/chat.js"></script>
 	</body>
 </html>

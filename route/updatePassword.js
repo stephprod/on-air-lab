@@ -1,8 +1,8 @@
-let express = require('express')
-let User = require('../models/req_user')
-let validator = require('../middlewares/valid_form').register_updatePassword
+const express = require('express')
+const User = require('../models/req_user')
+const validator = require('../middlewares/valid_form').register_updatePassword
 
-let router = express.Router()
+const router = express.Router()
 
 router.param('token', (req, res, next, token) => {
 	req.session.token = token
@@ -12,7 +12,7 @@ router.param('token', (req, res, next, token) => {
 		next()
 	})
 })
-	
+
 router.route('/updatePassword/:token')
 	.get((request, response) => {
 		if (request.user == undefined && request.session.token != 'default')
@@ -22,15 +22,14 @@ router.route('/updatePassword/:token')
 	})
 	.post(validator, (request, response) => {
 		let table = []
-		for (let prop in request.body){		
+		for (let prop in request.body){
 			table.push(request.body[prop])
 		}
-		User.updateUser("mot_de_passe='"+table[0]+"', jeton=NULL WHERE jeton='"+request.session.token+"'"
+		User.updateUser("mot_de_passe='"+table[0]+"' WHERE jeton='"+request.session.token+"'"
 		, (result) => {
 			let ret = {}
 			if (result > 0)
 			{
-				request.session.token = undefined
 				ret.msg = ["Mot de passe mis à jour avec succés !"]
 				ret.success = true
 			}
@@ -43,6 +42,6 @@ router.route('/updatePassword/:token')
 				ret.success = false
 			}
 			response.send(ret)
-	})	
+	})
 })
 module.exports = router
