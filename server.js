@@ -116,6 +116,10 @@ app.get('/', (request, response) => {
     response.locals.session = request.session
 	response.render('pages/index')
 })
+app.get('/index', (request, response) => {
+    response.locals.session = request.session
+	response.render('pages/index')
+})
 
 app.get('*', function(req, res){
     res.status('404').send('404 Not Found !')

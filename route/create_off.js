@@ -20,7 +20,7 @@ router.route('/create_off')
 			for (let prop in request.body){
 				table.push(request.body[prop])
 			}
-			console.log(table)
+			//console.log(table)
 			if (request.body.action ==  "insert_update"){
 				User.getOffre(request.session.userId, (result) => {
 					if (tmp == 0) {
@@ -29,7 +29,7 @@ router.route('/create_off')
 							if (result2 == 0){
 								ret.success.push(false)
 								ret.global_msg.push("Echec lors de l'insertion de l'offre, contactez le modérateur !")
-								console.log("echec insertion table offre")
+								//console.log("echec insertion table offre")
 								response.send(ret)
 							}
 							else{
@@ -38,12 +38,12 @@ router.route('/create_off')
 									if (result3 > 0){
 										ret.success.push(true)
 										ret.global_msg.push("Insertion de l'offre effectuée !")
-										console.log("succes data envoyer")
+										//console.log("succes data envoyer")
 									}
 									else{
 										ret.success.push(false)
 										ret.global_msg.push("Echec lors de l'insertion de l'offre (table liée), contactez le modérateur !")
-										console.log("echec insertion table contenir")
+										//console.log("echec insertion table contenir")
 									}
 									response.send(ret)
 								})
@@ -53,8 +53,8 @@ router.route('/create_off')
 						table.push(tmp)
 						//console.log(table)
 						User.update_offre("titre='"+table[0].replace(/'/g, "\\'")+"',spe_off='"+table[1].replace(/'/g, "\\'")+"',prix_off='"+table[2]+"' WHERE id_offre='"+table[5]+"'", (result) => {
-							console.log("-----------UPDATE OK----------")
-							console.log("-----------"+result+" LIGNE CHANGE---------")
+							//console.log("-----------UPDATE OK----------")
+							//console.log("-----------"+result+" LIGNE CHANGE---------")
 							ret.result = result
 							ret.success.push(true)
 							ret.global_msg.push("Offre mise à jour avec succès !")
@@ -65,8 +65,8 @@ router.route('/create_off')
 			}else{
 				//Suppression des offre
 				User.delete_offre(table[1], (result) => {
-					console.log("-----------DELETE OK----------")
-					console.log("-----------"+result+" LIGNE CHANGEE(S)---------")
+					//console.log("-----------DELETE OK----------")
+					//console.log("-----------"+result+" LIGNE CHANGEE(S)---------")
 					if (result > 0){
 						ret.success.push(true)
 						ret.global_msg.push("Offre supprimée avec succès !")
