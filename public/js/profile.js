@@ -344,6 +344,7 @@ function on_rdv_offer_link_click(e){
 	//console.log($(e.target).parents(".grid-offer-back"));
 	var parent = $(e.target).parents(".grid-offer-back").prev(".grid-offer-front");
 	var cible = $("#rdv-offer-modal");
+	cible.find('input[type="hidden"]').remove();
 	var inputs_to_hide = '<input type="hidden" name="offer-name" value="'+parent.find(".etiquette-name").text().trim()+'"/>'+
 	'<input type="hidden" name="offer-price" value="'+parent.find(".grid-price.pull-right").text().trim()+'"/>'+
 	'<input type="hidden" name="offer-desc" value="'+parent.find(".grid-offer-text p").text().trim()+'"/>'+

@@ -305,7 +305,7 @@ if ($(this).hasClass("meet-up-chat")){
       req.setRequestHeader("x-access-token", token);
     },
     success: function (data){
-      //console.log(data);
+      console.log(data);
       if (data.result.type_r == "rdv")
         update_front_with_msg(data, "msg-rdv");
       else

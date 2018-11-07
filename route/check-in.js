@@ -46,9 +46,16 @@ router.route('/check-in')
 			}else{	
 				len = (table.length - 7) / 2 ;
 				promise = insert_event(len, table, ret, request)
-				.then(insert_type_rdv_message)
-				.then(insert_message).then((res)=>{
+				.then((res) => {
+					return insert_type_rdv_message(request, response, res.result.id_dispos, res)
+				})
+				.then((res) => {
+					return insert_message(request, res, res.type_mess_id)
+				}).then((res)=>{
 					response.send(res)
+				}).catch((err) => {
+					console.log(err);
+					response.send(err)
 				});
 			}
 			if (len == 0){
