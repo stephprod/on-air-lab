@@ -298,7 +298,7 @@ function on_valid_rdv_offer_link_click(e){
 		desc: $("#rdv-offer-modal").find("[name='offer-desc']").val(),
 		id: $("#rdv-offer-modal").find("[name='offer-id']").val(),
 		type: $("#rdv-offer-modal").find("[name='offer-type']").val()};
-	//console.log(datas);
+	console.log(datas);
 	if (roomDisplay != null){
 		datas.from = "rdv_offer";
 		datas.title = "event-meet";
@@ -348,8 +348,8 @@ function on_rdv_offer_link_click(e){
 	'<input type="hidden" name="offer-price" value="'+parent.find(".grid-price.pull-right").text().trim()+'"/>'+
 	'<input type="hidden" name="offer-desc" value="'+parent.find(".grid-offer-text p").text().trim()+'"/>'+
 	'<input type="hidden" name="offer-type" value="'+parent.find("[class=transaction-type], [class=estate-type]").text().trim()+'"/>'+
-	'<input type="hidden" name="offer-id" value="'+$("a[href='#rdv-offer-modal']").attr("id").trim()+'"/>';
-	//console.log(inputs_to_hide);
+	'<input type="hidden" name="offer-id" value="'+$(e.target).parents("a[href='#rdv-offer-modal']").attr("id").trim()+'"/>';
+	console.log(inputs_to_hide);
 	cible.append(inputs_to_hide);
 	//console.log(parent);
 	//console.log(id_offre);

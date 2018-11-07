@@ -702,7 +702,7 @@ function on_module_deny_typeMessage_link_click(e){
   // Envoi de mail contenant le lien de refus d'une demande
 }
 function on_socket_update_eventstypeoffermessage(data){
-  console.log(data);
+  //console.log(data);
   var content = '';
   var div = $("div[id-message='"+data.id_m+"']");
   content += '<p>'+data.offer.titre+'</p>'; 

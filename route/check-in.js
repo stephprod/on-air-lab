@@ -109,7 +109,7 @@ router.route('/check-in')
 	function insert_type_rdv_offer_message(request, response, id_dispos, ret){
 		return new Promise((resolve, reject) => {
 			var tableT = []
-			//INSERTION TYPEMESSAGE PUIS MESSAGE
+			//INSERTION TYPEMESSAGE
 			tableT.push("rdv_offer", request.body["offer[id]"])
 			let dispos = id_dispos
 			if (id_dispos.length > 0){
