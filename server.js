@@ -314,7 +314,7 @@ io.sockets.on('connection', function (socket) {
                                         //console.log(tabCorresp)
                                         //console.log("-----------------------------------------------")
                                         if (k == result.length - 1){
-                                            console.log(tabCorresp)
+                                            //console.log(tabCorresp)
                                             socket.emit('updaterooms', tabCorresp, socket.room, null);
                                         }
                                    })
@@ -385,6 +385,7 @@ io.sockets.on('connection', function (socket) {
                         break;
                     case "booking":
                     case "rdv":
+                    case "rdv_offer":
                         break;
                     case "contact":
                         io.sockets.in(socket.id).emit('updatechat', user_receiver, data, context)
@@ -393,7 +394,7 @@ io.sockets.on('connection', function (socket) {
                         tableT.push(data.type_m, data.path)
                         break;
                 }
-                if (data.type_m != "rdv" && data.type_m != "booking" && data.type_m != "contact"){
+                if (data.type_m != "rdv" && data.type_m != "booking" && data.type_m != "contact" && data.type_m != "rdv_offer"){
                     //INSERTION DU TYPE DE MESSAGE
                     User.insertTypeM(tableT ,(result) => {
                         //console.log("INSERTION DU TYPE DE MESSAGE  AUDIO AU CALME!")
@@ -453,6 +454,7 @@ io.sockets.on('connection', function (socket) {
                         break;
                     case "rdv":
                     case "booking":
+                    case "rdv_offer":
                         io.sockets.in(socket.room).emit('updatechat', user_receiver, data, context)
                         break;
                     case "devis_request":
@@ -465,7 +467,7 @@ io.sockets.on('connection', function (socket) {
                         tableT.push(data.type_m, data.path)
                         break;
                 }
-                if (data.type_m != "rdv" && data.type_m != "booking" && data.type_m != "devis_request" && data.type_m != "contact"){
+                if (data.type_m != "rdv" && data.type_m != "booking" && data.type_m != "devis_request" && data.type_m != "contact" && data.type_m != "rdv_offer"){
                     User.insertTypeM(tableT ,(result) => {
                         tableM.push(userIdSender, userIdReceiver, data.txt, socket.room, result, created_date);
                         User.insertMessages(tableM, (result) => {
@@ -496,7 +498,7 @@ io.sockets.on('connection', function (socket) {
     socket.on('list_msg', (data, corespObj, type_user) => {
         let message = []
         getPreviousMsg(15, type_user, data, (result) => {
-            //CHARGEMENT DES MESSAGES DE LA BDD UNIQUEMENT SUR LE SWITCH DE LA ROOM
+            //CHARGEMENT DES MESSAGES DE LA BDD UNIQUEMENT SUR LE CHGMT DE ROOM
             for (let k=result.length - 1; k >= 0; k--)
             {
                 message = {
@@ -513,7 +515,8 @@ io.sockets.on('connection', function (socket) {
                 }
                 message.events = null
                 message.servs = null
-                if (message.type_m == "rdv" || message.type_m == "booking"){
+                //console.log(message)
+                if (message.type_m == "rdv" || message.type_m == "booking" || message.type_m == "rdv_offer"){
                     message.events = []
                     setTimeout((function(message) {
                         return function(){
@@ -529,11 +532,25 @@ io.sockets.on('connection', function (socket) {
                                     message.request_state = message.events[0].state
                                     //console.log(message)
                                     io.sockets.in(socket.id).emit('update_eventstypemessage', message)
-                                }
+                                    if (message.type_m == "rdv_offer"){
+                                        User.getOfferInTypeMessage(message.id_type_m, (result2) => {
+                                            if (result2.length > 0){
+                                                let offer = {}
+                                                offer.id = result2[0].id_offre
+                                                offer.titre = result2[0].titre
+                                                offer.desc = result2[0].spe_off
+                                                offer.prix = result2[0].prix_off
+                                                message.offer = offer
+                                                //console.log(message)
+                                                io.sockets.in(socket.id).emit('update_eventstypeoffermessage', message)
+                                            }
+                                        })
+                                    }
+                               }
                             })
                         };
                     }) (message), 100);
-                } else if(message.type_m == "devis_request"){
+                }else if(message.type_m == "devis_request"){
                     message.servs = []
                     setTimeout((function(message) {
                         return function(){
@@ -652,7 +669,7 @@ io.sockets.on('connection', function (socket) {
                     }
                 }
                 //console.log(message)
-                io.sockets.in(socket.id).emit('updatechat',corespObj, message)
+                io.sockets.in(data).emit('updatechat',corespObj, message)
             }
             //console.log("----------------------------------------------------")
         });

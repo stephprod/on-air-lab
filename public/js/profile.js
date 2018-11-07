@@ -209,7 +209,7 @@ function on_form_contact_submit(e){
 
 function on_reservation_link_click(e){
 	e.preventDefault();
-	console.log("resa click !");
+	//console.log("resa click !");
 	var iframe = $(this).data("frame") == "1" ? iframe_cal1 : iframe_cal2 ;
 	var datePickerVal = $(iframe).find(".datepicker input").val().replace(new RegExp("/", "g"), "-");
 	var datePickerValTab = datePickerVal.split("-");
@@ -226,7 +226,7 @@ function on_reservation_link_click(e){
 			datas.from = "rdv";
 			datas.title = "event-meet";
 		}
-		else{ 
+		else if($(this).data("frame") == "2"){ 
 			datas.from = "booking";
 			datas.title = "event-work";
 		}
@@ -235,6 +235,9 @@ function on_reservation_link_click(e){
 			type: "POST",
 			url: "/check-in",
 			data: datas,
+			beforeSend: function (req){
+				req.setRequestHeader("x-access-token", token);
+			},
 			success: function (data){
 				//console.log(data);
 				update_front_with_msg(data, "msg-contact");
@@ -277,12 +280,88 @@ function on_reservation_link_click(e){
 		console.log("Aucune room existe entre les users !");
 	}
 }
+function on_valid_rdv_offer_link_click(e){
+	e.preventDefault();
+	var iframe = iframe_cal3 ;
+	var datePickerVal = $(iframe).find(".datepicker input").val().replace(new RegExp("/", "g"), "-");
+	var datePickerValTab = datePickerVal.split("-");
+	var hours = $(iframe).find("#selectHours .sel");
+	var datas = {};
+	datas = get_events(hours, datePickerValTab);
+	datas.id_pro = session.id_u;
+	datas.id_art = userId;
+	datas.user_receiv = session.id_u;
+	datas.user_sender = userId;
+	datas.room = roomDisplay;
+	datas.offer = {titre: $("#rdv-offer-modal").find("[name='offer-name']").val(),
+		price: $("#rdv-offer-modal").find("[name='offer-price']").val(),
+		desc: $("#rdv-offer-modal").find("[name='offer-desc']").val(),
+		id: $("#rdv-offer-modal").find("[name='offer-id']").val(),
+		type: $("#rdv-offer-modal").find("[name='offer-type']").val()};
+	//console.log(datas);
+	if (roomDisplay != null){
+		datas.from = "rdv_offer";
+		datas.title = "event-meet";
+		console.log(datas);
+		$.ajax({
+			type: "POST",
+			url: "/check-in",
+			data: datas,
+			beforeSend: function (req){
+				req.setRequestHeader("x-access-token", token);
+			},
+			success: function (data){
+				//console.log(data);
+				update_front_with_msg(data, "msg-offer");
+				if (data.success[0]){
+					//Emission de la socket
+		            var rdv_off = {
+		                type_m : data.result.type_r,
+		                user_receiver : user_receiv,
+		                txt : data.msg,
+		                events: datas.events,
+		                id_disp: data.result.id_dispos,
+		                id_temp: data.result.id_t,
+						created: data.created,
+						offer: datas.offer,
+		                request_state : 0
+		            }
+		            //console.log(rdv_off);
+		            switchRoom(roomDisplay, user_receiv.id_coresp, user_receiv.nom, user_receiv.prenom, user_receiv.type, user);
+		            socket.emit('sendchat', rdv_off, userId, user_receiv, "iframe-chat");
+				}
+		    }
+		});
+	}else{
+		var data = {};
+		data.success = [false];
+		data.global_msg = ["Aucune room n'a été créée entre les users !"];
+		update_front_with_msg(data, "msg-contact");
+		//console.log("Aucune room existe entre les users !");
+	}
+}
+function on_rdv_offer_link_click(e){
+	//console.log($(e.target).parents(".grid-offer-back"));
+	var parent = $(e.target).parents(".grid-offer-back").prev(".grid-offer-front");
+	var cible = $("#rdv-offer-modal");
+	var inputs_to_hide = '<input type="hidden" name="offer-name" value="'+parent.find(".etiquette-name").text().trim()+'"/>'+
+	'<input type="hidden" name="offer-price" value="'+parent.find(".grid-price.pull-right").text().trim()+'"/>'+
+	'<input type="hidden" name="offer-desc" value="'+parent.find(".grid-offer-text p").text().trim()+'"/>'+
+	'<input type="hidden" name="offer-type" value="'+parent.find("[class=transaction-type], [class=estate-type]").text().trim()+'"/>'+
+	'<input type="hidden" name="offer-id" value="'+$("a[href='#rdv-offer-modal']").attr("id").trim()+'"/>';
+	//console.log(inputs_to_hide);
+	cible.append(inputs_to_hide);
+	//console.log(parent);
+	//console.log(id_offre);
+}
 var form = $("form#contact");
 form.on("submit", on_form_contact_submit);
 var iframe_cal1 = $(".cal")[0].contentDocument ? $(".cal")[0].contentDocument : $(".cal")[0].contentWindow.document;
 var iframe_cal2 = $(".cal")[1].contentDocument ? $(".cal")[1].contentDocument : $(".cal")[1].contentWindow.document;
+var iframe_cal3 = $(".cal")[2].contentDocument ? $(".cal")[2].contentDocument : $(".cal")[2].contentWindow.document;
 var check_in = $("a#booking");
 var meet_up = $("a#meet-up");
+var offer_meet_up = $("a#offer-meet-up");
 var socket = io.connect();
 var session = JSON.parse(sessionStorage.getItem('session'));
 //sessionStorage.clear();
@@ -304,6 +383,8 @@ if (session != null && session.user != undefined){
 /*$(iframe_cal1).on("click", ".timeSelect", on_click_dispo);
 $(iframe_cal2).on("click", ".timeSelect", on_click_dispo);*/
 $(document).on("click", "a#booking, a#meet-up", on_reservation_link_click);
+$(document).on("click", "a#offer-meet-up", on_valid_rdv_offer_link_click);
+$(document).on("click", "a[data-action='in-chat']", on_rdv_offer_link_click);
 //check_in.on("click", on_reservation_link_click);
 //meet_up.on("click", on_reservation_link_click);
 //export {get_events};

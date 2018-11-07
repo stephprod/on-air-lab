@@ -229,8 +229,8 @@
 									<div class="grid-offer-back">
 										<div id="grid-map1" class="grid-offer-map"></div>
 										<div class="button">
-											<a href="estate-details-right-sidebar.html" class="button-primary">
-												<span>read more</span>
+											<a id="<%= locals.offObj[i].id_offre %>" <%if (locals.session.userId !== undefined && locals.session.userId != null){ %> href="#rdv-offer-modal"<%} else {%> href="#login-modal" <%}%> data-action="in-chat" data-toggle="modal" class="button-primary">
+												<span>Prise de rendez-vous</span>
 												<div class="button-triangle"></div>
 												<div class="button-triangle2"></div>
 												<div class="button-icon"><i class="fa fa-search"></i></div>
@@ -241,7 +241,7 @@
 							</div>
 							<% } %>
 						</div>
-						<% }else { %>
+						<% }else{ %>
 							Aucune offre.
 						<% } %>
 					</div>
@@ -256,7 +256,7 @@
 	      <div class="col-xs-12 col-md-6 small-cont">
 	      </div>
 	      <div class="col-xs-12 col-md-6 footer-copyrights">
-	        &copy; Copyright 2018 <a href="http://label-onair.com" target="blank">Label On Air</a>. All rights reserved.
+	        &copy; Copyright 2018 <a href="https://label-onair.com" target="blank">Label On Air</a>. All rights reserved.
 	      </div>
 	    </div>
 	  </div>
@@ -392,7 +392,7 @@
 		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
 
-<!-- Rdv password modal -->
+<!-- Rdv modal -->
 	<div class="modal fade apartment-modal" id="rdv-modal">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -416,7 +416,7 @@
 		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
 
-<!-- resa password modal -->
+<!-- resa modal -->
 	<div class="modal fade apartment-modal" id="resa-modal">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -438,14 +438,36 @@
 			</div><!-- /.modal-content -->
 		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
-
+<!-- Rdv offer modal -->
+<div class="modal fade apartment-modal" id="rdv-offer-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-body">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<div class="modal-title msg-offer">
+					<h1>Prise de Rendez-vous<span class="special-color">?</span></h1>
+					<div class="short-title-separator"></div>
+				</div>
+				<p class="negative-margin forgot-info">Cliquer sur la date de votre choix</p>
+				<iframe class="cal" src="/widget_calendar?page=profil" style="border: none;width: 100%;min-height: 350px;"></iframe>
+				<div id="selectHours"></div>
+				<a id="offer-meet-up" data-frame="3" href="#" class="button-primary button-shadow button-full">
+					<span>Valider le rendez-vous</span>
+					<div class="button-triangle"></div>
+					<div class="button-triangle2"></div>
+					<div class="button-icon"><i class="fa fa-user"></i></div>
+				</a>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 <!-- jQuery  -->
     <script type="text/javascript" src="/asset/js/jQuery/jquery.min.js"></script>
 	<script type="text/javascript" src="/asset/js/jQuery/jquery-ui.min.js"></script>
 
 <!-- Bootstrap-->
     <script type="text/javascript" src="/asset/bootstrap/bootstrap.min.js"></script>
-
+	<script src="/socket.io/socket.io.js"></script>
 <!-- Google Maps -->
 	<!-- <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDfDCV5hXiPamCIT8_vwGXuzimLQ9MF76g&amp;sensor=false&amp;libraries=places"></script> -->
 

@@ -123,6 +123,8 @@ if (userId != null && userId != "null") {
 function on_socket_updatechat(coresp, data, cont){
 //console.log("updatechat");
 //console.log(data);
+//console.log(coresp);
+//console.log(cont);
 if (data !== undefined && data != null){
   var htmlToAppend = "";
   if (data.type_m !== undefined && data.type_m != null){
@@ -156,7 +158,7 @@ if (data !== undefined && data != null){
       else
         htmlToAppend += actions.devis_request[1](data);
     }
-    else if (data.type_m = 'contact'){
+    else if (data.type_m == 'contact'){
       //console.log(user);
       if (user.type == 4){
         if (user.id == data.user_sender)
@@ -169,8 +171,12 @@ if (data !== undefined && data != null){
         else
           htmlToAppend += actions.contactPro[1](data);
       }
-    }
-    else{
+    }else if(data.type_m == 'rdv_offer'){
+      if (user.id == data.user_sender)
+        htmlToAppend += actions.rdv_offer[0](data);
+      else
+        htmlToAppend += actions.rdv_offer[1](data);
+    }else{
       if (user.id == data.user_sender)
         htmlToAppend += actions.paiement[0](data);
       else
@@ -492,18 +498,18 @@ function on_devis_module_send_link_click(e){
         update_front_with_errors(data.errors);
       else{
         //Emmistion de socket
-                  //console.log("demende enregistré !" +userId);
-                  var devis_request = {
-                       type_m : data.type_d,
-                      txt : data.msg,
-                      created: data.created,
-                      id_m: data.id_message,
-                      servs: data.result.servs
-                  }
-                  //console.log(devis_request);
-                  socket.emit('sendchat', devis_request, userId, user_receiv, null);
-                  //$('#chat-messages').empty();
-                  //socket.emit('list_msg', roomDisplay, user_receiv, user.type);
+        //console.log("demende enregistré !" +userId);
+        var devis_request = {
+              type_m : data.type_d,
+            txt : data.msg,
+            created: data.created,
+            id_m: data.id_message,
+            servs: data.result.servs
+        }
+        //console.log(devis_request);
+        socket.emit('sendchat', devis_request, userId, user_receiv, null);
+        //$('#chat-messages').empty();
+        //socket.emit('list_msg', roomDisplay, user_receiv, user.type);
       }
       }
     });
@@ -695,6 +701,38 @@ function on_module_deny_typeMessage_link_click(e){
   });
   // Envoi de mail contenant le lien de refus d'une demande
 }
+function on_socket_update_eventstypeoffermessage(data){
+  console.log(data);
+  var content = '';
+  var div = $("div[id-message='"+data.id_m+"']");
+  content += '<p>'+data.offer.titre+'</p>'; 
+  content += '<p>'+data.offer.desc+'</p>';
+  content += '<p>Prix : '+data.offer.prix+' €</p>';
+  div.find(".card-chat > h3").after(content);
+  /*div.find("p.date_creneau").empty();
+  var content = '', content2 = '';
+  $.each(data.events, function(ind, val){
+    content += '<p style="background: #18457c;color: white;padding: 12px;">Début ('+val.start.substr(0,10)+') A ('+val.start.substr(11,5)+') </br>';
+    content += 'Fin ('+val.end.substr(0,10)+') A ('+val.end.substr(11,5)+') </p> ';
+  });
+  div.find("p.date_creneau").append(content);
+  if (data.request_state == 0 && data.user_receiver == userId){
+    content = 'demande en attente de votre réponse';
+    div.find("p.date_creneau").append(content);
+    content2 += '<a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a>';
+  }
+  else if (data.request_state == 1){
+    content2 += 'demande acceptée !';
+  }
+  else{
+    content = 'demande en attente de réponse du correspondant';
+    div.find("p.date_creneau").append(content);
+  }
+  div.find("div.card-chat div.div-submi").empty();
+  div.find("div.card-chat div.div-submi").append(content2);
+  div.find("div.card-chat span").empty();
+  div.find("div.card-chat span").append(data.created);*/
+}
 var song_module_send_link = $("#song_up");
 var video_module_send_link = $("#video_up");
 var devis_module_send_link = $("#devis-send");
@@ -718,10 +756,10 @@ var userId = null;
 var page = null;
 var token = null;
 if (session != null && session.user != undefined){
-user = session.user;
-userId = user.id;
-page = session.page;
-token = session.token;
+  user = session.user;
+  userId = user.id;
+  page = session.page;
+  token = session.token;
 }
 //$(document).on("click", ".cal .timeSelect", on_click_dispo);
 $(document).on("click", "a.booking-chat", on_reservation_link_click);
@@ -749,6 +787,7 @@ socket.on('connect', on_socket_connect);
 socket.on('updatechat', on_socket_updatechat);
 socket.on('updatepreview', on_socket_updatepreview);
 socket.on('update_eventstypemessage', on_socket_update_eventstypemessage);
+socket.on('update_eventstypeoffermessage', on_socket_update_eventstypeoffermessage);
 socket.on('updateservicesfront', on_socket_update_service_front);
 socket.on('update_servicestypemessage', on_socket_update_servicestypemessage);
 socket.on('update_contactstypemessage', on_socket_update_contactstypemessage);
@@ -764,55 +803,55 @@ var actions = {};
 actions.audio = [], actions.video = [], actions.rdv = [],
 actions.booking = [], actions.devis = [], actions.paiement = [],
 actions.texte = [], actions.devis_request = [], actions.contactArt = [],
-actions.contactPro = [];
+actions.contactPro = [], actions.rdv_offer = [];
 actions.texte.push(function (data){
-var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">'+data.txt+'<div class="corner"></div><span>'+data.created+'</span></div></div>';
-return (ret);
-}, function (data){
-var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">'+data.txt+'<div class="corner"></div><span>'+data.created+'</span></div></div>';
-return (ret);
+  var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">'+data.txt+'<div class="corner"></div><span>'+data.created+'</span></div></div>';
+  return (ret);
+  }, function (data){
+  var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">'+data.txt+'<div class="corner"></div><span>'+data.created+'</span></div></div>';
+  return (ret);
 });
 actions.audio.push(function (data){
-//console.log(data);
-var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><audio src="'+data.path+'" style="width:100%;" controls></audio><span>'+data.created+'</span></div></div></div>';
-return (ret);
-}, function (data){
-//console.log(data);
-var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><audio src="'+data.path+'" style="width:100%;" controls></audio><span>'+data.created+'</span></div></div></div>';
-return (ret);
+  //console.log(data);
+  var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><audio src="'+data.path+'" style="width:100%;" controls></audio><span>'+data.created+'</span></div></div></div>';
+  return (ret);
+  }, function (data){
+  //console.log(data);
+  var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><audio src="'+data.path+'" style="width:100%;" controls></audio><span>'+data.created+'</span></div></div></div>';
+  return (ret);
 });
 actions.rdv.push(function (data){
-//console.log(data);
-var ret = '<div class="message" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="rdv"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de rendez-vous</h3><p class="date_creneau">';
-$.each(data.events, function(ind, val){
-  ret += '<p style="background: #18457c;color: white;padding: 12px;">Début ('+val.start.substr(0,10)+') A ('+val.start.substr(11,5)+') </br>';
-  ret += 'Fin ('+val.end.substr(0,10)+') A ('+val.end.substr(11,5)+') </p> ';
-});
-if (data.events.length == 0){
-  ret += '</p><div class="div-submi" style="color: black;">demande refusée !</div><div class="corner"></div><span>'+data.created+'</span>';
-}else{
-  ret += 'demande en attente de réponse du correspondant</p><div class="div-submi" style="color: black;"></div><div class="corner"></div><span>'+data.created+'</span>';
-}
-ret += '</div></div></div>';
-//ret += 'statut de la demande ('+data.request_state+')</p></div></div></div>';
-//ret += '</p><div class="div-submi"><a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a></div></div><div class="corner"></div><span>'+data.created+'</span></div></div>';
-return (ret);
+  //console.log(data);
+  var ret = '<div class="message" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="rdv"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de rendez-vous</h3><p class="date_creneau">';
+  $.each(data.events, function(ind, val){
+    ret += '<p style="background: #18457c;color: white;padding: 12px;">Début ('+val.start.substr(0,10)+') A ('+val.start.substr(11,5)+') </br>';
+    ret += 'Fin ('+val.end.substr(0,10)+') A ('+val.end.substr(11,5)+') </p> ';
+  });
+  if (data.events.length == 0){
+    ret += '</p><div class="div-submi" style="color: black;">demande refusée !</div><div class="corner"></div><span>'+data.created+'</span>';
+  }else{
+    ret += 'demande en attente de réponse du correspondant</p><div class="div-submi" style="color: black;"></div><div class="corner"></div><span>'+data.created+'</span>';
+  }
+  ret += '</div></div></div>';
+  //ret += 'statut de la demande ('+data.request_state+')</p></div></div></div>';
+  //ret += '</p><div class="div-submi"><a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a></div></div><div class="corner"></div><span>'+data.created+'</span></div></div>';
+  return (ret);
 }, function (data){
-//console.log(data);
-var ret = '<div class="message right" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="rdv"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de rendez-vous</h3><p class="date_creneau">';
-$.each(data.events, function(ind, val){
-  ret += '<p style="background: #18457c;color: white;padding: 12px;">Début ('+val.start.substr(0,10)+') A ('+val.start.substr(11,5)+') </br>';
-  ret += 'Fin ('+val.end.substr(0,10)+') A ('+val.end.substr(11,5)+') </p> ';
-});
-if (data.events.length == 0){
-  ret += '</p><div class="div-submi" style="color: black;">demande refusée !</div><div class="corner"></div><span>'+data.created+'</span>';
-}else{
-  ret += 'demande en attente de votre réponse</p><div class="div-submi" style="color: black;"><a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a></div><div class="corner"></div><span>'+data.created+'</span>';
-}
-ret += '</div></div></div>';
-//ret += 'statut de la demande ('+data.request_state+')</div>';
-//console.log(data.request_state);
-return (ret);
+  //console.log(data);
+  var ret = '<div class="message right" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="rdv"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de rendez-vous</h3><p class="date_creneau">';
+  $.each(data.events, function(ind, val){
+    ret += '<p style="background: #18457c;color: white;padding: 12px;">Début ('+val.start.substr(0,10)+') A ('+val.start.substr(11,5)+') </br>';
+    ret += 'Fin ('+val.end.substr(0,10)+') A ('+val.end.substr(11,5)+') </p> ';
+  });
+  if (data.events.length == 0){
+    ret += '</p><div class="div-submi" style="color: black;">demande refusée !</div><div class="corner"></div><span>'+data.created+'</span>';
+  }else{
+    ret += 'demande en attente de votre réponse</p><div class="div-submi" style="color: black;"><a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a></div><div class="corner"></div><span>'+data.created+'</span>';
+  }
+  ret += '</div></div></div>';
+  //ret += 'statut de la demande ('+data.request_state+')</div>';
+  //console.log(data.request_state);
+  return (ret);
 });
 actions.booking.push(function (data){
 //console.log(data);
@@ -909,6 +948,51 @@ if (data.user_sender_info != null){
 ret += 'statut de la demande ('+data.request_state+')';
 ret += '</p><div class="corner"></div><span>'+data.created+'</span></div></div>';
 return (ret);
+});
+actions.rdv_offer.push(function (data){
+  //console.log(data);
+  var ret = '<div class="message" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="rdv-offer"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de rendez-vous</h3>';
+  if (data.offer !== undefined){
+    ret += '<p>'+data.offer.titre+'</p>';
+    ret += '<p>'+data.offer.desc+'</p>';
+    ret += '<p>Prix : '+data.offer.price+'</p>';
+  }
+  ret += '<p class="date_creneau">';
+  $.each(data.events, function(ind, val){
+    ret += '<p style="background: #18457c;color: white;padding: 12px;">Début ('+val.start.substr(0,10)+') A ('+val.start.substr(11,5)+') </br>';
+    ret += 'Fin ('+val.end.substr(0,10)+') A ('+val.end.substr(11,5)+') </p> ';
+  });
+  if (data.events.length == 0){
+    ret += '</p><div class="div-submi" style="color: black;">demande refusée !</div><div class="corner"></div><span>'+data.created+'</span>';
+  }else{
+    ret += 'demande en attente de réponse du correspondant</p><div class="div-submi" style="color: black;"></div><div class="corner"></div><span>'+data.created+'</span>';
+  }
+  ret += '</div></div></div>';
+  //ret += 'statut de la demande ('+data.request_state+')</p></div></div></div>';
+  //ret += '</p><div class="div-submi"><a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a></div></div><div class="corner"></div><span>'+data.created+'</span></div></div>';
+  return (ret);
+}, function (data){
+  //console.log(data);
+  var ret = '<div class="message right" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="rdv-offer"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de rendez-vous</h3>';
+  if (data.offer !== undefined){
+    ret += '<p>'+data.offer.titre+'</p>';
+    ret += '<p>'+data.offer.desc+'</p>';
+    ret += '<p>Prix : '+data.offer.price+'</p>';
+  }
+  ret += '<p class="date_creneau">';
+  $.each(data.events, function(ind, val){
+    ret += '<p style="background: #18457c;color: white;padding: 12px;">Début ('+val.start.substr(0,10)+') A ('+val.start.substr(11,5)+') </br>';
+    ret += 'Fin ('+val.end.substr(0,10)+') A ('+val.end.substr(11,5)+') </p> ';
+  });
+  if (data.events.length == 0){
+    ret += '</p><div class="div-submi" style="color: black;">demande refusée !</div><div class="corner"></div><span>'+data.created+'</span>';
+  }else{
+    ret += 'demande en attente de votre réponse</p><div class="div-submi" style="color: black;"><a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a></div><div class="corner"></div><span>'+data.created+'</span>';
+  }
+  ret += '</div></div></div>';
+  //ret += 'statut de la demande ('+data.request_state+')</div>';
+  //console.log(data.request_state);
+  return (ret);
 });
 function get_events(hours, datePickerValTab){
 var start, end, datas = {};
@@ -1056,16 +1140,16 @@ $.ajax({
   }
 });
 //console.log(room);
-if (usr.id != "null" && usr.id != null){
-if (room == 1 && usr.id != 1)
-        socket.emit('list_msg_admin', room, user_receiv, usr.id);
+  if (usr.id != "null" && usr.id != null){
+    if (room == 1 && usr.id != 1)
+      socket.emit('list_msg_admin', room, user_receiv, usr.id);
     else{
-        socket.emit('list_msg', room, user_receiv, usr.type);
-        socket.emit('update_services', usr.id, room, user_receiv);
-        //socket.emit('update_modeles_devis', user.id, room, user_receiv);
+      socket.emit('list_msg', room, user_receiv, usr.type);
+      socket.emit('update_services', usr.id, room, user_receiv);
+      //socket.emit('update_modeles_devis', user.id, room, user_receiv);
     }
-  socket.emit('switchRoom', usr.id, room, user_receiv);
-}
+    socket.emit('switchRoom', usr.id, room, user_receiv);
+  }
 }
 //*******************************************************************//
 //export {socket, get_events, switchRoom};

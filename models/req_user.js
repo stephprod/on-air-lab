@@ -103,19 +103,28 @@ class User{
     }
 
 	static insertMessages(messages, cb){
-		console.time("insert")
+		//console.time("insert")
 		let q = db.query('INSERT INTO messages (iduser_send, iduser_received, message_txt, id_room, id_type, created_at) VALUE (?)', [messages], (err, result) =>{
 			if (err){
-				console.log(q.sql)
+				//console.log(q.sql)
 				throw err
 			}
 			cb(result.insertId)
-			console.timeEnd("insert")
+			//console.timeEnd("insert")
 		})
 	}	
 
 	static insertTypeM(type_message, cb){
 		let r = db.query('INSERT INTO type_message (type_m, path) VALUE (?)', [type_message], (err, result) =>{
+			if (err){
+				console.log(r.sql)
+				throw err
+			}
+			cb(result.insertId)
+		})
+    }
+    static insertTypeOM(type_message, cb){
+		let r = db.query('INSERT INTO type_message (type_m, id_offre) VALUE (?)', [type_message], (err, result) =>{
 			if (err){
 				console.log(r.sql)
 				throw err
@@ -228,7 +237,18 @@ class User{
             'INNER JOIN calendar_event ON events_in_type_message.id_calendar_event = calendar_event.id_event '+
             'WHERE events_in_type_message.id_type_message = ?', [table], (err, result) => {
             if(err){
-                console.log(r.sql)
+                //console.log(r.sql)
+                throw err;
+            }
+            cb(result);
+        });
+    }
+    static getOfferInTypeMessage(table, cb){
+        let r = db.query('SELECT * FROM type_message '+
+            'INNER JOIN offres ON type_message.id_offre = offres.id_offre '+
+            'WHERE type_message.id_type_m = ?', [table], (err, result) => {
+            if(err){
+                //console.log(r.sql)
                 throw err;
             }
             cb(result);
