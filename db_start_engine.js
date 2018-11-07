@@ -1,4 +1,4 @@
-let mysql = require('mysql')
+const mysql = require('mysql')
 //database link to the CI (intégration continue)
 let connection = mysql.createConnection({
 	host	 : '127.0.0.1',

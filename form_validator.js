@@ -1,4 +1,4 @@
-let db = require('./db_start_engine');
+const db = require('./db_start_engine');
 
 class Form_validator {
 

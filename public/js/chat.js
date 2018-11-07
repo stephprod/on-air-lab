@@ -218,8 +218,18 @@ if($(this).val() == ""){
 
 }
 });
+
+function StringParser(text)
+{
+    let patternEmail = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi;
+    let StringNoEmail = text.replace(patternEmail,"Email Delete");
+    let patternTel = /(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}/gi;
+    let StringNoTelNoEmail = StringNoEmail.replace(patternTel,"Tel delete");
+    return(StringNoTelNoEmail)
+}
+
 function on_msg_send_click(){
-var message = $("#sendmessage textarea").val();
+var message = StringParser($("#sendmessage textarea").val())
 var data = {};
 var room = $('#chat-messages').data('current');
 if(userId != "null"){
