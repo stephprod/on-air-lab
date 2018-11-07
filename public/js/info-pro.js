@@ -268,9 +268,7 @@ import {update_front_with_msg, update_front_with_errors, update_front_with_succe
 	  	}
 	});
 	$(document).on('click', '#redirectAdmin', function(event) { 
-		event.preventDefault(); 
-		$("#doc").trigger('click'); 
+		event.preventDefault();
+		$("#switcher-button2").trigger('click');
+		$($('iframe[src="/chat"]')[0].contentDocument).find(".friend:nth-child(1)").trigger('click');
 	});//yanndu92971@gmail.com
-	/*var offre_add_card = '<div class="grid-offer-col" style="width: 265px;display: inline-flex;"><div class="grid-offer"><div class="grid-offer-front"><div class="grid-offer-photo"><img src="/asset/images/grid-offer1.jpg" alt="" /><div class="type-container"><div class="etiquette-name">...</div></div></div><div class="grid-offer-text"><i class="fas fa-map-marker grid-offer-localization"></i><div class="grid-offer-h4"><h4 class="grid-offer-title">..., FRANCE</h4></div><div class="clearfix"></div><p>...</p><div class="clearfix"></div></div><div class="price-grid-cont"><div class="grid-price-label pull-left">Price:</div><div class="grid-price pull-right">€ ...</div>'+
-		'<div class="clearfix"></div></div><div class="grid-offer-params"><div class="grid-area"><img src="/asset/images/area-icon.png" alt="" />54m<sup>2</sup></div><div class="grid-rooms"><img src="/asset/images/rooms-icon.png" alt="" />3</div><div class="grid-baths"><img src="/asset/images/bathrooms-icon.png" alt="" />1</div></div></div><div class="grid-offer-back"><div id="offer-form-0" method="post" action="#" data-profil="0"><div class="title-separator-primary"></div><h3 class="sidebar-title" style="margin: 14px;">Ajout<span class="special-color">.</span></h3><input type="text" name="title" class="main-input required,all" placeholder="titre"><textarea name="spe_off" class="main-input required,all" placeholder="description"></textarea>'+
-		'<div class="adv-search-range-cont"><label for="slider-o-price99-value" class="adv-search-label">Prix offre:</label><span>€</span><input type="text" id="slider-o-price99-value" class="adv-search-amount"><div class="clearfix"></div><div id="slider-o-price99" data-val="0" data-min="0" data-max="10000" class="slider" name="prix_off"></div></div></div><div class="button"><a href="#" class="button-primary" data-action="offre" data-form="offer-form-0"><span>ajouter</span><div class="button-triangle"></div><div class="button-triangle2"></div><div class="button-icon"><i class="far fa-user-circle"></i></div></a></div></div></div></div>';*/
