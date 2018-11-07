@@ -9,6 +9,7 @@ router.route('/drop_event_calendar')
 	.post((request, response) => {
 		console.log("Delete id "+request.body.id)
 		User.drop_calendar(request.body.id)
+		response.end()
 	})
 
 module.exports = router

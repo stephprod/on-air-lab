@@ -206,7 +206,15 @@ input[type="checkbox"]:checked + label:before {
         // console.log('Coordinates: ' + jsEvent.id + ',' + jsEvent.pageY);
 
         // console.log('Current view: ' + view.name);
-
+        $('#calendar').fullCalendar('removeEvents', event._id);
+		      $.ajax({
+				      url: '/drop_event_calendar',
+				      data: 'id='+event.id_event,
+				      type: "POST",
+				    success: function(data) {
+				 	    console.log("Event "+data+" Mit à la poubelle");
+				    }
+			    })
         // change the day's background color just for fun
         $(this).css('background-color', '#e9e9e9');
       },
