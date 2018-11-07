@@ -66,6 +66,7 @@ jobs:
             sudo npm i --global axios
             sudo npm i --global mocha
             sudo npm i --global chai nock
+            sudo npm i --global stripe
             sudo npm i
       - run: mkdir ~/junit
       - run:
