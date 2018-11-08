@@ -1,7 +1,6 @@
 const express = require('express')
 const User = require('../models/req_user')
 const fs = require('fs');
-//let fileUpload = require('express-fileupload')
 const router = express.Router()
 
 router.route('/delete-files')
@@ -12,6 +11,7 @@ router.route('/delete-files')
 		let table = [], ret = {}
 		console.log(request.body)
 		table.push(request.body.file_profileId)
+		table.push(request.body.path)
 		User.delete_document(table, (res) => {
 			if (res > 0){
 				ret.success = true

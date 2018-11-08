@@ -1,6 +1,7 @@
 const express = require('express')
 const User = require('../models/req_user')
 //let fileUpload = require('express-fileupload')
+const fs = require('fs')
 const router = express.Router()
 
 router.route('/upload-files')
@@ -11,34 +12,47 @@ router.route('/upload-files')
 			response.render('pages/index')
 		}else{
 			User.getInfoPro_etablissement(request.session.userId, (result) => {
-				//console.log(result)
+				console.log(result)
 				response.render('pages/upload_files', {etabObj: result})
 			})
 		}
 	})
 	.post((request, response) => {
-		let sampleFile = request.files.uploaded_file
-		// Use the mv() method to place the file somewhere on your server
 		let ret = {}
-		let filename = 'avatar-'+request.body.file_profileId+'-'+request.body.file_id+'.'+sampleFile.name.split(".")[1]
-		let table = []
-		sampleFile.mv('public/content/img/'+filename, function(err) {
-			if (err)
-				response.send(err)
-			else
-			{
-				table.push(request.body.file_profileId, "image", "/asset/content/img/"+filename)
-				User.insert_document(table, (res) => {
-					if (res > 0){
-						ret.success = true
-					}
+		if(request.files){
+			let sampleFile = request.files.uploaded_file
+			originalName = sampleFile.name.split(".")[0].toLowerCase().split(' ').join('')
+			console.log(originalName)
+			let filename = originalName+'-'+request.body.file_profileId+'.'+sampleFile.name.split(".")[1].toLowerCase()
+			let table = []
+			if (fs.existsSync('public/content/img/'+filename)) {
+				console.log('fichier exist deja');
+				ret.success = false
+				response.send(ret)
+			}else{
+				sampleFile.mv('public/content/img/'+filename, function(err) {
+					if (err)
+						response.send(err)
 					else
 					{
-						ret.success = false
+						table.push(request.body.file_profileId, "image", "/asset/content/img/"+filename)
+						User.insert_document(table, (res) => {
+							if (res > 0){
+								ret.success = true
+								ret.path = "/asset/content/img/"+filename
+							}
+							else
+							{
+								ret.success = false
+							}
+							response.send(ret)
+						})
 					}
-					response.send(ret)
 				})
 			}
-		})
+		}else{
+			ret.success = false
+			response.send(ret)
+		}
 	})
 module.exports = router
