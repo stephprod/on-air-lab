@@ -1,4 +1,4 @@
-import {update_front_with_msg, update_front_with_errors, update_front_with_success} from './front-update.js';
+import {update_front_with_msg, update_front_with_errors} from './front-update.js';
 /*import {get_events} from './events.js';
 import {socket, switchRoom} from './socket_modules.js';*/
 $(document).on("click", ".friend", function(){
@@ -48,10 +48,14 @@ $(document).on("click", ".friend", function(){
     }, 50);
   });
   if ($(this).data('coresp-type') == "4"){
-    $($(".box-module .module")[0]).hide();
+    //console.log(user);
+    $($(".box-module .module")[0]).hide(); 
+    $($(".box-module .module")[1]).hide();
     $($(".box-module .module")[2]).show();
-    $($(".box-module .module")[3]).hide();
-    $($(".box-module .module")[1]).show();
+    if (user.pay_module == 1)
+      $($(".box-module .module")[3]).show();
+    else
+      $($(".box-module .module")[3]).hide();
     $($(".box-module .module")[4]).show();
     $($(".box-module .module")[5]).show();
     $("#devis-modal").find("h1").empty();
@@ -71,9 +75,9 @@ $(document).on("click", ".friend", function(){
     $($(".box-module .module")[0]).show();
     $($(".box-module .module")[1]).show();
     $($(".box-module .module")[2]).show();
-    $($(".box-module .module")[3]).show();
+    $($(".box-module .module")[3]).hide();
     $($(".box-module .module")[4]).show();
-    $($(".box-module .module")[5]).show();
+    $($(".box-module .module")[5]).hide();
     $("#devis-modal").find("h1").empty();
     $("#devis-modal").find("h1").append("Demande de devis");
     $('#devis-modal').find("a#devis-send span").empty();
@@ -84,8 +88,8 @@ $(document).on("click", ".friend", function(){
     $($(".box-module .module")[0]).hide();
     $($(".box-module .module")[1]).show();
     $($(".box-module .module")[2]).show();
-    $($(".box-module .module")[3]).show();
-    $($(".box-module .module")[4]).show();
+    $($(".box-module .module")[3]).hide();
+    $($(".box-module .module")[4]).hide();
     $($(".box-module .module")[5]).show();
     $("#devis-modal").find("h1").empty();
     $("#devis-modal").find("h1").append("Demande de devis");
@@ -94,14 +98,14 @@ $(document).on("click", ".friend", function(){
   }
   switchRoom($(this).data("room"), $(this).data("coresp"), name.split(" ")[0], name.split(" ")[1], $(this).data('coresp-type'), $(this).data('coresp-payment'), user);
 });
-function on_socket_update_rooms(rooms, current_room, coresp){
-//console.log("updateroom");
-//console.log(coresp);
-//console.log(rooms);
-$("div#friends").empty();
-for (var i = 0; i < rooms.length; i++){
-  $("div#friends").append('<div class="friend" data-coresp="'+rooms[i][0]+'" data-coresp-type="'+rooms[i][4]+'" data-room="'+rooms[i][1]+'" data-coresp-payment="'+rooms[i][6]+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><p><strong>'+rooms[i][2]+' '+rooms[i][3]+'</strong><span>'+rooms[i][5]+'</span><p class="preview">'+rooms[i][8]+'</p></p><div class="status available"></div></div>');
-}
+function on_socket_update_rooms(rooms){
+  //console.log("updateroom");
+  //console.log(coresp);
+  //console.log(rooms);
+  $("div#friends").empty();
+  for (var i = 0; i < rooms.length; i++){
+    $("div#friends").append('<div class="friend" data-coresp="'+rooms[i][0]+'" data-coresp-type="'+rooms[i][4]+'" data-room="'+rooms[i][1]+'" data-coresp-payment="'+rooms[i][6]+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><p><strong>'+rooms[i][2]+' '+rooms[i][3]+'</strong><span>'+rooms[i][5]+'</span><p class="preview">'+rooms[i][8]+'</p></p><div class="status available"></div></div>');
+  }
 }
 function on_socket_connect(id){
 //console.log("connect --> "+ userId);
@@ -189,21 +193,21 @@ if (data !== undefined && data != null){
       htmlToAppend += actions.texte[1](data);
   }
   if (cont !== undefined && cont == "iframe-chat"){
-    var iframe = $("iframe[src='/chat']")[0] !== undefined ? $("iframe[src='/chat']")[0].contentDocument : null;
+    iframe = $("iframe[src='/chat']")[0] !== undefined ? $("iframe[src='/chat']")[0].contentDocument : null;
     $('#chat-messages', iframe).append(htmlToAppend);
   }else{
     $('#chat-messages').append(htmlToAppend);
   }
 }
 if (data.user_sender != "SERVER")
-        socket.emit('update_preview_in_room', data, cont);
+  socket.emit('update_preview_in_room', data, cont);
 }
 function on_socket_updatepreview(tabCorresp, cont){
 //console.log("update_preview"+tabCorresp[1]);
 //console.log(tabCorresp);
 var div_to_update = null;
 if (cont !== undefined && cont == "iframe-chat"){
-  var iframe = $("iframe[src='/chat']")[0] !== undefined ? $("iframe[src='/chat']")[0].contentDocument : null;
+  iframe = $("iframe[src='/chat']")[0] !== undefined ? $("iframe[src='/chat']")[0].contentDocument : null;
   div_to_update = $("div#friends .friend[data-room='"+tabCorresp[1]+"']", iframe);
 }
   else
@@ -227,14 +231,14 @@ if($(this).val() == ""){
 function on_msg_send_click(){
 var message = $("#sendmessage textarea").val();
 var data = {};
-var room = $('#chat-messages').data('current');
+//var room = $('#chat-messages').data('current');
 if(userId != "null"){
   $('#sendmessage textarea').val('');
   data.txt = message;
   socket.emit('sendchat', data, userId, user_receiv, null);
 }
 }
-function on_msg_send_keypress(){
+function on_msg_send_keypress(e){
     if(e.which == 13) {
         $(this).blur();
         $('#sendmessage button#send').focus().click();
@@ -251,13 +255,13 @@ if($(this).val() == ""){
 
 }
 });
-function getBody(content) 
-{ 
- var x = content.indexOf("<html");
- x = content.indexOf(">", x);    
- var y = content.lastIndexOf("</html>"); 
- return content.slice(x + 1, y);
-}
+// function getBody(content) 
+// { 
+//  var x = content.indexOf("<html");
+//  x = content.indexOf(">", x);    
+//  var y = content.lastIndexOf("</html>"); 
+//  return content.slice(x + 1, y);
+// }
 function serialize(obj, prefix) {
 var str = [],
   p;
@@ -275,7 +279,7 @@ return str.join("&");
 function on_reservation_link_click(e){
   e.preventDefault();
   //console.log("Resa click !");
-  var iframe = $(this).hasClass("booking-chat") ? iframe_cal2 : iframe_cal1 ;
+  iframe = $(this).hasClass("booking-chat") ? iframe_cal2 : iframe_cal1 ;
   //console.log($(iframe).find("#selectHours"));
   var datePickerVal = $(iframe).find(".datepicker input").val().replace(new RegExp("/", "g"), "-");
   var datePickerValTab = datePickerVal.split("-");
@@ -390,11 +394,11 @@ function on_form_song_submit(e){
         }
     });
 }
-function on_input_file_ghost_change(e){
+function on_input_file_ghost_change(){
   console.log("input change");
   input_text.val($(this).val().split("\\").pop());
 }
-function on_input_text_mousedown(e){
+function on_input_text_mousedown(){
   input_file_ghost.click();
   return false;
 }
@@ -494,17 +498,17 @@ function on_devis_module_send_link_click(e){
       success: function(data){
         //console.log(data);
         update_front_with_msg(data, "msg-devis");
-      if (!data.success[0])
-        update_front_with_errors(data.errors);
-      else{
-        //Emmistion de socket
-        //console.log("demende enregistré !" +userId);
-        var devis_request = {
-              type_m : data.type_d,
-            txt : data.msg,
-            created: data.created,
-            id_m: data.id_message,
-            servs: data.result.servs
+        if (!data.success[0])
+          update_front_with_errors(data.errors);
+        else{
+          //Emmistion de socket
+          //console.log("demende enregistré !" +userId);
+          var devis_request = {
+                type_m : data.type_d,
+              txt : data.msg,
+              created: data.created,
+              id_m: data.id_message,
+              servs: data.result.servs
         }
         //console.log(devis_request);
         socket.emit('sendchat', devis_request, userId, user_receiv, null);
@@ -610,7 +614,7 @@ function on_module_accept_typeMessage_link_click(e){
             url : "/secure_profile",
             data: {"temp": user_receiv.id_coresp},
             success: function(data) {
-              var datas = {};
+              var datas = {}, query;
               datas.type = "devis";
               datas.from = "accept-devis";
               datas.id_pro = user_receiv.id_coresp;
@@ -652,7 +656,7 @@ function on_module_accept_typeMessage_link_click(e){
   $.ajax({
       type: "POST",
       url: "/action-in-module",
-      data: global_datas,
+      data: glob_datas,
       success: function (data){
         // Envoi de mail contenant le lien d'acccepation d'une demande
         $.ajax({
@@ -709,33 +713,61 @@ function on_socket_update_eventstypeoffermessage(data){
   content += '<p>'+data.offer.desc+'</p>';
   content += '<p>Prix : '+data.offer.prix+' €</p>';
   div.find(".card-chat > h3").after(content);
-  /*div.find("p.date_creneau").empty();
-  var content = '', content2 = '';
-  $.each(data.events, function(ind, val){
-    content += '<p style="background: #18457c;color: white;padding: 12px;">Début ('+val.start.substr(0,10)+') A ('+val.start.substr(11,5)+') </br>';
-    content += 'Fin ('+val.end.substr(0,10)+') A ('+val.end.substr(11,5)+') </p> ';
-  });
-  div.find("p.date_creneau").append(content);
-  if (data.request_state == 0 && data.user_receiver == userId){
-    content = 'demande en attente de votre réponse';
-    div.find("p.date_creneau").append(content);
-    content2 += '<a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a>';
-  }
-  else if (data.request_state == 1){
-    content2 += 'demande acceptée !';
-  }
-  else{
-    content = 'demande en attente de réponse du correspondant';
-    div.find("p.date_creneau").append(content);
-  }
-  div.find("div.card-chat div.div-submi").empty();
-  div.find("div.card-chat div.div-submi").append(content2);
-  div.find("div.card-chat span").empty();
-  div.find("div.card-chat span").append(data.created);*/
 }
-var song_module_send_link = $("#song_up");
-var video_module_send_link = $("#video_up");
-var devis_module_send_link = $("#devis-send");
+function on_payment_link_click(e){
+  e.preventDefault();
+  var datas = {};
+  var parent = $("#paiement-modal");
+  datas.desc = parent.find("[name='desc']").val();
+  datas.price = parent.find("[name='price']").val();
+  datas.sender = userId;
+  datas.receiver = user_receiv.id_coresp;
+  datas.room = roomDisplay;
+  //console.log(datas);
+  $.ajax({
+    type: "POST",
+    url: "/payment-request",
+    data: datas,
+    beforeSend: function (req){
+      req.setRequestHeader("x-access-token", token);
+    },
+    success: function (data){
+      //console.log(data);
+      update_front_with_msg(data, "msg-paiement");
+      if (!data.success[0])
+        update_front_with_errors(data.errors);
+      else{
+        //Emmistion de socket
+        //console.log("demende de paiement enregistré !");
+        console.log(data);
+        var paiement_request = {
+          id_type_m : data.result.id_type_m,
+          txt : data.msg,
+          created: data.created,
+          id_m: data.result.id_m,
+          id_p: data.result.id_p,
+          desc: datas.desc,
+          price: datas.price,
+          type_m: "payment"
+        }
+        //console.log(paiement_request);
+        socket.emit('sendchat', paiement_request, userId, user_receiv, null);
+      }
+    }
+  });
+}
+function on_socket_update_paymentstypemessage(data){
+  //console.log(data);
+  var div = $("div[id-message='"+data.id_m+"']");
+  var content = '';
+  content += '<p style="background: #18457c;color: white;padding: 12px;">Description ('+data.payment.desc+') </br>';
+  content += '<p style="background: #18457c;color: white;padding: 12px;">Prix ('+data.payment.price+' €) </br>';
+  div.find("p.date_creneau").empty();
+  div.find("p.date_creneau").append(content);
+}
+// var song_module_send_link = $("#song_up");
+// var video_module_send_link = $("#video_up");
+// var devis_module_send_link = $("#devis-send");
 var input_file_ghost = $("[name='uploaded_file']");
 var input_text = $("[name='song']");
 input_text.css("cursor", "pointer");
@@ -755,32 +787,24 @@ var user = null;
 var userId = null;
 var page = null;
 var token = null;
+var iframe;
 if (session != null && session.user != undefined){
   user = session.user;
   userId = user.id;
   page = session.page;
   token = session.token;
 }
-//$(document).on("click", ".cal .timeSelect", on_click_dispo);
 $(document).on("click", "a.booking-chat", on_reservation_link_click);
 $(document).on("click", "a.meet-up-chat", on_reservation_link_click);
+$(document).on("click", "a.payment-chat", on_payment_link_click);
 $(document).on("submit", "form.upload", on_form_song_submit);
 $(document).on("change", "input[name='uploaded_file']", on_input_file_ghost_change);
 $(document).on("mousedown", "input[name='song']", on_input_text_mousedown);
 $(document).on("click", "#song_up", on_song_module_send_link_click);
 $(document).on("click", "#video_up", on_video_module_send_link_click);
 $(document).on("click", "#devis-send", on_devis_module_send_link_click);
-//$(document).on("click", "#devis-send", on_devis_module_send_link_click);
 $(document).on("click", ".div-submi .btn-accept", on_module_accept_typeMessage_link_click);
 $(document).on("click", ".div-submi .btn-refus", on_module_deny_typeMessage_link_click);
-//check_in.on("click", on_reservation_link_click);
-//meet_up.on("click", on_reservation_link_click);
-//form_song.on("submit", on_form_song_submit);
-//input_file_ghost.on("change", on_input_file_ghost_change);
-//input_text.on("mousedown", on_input_text_mousedown);
-//song_module_send_link.on("click", on_song_module_send_link_click);
-//video_module_send_link.on("click", on_video_module_send_link_click);
-//devis_module_send_link.on("click", on_devis_module_send_link_click);
 if (socket != null){
 socket.on('updaterooms', on_socket_update_rooms);
 socket.on('connect', on_socket_connect);
@@ -791,6 +815,7 @@ socket.on('update_eventstypeoffermessage', on_socket_update_eventstypeoffermessa
 socket.on('updateservicesfront', on_socket_update_service_front);
 socket.on('update_servicestypemessage', on_socket_update_servicestypemessage);
 socket.on('update_contactstypemessage', on_socket_update_contactstypemessage);
+socket.on('update_paymentstypemessage', on_socket_update_paymentstypemessage);
 }
 $('#sendmessage button#send').on("click", on_msg_send_click);
 $('#sendmessage button#send').on("keypress", on_msg_send_keypress);
@@ -994,6 +1019,59 @@ actions.rdv_offer.push(function (data){
   //console.log(data.request_state);
   return (ret);
 });
+actions.paiement.push(function (data){
+  //console.log(data);
+  var ret = '<div class="message" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="payment"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de paiment</h3>';
+  // if (data.offer !== undefined){
+  //   ret += '<p>'+data.offer.titre+'</p>';
+  //   ret += '<p>'+data.offer.desc+'</p>';
+  //   ret += '<p>Prix : '+data.offer.price+'</p>';
+  // }
+  ret += '<p class="date_creneau">';
+  //$.each(data.events, function(ind, val){
+  if (data.desc !== undefined && data.price !== undefined){
+    ret += '<p style="background: #18457c;color: white;padding: 12px;">Description ('+data.desc+') </br>';
+    ret += '<p style="background: #18457c;color: white;padding: 12px;">Prix ('+data.price+' €) </br>';
+  }
+  ret += '</p>';
+  //});
+  // if (data.events.length == 0){
+  //   ret += '</p><div class="div-submi" style="color: black;">demande refusée !</div><div class="corner"></div><span>'+data.created+'</span>';
+  // }else{
+  ret += 'demande en attente de réponse du correspondant';
+  ret +='<div class="div-submi" style="color: black;"></div><div class="corner"></div><span>'+data.created+'</span>';
+  //}
+  ret += '</div></div></div>';
+  //ret += 'statut de la demande ('+data.request_state+')</p></div></div></div>';
+  //ret += '</p><div class="div-submi"><a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a></div></div><div class="corner"></div><span>'+data.created+'</span></div></div>';
+  return (ret);
+}, function (data){
+  //console.log(data);
+  var ret = '<div class="message right" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="payment"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de paiement</h3>';
+  // if (data.offer !== undefined){
+  //   ret += '<p>'+data.offer.titre+'</p>';
+  //   ret += '<p>'+data.offer.desc+'</p>';
+  //   ret += '<p>Prix : '+data.offer.price+'</p>';
+  // }
+  ret += '<p class="date_creneau">';
+  //$.each(data.events, function(ind, val){
+  if (data.desc !== undefined && data.price !== undefined){
+    ret += '<p style="background: #18457c;color: white;padding: 12px;">Description ('+data.desc+') </br>';
+    ret += '<p style="background: #18457c;color: white;padding: 12px;">Prix ('+data.price+' €) </br>';
+  }
+  ret += '</p>';
+  // });
+  // if (data.events.length == 0){
+  //   ret += '</p><div class="div-submi" style="color: black;">demande refusée !</div><div class="corner"></div><span>'+data.created+'</span>';
+  // }else{
+    ret += 'demande en attente de votre réponse';
+    ret += '<div class="div-submi" style="color: black;"><a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a></div><div class="corner"></div><span>'+data.created+'</span>';
+  //}
+  ret += '</div></div></div>';
+  //ret += 'statut de la demande ('+data.request_state+')</div>';
+  //console.log(data.request_state);
+  return (ret);
+});
 function get_events(hours, datePickerValTab){
 var start, end, datas = {};
 datas.events = [];
@@ -1002,12 +1080,13 @@ var donn = {};
 $.each(hours, function(ind){
 var hour = $(this).text();
 if (parseInt(hour) == hour){
+  var tabTimeIndice = timeIndice.toString().split(".");
   if (timeIndice == parseInt(hour)){
     //Ne rien faire
   }else{
     if (timeIndice == -1.0 || timeIndice != parseInt(timeIndice)){
       if (donn.start !== undefined && donn.end === undefined){
-        var tabTimeIndice = timeIndice.toString().split(".");
+        tabTimeIndice = timeIndice.toString().split(".");
         end = datePickerValTab[2] + "-" +datePickerValTab[1]+ "-" +datePickerValTab[0] + "T" + put_in_n_digits_hours(tabTimeIndice[0], 2) + ":" + put_in_n_digits_minutes(tabTimeIndice[1], 2)+":00";
         donn.end = end;
         datas.events.push(donn);
@@ -1054,7 +1133,7 @@ else{
           put_in_n_digits_minutes(tabH[1], 2)+":00";
       donn.start = start;
     }else{
-      var tabTimeIndice = timeIndice.toString().split(".");
+      tabTimeIndice = timeIndice.toString().split(".");
       end = datePickerValTab[2] + "-" +datePickerValTab[1]+ "-" +datePickerValTab[0] + "T" + put_in_n_digits_hours(tabTimeIndice[0], 2) + ":" + put_in_n_digits_minutes(tabTimeIndice[1], 2)+":00";
       donn.end = end;
       datas.events.push(donn);
@@ -1135,7 +1214,7 @@ $.ajax({
   type: "POST",
   url: "/chat",
   data: datas,
-  success: function (data){
+  success: function (){
     //console.log(data);
   }
 });
@@ -1146,7 +1225,7 @@ $.ajax({
     else{
       socket.emit('list_msg', room, user_receiv, usr.type);
       socket.emit('update_services', usr.id, room, user_receiv);
-      //socket.emit('update_modeles_devis', user.id, room, user_receiv);
+      //socket.emit('update_modeles_devis', user.id);
     }
     socket.emit('switchRoom', usr.id, room, user_receiv);
   }

@@ -5,6 +5,7 @@ const router = express.Router()
 
 router.route('/chat')
 	.get((request, response) => {
+		//console.log(request.session)
 		response.locals.session = request.session
 		response.render('pages/chat2')
 	})

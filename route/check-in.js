@@ -54,7 +54,7 @@ router.route('/check-in')
 				}).then((res)=>{
 					response.send(res)
 				}).catch((err) => {
-					console.log(err);
+					//console.log(err);
 					response.send(err)
 				});
 			}
@@ -197,7 +197,7 @@ router.route('/check-in')
 						ret.success.push(false)
 						ret.global_msg.push("Une erreur est survenue lors de l'insertion du type de message, contactez le support/modérateur !")
 						//response.send(ret)
-						resolve(ret)
+						reject(ret)
 					}
 				});
 			}

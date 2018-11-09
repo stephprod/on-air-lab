@@ -106,7 +106,7 @@
 		            <span>Artiste</span>
 		            <div class="box-module">
 		            	<a class="module" href="#booking-modal" data-toggle="modal">booking</a>
-		            	<!-- <a class="module" href="#devis-modal" data-toggle="modal">devis</a> -->
+		            	<a class="module" href="#devis-modal" data-toggle="modal">devis</a>
 		            	<a class="module" href="#rdv-modal" data-toggle="modal">rdv</a>
 		            	<a class="module" href="#paiement-modal" data-toggle="modal">paiement</a>
 		            	<a class="module" href="#son-modal" data-toggle="modal">son</a>
@@ -170,7 +170,7 @@
 		</div>
     </section>
 
-<!-- SON modal -->
+<!-- sound modal -->
 	<div class="modal fade apartment-modal" id="son-modal">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -197,7 +197,7 @@
 		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
 
-<!-- video password modal -->
+<!-- video modal -->
 	<div class="modal fade apartment-modal" id="video-modal">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -221,7 +221,7 @@
 		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
 
-<!-- rdv password modal -->
+<!-- rdv modal -->
 	<div class="modal fade apartment-modal" id="rdv-modal">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -244,7 +244,7 @@
 		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
 
-<!-- devis password modal -->
+<!-- devis modal -->
 	<div class="modal fade apartment-modal" id="devis-modal">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -268,7 +268,7 @@
 		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
 
-<!-- booking password modal -->
+<!-- booking modal -->
 	<div class="modal fade apartment-modal" id="booking-modal">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -291,7 +291,7 @@
 		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
 
-<!-- paiement password modal -->
+<!-- paiement modal -->
 	<div class="modal fade apartment-modal" id="paiement-modal">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -301,10 +301,11 @@
 						<h1>Envoyer une demande de paiement<span class="special-color">?</span></h1>
 						<div class="short-title-separator"></div>
 					</div>
-					<p class="negative-margin forgot-info">Instert your account email address.<br/>We will send you a link to reset your password.</p>
-					<input name="login" type="email" class="input-full main-input" placeholder="Your email" />
-					<a href="my-profile.html" class="button-primary button-shadow button-full">
-						<span>Reset password</span>
+					<p class="negative-margin forgot-info">Veillez à remplir la totalité des champs du formulaire.<br/>L'artiste aura le choix d'accepter/refuser la demande de paiement.</p>
+					<input name="desc" type="text" class="input-full main-input" placeholder="Produits (Ex: CADRAGE + MONTAGE + POST PROD)" />
+					<input name="price" type="tel" class="input-full main-input" placeholder="Prix en euros (Ex: 150)" />
+					<a href="#" class="button-primary button-shadow button-full payment-chat">
+						<span>Envoyer la demande</span>
 						<div class="button-triangle"></div>
 						<div class="button-triangle2"></div>
 						<div class="button-icon"><i class="fa fa-user"></i></div>
@@ -341,7 +342,9 @@
     	user.nom = "<%- locals.session.userName ?
     		locals.session.userName : "null" %>";
     	user.type = "<%- locals.session.userType ?
-    		locals.session.userType : "null" %>";
+			locals.session.userType : "null" %>";
+		user.pay_module = "<%- locals.session.pay_module ?
+			locals.session.pay_module : "null" %>";
     	//console.log(session);
     	session.user = user;
     	sessionStorage.setItem("session", JSON.stringify(session));

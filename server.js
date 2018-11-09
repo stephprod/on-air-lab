@@ -2,8 +2,8 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const session = require('express-session')
-const db = require('./db_start_engine')
-const sass = require('node-sass')
+//const db = require('./db_start_engine')
+//const sass = require('node-sass')
 const os = require('os');
 const interfaces = os.networkInterfaces()
 /*Variables routes*/
@@ -44,6 +44,7 @@ const payment_recap = require('./route/payment_recap')
 const mailer = require('./route/send_mail')
 const payment = require('./route/payment')
 const mail_template_generator = require('./route/generate_mail')
+const pay_module = require('./route/module_paiement')
 /*Modeles*/
 const User = require('./models/req_user')
 // SECURE HTTP POUR SOCKET IO
@@ -56,6 +57,7 @@ app.set('view engine', 'ejs')
 
 
 //NOS MIDDLEWARES
+var __dirname
 app.use('/asset', express.static(__dirname + '/public'))
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
@@ -112,6 +114,7 @@ app.use('/', payment_recap)
 app.use('/', mailer)
 app.use('/', payment)
 app.use('/', mail_template_generator)
+app.use('/', pay_module)
 app.get('/', (request, response) => {
     response.locals.session = request.session
 	response.render('pages/index')
@@ -157,7 +160,6 @@ io.sockets.on('connection', function (socket) {
         user.userType = type;
         socket.user = user;
         //console.log("Socket ID du GARS "+socket.id);
-        let p
         if (type == 2 || type == 1 || type == 3){
                 User.getRoomForPro('`rooms`.`with_userid`='+id+' GROUP BY `rooms`.`id_room`'
                 ,(result) => {
@@ -183,7 +185,7 @@ io.sockets.on('connection', function (socket) {
                                             room.push(null, 'Aucun message.')
                                         }
                                         tabCorresp.push(room)
-                                        //socket.emit('updaterooms', tabCorresp, 1, null);
+                                        //socket.emit('updaterooms', tabCorresp);
                                     })
                                 };
                             }) (room), 100);
@@ -223,7 +225,7 @@ io.sockets.on('connection', function (socket) {
                                         //console.log("-----------------------------------------------")
                                         if (k == result.length - 1){
                                             //console.log(tabCorresp)
-                                            socket.emit('updaterooms', tabCorresp, socket.room, null);
+                                            socket.emit('updaterooms', tabCorresp);
                                         }
                                    })
                                 };
@@ -250,7 +252,7 @@ io.sockets.on('connection', function (socket) {
                         //data.txt = id + ' has connected to this room'
                         //data.user_receiver = socket.user.userId
                         //socket.broadcast.to(socket.room).emit('updatechat', coresp, data);
-                        //socket.emit('updaterooms', tabCorresp, socket.room, coresp);
+                        //socket.emit('updaterooms', tabCorresp);
                         }
                     })
         }
@@ -278,7 +280,7 @@ io.sockets.on('connection', function (socket) {
                                             room.push(null, 'Aucun message.')
                                         }
                                         tabCorresp.push(room)
-                                        //socket.emit('updaterooms', tabCorresp, 1, null);
+                                        //socket.emit('updaterooms', tabCorresp);
                                     })
                                 };
                             }) (room), 100);
@@ -315,7 +317,7 @@ io.sockets.on('connection', function (socket) {
                                         //console.log("-----------------------------------------------")
                                         if (k == result.length - 1){
                                             //console.log(tabCorresp)
-                                            socket.emit('updaterooms', tabCorresp, socket.room, null);
+                                            socket.emit('updaterooms', tabCorresp);
                                         }
                                    })
                                 };
@@ -342,7 +344,7 @@ io.sockets.on('connection', function (socket) {
                         //data.txt = id + ' has connected to this room'
                         //data.user_receiver = socket.user.userId
                         //socket.broadcast.to(socket.room).emit('updatechat', coresp, data);
-                        //socket.emit('updaterooms', tabCorresp, socket.room, coresp); 
+                        //socket.emit('updaterooms', tabCorresp); 
                     }
                 })
             }
@@ -360,7 +362,6 @@ io.sockets.on('connection', function (socket) {
         let tableM = [];
         //Table Type_Message
         let tableT = [];
-        let tableE = [];
         //Si tu es sur la room admin
         if (socket.room == 1){
             if (data.type_m === undefined)
@@ -386,6 +387,7 @@ io.sockets.on('connection', function (socket) {
                     case "booking":
                     case "rdv":
                     case "rdv_offer":
+                    case "payment":
                         break;
                     case "contact":
                         io.sockets.in(socket.id).emit('updatechat', user_receiver, data, context)
@@ -394,7 +396,12 @@ io.sockets.on('connection', function (socket) {
                         tableT.push(data.type_m, data.path)
                         break;
                 }
-                if (data.type_m != "rdv" && data.type_m != "booking" && data.type_m != "contact" && data.type_m != "rdv_offer"){
+                if (data.type_m != "rdv" && 
+                    data.type_m != "booking" && 
+                    data.type_m != "devis_request" && 
+                    data.type_m != "contact" && 
+                    data.type_m != "rdv_offer" && 
+                    data.type_m != "payment"){
                     //INSERTION DU TYPE DE MESSAGE
                     User.insertTypeM(tableT ,(result) => {
                         //console.log("INSERTION DU TYPE DE MESSAGE  AUDIO AU CALME!")
@@ -421,8 +428,8 @@ io.sockets.on('connection', function (socket) {
             }
             else
             {
-                for( var i=0, len=userGlobal.length; i<len; ++i ){
-                    var c = userGlobal[i]
+                for(i=0, len=userGlobal.length; i<len; ++i ){
+                    c = userGlobal[i]
                     if(c.id_user == userIdReceiver){
                         io.sockets.in(c.socket).emit('updatechat', user_receiver, data, context)
                         break;
@@ -455,6 +462,7 @@ io.sockets.on('connection', function (socket) {
                     case "rdv":
                     case "booking":
                     case "rdv_offer":
+                    case "payment":
                         io.sockets.in(socket.room).emit('updatechat', user_receiver, data, context)
                         break;
                     case "devis_request":
@@ -467,7 +475,12 @@ io.sockets.on('connection', function (socket) {
                         tableT.push(data.type_m, data.path)
                         break;
                 }
-                if (data.type_m != "rdv" && data.type_m != "booking" && data.type_m != "devis_request" && data.type_m != "contact" && data.type_m != "rdv_offer"){
+                if (data.type_m != "rdv" && 
+                        data.type_m != "booking" && 
+                        data.type_m != "devis_request" && 
+                        data.type_m != "contact" && 
+                        data.type_m != "rdv_offer" && 
+                        data.type_m != "payment"){
                     User.insertTypeM(tableT ,(result) => {
                         tableM.push(userIdSender, userIdReceiver, data.txt, socket.room, result, created_date);
                         User.insertMessages(tableM, (result) => {
@@ -511,7 +524,8 @@ io.sockets.on('connection', function (socket) {
                     type_m : result[k].type_m,
                     path : result[k].path,
                     content_m: result[k].content_m,
-                    id_r : data
+                    id_r : data,
+                    id_payment: result[k].id_payment,
                 }
                 message.events = null
                 message.servs = null
@@ -568,6 +582,25 @@ io.sockets.on('connection', function (socket) {
                             })
                         };
                     }) (message), 100);
+                }else if(message.type_m == "payment"){
+                    User.getPaymentInTypeMessage(message.id_payment, message.id_type_m, (result) =>{
+                        console.log(result)
+                        if (result.length > 0){
+                            let obj = {}
+                            obj.id = result[0].id,
+                            obj.desc = result[0].desc,
+                            obj.price = result[0].price,
+                            message.payment = obj
+                            if (result[0].id_temp != null){
+                                message.id_temp = result[0].id_temp
+                                message.request_state = 0
+                            }else{
+                                message.request_state = -1
+                            }
+                            //console.log(message)
+                            io.sockets.in(socket.id).emit('update_paymentstypemessage', message)
+                        }
+                    })
                 }
                 //console.log(message)
                 io.sockets.in(socket.id).emit('updatechat',corespObj, message)
@@ -594,7 +627,8 @@ io.sockets.on('connection', function (socket) {
                     type_m : result[k].type_m,
                     path : result[k].path,
                     content_m: result[k].content_m,
-                    id_r : data
+                    id_r : data,
+                    id_payment: result[k].id_payment
                 }
                 message.events = null
                 message.user_request_info = null
@@ -616,8 +650,7 @@ io.sockets.on('connection', function (socket) {
                             })
                         };
                     }) (message), 100);
-                }
-                else if(message.type_m == "contact"){
+                }else if(message.type_m == "contact"){
                     //console.log(socket.user)
                     if (socket.user.userType != 4){
                         setTimeout((function(message) {
@@ -667,6 +700,24 @@ io.sockets.on('connection', function (socket) {
                             };
                         }) (message), 100)
                     }
+                }else if(message.type_m == "payment"){
+                    User.getPaymentInTypeMessage(message.id_payment, message.id_type_m, (result) =>{
+                        if (result.length > 0){
+                            let obj = {}
+                            obj.id = result[0].id,
+                            obj.desc = result[0].nom,
+                            obj.price = result[0].prenom,
+                            message.payment = obj
+                            if (result[0].id_temp != null){
+                                message.id_temp = result[0].id_temp
+                                message.request_state = 0
+                            } else{
+                                message.request_state = -1
+                            }
+                            //console.log(message)
+                            io.sockets.in(socket.id).emit('socket_update_paymentstypemessage', message)
+                        }
+                    })
                 }
                 //console.log(message)
                 io.sockets.in(data).emit('updatechat',corespObj, message)
@@ -700,7 +751,7 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('update_services', function(idUser, room, coresp){
-        let data = {}
+        //let data = {}
         User.get_servicesOfPro(coresp.id_coresp, (result) => {
             if (result.length > 0){
                 socket.emit('updateservicesfront', result);
@@ -708,8 +759,8 @@ io.sockets.on('connection', function (socket) {
         })
     });
 
-    socket.on('update_modeles_devis', function(idUser, room, coresp){
-        let data = {}
+    socket.on('update_modeles_devis', function(idUser){
+        //let data = {}
         User.get_devisOfPro(idUser, (result) => {
             if (result.length > 0){
                 socket.emit('updatemodelesdevisfront', result);

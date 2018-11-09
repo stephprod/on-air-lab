@@ -106,7 +106,7 @@ class User{
 		//console.time("insert")
 		let q = db.query('INSERT INTO messages (iduser_send, iduser_received, message_txt, id_room, id_type, created_at) VALUE (?)', [messages], (err, result) =>{
 			if (err){
-				//console.log(q.sql)
+				console.log(q.sql)
 				throw err
 			}
 			cb(result.insertId)
@@ -131,6 +131,18 @@ class User{
 			}
 			cb(result.insertId)
 		})
+    }
+    // V2 : exemple implémentation PROMISE
+    static insertTypePM(type_message){
+        return new Promise((resolve, reject) => {
+            let r = db.query('INSERT INTO type_message (type_m, id_payment) VALUE (?)', [type_message], (err, result) =>{
+                if (err){
+                    console.log(r.sql)
+                    throw err
+                }
+                resolve(result.insertId)
+            })
+        })
 	}
     static insertContactTypeM(type_message, cb){
         let r = db.query('INSERT INTO type_message (type_m, path, id_art) VALUE (?)', [type_message], (err, result) =>{
@@ -161,7 +173,7 @@ class User{
     }
 	static getFirstPreviousMsgPro(room, number, cb)
     {
-    	//console.time("select counting")
+        //console.time("select counting")
         let r = db.query('SELECT * FROM messages INNER JOIN rooms ON rooms.id_room=messages.id_room '+
         	'LEFT JOIN type_message ON messages.id_type = type_message.id_type_m '+ 
         	'LEFT JOIN user ON rooms.userid = user.id WHERE messages.id_room = ? '+
@@ -270,6 +282,18 @@ class User{
         let r = db.query('SELECT * FROM services_in_type_message '+
             'INNER JOIN service ON service.id_service = services_in_type_message.id_service '+
             'WHERE services_in_type_message.id_type_message = ?', [table], (err, result) => {
+            if(err){
+                console.log(r.sql)
+                throw err;
+            }
+            cb(result);
+        });
+    }
+    static getPaymentInTypeMessage(id_p, id_type_m, cb){
+        let r = db.query('SELECT * FROM payment '+
+            'INNER JOIN type_message ON type_message.id_payment = payment.id '+
+            'LEFT JOIN temp ON temp.id_type_message = type_message.id_type_m '+
+            'WHERE payment.id ='+id_p+' AND type_message.id_type_m ='+id_type_m, (err, result) => {
             if(err){
                 console.log(r.sql)
                 throw err;
@@ -815,7 +839,7 @@ class User{
             cb(result.affectedRows);
         });
     }
-    static insertCalendar(tab, cb){
+/*    static insertCalendar(tab, cb){
         let r = db.query('INSERT INTO calendar_event (title, start, end, id_pro) VALUE (?)', [tab], (err, result) => {
             if(err){
                 console.log(r.sql)
@@ -849,7 +873,7 @@ class User{
             }
             cb(result.changedRows);
         });
-    }
+    }*/
     static insertDow(tab, cb){
         let r = db.query('INSERT INTO dow (userid, lundi, mardi, mercredi, jeudi, vendredi, samedi, dimanche, pause) VALUE (?)', [tab], (err, result) => {
             if(err){
@@ -1050,6 +1074,16 @@ class User{
             }
             cb(res)
         })
+    }
+    static insert_payment_db(table, cb){
+        let r = db.query('INSERT INTO `payment`(`id_art`, `id_pro`, `desc`, `price`)  '+
+            'VALUES (?) ', [table], (err, result) => {
+            if(err){
+                //console.log(r.sql)
+                throw err;
+            }
+            cb(result.insertId);
+        });
     }
 }
 
