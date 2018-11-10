@@ -652,6 +652,8 @@ function on_module_accept_typeMessage_link_click(e){
           });
       }
     });*/
+}else if(type_message_libelle == 'payment'){
+  console.log("Accept payment request !")
 }else{
   $.ajax({
       type: "POST",

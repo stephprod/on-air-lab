@@ -3,7 +3,7 @@ const User = require('../models/req_user')
 const router = express.Router()
 router.route('/check-in')
 	.post((request, response) => {
-		let id_user
+		//let id_user
 		let ret = {}
 		ret.success = []
 		ret.global_msg = []
@@ -11,25 +11,25 @@ router.route('/check-in')
 		ret.msg = request.body.from == "rdv" || request.body.from == "rdv_offer" ? "Demande de rendez-vous !" : "Demande de booking !"
 		ret.created = new Date()
 		if (request.session.token == request.headers["x-access-token"]){
-			let table = [], tableD = [], tableT = [], tableTemp = [], tableE = [], tableM = []
+			var table = []
+			//let tableD = [], tableT = [], tableTemp = [], tableE = [], tableM = []
 			//let start, end, title, id_pro, id_art
-			let len
-			let req_ok = '', req_ko = ''
-			id_sender = request.body.user_sender
+			var len
+			//let req_ok = '', req_ko = ''
+			//var id_sender = request.body.user_sender,
 			//title = request.body.title
-			id_receiv = request.body.user_receiv
+			//id_receiv = request.body.user_receiv
 			//id_pro = request.body.id_pro
 			//id_art = request.body.id_art
 			//console.log(request.body)
-			for (k in request.body){
+			for (var k in request.body){
 				table.push(request.body[k])
 			}
 			//console.log(table)
 			//INSERTION EVENNEMENT
-			let promise;
 			if (request.body.from == "rdv_offer"){
 				len = (table.length - 12) / 2 ;
-				promise = insert_event(len, table, ret, request)
+				insert_event(len, table, ret, request)
 				.then((res) => {
 					return insert_type_rdv_offer_message(request, response, res.result.id_dispos, res)
 				})
@@ -45,7 +45,7 @@ router.route('/check-in')
 				});
 			}else{	
 				len = (table.length - 7) / 2 ;
-				promise = insert_event(len, table, ret, request)
+				insert_event(len, table, ret, request)
 				.then((res) => {
 					return insert_type_rdv_message(request, response, res.result.id_dispos, res)
 				})
@@ -79,7 +79,6 @@ router.route('/check-in')
 				setTimeout((function(k) {
 					return function(){
 						var tableD = [],
-						tableTemp = [],
 						start = request.body["events["+k+"][start]"],
 						end = request.body["events["+k+"][end]"];
 						//console.log(k);
@@ -114,18 +113,17 @@ router.route('/check-in')
 		});
 	}
 	function insert_type_rdv_offer_message(request, response, id_dispos, ret){
-		return new Promise((resolve, reject) => {
+		return new Promise((resolve) => {
 			var tableT = []
 			//INSERTION TYPEMESSAGE
 			tableT.push("rdv_offer", request.body["offer[id]"])
-			let dispos = id_dispos
 			if (id_dispos.length > 0){
 				User.insertTypeOM(tableT, (result)=>{
 					if (result > 0){
 						ret.success.push(true)
 						ret.global_msg.push("Type du message inséré !")
 						ret.type_mess_id = result
-						for (k in id_dispos){
+						for (var k in id_dispos){
 							setTimeout((function(k) {
 								return function (){		
 									let tableE = []
@@ -163,14 +161,13 @@ router.route('/check-in')
 			var tableT = []
 			//INSERTION TYPEMESSAGE PUIS MESSAGE
 			tableT.push(request.body.from, null)
-			let dispos = id_dispos
 			if (id_dispos.length > 0){
 				User.insertTypeM(tableT, (result)=>{
 					if (result > 0){
 						ret.success.push(true)
 						ret.type_mess_id = result
 						ret.global_msg.push("Type du message inséré !")
-						for (k in id_dispos){
+						for (var k in id_dispos){
 							setTimeout((function(k) {
 								return function (){		
 									let tableE = []
