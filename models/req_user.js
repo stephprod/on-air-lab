@@ -289,16 +289,18 @@ class User{
             cb(result);
         });
     }
-    static getPaymentInTypeMessage(id_p, id_type_m, cb){
-        let r = db.query('SELECT * FROM payment '+
-            'INNER JOIN type_message ON type_message.id_payment = payment.id '+
-            'LEFT JOIN temp ON temp.id_type_message = type_message.id_type_m '+
-            'WHERE payment.id ='+id_p+' AND type_message.id_type_m ='+id_type_m, (err, result) => {
-            if(err){
-                console.log(r.sql)
-                throw err;
-            }
-            cb(result);
+    static getPaymentInTypeMessage(message, cb){
+        return new Promise((resolve, reject) => {
+            let r = db.query('SELECT * FROM payment '+
+                'INNER JOIN type_message ON type_message.id_payment = payment.id '+
+                'LEFT JOIN temp ON temp.id_type_message = type_message.id_type_m '+
+                'WHERE payment.id ='+message.id_payment+' AND type_message.id_type_m ='+message.id_type_m, (err, result) => {
+                if(err){
+                    console.log(r.sql)
+                    throw err;
+                }
+                cb(result, message, resolve, reject);
+            });
         });
     }
     static getPreviousMsgAdmin(room, id, index, len, cb)
