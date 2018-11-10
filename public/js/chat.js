@@ -551,32 +551,8 @@ function on_module_accept_typeMessage_link_click(e){
   //console.log(user_receiv);
   //console.log(glob_datas);
   if (type_message_libelle == 'booking'){
-    /*if (user_receiv.payment_module == 0 && user.type == 4){
-      //Dead Code
-      //Demande de confirmation du choix de validation/Récapitulatif
-      //Securisation du lien vers la page
-       $.ajax({
-            type : "POST",
-            url : "/secure_profile",
-            data: {"temp": user_receiv.id_coresp},
-            success: function(data) {
-                //console.log(data)
-                var datas = {},
-                query = '';
-                datas.type = "booking";
-                //datas.events = global_datas.events;
-                console.log(datas);
-                query = serialize(datas);
-                console.log(query);
-                //Récupération du nombre d'h de booking a faire
-                iframe.location = '/payment-recap/'+user_receiv.id_coresp + '?' + query;
-                //window.document.location.href = '/payment-recap/'+user_receiv.id_coresp;
-            }   
-        });
-    }else if (user_receiv.payment_module == 1 && user.type == 4){
-      //Dead Case
-      //window.document.location.href = "/module-payment-recap/"+user_receiv.id_coresp
-    }else{*/
+    // Parite executée uniquement par les utilisateurs de type (2-3)
+    /*if (user_receiv.payment_module == 0 && user.type == 4){*/
       $.ajax({
         type: "POST",
         url: "/action-in-module",
@@ -607,52 +583,33 @@ function on_module_accept_typeMessage_link_click(e){
     });
     //}
 }else if(type_message_libelle == 'devis'){
-  if (user.type == 4){
-    //Securisation du lien vers la page
-       $.ajax({
-            type : "POST",
-            url : "/secure_profile",
-            data: {"temp": user_receiv.id_coresp},
-            success: function(data) {
-              var datas = {}, query;
-              datas.type = "devis";
-              datas.from = "accept-devis";
-              datas.id_pro = user_receiv.id_coresp;
-              datas.id_type = glob_datas.id_type_message;
-              datas.id_payment_module = user_receiv.payment_module
-              //datas.events = global_datas.events;
-              //console.log(datas);
-              query = serialize(datas);
-              //console.log(query);
-              iframe.location = '/payment-recap/'+user_receiv.id_coresp + '?' + query;
-            }
-          });
-   }
-  /*$.ajax({
-      type: "POST",
-      url: "/action-in-module",
-      data: datas,
-      success: function (data){
-        // Envoi de mail contenant le lien d'acccepation d'une demande
-        $.ajax({
-              type : "POST",
-              url : "/mail",
-              data: {"receiver": user_receiv.id_coresp,
-                "typeMessage": type_message_libelle,
-                "events", data.result.events,
-                "action": data.result.libelle},
-              success: function(data) {
-                if (data.success[0]){
-            const content = 'demande acceptée !';
-            div.find("div.card-chat div.div-submi").empty();
-            div.find("div.card-chat div.div-submi").append(content);
-            }
-              console.log(data)
-              }   
-          });
-      }
-    });*/
+  if (user_receiv.payment_module == 0){
+    if (user.type == 4){
+      //Securisation du lien vers la page
+      $.ajax({
+        type : "POST",
+        url : "/secure_profile",
+        data: {"temp": user_receiv.id_coresp},
+        success: function(data) {
+          var datas = {}, query;
+          datas.type = "devis";
+          datas.from = "accept-devis";
+          datas.id_pro = user_receiv.id_coresp;
+          datas.id_type = glob_datas.id_type_message;
+          datas.id_payment_module = user_receiv.payment_module
+          //datas.events = global_datas.events;
+          //console.log(datas);
+          query = serialize(datas);
+          //console.log(query);
+          iframe.location = '/payment-recap/'+user_receiv.id_coresp + '?' + query;
+        }
+      });
+    }
+  }else{
+    // Redirection vers le paiement
+  }
 }else if(type_message_libelle == 'payment'){
+  // Redirection vers le paiement
   console.log("Accept payment request !")
 }else{
   $.ajax({
@@ -762,6 +719,9 @@ function on_socket_update_paymentstypemessage(data){
   //console.log(data);
   var div = $("div[id-message='"+data.id_m+"']");
   var content = '';
+  if (data.payment.id == 0){
+    div.find(".div-submi").empty();
+  }
   content += '<p style="background: #18457c;color: white;padding: 12px;">Description ('+data.payment.desc+') </br>';
   content += '<p style="background: #18457c;color: white;padding: 12px;">Prix ('+data.payment.price+' €) </br>';
   //div.find("p.date_creneau").empty();
