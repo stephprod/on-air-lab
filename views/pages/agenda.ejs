@@ -649,25 +649,25 @@
 		 if (title) {
 			 start = start.format();
 			 end = end.format();
-			 $.ajax({
-				 url: '/agenda',
-				 data: 'title='+ title+'&start='+ start +'&end='+ end ,
-				 type: "POST",
-				 success: function(data) {
-					 calendar.fullCalendar('renderEvent',
-					 {
-					 	 id_event : data[4],
-						 title: title,
-						 start: start,
-						 end: end,
-					 },
-				 		true // make the event "stick"
-				 	);
-				 }
-			 });
-		 }
-		 calendar.fullCalendar('unselect');
-		},
+			$.ajax({
+				url: '/agenda',
+				data: 'title='+ title+'&start='+ start +'&end='+ end ,
+				type: "POST",
+				success: function(data) {
+					calendar.fullCalendar('renderEvent',
+						{
+							id_event : data[4],
+							title: title,
+							start: start,
+							end: end,
+						},
+						true // make the event "stick"
+					);
+				}
+			});
+		}
+		calendar.fullCalendar('unselect');
+	},
       eventClick: function(event, jsEvent, view) {
         console.log('Clicked on: ' + event.start.format()+' A : ' + event.end.format());
         console.log('Clicked on: ' + event.title);
@@ -804,7 +804,7 @@
 		$('input[type=checkbox]').attr("disabled", "disabled");
 		$('input[type=checkbox]').change(function(e){
 		    if($(this).is(':checked')) {
-		        console.log("Checked" +e.target.id);
+		        //console.log("Checked" +e.target.id);
 				$("<p class='horaire-align' id="+e.target.id+">"+e.target.id+" : de "+$('input[name="ouverture"]').val()+" A "+$('input[name="fermeture"]').val()+"</p>").appendTo( "#dishoraire" );
 				if (e.target.id == "lundi") {
 					lundi = $('input[name="ouverture"]').val()+"-"+$('input[name="fermeture"]').val();
@@ -822,7 +822,7 @@
 					dimanche = $('input[name="ouverture"]').val()+"-"+$('input[name="fermeture"]').val();
 				}
 		    } else {
-		        console.log("pas Checked" +e.target.id);
+		        //console.log("pas Checked" +e.target.id);
 		        $("p").remove("#"+e.target.id)
 				if (e.target.id == "lundi") {
 					lundi = null;
@@ -844,13 +844,13 @@
 		$('.savecal').click(function(ev){
 			ev.preventDefault();
 			pause = $('input[name="pausedeb"]').val()+"-"+$('input[name="pausefin"]').val();
-		    console.log(lundi+" / "+mardi+" / "+mercredi+" / "+jeudi+" / "+vendredi+" / "+samedi+" / "+dimanche+" / "+pause);
+		    //console.log(lundi+" / "+mardi+" / "+mercredi+" / "+jeudi+" / "+vendredi+" / "+samedi+" / "+dimanche+" / "+pause);
 			 $.ajax({
 				 url: '/calendar_dow',
 				 data: 'lundi='+lundi+'&mardi='+mardi+'&mercredi='+mercredi+'&jeudi='+jeudi+'&vendredi='+vendredi+'&samedi='+samedi+'&dimanche='+dimanche+'&pause='+pause ,
 				 type: "POST",
 				 success: function(data) {
-					console.log(data);
+					//console.log(data);
 					localStorage.setItem("datas", JSON.stringify(data));
 					document.location = "/agenda";
 				 }
@@ -942,6 +942,8 @@
 			locals.session.userName : "null" %>";
 		user.type = "<%- locals.session.userType ? 
 			locals.session.userType : "null" %>";
+		session.token = "<%- locals.session.token != undefined ? 
+			locals.session.token : "null" %>";	
 		//console.log(session);
 		session.user = user;
 		sessionStorage.setItem("session", JSON.stringify(session));

@@ -66,11 +66,11 @@ router.route('/agenda')
 				User.get_calendar(request.session.userId, (result) => {
 					if (result.length >= 0){
 						let data = JSON.stringify(result)
-						data = data.replace(/\"([^(\")"]+)\":/g,"$1:");
+						data = data.replace(/"([^(")"]+)":/g,"$1:");
 						let d = JSON.stringify(table)
 						table = [];
 						response.render('pages/agenda', {eventObj : data, dow: d})
-					 }
+					}
 				})
 			})
 		}

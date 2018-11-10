@@ -36,14 +36,14 @@ var session = JSON.parse(sessionStorage.getItem('session'));
 var user = null;
 sessionStorage.clear();
 //console.log(user);
-var userId = null;
-var page = null;
+// var userId = null;
+// var page = null;
 var token = null;
 if (session != null){
 	user = session.user;
-	if (user != null && user.id != null && user.id != "null"){
-		userId = user.id;
-	}
+	// if (user != null && user.id != null && user.id != "null"){
+	// 	userId = user.id;
+	// }
 	token = session.token;
 }
 $(document).on("ready", on_document_ready);

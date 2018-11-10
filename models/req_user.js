@@ -249,7 +249,7 @@ class User{
             'INNER JOIN calendar_event ON events_in_type_message.id_calendar_event = calendar_event.id_event '+
             'WHERE events_in_type_message.id_type_message = ?', [table], (err, result) => {
             if(err){
-                //console.log(r.sql)
+                console.log(r.sql)
                 throw err;
             }
             cb(result);
@@ -260,7 +260,7 @@ class User{
             'INNER JOIN offres ON type_message.id_offre = offres.id_offre '+
             'WHERE type_message.id_type_m = ?', [table], (err, result) => {
             if(err){
-                //console.log(r.sql)
+                console.log(r.sql)
                 throw err;
             }
             cb(result);
@@ -1022,7 +1022,7 @@ class User{
         })
     }
     static delete_tarification(tab, cb){
-        let r = db.query('DELETE FROM `tarification` WHERE id_tarifiaction=?', [table], (err, res)=>{
+        let r = db.query('DELETE FROM `tarification` WHERE id_tarifiaction=?', [tab], (err, res)=>{
             if (err){
                 console.log(r.sql)
                 throw err
@@ -1031,7 +1031,7 @@ class User{
         })
     }
     static delete_etablissement(tab, cb){
-       let r = db.query('DELETE FROM `etablissement` WHERE id=?', [table], (err, res)=>{
+       let r = db.query('DELETE FROM `etablissement` WHERE id=?', [tab], (err, res)=>{
             if (err){
                 console.log(r.sql)
                 throw err
@@ -1040,7 +1040,7 @@ class User{
         }) 
     }
     static delete_user(tab, cb){
-        let r = db.query('DELETE FROM `user` WHERE id=?', [table], (err, res)=>{
+        let r = db.query('DELETE FROM `user` WHERE id=?', [tab], (err, res)=>{
             if (err){
                 console.log(r.sql)
                 throw err
@@ -1079,7 +1079,7 @@ class User{
         let r = db.query('INSERT INTO `payment`(`id_art`, `id_pro`, `desc`, `price`)  '+
             'VALUES (?) ', [table], (err, result) => {
             if(err){
-                //console.log(r.sql)
+                console.log(r.sql)
                 throw err;
             }
             cb(result.insertId);
