@@ -583,24 +583,28 @@ io.sockets.on('connection', function (socket) {
                         };
                     }) (message), 100);
                 }else if(message.type_m == "payment"){
-                    User.getPaymentInTypeMessage(message.id_payment, message.id_type_m, (result) =>{
-                        console.log(result)
-                        if (result.length > 0){
-                            let obj = {}
-                            obj.id = result[0].id,
-                            obj.desc = result[0].desc,
-                            obj.price = result[0].price,
-                            message.payment = obj
-                            if (result[0].id_temp != null){
-                                message.id_temp = result[0].id_temp
-                                message.request_state = 0
-                            }else{
-                                message.request_state = -1
-                            }
-                            //console.log(message)
-                            io.sockets.in(socket.id).emit('update_paymentstypemessage', message)
+                    setTimeout((function(message) {
+                        return function(){
+                            User.getPaymentInTypeMessage(message.id_payment, message.id_type_m, (result) =>{
+                                //console.log(result)
+                                if (result.length > 0){
+                                    let obj = {}
+                                    obj.id = result[0].id,
+                                    obj.desc = result[0].desc,
+                                    obj.price = result[0].price,
+                                    message.payment = obj
+                                    if (result[0].id_temp != null){
+                                        message.id_temp = result[0].id_temp
+                                        message.request_state = 0
+                                    }else{
+                                        message.request_state = -1
+                                    }
+                                    //console.log(message)
+                                    io.sockets.in(socket.id).emit('update_paymentstypemessage', message)
+                                }
+                            })
                         }
-                    })
+                    }) (message), 100);
                 }
                 //console.log(message)
                 io.sockets.in(socket.id).emit('updatechat',corespObj, message)

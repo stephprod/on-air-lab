@@ -764,8 +764,8 @@ function on_socket_update_paymentstypemessage(data){
   var content = '';
   content += '<p style="background: #18457c;color: white;padding: 12px;">Description ('+data.payment.desc+') </br>';
   content += '<p style="background: #18457c;color: white;padding: 12px;">Prix ('+data.payment.price+' €) </br>';
-  div.find("p.date_creneau").empty();
-  div.find("p.date_creneau").append(content);
+  //div.find("p.date_creneau").empty();
+  div.find("p.date_creneau").prepend(content);
 }
 // var song_module_send_link = $("#song_up");
 // var video_module_send_link = $("#video_up");
@@ -1035,12 +1035,12 @@ actions.paiement.push(function (data){
     ret += '<p style="background: #18457c;color: white;padding: 12px;">Description ('+data.desc+') </br>';
     ret += '<p style="background: #18457c;color: white;padding: 12px;">Prix ('+data.price+' €) </br>';
   }
-  ret += '</p>';
   //});
   // if (data.events.length == 0){
   //   ret += '</p><div class="div-submi" style="color: black;">demande refusée !</div><div class="corner"></div><span>'+data.created+'</span>';
   // }else{
   ret += 'demande en attente de réponse du correspondant';
+  ret += '</p>';
   ret +='<div class="div-submi" style="color: black;"></div><div class="corner"></div><span>'+data.created+'</span>';
   //}
   ret += '</div></div></div>';
@@ -1061,12 +1061,12 @@ actions.paiement.push(function (data){
     ret += '<p style="background: #18457c;color: white;padding: 12px;">Description ('+data.desc+') </br>';
     ret += '<p style="background: #18457c;color: white;padding: 12px;">Prix ('+data.price+' €) </br>';
   }
-  ret += '</p>';
   // });
   // if (data.events.length == 0){
   //   ret += '</p><div class="div-submi" style="color: black;">demande refusée !</div><div class="corner"></div><span>'+data.created+'</span>';
   // }else{
     ret += 'demande en attente de votre réponse';
+    ret += '</p>';
     ret += '<div class="div-submi" style="color: black;"><a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a></div><div class="corner"></div><span>'+data.created+'</span>';
   //}
   ret += '</div></div></div>';
