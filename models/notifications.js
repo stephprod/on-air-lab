@@ -1,6 +1,4 @@
 const mail_gen = require("./mail_generator")
-const http = require("../server").server
-const io = require("socket.io")(http)
 const axios = require('axios');
 const nodemailer = require('nodemailer')
 const transporter = nodemailer.createTransport({
@@ -44,7 +42,8 @@ class Notif{
                         //ret.global_msg.push("Message sent: "+info.messageId, "Preview URL: "+nodemailer.getTestMessageUrl(info))
                         ret = {
                             receiverAction: {id: this.objReceiver.id, nom: this.objReceiver.nom},
-                            senderAction: {id:this.sender.id, nom: this.sender.nom}
+                            senderAction: {id:this.sender.id, nom: this.sender.nom},
+                            msg: result.subject,
                         }
                         //console.log('Message sent: %s', info.messageId);
                         // Preview only available when sending through an Ethereal account
@@ -63,5 +62,4 @@ class Notif{
 exports.actions = {mail: (events, receiver, action, type_message, subject, sender) => new Notif(events, receiver, action, type_message, subject, sender).sendEmail("http://localhost:4000")  
     .then((result) => result, 
         (err) => err)
-    .catch((err) => err),
-    notif: null}
+    .catch((err) => err)}

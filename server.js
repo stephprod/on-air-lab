@@ -157,8 +157,31 @@ function getPreviousMsgAdmin(len, id_user, id_room, callback)
 }
 io.sockets.on('connection', function (socket) {
     socket.on('sendNotif', (res) => {
+        var table = []
         //console.log(res)
-        io.sockets.in(socket.room).emit('new_notif', res)
+        //Insertion de la notification en base de données
+        res.time = new Date()
+        table.push(res.msg)
+        table.push(res.senderAction.id)
+        table.push(res.senderAction.nom)
+        table.push(res.receiverAction.id)
+        table.push(res.receiverAction.nom)
+        table.push(res.time)
+        //console.log(table)
+        User.insert_notification(table, (result, resolve, reject) => {
+            //console.log(result)
+            if (result > 0){
+                resolve(result)
+            }else{
+                reject(result)
+            }
+        })
+        .then((result) => {
+            res.id = result
+            //console.log(res)
+            io.sockets.in(socket.room).emit('new_notif', res)
+        })
+        .catch((err) => console.log(err))
     })
     // QUAND LE USER SE CO DANS LOGIN ET ARRIVE SUR LA PAGE DU CHAT
     socket.on('adduser', function(id, type){

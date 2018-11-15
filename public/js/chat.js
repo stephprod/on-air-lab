@@ -566,8 +566,6 @@ function on_module_accept_typeMessage_link_click(e){
         },
         success: function (data){
           if (data.success[0]){
-            data.notif.msg = "Demande de booking acceptée !";
-            data.notif.time = new Date();
             socket.emit("sendNotif", data.notif);
             const content = 'demande acceptée !';
             div.find("div.card-chat div.div-submi").empty();
@@ -629,8 +627,6 @@ function on_module_accept_typeMessage_link_click(e){
       },
       success: function (data){
         if (data.success[0]){
-          data.notif.msg = "Demande de rendez-vous acceptée !";
-          data.notif.time = new Date();
           socket.emit("sendNotif", data.notif);
           const content = 'demande acceptée !';
           div.find("div.card-chat div.div-submi").empty();
@@ -659,24 +655,6 @@ function on_module_deny_typeMessage_link_click(e){
     success: function (data){
       //console.log(data);
       if (data.success[0]){
-        switch (datas.type_m){
-          case "rdv":
-            data.notif.msg = "Demande de rendez-vous refusée !";
-            break;
-          case "booking":
-            data.notif.msg = "Demande de booking refusée !";
-            break;
-          case "payment":
-            data.notif.msg = "Demande de paiement refusée !";
-            break;
-          case "devis":
-            data.notif.msg = "Demande de devis refusée !";
-            break;
-          default:
-            data.notif.msg = "Demande refusée !";
-            break;
-        }
-        data.notif.time = new Date();
         socket.emit("sendNotif", data.notif);
         const content = 'demande refusée !';
         div.find("div.card-chat div.div-submi").empty();
@@ -719,7 +697,7 @@ function on_payment_link_click(e){
       else{
         //Emmistion de socket
         //console.log("demende de paiement enregistré !");
-        console.log(data);
+        //console.log(data);
         var paiement_request = {
           id_type_m : data.result.id_type_m,
           txt : data.msg,

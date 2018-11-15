@@ -1104,6 +1104,29 @@ class User{
             });
         });
     }
+    static insert_notification(table, cb){
+        return new Promise((resolve, reject) => {
+            let r = db.query('INSERT INTO `notifications`(`notification`, `sender_user_id`, `sender_user_name`, `receiver_user_id`, `receiver_user_name`, `time`) VALUES (?)', [table], (err, res) => {
+                if (err){
+                    console.log(r.sql)
+                    throw err;
+                }
+                cb(res.insertId, resolve, reject)
+            })
+        })
+    }
+    static get_notifications(table, cb){
+        return new Promise((resolve, reject) => {
+            let r = db.query('SELECT * FROM `notifications` '+
+                'WHERE `notifiaction`.`sender_user_id`=? OR `notifiaction`.`receiver_user_id`=?', [table], (err, result) => {
+                if(err){
+                    console.log(r.sql)
+                    throw err;
+                }
+                cb(result, resolve, reject);
+            });
+        });
+    }
 }
 
 module.exports = User

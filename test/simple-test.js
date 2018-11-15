@@ -96,8 +96,7 @@ describe('List of simple mocha tests', function() {
 			events.push({id_event: 1, id_pro: 18, id_artist: 21, start:"2018-05-14T15:30:00", end: "2018-05-14T17:30:00", title: 'event-meet'})
 			return notif.mail(events, sender, "accept", "rdv", user)
 			.then((res) => {
-				expect(res.success).to.be.an.instanceof(Array);
-				expect(res.success[0]).to.be.true;
+				expect(res).to.be.an.instanceof(Object);
 			})
 			.catch((err) => console.log(err))
 		});
@@ -106,8 +105,7 @@ describe('List of simple mocha tests', function() {
 			sender = {nom: "testSender", prenom: "testSender", email: "testSender@test.fr"}
 			return notif.mail(events, sender, "deny", "rdv", user)
 			.then((res) => {
-				expect(res.success).to.be.an.instanceof(Array);
-				expect(res.success[0]).to.be.true;
+				expect(res).to.be.an.instanceof(Object);
 			})
 			.catch((err) => console.log(err))
 		});
