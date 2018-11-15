@@ -27,8 +27,8 @@ router.param('id', (req, res, next, token) => {
 router.route('/payment-recap/:id')
 	.get((req, res) => {
 		let paymentObj = {}
-        let userIdSender = req.session.userId
-		let userIdReceiver = req.session.user_receiv.id_coresp
+        //let userIdSender = req.session.userId
+		//let userIdReceiver = req.session.user_receiv.id_coresp
         console.log(req.query)
         //res.locals.id_u = req.session.id_u
         res.locals.session = req.session

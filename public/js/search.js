@@ -388,7 +388,7 @@ function updateListEtabInView(value){
         select_cities.on("changed.bs.select", cities_change);
         radios_type_service_switcher.on("change", on_type_service_change);
         //TRI AJAX ISOTOP
-        initIsotop($grid);
+        //initIsotop($grid);
         //PAGINATION
         elems_in_a_page = 16;
         $grid.easyPaginate({

@@ -46,6 +46,7 @@ router.route('/login')
 					userSess.userType = result.type
 					userSess.token = result.jeton
 					userSess.pay_module = result.payment_module
+					userSess.userMail = result.email
 					console.log('Tu est connecter avec id bdd ' +userSess.userId)
 					console.log('Tu est connecter avec le nom '+userSess.userName)
 					User.updateUser("disponibilite='1' WHERE id='"+result.id+"'"

@@ -241,12 +241,7 @@ TESTO INTENSE #ffffff
                                         </tr>
                                         <tr>
                                             <td align="center" class="padding-copy textlightStyle" style="padding: 20px 0 0 0; font-size: 16px; line-height: 25px; font-family: Helvetica, Arial, sans-serif; color: #3F3D33;">
-                                                <p style="margin:0px;"><%= locals.obj.content_start %></p>
-                                                <p style="margin:0px;"><%= locals.obj.content %></p>
-                                                <% if (locals.obj.details !== undefined){ %>
-                                                    <p style="margin:0px;"><%= locals.obj.details %></p>
-                                                <% }%>
-                                                <p style="margin:0px;"><%= locals.obj.content_end %></p>
+                                                <%- locals.obj.content %>
                                             </td>
                                         </tr>
                                     </tbody></table>
@@ -261,7 +256,7 @@ TESTO INTENSE #ffffff
                                             <td align="center" style="padding: 25px 0 0 0;" class="padding-copy">
                                                 <table border="0" cellspacing="0" cellpadding="0" class="responsive-table">
                                                     <tbody><tr>
-                                                        <td align="center"><a target="_new" class="mobile-button" style="display: inline-block; font-size: 18px; font-family: Helvetica, Arial, sans-serif; font-weight: normal; color: #ffffff; text-decoration: none; background-color: #9C010F; padding-top: 15px; padding-bottom: 15px; padding-left: 25px; padding-right: 25px; border-radius: 3px; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-bottom: 3px solid #5f0109;" href="<%= locals.obj.website_path %>">Label-OnAir →</a></td>
+                                                        <td align="center"><a target="_new" class="mobile-button" style="display: inline-block; font-size: 18px; font-family: Helvetica, Arial, sans-serif; font-weight: normal; color: #ffffff; text-decoration: none; background-color: #9C010F; padding-top: 15px; padding-bottom: 15px; padding-left: 25px; padding-right: 25px; border-radius: 3px; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-bottom: 3px solid #5f0109;" href="<%= locals.obj.website_path %>">Allez sur le site →</a></td>
                                                     </tr>
                                                 </tbody></table>
                                             </td>

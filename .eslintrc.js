@@ -12,7 +12,8 @@ module.exports = {
         "require": false,
         "module": false,
         "$": false,
-        "io": false
+        "io": false,
+        "exports": false
     },
     "rules": {
         "accessor-pairs": "error",

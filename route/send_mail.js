@@ -1,19 +1,33 @@
-const nodemailer = require('nodemailer')
 const express = require('express')
 const User = require('../models/req_user')
-const Mail = require('../models/mail_generator')
+const notifications = require('../models/notifications').x
 const router = express.Router()
-// create reusable transporter object using the default SMTP transport
-const transporter = nodemailer.createTransport({
-    host: 'smtp.ethereal.email',
-    port: 587,
-    secure: false, // true for 465, false for other ports
-    auth: {
-        user: 'ijv6lvrhtrfvwaqq@ethereal.email', // generated ethereal user
-        pass: 'y3HEPhr67AdcBswmcg' // generated ethereal password
-    }
-});
-
+//PROMISE http client
+const axios = require('axios');
+// const nodemailer = require('nodemailer')
+// const transporter = nodemailer.createTransport({
+//     host: 'smtp.ethereal.email',
+//     port: 587,
+//     secure: false, // true for 465, false for other ports
+//     auth: {
+//         user: 'ijv6lvrhtrfvwaqq@ethereal.email', // generated ethereal user
+//         pass: 'y3HEPhr67AdcBswmcg' // generated ethereal password
+//     }
+// });
+//const nodemailer = require('nodemailer')
+// const transporter = nodemailer.createTransport({
+//     host: 'smtp.ethereal.email',
+//     port: 587,
+//     secure: false, // true for 465, false for other ports
+//     auth: {
+//         user: 'ijv6lvrhtrfvwaqq@ethereal.email', // generated ethereal user
+//         pass: 'y3HEPhr67AdcBswmcg' // generated ethereal password
+//     }
+// });
+//const mail_gen = require("./mail_generator")
+//console.log(notifications("a", "b", "c", "d", "e", "f"))
+//notifications("a", "b", "c", "d", "e", "f")
+//	.then ((res) => {console.log(res)})
 router.route('/mail')
 	.post((req, res) => {
 		//console.log(req.body)
@@ -21,13 +35,15 @@ router.route('/mail')
 		let ret = {}
 		ret.success = []
 		ret.global_msg = []
-		ret.res = {}
-		for (k in req.body){
+		for (var k in req.body){
 			table.push(req.body[k])
 		}
-		if (req.session.token == req.headers["x-access-token"]){
+		//console.log(table)
+		// notifications("a", "b", "c", "d", "e", "f")
+		// 	.then ((res) => {console.log(res)})
+		//if (req.session.token == req.headers["x-access-token"]){
 			if (table.length > 0){
-				let subject = '', text = '', html = ''
+				let subject = ''
 				User.getUser("id="+table[0], (result) => {
 					if (result !== undefined){
 						switch(table[1]){
@@ -38,43 +54,9 @@ router.route('/mail')
 								subject = "Demande de rendez-vous !"
 								break;
 						}
-						if (table[3] == "accept"){
-							subject += ' ✔';
-						}else{
-							subject += ' X'
-						}
-						text = createMessagePlainText(table[2], result, table[3], table[1])
-						Mail.generateClassicHtmlTemplate(table[2], result, table[3], table[1], 'http://'+req.hostname+':4000', subject)
-						.then((result2) =>{
-							//console.log(result2.data)
-							html = result2.data
-							// setup email data with unicode symbols
-							ret.res = result.email
-							let mailOptions = {
-								from: '"Automate 👻" <nepasrepondre@label-onair.com>', // sender address
-								to: '"'+result.nom+' '+result.prenom+'" <'+result.email+'>, <ijv6lvrhtrfvwaqq@ethereal.email>', // list of receivers
-								subject: subject, // Subject line
-								text: text, // plain text body
-								html: html // html body
-							};
-							transporter.sendMail(mailOptions, (error, info) => {
-								if (error) {
-									ret.success.push(false)
-									ret.global_msg.push("Erreur lors de l'envoi du message !")
-									console.log(error);
-								}else{
-									ret.success.push(true)
-									ret.global_msg.push("Message sent: "+info.messageId, "Preview URL: "+nodemailer.getTestMessageUrl(info))
-									//console.log('Message sent: %s', info.messageId);
-									// Preview only available when sending through an Ethereal account
-									//console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));		    
-								}
-								res.send(ret)
-								// Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-								// Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
-							})
-						})
-						.catch((error) => console.log(error))
+						ret.success.push(true)
+						ret.global_msg.push("Mail envoyé !")
+						res.send(ret)
 					}else{
 						ret.success.push(false)
 						ret.global_msg.push("Utilisateur introuvable !")
@@ -86,13 +68,13 @@ router.route('/mail')
 				ret.global_msg.push("Fause requête !")
 				res.send(ret)
 			}
-		}else{
-			ret.success.push(false)
-			ret.global_msg.push("Token compromised !")
-			res.send(ret)
-		}
+		// }else{
+		// 	ret.success.push(false)
+		// 	ret.global_msg.push("Token compromised !")
+		// 	res.send(ret)
+		// }
 })
-function createMessagePlainText(events, userInfo, action, typeMessage){
+/*function createMessagePlainText(events, userInfo, action, typeMessage){
 	let ret = 'Salut '+userInfo.prenom+' '+userInfo.nom+', \n'
 	if (typeMessage == "rdv"){
 		if (action == "accept")
@@ -115,7 +97,7 @@ function createMessagePlainText(events, userInfo, action, typeMessage){
 	ret += "LabelOnAir"
 	return ret;
 }
-/*function createMessageHtmlText(events, userInfo, action, typeMessage){
+function createMessageHtmlText(events, userInfo, action, typeMessage){
 	let ret = '<p>Salut <b>'+userInfo.prenom+' '+userInfo.nom+', </b></p>'
 	if (typeMessage == "rdv"){
 		if (action == "accept")

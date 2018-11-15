@@ -1,4 +1,5 @@
 import {update_front_with_msg, update_front_with_errors} from './front-update.js';
+//import {Push} from './push.min.js';
 /*import {get_events} from './events.js';
 import {socket, switchRoom} from './socket_modules.js';*/
 $(document).on("click", ".friend", function(){
@@ -381,15 +382,15 @@ function on_form_song_submit(e){
       update_front_with_errors(data.errors);
     else{
       /*Emmistion de socket*/
-                console.log("audio enregistré !" +userId);
-                var song = {
-                    type_m : data.result.type_a,
-                    path: data.result.path,
-                    user_receiver : user_receiv,
-                    txt : data.msg
-                }
-                //console.log(song);
-                socket.emit('sendchat', song, userId, user_receiv, null);
+      console.log("audio enregistré !" +userId);
+      var song = {
+          type_m : data.result.type_a,
+          path: data.result.path,
+          user_receiver : user_receiv,
+          txt : data.msg
+      }
+      //console.log(song);
+      socket.emit('sendchat', song, userId, user_receiv, null);
     }
         }
     });
@@ -542,11 +543,14 @@ function on_socket_update_contactstypemessage(data){
 }
 function on_module_accept_typeMessage_link_click(e){
   e.preventDefault();
+  //Appel de l'iframe à partir d'elle-même
+  iframe = window.parent.$("iframe[src='/chat']")[0];
   var glob_datas = {};
   var div = $(e.target).parents("div[id-message]");
   var type_message_libelle = div.data("type-message-libelle")
   glob_datas.id_type_message = div.data("id-typeMessage");
   glob_datas.action = "accept";
+  glob_datas.type_m = type_message_libelle;
   //console.log(user);
   //console.log(user_receiv);
   //console.log(glob_datas);
@@ -557,112 +561,129 @@ function on_module_accept_typeMessage_link_click(e){
         type: "POST",
         url: "/action-in-module",
         data: glob_datas,
+        beforeSend: function (req){
+          req.setRequestHeader("x-access-token", token);
+        },
         success: function (data){
-          //Envoi de mail à l'artiste indiquant une demande acceptée
-          $.ajax({
-                type : "POST",
-                url : "/mail",
-                data: {"receiver": user_receiv.id_coresp,
-                  "typeMessage": type_message_libelle,
-                  "events": data.result.events,
-                  "action": data.result.libelle
-                },
-                beforeSend: function(req){
-                  req.setRequestHeader("x-access-token", token);
-                },
-                success: function(data) {
-                    if (data.success[0]){
-                    const content = 'demande acceptée !';
-                    div.find("div.card-chat div.div-submi").empty();
-                    div.find("div.card-chat div.div-submi").append(content);
-                    }
-                   // console.log(data);
-                }   
-            });
+          if (data.success[0]){
+            data.notif.msg = "Demande de booking acceptée !";
+            data.notif.time = new Date();
+            socket.emit("sendNotif", data.notif);
+            const content = 'demande acceptée !';
+            div.find("div.card-chat div.div-submi").empty();
+            div.find("div.card-chat div.div-submi").append(content);
+          }
       }
     });
     //}
-}else if(type_message_libelle == 'devis'){
-  if (user_receiv.payment_module == 0){
-    if (user.type == 4){
-      //Securisation du lien vers la page
-      $.ajax({
-        type : "POST",
-        url : "/secure_profile",
-        data: {"temp": user_receiv.id_coresp},
-        success: function(data) {
-          var datas = {}, query;
-          datas.type = "devis";
-          datas.from = "accept-devis";
-          datas.id_pro = user_receiv.id_coresp;
-          datas.id_type = glob_datas.id_type_message;
-          datas.id_payment_module = user_receiv.payment_module
-          //datas.events = global_datas.events;
-          //console.log(datas);
-          query = serialize(datas);
-          //console.log(query);
-          iframe.location = '/payment-recap/'+user_receiv.id_coresp + '?' + query;
-        }
-      });
+  }else if(type_message_libelle == 'devis'){
+    if (user_receiv.payment_module == 0){
+      if (user.type == 4){
+        //Securisation du lien vers la page
+        $.ajax({
+          type : "POST",
+          url : "/secure_profile",
+          data: {"temp": user_receiv.id_coresp},
+          success: function(data) {
+            var datas = {}, query;
+            datas.type = "devis";
+            datas.from = "accept-devis";
+            datas.id_pro = user_receiv.id_coresp;
+            datas.id_type = glob_datas.id_type_message;
+            datas.id_payment_module = user_receiv.payment_module
+            //datas.events = global_datas.events;
+            //console.log(datas);
+            query = serialize(datas);
+            //console.log(query);
+            iframe.src = '/payment-recap/'+user_receiv.id_coresp + '?' + query;
+          }
+        });
+      }
+    }else{
+      // Redirection vers le paiement
     }
+  }else if(type_message_libelle == 'payment'){
+    $.ajax({
+      type : "POST",
+      url : "/secure_profile",
+      data: {"temp": user_receiv.id_coresp},
+      success: function(data) {
+        // Redirection vers le paiement
+        var datas = {}, query ='';
+        datas.id_type_m = glob_datas.id_type_message;
+        query = serialize(datas);
+        //console.log(datas);
+        //console.log(iframe);
+        iframe.src = '/payment-module/'+user_receiv.id_coresp + '?' + query;
+        //console.log("Accept payment request !");
+      }
+    });
   }else{
-    // Redirection vers le paiement
-  }
-}else if(type_message_libelle == 'payment'){
-  // Redirection vers le paiement
-  console.log("Accept payment request !")
-}else{
-  $.ajax({
+    //Cas du rdv
+    $.ajax({
       type: "POST",
       url: "/action-in-module",
       data: glob_datas,
+      beforeSend: function (req){
+        req.setRequestHeader("x-access-token", token);
+      },
       success: function (data){
-        // Envoi de mail contenant le lien d'acccepation d'une demande
-        $.ajax({
-              type : "POST",
-              url : "/mail",
-              data: {"receiver": user_receiv.id_coresp,
-                "typeMessage": type_message_libelle,
-                "events": data.result.events,
-                "action": data.result.libelle
-              },
-              beforeSend: function(req){
-                req.setRequestHeader("x-access-token", token);
-              },
-              success: function(data) {
-                if (data.success[0]){
-                  const content = 'demande acceptée !';
-                  div.find("div.card-chat div.div-submi").empty();
-                  div.find("div.card-chat div.div-submi").append(content);
-                }
-                //console.log(data)
-              }   
-          });
+        if (data.success[0]){
+          data.notif.msg = "Demande de rendez-vous acceptée !";
+          data.notif.time = new Date();
+          socket.emit("sendNotif", data.notif);
+          const content = 'demande acceptée !';
+          div.find("div.card-chat div.div-submi").empty();
+          div.find("div.card-chat div.div-submi").append(content);
+        }
       }
     });
-}
+  }
 }
 function on_module_deny_typeMessage_link_click(e){
   e.preventDefault();
   var datas = {};
   var div = $(e.target).parents("div[id-message]");
+  var type_message_libelle = div.data("type-message-libelle");
   datas.id_type_message = div.data("id-typeMessage");
   datas.action = "deny";
+  datas.type_m = type_message_libelle;
   //console.log(datas);
   $.ajax({
     type: "POST",
     url: "/action-in-module",
     data: datas,
+    beforeSend: function (req){
+      req.setRequestHeader("x-access-token", token);
+    },
     success: function (data){
       //console.log(data);
       if (data.success[0]){
-      const content = 'demande refusée !';
-      div.find("div.card-chat div.div-submi").empty();
-      div.find("div.card-chat div.div-submi").append(content);
+        switch (datas.type_m){
+          case "rdv":
+            data.notif.msg = "Demande de rendez-vous refusée !";
+            break;
+          case "booking":
+            data.notif.msg = "Demande de booking refusée !";
+            break;
+          case "payment":
+            data.notif.msg = "Demande de paiement refusée !";
+            break;
+          case "devis":
+            data.notif.msg = "Demande de devis refusée !";
+            break;
+          default:
+            data.notif.msg = "Demande refusée !";
+            break;
+        }
+        data.notif.time = new Date();
+        socket.emit("sendNotif", data.notif);
+        const content = 'demande refusée !';
+        div.find("div.card-chat div.div-submi").empty();
+        div.find("div.card-chat div.div-submi").append(content);
       }
     }
   });
-  // Envoi de mail contenant le lien de refus d'une demande
 }
 function on_socket_update_eventstypeoffermessage(data){
   //console.log(data);
@@ -727,6 +748,27 @@ function on_socket_update_paymentstypemessage(data){
   //div.find("p.date_creneau").empty();
   div.find("p.date_creneau").prepend(content);
 }
+function on_socket_new_notif(data){
+  if (data.senderAction.id != user.id){
+    Push.create("Notification de Label-onair !", {
+      body: data.msg+" par "+data.senderAction.nom+" "+data.time,
+      icon: "/icon.png",
+      timeout: 5000,
+      onClick: function() {
+          console.log(this);
+      }
+    });
+  }else{
+    Push.create("Notification de Label-onair !", {
+      body: data.msg+"  "+data.time,
+      icon: "/icon.png",
+      timeout: 5000,
+      onClick: function() {
+          console.log(this);
+      }
+    });
+  }
+}
 // var song_module_send_link = $("#song_up");
 // var video_module_send_link = $("#video_up");
 // var devis_module_send_link = $("#devis-send");
@@ -778,6 +820,7 @@ socket.on('updateservicesfront', on_socket_update_service_front);
 socket.on('update_servicestypemessage', on_socket_update_servicestypemessage);
 socket.on('update_contactstypemessage', on_socket_update_contactstypemessage);
 socket.on('update_paymentstypemessage', on_socket_update_paymentstypemessage);
+socket.on('new_notif', on_socket_new_notif);
 }
 $('#sendmessage button#send').on("click", on_msg_send_click);
 $('#sendmessage button#send').on("keypress", on_msg_send_keypress);

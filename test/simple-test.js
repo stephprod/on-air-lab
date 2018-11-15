@@ -8,6 +8,7 @@ const testHttpRequestInGet = require('../server').httpGetRequest
 const User = require('../models/req_user')
 //const axios = require('axios')
 const testHttpRequestInPost = require('../server').httpPostRequest
+const notif = require('../server').notifs;
 
 describe('List of simple mocha tests', function() {
 	this.timeout(15000);
@@ -87,31 +88,28 @@ describe('List of simple mocha tests', function() {
 	    	// runs before each test in this block
 	    	//nock('http://'+addresses[0]+':4000');
 		});
-		it('expecting false - call send test mail request to unknown user https://ethereal.email/', () => {
-			var events = []
-			events.push({id_event: 1, id_pro: 18, id_artist: 21, start:"2018-05-14T08:30:00", end: "2018-05-14T09:30:00", title: 'event-work'})
-			events.push({id_event: 1, id_pro: 18, id_artist: 21, start:"2018-05-14T11:30:00", end: "2018-05-14T12:30:00", title: 'event-work'})
-			events.push({id_event: 1, id_pro: 18, id_artist: 21, start:"2018-05-14T15:30:00", end: "2018-05-14T17:30:00", title: 'event-work'})
-			return testHttpRequestInPost('http://'+addresses[0]+':4000/mail', {receiver: 69, typeMessage: "bookink", events: events, action: "deny"}).then(response =>{
-				//console.log(response.data);
-				expect(response.data.success).to.be.an.instanceof(Array);
-				expect(response.data.success[0]).to.be.false;
-			}).catch(error => {
-				//console.log(error);
-			});
-		});
-		it('expecting true - call send test mail resuest to known user https://ethereal.email/', () => {
-			var events = []
+		it('expecting true - call send test mail accept request https://ethereal.email/', () => {
+			var events = [], user = {nom: "testReceiver", prenom: "testReceiver", email: "testReceiver@test.fr"}, 
+			sender = {nom: "testSender", prenom: "testSender", email: "testSender@test.fr"}
 			events.push({id_event: 1, id_pro: 18, id_artist: 21, start:"2018-05-14T08:30:00", end: "2018-05-14T09:30:00", title: 'event-meet'})
 			events.push({id_event: 1, id_pro: 18, id_artist: 21, start:"2018-05-14T11:30:00", end: "2018-05-14T12:30:00", title: 'event-meet'})
 			events.push({id_event: 1, id_pro: 18, id_artist: 21, start:"2018-05-14T15:30:00", end: "2018-05-14T17:30:00", title: 'event-meet'})
-			return testHttpRequestInPost('http://'+addresses[0]+':4000/mail', {receiver: 21, typeMessage: "rdv", events: events, action: "accept"}).then(response =>{
-				//console.log(response.data);
-				expect(response.data.success).to.be.an.instanceof(Array);
-				expect(response.data.success[0]).to.be.true;
-			}).catch(error => {
-				//console.log(error);
-			});
+			return notif.mail(events, sender, "accept", "rdv", user)
+			.then((res) => {
+				expect(res.success).to.be.an.instanceof(Array);
+				expect(res.success[0]).to.be.true;
+			})
+			.catch((err) => console.log(err))
+		});
+		it('expecting true - call send test mail deny request https://ethereal.email/', () => {
+			var events = [], user = {nom: "testReceiver", prenom: "testReceiver", email: "testReceiver@test.fr"},
+			sender = {nom: "testSender", prenom: "testSender", email: "testSender@test.fr"}
+			return notif.mail(events, sender, "deny", "rdv", user)
+			.then((res) => {
+				expect(res.success).to.be.an.instanceof(Array);
+				expect(res.success[0]).to.be.true;
+			})
+			.catch((err) => console.log(err))
 		});
 	});
 

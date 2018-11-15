@@ -44,9 +44,11 @@ const payment_recap = require('./route/payment_recap')
 const mailer = require('./route/send_mail')
 const payment = require('./route/payment')
 const mail_template_generator = require('./route/generate_mail')
-const pay_module = require('./route/module_paiement')
+const pay_module_art = require('./route/payment_art_module')
+const pay_module_pro = require('./route/payment_pro_module')
 /*Modeles*/
 const User = require('./models/req_user')
+const notification = require('./models/notifications').actions
 // SECURE HTTP POUR SOCKET IO
 const http = require('http').Server(app)
 const io = require('socket.io')(http)
@@ -114,7 +116,8 @@ app.use('/', payment_recap)
 app.use('/', mailer)
 app.use('/', payment)
 app.use('/', mail_template_generator)
-app.use('/', pay_module)
+app.use('/', pay_module_art)
+app.use('/', pay_module_pro)
 app.get('/', (request, response) => {
     response.locals.session = request.session
 	response.render('pages/index')
@@ -153,6 +156,10 @@ function getPreviousMsgAdmin(len, id_user, id_room, callback)
     User.getFirstPreviousMsgAdmin(id_room, id_user, len, callback)
 }
 io.sockets.on('connection', function (socket) {
+    socket.on('sendNotif', (res) => {
+        //console.log(res)
+        io.sockets.in(socket.room).emit('new_notif', res)
+    })
     // QUAND LE USER SE CO DANS LOGIN ET ARRIVE SUR LA PAGE DU CHAT
     socket.on('adduser', function(id, type){
         let user = {}
@@ -831,5 +838,6 @@ module.exports = { httpGetRequest: function(path){
             .then((res) => res)
         },
     host: addresses,
-    server: http
+    server: http,
+    notifs: notification
 }

@@ -58,17 +58,20 @@ button {
 <form id="payment-form">
   <div class="form-row">
     <label for="card-element">
-      Credit or debit card
+        <h1> Carte de crédit/débit </h1>
     </label>
     <div id="card-element">
       <!-- A Stripe Element will be inserted here. -->
     </div>
-
+    <p><%= locals.paymentObj[0].desc %></p>
+    <p><%= locals.paymentObj[0].price %> €</p>
+    <p><%= locals.paymentObj[0].id_art %></p>
+    <p><%= locals.paymentObj[0].id_pro %></p>
     <!-- Used to display form errors. -->
     <div id="card-errors" role="alert"></div>
   </div>
 
-  <button>Submit Payment</button>
+  <button id="submit">Submit Payment</button>
 </form>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
 <script src="https://js.stripe.com/v3/"></script>
@@ -113,12 +116,14 @@ card.addEventListener('change', function(event) {
     displayError.textContent = '';
   }
 });
-
+// Handle button click
+document.getElementsByTagName('button')[0].addEventListener("click", (e) => {
+    console.log(e);
+});
 // Handle form submission.
 var form = document.getElementById('payment-form');
 form.addEventListener('submit', function(event) {
   event.preventDefault();
-
   stripe.createToken(card).then(function(result) {
     if (result.error) {
       // Inform the user if there was an error.
@@ -126,7 +131,7 @@ form.addEventListener('submit', function(event) {
       errorElement.textContent = result.error.message;
     } else {
       // Send the token to your server.
-      console.log(result.token);
+      //console.log(result.token);
       stripeTokenHandler(result.token);
     }
   });
@@ -134,19 +139,43 @@ form.addEventListener('submit', function(event) {
 function stripeTokenHandler(token) {
   // Insert the token ID into the form so it gets submitted to the server
   var form = document.querySelector('form');
-  var hiddenInput = document.createElement('input');
+  var hiddenInput = document.createElement('input'),
+  hiddenInput1 = document.createElement('input'),
+  hiddenInput2 = document.createElement('input'),
+  hiddenInput3 = document.createElement('input'),
+  hiddenInput4 = document.createElement('input'),
+  hiddenInput5 = document.createElement('input');
   hiddenInput.setAttribute('type', 'hidden');
   hiddenInput.setAttribute('name', 'stripeToken');
   hiddenInput.setAttribute('value', token.id);
+  hiddenInput1.setAttribute('type', 'hidden');
+  hiddenInput1.setAttribute('name', 'paymentId');
+  hiddenInput1.setAttribute('value', <%= locals.paymentObj[0].id %>);
+  hiddenInput2.setAttribute('type', 'hidden');
+  hiddenInput2.setAttribute('name', 'paymentDesc');
+  hiddenInput2.setAttribute('value', '<%= locals.paymentObj[0].desc %>');
+  hiddenInput3.setAttribute('type', 'hidden');
+  hiddenInput3.setAttribute('name', 'paymentPrice');
+  hiddenInput3.setAttribute('value', <%= locals.paymentObj[0].price %>);
+  hiddenInput4.setAttribute('type', 'hidden');
+  hiddenInput4.setAttribute('name', 'paymentSrc');
+  hiddenInput4.setAttribute('value', <%= locals.paymentObj[0].id_art %>);
+  hiddenInput5.setAttribute('type', 'hidden');
+  hiddenInput5.setAttribute('name', 'paymentDest');
+  hiddenInput5.setAttribute('value', <%= locals.paymentObj[0].id_pro %>);
   form.appendChild(hiddenInput);
+  form.appendChild(hiddenInput1);
+  form.appendChild(hiddenInput2);
+  form.appendChild(hiddenInput3);
+  form.appendChild(hiddenInput4);
+  form.appendChild(hiddenInput5);
   var formData = new FormData(form);
-  //formData.append("id", <%= locals.obj.id %>);
-  //formData.append("desc", <%= locals.obj.desc %>);
-  //formData.append("price", <%= locals.obj.price %>);
-  axios.post("http://localhost:4000/payment", formData, {
+  axios.post("http://localhost:4000/payment-module/<%= locals.paymentObj[0].id_pro %>", formData, {
     headers: {"x-access-token": "<%- locals.session.token %>"}
   }).then(res => {
       console.log('test axios ok')
+  }).catch((err) => {
+      console.log('erreur dans la requête de paiement !');
   })
   // Submit the form
 }

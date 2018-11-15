@@ -1051,7 +1051,9 @@ class User{
         })
     }
     static get_accept_action_module(tab, cb){
-        let r = db.query('SELECT action_ok FROM `temp` WHERE id_type_message=?', [tab], (err, res)=>{
+        let r = db.query('SELECT * FROM `temp` '+
+        'LEFT JOIN `user` ON `user`.`id`=`temp`.`id_user_host` '+
+        'WHERE id_type_message=?', [tab], (err, res)=>{
             if (err){
                 console.log(r.sql)
                 throw err
@@ -1060,7 +1062,9 @@ class User{
         })
     }
     static get_deny_action_module(tab, cb){
-        let r = db.query('SELECT action_ko FROM `temp` WHERE id_type_message=?', [tab], (err, res)=>{
+        let r = db.query('SELECT * FROM `temp` '+
+        'LEFT JOIN `user` ON `user`.`id`=`temp`.`id_user_host` '+
+        'WHERE id_type_message=?', [tab], (err, res)=>{
             if (err){
                 console.log(r.sql)
                 throw err
@@ -1085,6 +1089,19 @@ class User{
                 throw err;
             }
             cb(result.insertId);
+        });
+    }
+    static get_payment_in_tm(table, cb){
+        return new Promise((resolve, reject) => {
+            let r = db.query('SELECT * FROM `type_message` '+
+                'INNER JOIN `payment` ON `payment`.`id`=`type_message`.`id_payment` '+
+                'AND `type_message`.`id_type_m`=?', [table], (err, result) => {
+                if(err){
+                    console.log(r.sql)
+                    throw err;
+                }
+                cb(result, resolve, reject);
+            });
         });
     }
 }
