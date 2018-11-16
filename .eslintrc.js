@@ -13,7 +13,13 @@ module.exports = {
         "module": false,
         "$": false,
         "io": false,
-        "exports": false
+        "exports": false,
+        "describe": false,
+        "before": false,
+        "beforeEach": false,
+        "after": false,
+        "afterEach": false,
+        "it": false,
     },
     "rules": {
         "accessor-pairs": "error",

@@ -1,6 +1,6 @@
 const express = require('express')
 const User = require('../models/req_user')
-
+const notifications = require('../models/notifications').actions
 const router = express.Router()
 
 router.route('/devis-request')
@@ -28,7 +28,7 @@ router.route('/devis-request')
 							if (result2 > 0){
 								ret.id_message = result2
 								ret.success.push(true)
-								for (k in table[1]){
+								for (var k in table[1]){
 									tableS = []
 									setTimeout((function(k, tableS) {
 										return function (){
@@ -78,7 +78,7 @@ function get_services_with_libelles(response, id_type_M, ret){
 	User.getServicesInTypeMessage(id_type_M, (result)=>{
 		if (result.length > 0){
 			ret.result.servs = []
-			for (k in result){
+			for (var k in result){
 				let serv = {}
 				serv.id = result[k].id_service
 				serv.libelle = result[k].nom_service

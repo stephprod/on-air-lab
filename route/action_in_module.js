@@ -50,12 +50,12 @@ router.route('/action-in-module')
 														ret.result.events = result3
 													}
 													ret.result.libelle = "accept"
-													notifications.mail(ret.result.events, result[k], table[1], table[2], receiver)
-														.then((res) => {
-															ret.notif = res
-															response.send(ret)
-														}, (err) => response.send(err))
-														.catch((err) => response.send(err))
+													notifications.mail(result[k], receiver, table[2], table[1], ret.result.events)
+													.then((res) => {
+														ret.notif = res
+														response.send(ret)
+													}, (err) => response.send(err))
+													.catch((err) => response.send(err))
 												})
 											}
 										})
@@ -91,12 +91,12 @@ router.route('/action-in-module')
 											if (k == len - 1){
 												ret.result.libelle = "deny"
 												ret.result.events = []
-												notifications.mail(ret.result.events, result[k], table[1], table[2], receiver)
-													.then((res) => {
-														ret.notif = res
-														response.send(ret)
-													}, (err) => response.send(err))
-													.catch((err) => response.send(err))
+												notifications.mail(result[k], receiver, table[2], table[1])
+												.then((res) => {
+													ret.notif = res
+													response.send(ret)
+												}, (err) => response.send(err))
+												.catch((err) => response.send(err))
 											}
 										})
 									};

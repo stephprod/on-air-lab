@@ -24,14 +24,14 @@ describe('List of simple mocha tests', function() {
 	});
 	describe('#INDEX OF()', function() {
 		it('expecting -1 when the value 4 is not present in (1, 2, 3)', function(done) {
-		  assert.equal([1,2,3].indexOf(4), -1);
-		  done();
+			assert.equal([1,2,3].indexOf(4), -1);
+			done();
 		});
 	});
 	describe('#HTTP REQUESTS', function() {
 		beforeEach(() =>{
-	    	// runs before each test in this block
-	    	//nock('http://'+addresses[0]+':4000');
+			// runs before each test in this block
+			//nock('http://'+addresses[0]+':4000');
 		});
 		it('expecting 200 - search request', () => {
 			return testHttpRequestInGet('http://'+addresses[0]+':4000/search').then(response =>{
@@ -65,8 +65,8 @@ describe('List of simple mocha tests', function() {
 
 	describe('#BDD REQUESTS', function() {
 		beforeEach(() =>{
-	    	// runs before each test in this block
-	    	//nock('http://'+addresses[0]+':4000');
+			// runs before each test in this block
+			//nock('http://'+addresses[0]+':4000');
 		});
 		it('expecting at list one row - getRoomForArt whith id 21', (done) => {
 			return User.getRoomForArt('`rooms`.`userid`=21 GROUP BY `rooms`.`id_room`', (result) =>{
@@ -85,25 +85,34 @@ describe('List of simple mocha tests', function() {
 	});
 	describe('#MAILS SEND', function() {
 		beforeEach(() =>{
-	    	// runs before each test in this block
-	    	//nock('http://'+addresses[0]+':4000');
+			// runs before each test in this block
+			//nock('http://'+addresses[0]+':4000');
 		});
-		it('expecting true - call send test mail accept request https://ethereal.email/', () => {
-			var events = [], user = {nom: "testReceiver", prenom: "testReceiver", email: "testReceiver@test.fr"}, 
+		// it('expecting true - call send test mail accept request https://ethereal.email/', () => {
+		// 	var events = [], user = {nom: "testReceiver", prenom: "testReceiver", email: "testReceiver@test.fr"}, 
+		// 	sender = {nom: "testSender", prenom: "testSender", email: "testSender@test.fr"}
+		// 	events.push({id_event: 1, id_pro: 18, id_artist: 21, start:"2018-05-14T08:30:00", end: "2018-05-14T09:30:00", title: 'event-meet'})
+		// 	events.push({id_event: 1, id_pro: 18, id_artist: 21, start:"2018-05-14T11:30:00", end: "2018-05-14T12:30:00", title: 'event-meet'})
+		// 	events.push({id_event: 1, id_pro: 18, id_artist: 21, start:"2018-05-14T15:30:00", end: "2018-05-14T17:30:00", title: 'event-meet'})
+		// 	return notif.mail(sender, user, "rdv", "accept", events)
+		// 	.then((res) => {
+		// 		expect(res).to.be.an.instanceof(Object);
+		// 	})
+		// 	.catch((err) => console.log(err))
+		// });
+		// it('expecting true - call send test mail deny request https://ethereal.email/', () => {
+		// 	var events = [], user = {nom: "testReceiver", prenom: "testReceiver", email: "testReceiver@test.fr"},
+		// 	sender = {nom: "testSender", prenom: "testSender", email: "testSender@test.fr"}
+		// 	return notif.mail(sender, user, "rdv", "accept", events)
+		// 	.then((res) => {
+		// 		expect(res).to.be.an.instanceof(Object);
+		// 	})
+		// 	.catch((err) => console.log(err))
+		// });
+		it('expecting true - call send test mail audio https://ethereal.email/', () => {
+			var user = {nom: "testReceiver", prenom: "testReceiver", email: "testReceiver@test.fr"},
 			sender = {nom: "testSender", prenom: "testSender", email: "testSender@test.fr"}
-			events.push({id_event: 1, id_pro: 18, id_artist: 21, start:"2018-05-14T08:30:00", end: "2018-05-14T09:30:00", title: 'event-meet'})
-			events.push({id_event: 1, id_pro: 18, id_artist: 21, start:"2018-05-14T11:30:00", end: "2018-05-14T12:30:00", title: 'event-meet'})
-			events.push({id_event: 1, id_pro: 18, id_artist: 21, start:"2018-05-14T15:30:00", end: "2018-05-14T17:30:00", title: 'event-meet'})
-			return notif.mail(events, sender, "accept", "rdv", user)
-			.then((res) => {
-				expect(res).to.be.an.instanceof(Object);
-			})
-			.catch((err) => console.log(err))
-		});
-		it('expecting true - call send test mail deny request https://ethereal.email/', () => {
-			var events = [], user = {nom: "testReceiver", prenom: "testReceiver", email: "testReceiver@test.fr"},
-			sender = {nom: "testSender", prenom: "testSender", email: "testSender@test.fr"}
-			return notif.mail(events, sender, "deny", "rdv", user)
+			return notif.mail(user, sender, "payment")
 			.then((res) => {
 				expect(res).to.be.an.instanceof(Object);
 			})
@@ -112,9 +121,9 @@ describe('List of simple mocha tests', function() {
 	});
 
 	after(function() {
-	    // runs after all tests in this block
-	    console.log("Stopping the server hanging !");
-	    server.close();
+		// runs after all tests in this block
+		console.log("Stopping the server hanging !");
+		server.close();
 	});
 
 	afterEach(function() {

@@ -48,7 +48,7 @@ const pay_module_art = require('./route/payment_art_module')
 const pay_module_pro = require('./route/payment_pro_module')
 /*Modeles*/
 const User = require('./models/req_user')
-const notification = require('./models/notifications').actions
+const notifications = require('./models/notifications').actions
 // SECURE HTTP POUR SOCKET IO
 const http = require('http').Server(app)
 const io = require('socket.io')(http)
@@ -202,7 +202,7 @@ io.sockets.on('connection', function (socket) {
                         let room = []
                         tabCorresp = []
                         if (id != 1){
-                            room.push(1, 1, "Admin", "admin", 1, "Modérateur", 0)
+                            room.push(1, 1, "Admin", "admin", 1, "Modérateur", 0, 'admin@label-onair.com')
                             setTimeout((function(room){
                                 return function(){
                                     getPreviousMsgAdmin(1, id, 1, (result2) => {
@@ -234,6 +234,7 @@ io.sockets.on('connection', function (socket) {
                             room.push(result[k].id_user_type)
                             room.push(result[k].libelle)
                             room.push(result[k].payment_module)
+                            room.push(result[k].email)
                             //FONCTION DE CLOSURE POUR PERMETTRE LA RECUPERATION DES RSLT AVANT ITERATION DE LA BOUCLE
                             setTimeout((function(k, room){
                                 return function(){
@@ -297,7 +298,7 @@ io.sockets.on('connection', function (socket) {
                         let room = []
                         tabCorresp = []
                         if (id != 1){
-                            room.push(1, 1, "Admin", "admin", 1, "Modérateur", 0)
+                            room.push(1, 1, "Admin", "admin", 1, "Modérateur", 0, 'admin@label-onair.com')
                             setTimeout((function(room){
                                 return function(){
                                     getPreviousMsgAdmin(1, id, 1, (result2) => {
@@ -329,6 +330,7 @@ io.sockets.on('connection', function (socket) {
                             room.push(result[k].id_user_type)
                             room.push(result[k].libelle)
                             room.push(result[k].payment_module)
+                            room.push(result[k].email)
                             //FONCTION DE CLOSURE POUR PERMETTRE LA RECUPERATION DES RSLT AVANT ITERATION DE LA BOUCLE
                             setTimeout((function(k, room){
                                 return function(){
@@ -381,8 +383,8 @@ io.sockets.on('connection', function (socket) {
     });
     // quand le client émet 'sendchat', cela écoute et exécute
     socket.on('sendchat', function (data, userId, user_receiver, context) {
-        data.user_sender = userId
-        data.user_receiver = user_receiver.id_coresp
+        data.user_sender = {id: userId, nom: socket.request.session.userName, prenom:socket.request.session.userFirstName, email:socket.request.session.userMail}
+        data.user_receiver = {id: user_receiver.id_coresp, nom: user_receiver.nom, prenom: user_receiver.prenom, email: user_receiver.mail}
         data.id_r = socket.room
         let created_date = new Date();
         let userIdSender = userId;
@@ -400,7 +402,11 @@ io.sockets.on('connection', function (socket) {
                 User.insertMessages(tableM, (result) => {
                     data.id_m = result
                     data.created = created_date
-                    io.sockets.in(socket.id).emit('updatechat', user_receiver, data)
+                    notifications.mail(data.user_receiver, data.user_sender, data.type_m)
+                    .then((res) =>{
+                        data.notif = res
+                        io.sockets.in(socket.id).emit('updatechat', user_receiver, data)
+                    }).catch((err) => console.log(err));
                     //console.log("ENVOI DU MESSAGE AU CALME!")
                     //console.log(result)
                 })
@@ -440,7 +446,11 @@ io.sockets.on('connection', function (socket) {
                         User.insertMessages(tableM, (result) => {
                             data.id_m = result
                             data.created  = created_date
-                            io.sockets.in(socket.id).emit('updatechat', user_receiver, data, context)
+                            notifications.mail(data.user_receiver, data.user_sender, data.type_m)
+                            .then((res) =>{
+                                data.notif = res
+                                io.sockets.in(socket.room).emit('updatechat', user_receiver, data, context)
+                            }).catch((err) => console.log(err));
                         })
                     })
                 }
@@ -476,7 +486,11 @@ io.sockets.on('connection', function (socket) {
                 User.insertMessages(tableM, (result) => {
                     data.id_m = result
                     data.created = created_date
-                    io.sockets.in(socket.room).emit('updatechat', user_receiver, data)
+                    notifications.mail(data.user_receiver, data.user_sender)
+                    .then((res) =>{
+                        data.notif = res
+                        io.sockets.in(socket.room).emit('updatechat', user_receiver, data)
+                    }).catch((err) => console.log(err));
                     //console.log("ENVOI DU MESSAGE AU CALME!")
                     //console.log(result)
                 })
@@ -516,7 +530,12 @@ io.sockets.on('connection', function (socket) {
                         User.insertMessages(tableM, (result) => {
                             data.id_m = result
                             data.created = created_date
-                            io.sockets.in(socket.room).emit('updatechat', user_receiver, data, context)
+                            //Envoi de mails/notifications
+                            notifications.mail(data.user_receiver, data.user_sender, data.type_m)
+                            .then((res) =>{
+                                data.notif = res
+                                io.sockets.in(socket.room).emit('updatechat', user_receiver, data, context)
+                            }).catch((err) => console.log(err));
                             //console.log("ENVOI DU MESSAGE AUDIO AU CALME!")
                             //console.log(result)
                         })
@@ -540,6 +559,7 @@ io.sockets.on('connection', function (socket) {
     });
     socket.on('list_msg', (data, corespObj, type_user) => {
         let message = []
+        //let receiver = {id: corespObj.id_coresp, nom: corespObj.nom, prenom: corespObj.prenom, email: corespObj.mail}
         getPreviousMsg(15, type_user, data, (result) => {
             //CHARGEMENT DES MESSAGES DE LA BDD UNIQUEMENT SUR LE CHGMT DE ROOM
             for (let k=result.length - 1; k >= 0; k--)
@@ -549,8 +569,8 @@ io.sockets.on('connection', function (socket) {
                     id_type_m : result[k].id_type_m,
                     txt : result[k].message_txt,
                     created : result[k].created_at,
-                    user_sender : result[k].iduser_send,
-                    user_receiver : result[k].iduser_received,
+                    user_sender : {id: result[k].iduser_send},
+                    user_receiver : {id: result[k].iduser_received},
                     type_m : result[k].type_m,
                     path : result[k].path,
                     content_m: result[k].content_m,
@@ -643,7 +663,7 @@ io.sockets.on('connection', function (socket) {
                     })
                 }
                 //console.log(message)
-                io.sockets.in(socket.id).emit('updatechat',corespObj, message)
+                io.sockets.in(socket.id).emit('updatechat', corespObj, message)
             }
             //console.log("----------------------------------------------------")
         });
@@ -651,6 +671,7 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('list_msg_admin', (data, corespObj, userId) => {
         let message = {}
+        //let receiver = {id: corespObj.id_coresp, nom: corespObj.nom, prenom: corespObj.prenom, email: corespObj.mail}
         //console.log("-----------------LIST MESSAGES ADMIN-----------------")
         //console.log(userId)
         getPreviousMsgAdmin(15, userId, data, (result) => {
@@ -662,13 +683,13 @@ io.sockets.on('connection', function (socket) {
                     id_type_m : result[k].id_type_m,
                     txt : result[k].message_txt,
                     created : result[k].created_at,
-                    user_sender : result[k].iduser_send,
-                    user_receiver : result[k].iduser_received,
+                    user_sender : {id: result[k].iduser_send},
+                    user_receiver : {id: result[k].iduser_received},
                     type_m : result[k].type_m,
                     path : result[k].path,
                     content_m: result[k].content_m,
                     id_r : data,
-                    id_payment: result[k].id_payment
+                    id_payment: result[k].id_payment,
                 }
                 message.events = null
                 message.user_request_info = null
@@ -760,7 +781,7 @@ io.sockets.on('connection', function (socket) {
                     })
                 }
                 //console.log(message)
-                io.sockets.in(data).emit('updatechat',corespObj, message)
+                io.sockets.in(data).emit('updatechat', corespObj, message)
             }
             //console.log("----------------------------------------------------")
         });
@@ -862,5 +883,5 @@ module.exports = { httpGetRequest: function(path){
         },
     host: addresses,
     server: http,
-    notifs: notification
+    notifs: notifications
 }

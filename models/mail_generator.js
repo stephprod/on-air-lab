@@ -13,23 +13,43 @@ class MailTemplate{
 		if (action != null){
 			param.content = '<p style="margin:0px;">'
 			switch (typeMessage){
-				case "rdv":
-					param.content += action == "accept" ? 'Ta demande de rendez-vous a été acceptée par <b>'+userInfoSender.nom+' '+userInfoSender.prenom+'</b> !' : 
-						'Ta demande de rendez-vous a été refusée par <b>'+userInfoSender.nom+' '+userInfoSender.prenom+'</b> !'
+				case "rdv_response":
+					param.content += action == "accept" ? 'Ta demande de rendez-vous a été acceptée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !' : 
+						'Ta demande de rendez-vous a été refusée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
 					param.subject = "Demande de rendez-vous !"
 					break;
-				case "booking":
-					param.content += action == "accept" ? 'Ta demande de booking a été acceptée par <b>'+userInfoSender.nom+' '+userInfoSender.prenom+'</b> !' : 
-						'Ta demande de booking a été refusée par <b>'+userInfoSender.nom+' '+userInfoSender.prenom+'</b> !'
+				case "booking_response":
+					param.content += action == "accept" ? 'Ta demande de booking a été acceptée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !' : 
+						'Ta demande de booking a été refusée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
 					param.subject = "Demande de booking !"
 					break;
+				case "devis_response":
+					param.content += action == "accept" ? 'Ta demande de devis a été acceptée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !' : 
+						'Ta demande de devis a été refusée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
+					param.subject = "Demande de devis ! (suite)"
+					break;
+				case "payment_response":
+					param.content += action == "accept" ? 'Ta demande de paiement a été acceptée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !' : 
+						'Ta demande de paiement a été refusée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
+					param.subject = "Demande de paiement !"
+					break;
+				case "contact_response":
+					param.content += action == "accept" ? 'Ta demande de contact a été acceptée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !' : 
+						'Ta demande de contact a été refusée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
+					param.subject = "Demande de rendez-vous liée à une offre !"
+					break;
+				case "rdv_offer_response":
+					param.content += action == "accept" ? 'Ta demande de rendez-vous liée à une offre a été acceptée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !' : 
+						'Ta demande de rendez-vous liée à une offre a été refusée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
+					param.subject = "Demande de rendez-vous liée à une offre !"
+					break;
 				default:
-					param.subject = "Label-onair : spécialiste de la lise en relation !"
+					param.subject = "Label-onair - Nouveau message !"
 					break;
 			}
 			param.content += '</p>'
 			//console.log(param)
-			if (action == "accept") {
+			if (events != null) {
 				param.content += '<p style="margin:0px;text-align:left;">Dates : </p>';
 				for (var k in events) {
 					//Json parse
@@ -37,6 +57,51 @@ class MailTemplate{
 					param.content += '<p style="margin:0px;"><b>Début :</b> ' + ev.start + ' <b>Fin :</b> ' + ev.end + '</p>';
 				}
 			} 
+		}else{
+			param.content = '<p style="margin:0px;">'
+			switch (typeMessage){
+				case "rdv":
+					param.content += 'Nouvelle demande de rendez-vous envoyée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
+					param.subject = "Une action de votre part est requise !"
+					break;
+				case "booking":
+					param.content += 'Nouvelle demande de booking envoyée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
+					param.subject = "Une action de votre part est requise !"	
+					break;
+				case "devis":
+					param.content += 'Nouveau devis envoyée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
+					param.subject = "Une action de votre part est requise !"
+					break;
+				case "payment":
+					param.content += 'Nouvelle demande de paiement envoyée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
+					param.subject = "Une action de votre part est requise !"
+					break;
+				case "contact":
+					param.content += 'Nouvelle demande de contact envoyée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
+					param.subject = "Une action de votre part est requise !"
+					break;
+				case "rdv_offer":
+					param.content += 'Nouvelle demande de rendez-vous liée à une offre envoyée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
+					param.subject = "Une action de votre part est requise !"
+					break;
+				case "devis_request":
+					param.content += 'Nouvelle demande de devis envoyée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
+					param.subject = "Demande de devis !"
+					break;
+				case "audio":
+					param.content += 'Tu as reçu un nouveau fichier audio de la part de <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
+					param.subject = "Envoi de fichier audio !"
+					break;
+				case "video":
+					param.content += 'Tu as reçu une nouvelle vidéo de la part de <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
+					param.subject = "Envoi de vidéo !"
+					break;
+				default:
+					param.content += 'Tu as reçu un nouveau message de la part de <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
+					param.subject = "Label-onair - Nouveau message !"
+					break;
+			}
+			param.content += '</p>'
 		}
 		param.content += '<p style="margin:0px;">Bien cordialement, </p>'
 		param.content += '<p style="margin:0px;"><b>LabelOnAir</b></p>'

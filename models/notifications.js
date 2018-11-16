@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
     }
 });
 class Notif{
-   constructor (events = null, objReceiverOfAction, action = null, type, senderOfAction = null){
+   constructor (objReceiverOfAction, senderOfAction, type = null, action = null, events = null){
        this.events = events;
        this.objReceiver = objReceiverOfAction;
        this.action = action;
@@ -59,7 +59,7 @@ class Notif{
     }
 }
 
-exports.actions = {mail: (events, receiver, action, type_message, subject, sender) => new Notif(events, receiver, action, type_message, subject, sender).sendEmail("http://localhost:4000")  
+exports.actions = {mail: (receiver, sender, type_message = null, action = null, events = null) => new Notif(receiver, sender, type_message, action, events).sendEmail("http://localhost:4000")  
     .then((result) => result, 
         (err) => err)
     .catch((err) => err)}

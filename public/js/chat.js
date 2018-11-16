@@ -97,7 +97,7 @@ $(document).on("click", ".friend", function(){
     $('#devis-modal').find("a#devis-send span").empty();
     $('#devis-modal').find("a#devis-send span").append("Envoyer la demande");
   }
-  switchRoom($(this).data("room"), $(this).data("coresp"), name.split(" ")[0], name.split(" ")[1], $(this).data('coresp-type'), $(this).data('coresp-payment'), user);
+  switchRoom($(this).data("room"), $(this).data("coresp"), name.split(" ")[0], name.split(" ")[1], $(this).data('coresp-type'), $(this).data('coresp-payment'), $(this).data('coresp-mail'), user);
 });
 function on_socket_update_rooms(rooms){
   //console.log("updateroom");
@@ -105,7 +105,7 @@ function on_socket_update_rooms(rooms){
   //console.log(rooms);
   $("div#friends").empty();
   for (var i = 0; i < rooms.length; i++){
-    $("div#friends").append('<div class="friend" data-coresp="'+rooms[i][0]+'" data-coresp-type="'+rooms[i][4]+'" data-room="'+rooms[i][1]+'" data-coresp-payment="'+rooms[i][6]+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><p><strong>'+rooms[i][2]+' '+rooms[i][3]+'</strong><span>'+rooms[i][5]+'</span><p class="preview">'+rooms[i][8]+'</p></p><div class="status available"></div></div>');
+    $("div#friends").append('<div class="friend" data-coresp="'+rooms[i][0]+'" data-coresp-type="'+rooms[i][4]+'" data-room="'+rooms[i][1]+'" data-coresp-payment="'+rooms[i][6]+'" data-coresp-mail="'+rooms[i][7]+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><p><strong>'+rooms[i][2]+' '+rooms[i][3]+'</strong><span>'+rooms[i][5]+'</span><p class="preview">'+rooms[i][9]+'</p></p><div class="status available"></div></div>');
   }
 }
 function on_socket_connect(id){
@@ -118,6 +118,7 @@ if (userId != null && userId != "null") {
         coresp.prenom = "amdin";
         coresp.id_coresp = 1;
         coresp.type = 1;
+        coresp.mail = "admin@label-onair.com";
         socket.emit('adduser', id, type);
         console.log("TU ES DEJA CONNECTE :)");
         updateUserReceived(coresp);
@@ -128,37 +129,37 @@ if (userId != null && userId != "null") {
 function on_socket_updatechat(coresp, data, cont){
 //console.log("updatechat");
 //console.log(data);
-//console.log(coresp);
+//console.log(user);
 //console.log(cont);
 if (data !== undefined && data != null){
   var htmlToAppend = "";
   if (data.type_m !== undefined && data.type_m != null){
     if (data.type_m == 'audio'){
-      if (user.id == data.user_sender)
+      if (user.id == data.user_sender.id)
         htmlToAppend += actions.audio[0](data);
       else
         htmlToAppend += actions.audio[1](data);
     }
     else if (data.type_m == 'video'){
-      if (user.id == data.user_sender)
+      if (user.id == data.user_sender.id)
         htmlToAppend += actions.video[0](data);
       else
         htmlToAppend += actions.video[1](data);
     }
     else if (data.type_m == 'booking'){
-      if (user.id == data.user_sender)
+      if (user.id == data.user_sender.id)
         htmlToAppend += actions.booking[0](data);
       else
         htmlToAppend += actions.booking[1](data);
     }
     else if (data.type_m == 'rdv'){
-      if (user.id == data.user_sender)
+      if (user.id == data.user_sender.id)
         htmlToAppend += actions.rdv[0](data);
       else
         htmlToAppend += actions.rdv[1](data);
     }
     else if (data.type_m == 'devis_request'){
-      if (user.id == data.user_sender)
+      if (user.id == data.user_sender.id)
         htmlToAppend += actions.devis_request[0](data);
       else
         htmlToAppend += actions.devis_request[1](data);
@@ -166,29 +167,29 @@ if (data !== undefined && data != null){
     else if (data.type_m == 'contact'){
       //console.log(user);
       if (user.type == 4){
-        if (user.id == data.user_sender)
+        if (user.id == data.user_sender.id)
           htmlToAppend += actions.contactArt[0](data);
         else
           htmlToAppend += actions.contactArt[1](data);
       }else{
-        if (user.id == data.user_sender)
+        if (user.id == data.user_sender.id)
           htmlToAppend += actions.contactPro[0](data);
         else
           htmlToAppend += actions.contactPro[1](data);
       }
     }else if(data.type_m == 'rdv_offer'){
-      if (user.id == data.user_sender)
+      if (user.id == data.user_sender.id)
         htmlToAppend += actions.rdv_offer[0](data);
       else
         htmlToAppend += actions.rdv_offer[1](data);
     }else{
-      if (user.id == data.user_sender)
+      if (user.id == data.user_sender.id)
         htmlToAppend += actions.paiement[0](data);
       else
         htmlToAppend += actions.paiement[1](data);
     }
   }else{
-    if (user.id == data.user_sender)
+    if (user.id == data.user_sender.id)
       htmlToAppend += actions.texte[0](data);
     else
       htmlToAppend += actions.texte[1](data);
@@ -202,6 +203,8 @@ if (data !== undefined && data != null){
 }
 if (data.user_sender != "SERVER")
   socket.emit('update_preview_in_room', data, cont);
+if (data.notif !== undefined)
+  socket.emit('sendNotif', data.notif);
 }
 function on_socket_updatepreview(tabCorresp, cont){
 //console.log("update_preview"+tabCorresp[1]);
@@ -367,32 +370,32 @@ function on_form_song_submit(e){
     var that = $(this);
     //console.log(e.target);
     $.ajax({
-        type : that.attr('method'),
-        url : that.attr('action'),
-        processData: false,
-        contentType: false,
-        data: formData,
-        beforeSend: function (req){
-          req.setRequestHeader("x-access-token", token);
-        },
-        success: function(data) {
-            //console.log(data);
-            update_front_with_msg(data, "msg-song");
-    if (!data.success[0])
-      update_front_with_errors(data.errors);
-    else{
-      /*Emmistion de socket*/
-      console.log("audio enregistré !" +userId);
-      var song = {
-          type_m : data.result.type_a,
-          path: data.result.path,
-          user_receiver : user_receiv,
-          txt : data.msg
-      }
-      //console.log(song);
-      socket.emit('sendchat', song, userId, user_receiv, null);
-    }
+      type : that.attr('method'),
+      url : that.attr('action'),
+      processData: false,
+      contentType: false,
+      data: formData,
+      beforeSend: function (req){
+        req.setRequestHeader("x-access-token", token);
+      },
+      success: function(data) {
+        //console.log(data);
+        update_front_with_msg(data, "msg-song");
+        if (!data.success[0])
+          update_front_with_errors(data.errors);
+        else{
+          /*Emmistion de socket*/
+          console.log("audio enregistré !" +userId);
+          var song = {
+              type_m : data.result.type_a,
+              path: data.result.path,
+              user_receiver : user_receiv,
+              txt : data.msg
+          }
+          //console.log(song);
+          socket.emit('sendchat', song, userId, user_receiv, null);
         }
+      }
     });
 }
 function on_input_file_ghost_change(){
@@ -418,22 +421,22 @@ function on_socket_update_eventstypemessage(data){
     content += 'Fin ('+val.end.substr(0,10)+') A ('+val.end.substr(11,5)+') </p> ';
   });
   div.find("p.date_creneau").append(content);
-  if (data.request_state == 0 && data.user_receiver == userId){
+  if (data.request_state == 0 && data.user_receiver.id == userId){
     content = 'demande en attente de votre réponse';
     div.find("p.date_creneau").append(content);
-  content2 += '<a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a>';
-}
-else if (data.request_state == 1){
-  content2 += 'demande acceptée !';
-}
-else{
-  content = 'demande en attente de réponse du correspondant';
-    div.find("p.date_creneau").append(content);
-}
-div.find("div.card-chat div.div-submi").empty();
-div.find("div.card-chat div.div-submi").append(content2);
-div.find("div.card-chat span").empty();
-div.find("div.card-chat span").append(data.created);
+    content2 += '<a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a>';
+  }
+  else if (data.request_state == 1){
+    content2 += 'demande acceptée !';
+  }
+  else{
+    content = 'demande en attente de réponse du correspondant';
+      div.find("p.date_creneau").append(content);
+  }
+  div.find("div.card-chat div.div-submi").empty();
+  div.find("div.card-chat div.div-submi").append(content2);
+  div.find("div.card-chat span").empty();
+  div.find("div.card-chat span").append(data.created);
 }
 function on_video_module_send_link_click(e){
   e.preventDefault();
@@ -452,15 +455,15 @@ function on_video_module_send_link_click(e){
       update_front_with_errors(obj.errors);
     else{
       /*Emmistion de socket*/
-                //console.log("vidéo enregistré !" +userId);
-                var video = {
-                     type_m : obj.type_v,
-                    path: obj.path,
-                    user_receiver : user_receiv,
-                    txt : obj.msg
-                }
-                //console.log(song);
-                socket.emit('sendchat', video, userId, user_receiv, null);
+      //console.log("vidéo enregistré !" +userId);
+      var video = {
+            type_m : obj.type_v,
+          path: obj.path,
+          user_receiver : user_receiv,
+          txt : obj.msg
+      }
+      //console.log(song);
+      socket.emit('sendchat', video, userId, user_receiv, null);
     }
     }
   })
@@ -550,7 +553,7 @@ function on_module_accept_typeMessage_link_click(e){
   var type_message_libelle = div.data("type-message-libelle")
   glob_datas.id_type_message = div.data("id-typeMessage");
   glob_datas.action = "accept";
-  glob_datas.type_m = type_message_libelle;
+  glob_datas.type_m = type_message_libelle + '_response';
   //console.log(user);
   //console.log(user_receiv);
   //console.log(glob_datas);
@@ -570,6 +573,8 @@ function on_module_accept_typeMessage_link_click(e){
             const content = 'demande acceptée !';
             div.find("div.card-chat div.div-submi").empty();
             div.find("div.card-chat div.div-submi").append(content);
+          }else{
+            //update_front_with_msg(data, );
           }
       }
     });
@@ -617,7 +622,7 @@ function on_module_accept_typeMessage_link_click(e){
       }
     });
   }else{
-    //Cas du rdv
+    //Cas du rdv /offre_rdv /contact
     $.ajax({
       type: "POST",
       url: "/action-in-module",
@@ -643,7 +648,7 @@ function on_module_deny_typeMessage_link_click(e){
   var type_message_libelle = div.data("type-message-libelle");
   datas.id_type_message = div.data("id-typeMessage");
   datas.action = "deny";
-  datas.type_m = type_message_libelle;
+  datas.type_m = type_message_libelle + "_response";
   //console.log(datas);
   $.ajax({
     type: "POST",
@@ -1013,8 +1018,8 @@ actions.paiement.push(function (data){
   ret += '<p class="date_creneau">';
   //$.each(data.events, function(ind, val){
   if (data.desc !== undefined && data.price !== undefined){
-    ret += '<p style="background: #18457c;color: white;padding: 12px;">Description ('+data.desc+') </br>';
-    ret += '<p style="background: #18457c;color: white;padding: 12px;">Prix ('+data.price+' €) </br>';
+    ret += '<p style="background: #18457c;color: white;padding: 12px;">Description ('+data.desc+') </br></p>';
+    ret += '<p style="background: #18457c;color: white;padding: 12px;">Prix ('+data.price+' €) </br></p>';
   }
   //});
   // if (data.events.length == 0){
@@ -1039,8 +1044,8 @@ actions.paiement.push(function (data){
   ret += '<p class="date_creneau">';
   //$.each(data.events, function(ind, val){
   if (data.desc !== undefined && data.price !== undefined){
-    ret += '<p style="background: #18457c;color: white;padding: 12px;">Description ('+data.desc+') </br>';
-    ret += '<p style="background: #18457c;color: white;padding: 12px;">Prix ('+data.price+' €) </br>';
+    ret += '<p style="background: #18457c;color: white;padding: 12px;">Description ('+data.desc+') </br></p>';
+    ret += '<p style="background: #18457c;color: white;padding: 12px;">Prix ('+data.price+' €) </br></p>';
   }
   // });
   // if (data.events.length == 0){
@@ -1173,7 +1178,7 @@ return (res);
 function updateUserReceived(data){
 user_receiv = data;
 }
-function switchRoom(room, id_coresp, nom, prenom, type, paymentModule, usr){
+function switchRoom(room, id_coresp, nom, prenom, type, paymentModule, email, usr){
 //console.log("switch room");
 //console.log(usr);
 var coresp= {};
@@ -1181,6 +1186,7 @@ coresp.nom = nom;
 coresp.prenom = prenom;
 coresp.id_coresp = id_coresp;
 coresp.type = type;
+coresp.mail = email;
 if (type != 4 && type != 1){
   coresp.payment_module = paymentModule;
 }
