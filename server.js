@@ -426,7 +426,13 @@ io.sockets.on('connection', function (socket) {
                     case "payment":
                         break;
                     case "contact":
-                        io.sockets.in(socket.id).emit('updatechat', user_receiver, data, context)
+                        notifications.mail(data.user_receiver, data.user_sender, data.type_m)
+                        .then((res) => {
+                            data.notif = res
+                            io.sockets.in(socket.id).emit('updatechat', user_receiver, data, context)
+                        }).catch((err) => {
+                            console.log(err)
+                        })
                         break;
                     default:
                         tableT.push(data.type_m, data.path)
@@ -507,13 +513,15 @@ io.sockets.on('connection', function (socket) {
                     case "booking":
                     case "rdv_offer":
                     case "payment":
-                        io.sockets.in(socket.room).emit('updatechat', user_receiver, data, context)
-                        break;
                     case "devis_request":
-                        io.sockets.in(socket.room).emit('updatechat', user_receiver, data, context)
-                        break;
                     case "contact":
-                        io.sockets.in(socket.room).emit('updatechat', user_receiver, data, context)
+                        notifications.mail(data.user_receiver, data.user_sender, data.type_m)
+                        .then((res) => {
+                            data.notif = res
+                            io.sockets.in(socket.room).emit('updatechat', user_receiver, data, context)
+                        }).catch((err) => {
+                            console.log(err)
+                        })
                         break;
                     default:
                         tableT.push(data.type_m, data.path)
