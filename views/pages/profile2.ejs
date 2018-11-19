@@ -75,7 +75,7 @@
 		</div>
 	</section>
 	<section class="section-light no-bottom-padding">
-		<div data-name="global_msg"></div>
+		<div data-name="global_msg" class="msg-contact"></div>
 		<div class="container">
 			<div class="row">
 				<div class="col-xs-12">
@@ -502,7 +502,11 @@
     	user_receiv.prenom = "<%- locals.session.user_receiv.prenom ?
     		locals.session.user_receiv.prenom : "null" %>";
     	user_receiv.type = "<%- locals.session.user_receiv.type ?
-    		locals.session.user_receiv.type : "null" %>";
+			locals.session.user_receiv.type : "null" %>";
+		user_receiv.pay_module = "<%- locals.session.user_receiv.pay_module ?
+			locals.session.user_receiv.pay_module : "null" %>";
+		user_receiv.mail = "<%- locals.session.user_receiv.mail ?
+    		locals.session.user_receiv.mail : "null" %>";
     	sessionStorage.setItem("room", JSON.stringify(room));
     	sessionStorage.setItem("user_receiv", JSON.stringify(user_receiv));
     	sessionStorage.setItem("session", JSON.stringify(session));

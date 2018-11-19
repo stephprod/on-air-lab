@@ -203,6 +203,7 @@ if (data !== undefined && data != null){
 }
 if (data.user_sender != "SERVER")
   socket.emit('update_preview_in_room', data, cont);
+console.log(data.notif);
 if (data.notif !== undefined)
   socket.emit('sendNotif', data.notif);
 }
@@ -538,11 +539,39 @@ function on_socket_update_contactstypemessage(data){
   //console.log("contacts_type_message");
   //console.log(data);
   var div = $("div[id-message='"+data.id_m+"']");
-  div.find("p.user").empty();
-  var content = '';
-  content += 'nom ('+data.user_request_info.nom+') / prénom ('+data.user_request_info.prenom+') / type ('+data.user_request_info.type+') / id_temporisation ('+data.id_temp+')';
-  content += 'statut de la demande ('+data.request_state+')';
-  div.find("p.user").append(content);
+  //div.find("p.date_creneau").empty();
+  div.find("div.div-submi").empty();
+  var content = '', contentSubmit = '';
+  content += '<p style="background: #18457c;color: white;padding: 12px;">'+data.user_request_info.prenom+' '+data.user_request_info.nom+' (';
+  switch(data.user_request_info.type){
+    case 3:
+      content += "Professionnel vidéo"
+      break;
+    case 2:
+      content += "Professionnel audio"
+      break;
+    case 4:
+      content += "Artiste"
+      break;
+    default:
+      break;
+  }
+  content += ')</p>';
+  // content += '<p style="background: #18457c;color: white;padding: 12px;">' +
+  //   data.user_request_info.prenom+' '+data.user_request_info.nom+' ('+data.user_request_info.type+') ';
+  //'statut de la demande ('+data.request_state+')'+
+  if (data.request_state == 0 && data.user_request_info.type == 4){
+    //content += 'demande en attente de votre réponse';
+    contentSubmit += '<a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a>'
+  }else if(data.request_state == 0){
+    //contentSubmit += 'demande acceptée !';
+  }else{
+    //content += 'demande en attente de réponse du correspondant';
+    contentSubmit += '<div class="div-submi" style="color: black;"></div><div class="corner"></div><span>'+data.created+'</span>';
+    //'</p>';
+  }
+  div.find("p.date_creneau").prepend(content);
+  div.find("div.div-submi").append(contentSubmit);
 }
 function on_module_accept_typeMessage_link_click(e){
   e.preventDefault();
@@ -868,7 +897,8 @@ actions.rdv.push(function (data){
 });
 actions.booking.push(function (data){
 //console.log(data);
-var ret = '<div class="message" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="booking"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de booking</h3><p class="date_creneau">';
+var ret = '<div class="message" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="booking"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de booking</h3>';
+ret += '<p class="date_creneau">';
 $.each(data.events, function(ind, val){
   ret += '<p style="background: #18457c;color: white;padding: 12px;">Début ('+val.start.substr(0,10)+') A ('+val.start.substr(11,5)+') </br>';
   ret += 'Fin ('+val.end.substr(0,10)+') A ('+val.end.substr(11,5)+') </p> ';
@@ -926,40 +956,77 @@ return (ret);
 });
 actions.contactArt.push(function (data){
 //console.log(data);
-var ret = '<div class="message" id-message="'+data.id_m+'" data-type-message-libelle="contact"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">Objet : '+data.txt+' // Détails : <p class="user">';
-if (data.user_request_info != null){
-  ret += 'nom ('+data.user_request_info.nom+') / prénom ('+data.user_request_info.prenom+') / type ('+data.user_request_info.type+') / id_temporisation ('+data.id_temp+')';
-}
-ret += 'statut de la demande ('+data.request_state+')';
-ret += '</p><div class="corner"></div><span>'+data.created+'</span></div></div>';
+var ret = '<div class="message" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="contact"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de contact</h3>';
+ret += '<p class="date_creneau">';
+// if (data.user_request_info !== undefined && 
+//   data.user_request_info != null){
+//   ret += '<p style="background: #18457c;color: white;padding: 12px;">'+data.user_request_info.prenom+' '+data.user_request_info.nom+' (';
+//   switch(data.user_request_info.type){
+//     case 3:
+//       ret += "Professionnel vidéo"
+//       break;
+//     case 2:
+//       ret += "Professionnel audio"
+//       break;
+//     default:
+//       break;
+//   }
+//   ret += +')</p>';
+// }
+// if (data.user_request_info != null){
+//   ret += 'nom ('+data.user_request_info.nom+') / prénom ('+data.user_request_info.prenom+') / type ('+data.user_request_info.type+') / id_temporisation ('+data.id_temp+')';
+// }
+// ret += 'statut de la demande ('+data.request_state+')';
+// ret += '</p><div class="corner"></div><span>'+data.created+'</span></div></div>';
+// if (data.events.length == 0){
+//   ret += '</p><div class="div-submi" style="color: black;">demande refusée !</div><div class="corner"></div><span>'+data.created+'</span>';
+// }else{
+  ret += 'demande en attente de réponse du correspondant</p><div class="div-submi" style="color: black;"></div><div class="corner"></div><span>'+data.created+'</span>';
+//}
+ret += '</div></div></div>';
 return (ret);
 }, function (data){
 //console.log(data);
-var ret = '<div class="message right" id-message="'+data.id_m+'" data-type-message-libelle="contact"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">Objet : '+data.txt+' // Détails : <p class="user">';
-if (data.user_request_info != null){
-  ret += 'nom ('+data.user_request_info.nom+') / prénom ('+data.user_request_info.prenom+') / type ('+data.user_request_info.type+') / id_temporisation ('+data.id_temp+')';
-}
-ret += 'statut de la demande ('+data.request_state+')';
-ret += '</p><div class="corner"></div><span>'+data.created+'</span></div></div>';
+var ret = '<div class="message right" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="contact"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de contact</h3>';
+ret += '<p class="date_creneau">';
+// if (data.user_request_info != null){
+//   ret += '<p style="background: #18457c;color: white;padding: 12px;">'+data.user_request_info.prenom+' '+data.user_request_info.nom+' (';
+//   switch(data.user_request_info.type){
+//     case 3:
+//       ret += "Professionnel vidéo"
+//       break;
+//     case 2:
+//       ret += "Professionnel audio"
+//       break;
+//     default:
+//       break;
+//   }
+//   ret += +')</p>';
+// }
+// if (data.user_request_info != null){
+//   ret += 'nom ('+data.user_request_info.nom+') / prénom ('+data.user_request_info.prenom+') / type ('+data.user_request_info.type+') / id_temporisation ('+data.id_temp+')';
+// }
+// if (data.events.length == 0){
+//   ret += '</p><div class="div-submi" style="color: black;">demande refusée !</div><div class="corner"></div><span>'+data.created+'</span>';
+// }else{
+ret += 'demande en attente de votre réponse</p><div class="div-submi" style="color: black;"><a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a></div><div class="corner"></div><span>'+data.created+'</span>';
+//}
+ret += '</div></div></div>';
 return (ret);
 });
 actions.contactPro.push(function (data){
 //console.log(data);
-var ret = '<div class="message" id-message="'+data.id_m+'" data-type-message-libelle="contact"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">Objet : '+data.txt+' // Détails : <p class="user">';
-if (data.user_sender_info != null){
-  ret += 'nom ('+data.user_sender_info.nom+') / prénom ('+data.user_sender_info.prenom+') / type ('+data.user_sender_info.type+') / id_temporisation ('+data.id_temp+')';
-}
-ret += 'statut de la demande ('+data.request_state+')';
-ret += '</p><div class="corner"></div><span>'+data.created+'</span></div></div>';
+var ret = '<div class="message" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="contact"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de contact</h3>';
+ret += '<p class="date_creneau">';
+ret += 'demande en attente de réponse de votre corespondant</p><div class="div-submi" style="color: black;"></div><div class="corner"></div><span>'+data.created+'</span>';
+ret += '</div></div></div>';
 return (ret);
 }, function (data){
 //console.log(data);
-var ret = '<div class="message right" id-message="'+data.id_m+'" data-type-message-libelle="contact"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">Objet : '+data.txt+' // Détails : <p class="user">';
-if (data.user_sender_info != null){
-  ret += 'nom ('+data.user_sender_info.nom+') / prénom ('+data.user_sender_info.prenom+') / type ('+data.user_sender_info.type+') / id_temporisation ('+data.id_temp+')';
-}
-ret += 'statut de la demande ('+data.request_state+')';
-ret += '</p><div class="corner"></div><span>'+data.created+'</span></div></div>';
+var ret = '<div class="message right" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="contact"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de contact</h3>';
+ret += '<p class="date_creneau">';
+ret += 'demande en attente de votre réponse</p><div class="div-submi" style="color: black;"><a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a></div><div class="corner"></div><span>'+data.created+'</span>';
+ret += '</div></div></div>';
 return (ret);
 });
 actions.rdv_offer.push(function (data){

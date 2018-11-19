@@ -34,9 +34,10 @@ class MailTemplate{
 					param.subject = "Demande de paiement !"
 					break;
 				case "contact_response":
-					param.content += action == "accept" ? 'Ta demande de contact a été acceptée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !' : 
+					param.content += action == "accept" ? 'Ta demande de contact a été acceptée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !<br>'+
+						'Accédez au chat se trouvant sur le site pour le/la contacter.' : 
 						'Ta demande de contact a été refusée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
-					param.subject = "Demande de rendez-vous liée à une offre !"
+					param.subject = "Demande de contact !"
 					break;
 				case "rdv_offer_response":
 					param.content += action == "accept" ? 'Ta demande de rendez-vous liée à une offre a été acceptée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !' : 
@@ -49,7 +50,7 @@ class MailTemplate{
 			}
 			param.content += '</p>'
 			//console.log(param)
-			if (events != null) {
+			if (events != null && events.length > 0) {
 				param.content += '<p style="margin:0px;text-align:left;">Dates : </p>';
 				for (var k in events) {
 					//Json parse
@@ -102,6 +103,14 @@ class MailTemplate{
 					break;
 			}
 			param.content += '</p>'
+			if (events != null && events.length > 0) {
+				param.content += '<p style="margin:0px;text-align:left;">Dates : </p>';
+				for (k in events) {
+					//Json parse
+					const ev = events[k];
+					param.content += '<p style="margin:0px;"><b>Début :</b> ' + ev.start + ' <b>Fin :</b> ' + ev.end + '</p>';
+				}
+			}
 		}
 		param.content += '<p style="margin:0px;">Bien cordialement, </p>'
 		param.content += '<p style="margin:0px;"><b>LabelOnAir</b></p>'

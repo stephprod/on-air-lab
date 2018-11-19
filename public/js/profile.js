@@ -1,5 +1,5 @@
 //import {socket, get_events, switchRoom} from './chat.js';
-import {update_front_with_msg, update_front_with_errors, update_front_with_success} from './front-update.js';
+import {update_front_with_msg} from './front-update.js';
 /*import {get_events} from './events.js';
 import {socket, switchRoom} from './socket_modules.js';*/
 function get_events(hours, datePickerValTab){
@@ -119,14 +119,16 @@ function put_in_n_digits_minutes(ref, n){
 function updateUserReceived(data){
     user_receiv = data;
 }
-function switchRoom(room, id_coresp, nom, prenom, type, usr){
+function switchRoom(room, id_coresp, nom, prenom, type, pay_mod, email, usr){
 	//console.log("switch room");
 	//console.log(usr);
 	var coresp= {};
     coresp.nom = nom;
     coresp.prenom = prenom;
     coresp.id_coresp = id_coresp;
-    coresp.type = type;
+	coresp.type = type;
+	coresp.mail = email;
+	coresp.pay_module = pay_mod;
     //console.log(coresp);
     updateUserReceived(coresp);
     roomDisplay = room;
@@ -178,10 +180,12 @@ function on_form_contact_submit(e){
 			user_sender.nom = user.nom;
 			user_sender.prenom = user.prenom;
 			user_sender.type = user.type;
-			user_request.id = user_receiv.id_coresp;
+			user_request.id_coresp = user_receiv.id_coresp;
 			user_request.nom = user_receiv.nom;
 			user_request.prenom = user_receiv.prenom;
 			user_request.type = user_receiv.type;
+			user_request.mail = user_receiv.mail;
+			user_request.pay_module = user_receiv.pay_module;
             var contact = {
                 type_m : data.result.type_d,
                 user_request_info : user_request,
@@ -194,9 +198,10 @@ function on_form_contact_submit(e){
             }
             //console.log(contact);
             if (user.id != null && user.id != "null"){
-            	//console.log(user);
-            	switchRoom(1, 1, "Admin", "Admin", 1, user);
-            	socket.emit('sendchat', contact, user.id, user_receiv, "iframe-chat");
+            	console.log(data);
+            	switchRoom(1, 1, "Admin", "Admin", 1, 0, 'admin@label-onair.com', user);
+				socket.emit('sendchat', contact, user.id, user_request, "iframe-chat");
+				socket.emit('sendNotif', data.notif);
             }
         }else{
         	if (data.result.room !== undefined){
@@ -267,7 +272,7 @@ function on_reservation_link_click(e){
 		                request_state : 0
 		            }
 		            //console.log(contact);
-		            switchRoom(roomDisplay, user_receiv.id_coresp, user_receiv.nom, user_receiv.prenom, user_receiv.type, user);
+		            switchRoom(roomDisplay, user_receiv.id_coresp, user_receiv.nom, user_receiv.prenom, user_receiv.type,  user_receiv.pay_module, user_receiv.mail, user);
 		            socket.emit('sendchat', rdv, userId, user_receiv, "iframe-chat");
 				}
 		    }
@@ -327,7 +332,7 @@ function on_valid_rdv_offer_link_click(e){
 		                request_state : 0
 		            }
 		            //console.log(rdv_off);
-		            switchRoom(roomDisplay, user_receiv.id_coresp, user_receiv.nom, user_receiv.prenom, user_receiv.type, user);
+		            switchRoom(roomDisplay, user_receiv.id_coresp, user_receiv.nom, user_receiv.prenom, user_receiv.type, user_receiv.pay_module, user_receiv.mail, user);
 		            socket.emit('sendchat', rdv_off, userId, user_receiv, "iframe-chat");
 				}
 		    }
@@ -390,3 +395,17 @@ $(document).on("click", "a[data-action='in-chat']", on_rdv_offer_link_click);
 //meet_up.on("click", on_reservation_link_click);
 //export {get_events};
 //sessionStorage.clear();
+// if (userId != null && userId != "null") {
+// 	var type = user.type;
+// 	// var coresp = {};
+// 	// coresp.nom = "Admin";
+// 	// coresp.prenom = "amdin";
+// 	// coresp.id_coresp = 1;
+// 	// coresp.type = 1;
+// 	// coresp.mail = "admin@label-onair.com";
+// 	socket.emit('adduser', userId, type);
+// 	console.log("TU ES DEJA CONNECTE :)");
+// 	//updateUserReceived(coresp);
+// } else {
+// 	console.log("CONNECTE TOI POUR UTILISER LE TCHAT NO HACK :)");
+// }

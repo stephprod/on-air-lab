@@ -1,11 +1,15 @@
 const express = require('express')
 const User = require('../models/req_user')
-const session = require('express-session');
+//const session = require('express-session');
 const router = express.Router()
 const notifications = require('../models/notifications').actions
 
 router.route('/action-in-module')
 	.post((request, response) => {
+		let ret = {}
+		ret.success = []
+		ret.global_msg = []
+		ret.result = {}
 		if (request.session.token == request.headers["x-access-token"]){
 			//console.log(request.body);
 			const table = []
@@ -15,110 +19,118 @@ router.route('/action-in-module')
 				type: request.session.userType,
 				email: request.session.userMail,
 			}
-			var ret = {}
-			ret.success = []
-			ret.global_msg = []
-			ret.result = {}
 			for (const prop in request.body){
 				table.push(request.body[prop])
 			}
 			//console.log(table)
-			if (table.length > 1){
-				if (table[1] == "accept"){
-					User.get_accept_action_module(table[0], (result) =>{
-						if (result.length > 0){
-							//console.log(result)
-							const len = result.length
-							//console.log(len)
-							for (var k in result){
-								//Utilisation PROMISE A VENIR (FONCTION TEMPORAIRE)
-								setTimeout((function(k) {
-									return function (){
-										//console.log(result[k])
-										User.do_action_in_module(result[k].action_ok, (result2) => {
-											if (result2.changedRows > 0){
-												ret.success.push(true)
-												ret.global_msg.push("action acceptation effectuée !")
-											}else{
-												ret.success.push(false)
-												ret.global_msg.push("erreur lors de l'action d'acceptation !")
-											}
-											if (k == len - 1){
-												//console.log(ret);
-												User.getEventsInTypeMessage(table[0], (result3)=>{
-													if (result3.length > 0){
-														ret.result.events = result3
-													}
-													ret.result.libelle = "accept"
-													notifications.mail(result[k], receiver, table[2], table[1], ret.result.events)
-													.then((res) => {
-														ret.notif = res
-														response.send(ret)
-													}, (err) => response.send(err))
-													.catch((err) => response.send(err))
-												})
-											}
-										})
-									};
-								}) (k), 100)
-								//***********************************************//
-							}
-						}else{
-							ret.success.push(false)
-							ret.global_msg.push("Message expiré !")						
-							response.send(ret)
-						}
-					})
-				}
-				else if (table[1] == "deny"){
-					User.get_deny_action_module(table[0], (result) =>{
-						if (result.length > 0){
-							//console.log(result)
-							const len = result.length
-							for (var k in result){
-								//Utilisation PROMISE A VENIR (FONCTION TEMPORAIRE)
-								setTimeout((function(k) {
-									return function (){
-										//console.log(result[k])
-										User.do_action_in_module(result[k].action_ko, (result2) => {
-											if (result2.affectedRows > 0){
-												ret.success.push(true)
-												ret.global_msg.push("action refus effectuée !")
-											}else{
-												ret.success.push(false)
-												ret.global_msg.push("erreur lors de l'action de refus !")
-											}
-											if (k == len - 1){
-												ret.result.libelle = "deny"
-												ret.result.events = []
-												notifications.mail(result[k], receiver, table[2], table[1])
-												.then((res) => {
-													ret.notif = res
-													response.send(ret)
-												}, (err) => response.send(err))
-												.catch((err) => response.send(err))
-											}
-										})
-									};
-								}) (k), 100)
-								//***********************************************//
-							}
-						}else{
-							ret.success.push(false)
-							ret.global_msg.push("Message expiré !")
-							response.send(ret)
-						}
-					})
-				}
-			}else{
-				ret.success.push(false)
-				ret.global_msg.push("Paramètres incorrects !")
-				response.send(ret)
-			}
+			get_action(request, ret)
+			.then((res) => {
+				//console.log(res)
+				return do_actions(request, res)
+			}).then((res) => {
+				//console.log(res)
+				res.result.libelle = request.body.action
+				res.result.events = []
+				if (request.body.type_m == "contact_response")
+					return res
+				else if (request.body.action == "accept")
+					return get_events(request, res)
+				else
+					return res
+			}).then((res) => {
+				//console.log(res)
+				return notifications.mail(res.result.actionForNotif, receiver, request.body.type_m, request.body.action, ret.result.events)
+				.then((res) => {
+					ret.notif = res
+					response.send(ret)
+				}, (err) => response.send(err))
+			})
+			.catch((err) => {
+				//console.log("error -> "+err)
+				response.send(err)
+			})
 		}else{
 			ret.success.push(false)
 			ret.global_msg.push("Token compromised !")
 			response.send(ret)
 		}
 })
+function get_action(req, ret){
+	return new Promise((resolve) => {
+		User.get_accept_action_module(req.body.id_type_message, (result) =>{
+			if (result.length > 0){
+				ret.result.actions = result
+				ret.success.push(true)
+				ret.global_msg.push("Récupération de l'action réussite !")
+				resolve(ret)
+			}else{
+				ret.success.push(false)
+				ret.global_msg.push("Impossible de récupérer l'action liée à la demande (demande expirée) !")
+				throw ret;
+			}
+		})
+	})
+}
+function do_actions(req, ret){
+	const len = ret.result.actions.length
+	//console.log(ret.result.actions)
+	return new Promise((resolve) => {
+		for (var k in ret.result.actions){
+			let action
+			//console.log(ret.result.actions[k])
+			if (req.body.action == "accept")
+				action = ret.result.actions[k].action_ok
+			else
+				action = ret.result.actions[k].action_ko
+			//console.log("action -> "+action)
+			if (action != null){
+				User.do_action_in_module(action, (result, err) => {
+					const resOfAction = result.affectedRows == 0 ? result.changedRows : result.affectedRows
+					// console.log("error -> ")
+					// console.log(err)
+					// console.log("resOfAction -> ")
+					// console.log(resOfAction)
+					if (resOfAction > 0){
+						//ret.result.action = result
+						ret.success.push(true)
+						ret.global_msg.push("Action effectuée !")
+						//resolve(ret)
+					}else{
+						//console.log("Action echouée !")
+						ret.success.push(false)
+						ret.global_msg.push("Action echouée !")
+						throw ret
+					}
+					if (err)
+						throw err
+					if (k == len - 1){
+						ret.result.actionForNotif = ret.result.actions[k]
+						resolve(ret)
+					}
+				})
+			}else{
+				if (k == len - 1){
+					ret.result.actionForNotif = ret.result.actions[k]
+					resolve(ret)
+				}
+			}		
+		}
+	})
+}
+function get_events(req, ret){
+	return new Promise((resolve) => {
+		User.getEventsInTypeMessage(req.body.id_type_message, (result)=> {
+			if (result.length > 0){
+				ret.result.events = result
+				ret.success.push(true)
+				ret.global_msg.push("Evennements récupérés !")
+				resolve(ret)
+			}else{
+				ret.success.push(false)
+				ret.global_msg.push("Erreur lors de la récupération des évennements !")
+				throw ret
+			}
+		})
+	})
+}
 module.exports = router

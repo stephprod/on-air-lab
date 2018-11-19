@@ -94,11 +94,11 @@ class User{
     static roomExist(userid, with_userid, cb)
     {
         let r = db.query('SELECT * FROM `rooms` WHERE (userid =? AND with_userid =?)', [userid, with_userid], (err, result) => {
-            if(err){
-                console.log(r.sql)
-                throw err;
-            }
-            cb(result);
+            // if(err){
+            //     console.log(r.sql)
+            //     throw err;
+            // }
+            cb(result , err);
         })
     }
 
@@ -1074,11 +1074,7 @@ class User{
     }
     static do_action_in_module(req, cb){
         let r = db.query(req, (err, res)=>{
-            if (err){
-                console.log(r.sql)
-                throw err
-            }
-            cb(res)
+            cb(res, err)
         })
     }
     static insert_payment_db(table, cb){

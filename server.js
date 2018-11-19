@@ -185,6 +185,14 @@ io.sockets.on('connection', function (socket) {
     })
     // QUAND LE USER SE CO DANS LOGIN ET ARRIVE SUR LA PAGE DU CHAT
     socket.on('adduser', function(id, type){
+        // supprimer le nom d'utilisateur de la liste des noms d'utilisateur globaux s'il existe déjà
+        for( var i=0, len=userGlobal.length; i<len; ++i ){
+            var c = userGlobal[i]
+            if(c.id_user == id){
+                userGlobal.splice(i,1);
+                break;
+            }
+        }
         let user = {}
         user.userId = id;
         user.userType = type;
@@ -215,7 +223,7 @@ io.sockets.on('connection', function (socket) {
                                             room.push(null, 'Aucun message.')
                                         }
                                         tabCorresp.push(room)
-                                        //socket.emit('updaterooms', tabCorresp);
+                                        socket.emit('updaterooms', tabCorresp);
                                     })
                                 };
                             }) (room), 100);
@@ -262,6 +270,7 @@ io.sockets.on('connection', function (socket) {
                                 };
                             }) (k, room), 100);
                         }
+                        //socket.emit('updaterooms', tabCorresp);
                         socket.room = 1
                         // AJOUT DU CLIENT DANS LA GLOBAL LIST
                         let userInfos = {}
@@ -424,15 +433,21 @@ io.sockets.on('connection', function (socket) {
                     case "rdv":
                     case "rdv_offer":
                     case "payment":
-                        break;
-                    case "contact":
-                        notifications.mail(data.user_receiver, data.user_sender, data.type_m)
+                        notifications.mail(data.user_receiver, data.user_sender, data.type_m, null, data.events)
                         .then((res) => {
                             data.notif = res
+                            // console.log("notif -> ")
+                            // console.log(data.notif)
+                            // console.log("globalUsers -> ")
+                            // console.log(userGlobal)
+                            // console.log("socket id -> ")
+                            // console.log(socket.id)
                             io.sockets.in(socket.id).emit('updatechat', user_receiver, data, context)
                         }).catch((err) => {
                             console.log(err)
                         })
+                        break;
+                    case "contact":
                         break;
                     default:
                         tableT.push(data.type_m, data.path)
@@ -461,6 +476,7 @@ io.sockets.on('connection', function (socket) {
                     })
                 }
             }
+            console.log(userGlobal)
             //Si tu n'est pas l'administrateur
             if (userId != 1)
             {
@@ -515,7 +531,7 @@ io.sockets.on('connection', function (socket) {
                     case "payment":
                     case "devis_request":
                     case "contact":
-                        notifications.mail(data.user_receiver, data.user_sender, data.type_m)
+                        notifications.mail(data.user_receiver, data.user_sender, data.type_m, null, data.events)
                         .then((res) => {
                             data.notif = res
                             io.sockets.in(socket.room).emit('updatechat', user_receiver, data, context)
@@ -669,6 +685,55 @@ io.sockets.on('connection', function (socket) {
                     }, (err) => {
                         io.sockets.in(socket.id).emit('update_paymentstypemessage', err)
                     })
+                }else if (message.type_m == "contact"){
+                    if (socket.request.session.userType != 4){
+                        setTimeout((function(message) {
+                            return function (){
+                                User.getUserInfoInTypeMessage(message.id_type_m, (result) =>{
+                                    if (result.length > 0){
+                                        let obj = {}
+                                        obj.id = result[0].id,
+                                        obj.nom = result[0].nom,
+                                        obj.prenom = result[0].prenom,
+                                        obj.type = result[0].type
+                                        message.user_request_info = obj
+                                        if (result[0].id_temp != null){
+                                            message.id_temp = result[0].id_temp
+                                            message.request_state = 0
+                                        } else{
+                                            message.request_state = -1
+                                        }
+                                        //console.log(message)
+                                        io.sockets.in(socket.id).emit('update_contactstypemessage', message)
+                                    }
+                                })
+                            };
+                        }) (message), 100);
+                    }else{
+                        setTimeout((function(message) {
+                            return function(){
+                                User.getUserJoin("LEFT JOIN temp ON temp.id_user_dest=user.id WHERE user.id="+message.user_receiver.id+" AND temp.id_type_message="+message.id_type_m, (result2)=>{
+                                    //console.log(result2)
+                                    if (result2 != null){
+                                        let obj = {}
+                                        obj.id = message.user_receiver
+                                        obj.nom = result2.nom
+                                        obj.prenom = result2.prenom
+                                        obj.type = result2.type
+                                        message.user_request_info = obj
+                                        if (result2.id_temp != null){
+                                            message.id_temp = result2.id_temp
+                                            message.request_state = 0
+                                        } else{
+                                            message.request_state = -1
+                                        }
+                                        //console.log(message)
+                                        io.sockets.in(socket.id).emit('update_contactstypemessage', message)
+                                    }
+                                })
+                            };
+                        }) (message), 100)
+                    }
                 }
                 //console.log(message)
                 io.sockets.in(socket.id).emit('updatechat', corespObj, message)
@@ -682,6 +747,7 @@ io.sockets.on('connection', function (socket) {
         //let receiver = {id: corespObj.id_coresp, nom: corespObj.nom, prenom: corespObj.prenom, email: corespObj.mail}
         //console.log("-----------------LIST MESSAGES ADMIN-----------------")
         //console.log(userId)
+        //console.log(socket)
         getPreviousMsgAdmin(15, userId, data, (result) => {
             //CHARGEMENT DES MESSAGES DE LA BDD UNIQUEMENT SUR LE SWITCH DE LA ROOM
             for (let k=result.length - 1; k >= 0; k--)
@@ -720,8 +786,8 @@ io.sockets.on('connection', function (socket) {
                         };
                     }) (message), 100);
                 }else if(message.type_m == "contact"){
-                    //console.log(socket.user)
-                    if (socket.user.userType != 4){
+                    //console.log(socket.request.session)
+                    if (socket.request.session.userType != 4){
                         setTimeout((function(message) {
                             return function (){
                                 User.getUserInfoInTypeMessage(message.id_type_m, (result) =>{
@@ -747,7 +813,7 @@ io.sockets.on('connection', function (socket) {
                     }else{
                         setTimeout((function(message) {
                             return function(){
-                                User.getUserJoin("LEFT JOIN temp ON temp.id_user_dest=user.id WHERE user.id="+message.user_receiver+" AND temp.id_type_message="+message.id_type_m, (result2)=>{
+                                User.getUserJoin("LEFT JOIN temp ON temp.id_user_dest=user.id WHERE user.id="+message.user_receiver.id+" AND temp.id_type_message="+message.id_type_m, (result2)=>{
                                     //console.log(result2)
                                     if (result2 != null){
                                         let obj = {}
@@ -789,7 +855,7 @@ io.sockets.on('connection', function (socket) {
                     })
                 }
                 //console.log(message)
-                io.sockets.in(data).emit('updatechat', corespObj, message)
+                io.sockets.in(socket.id).emit('updatechat', corespObj, message)
             }
             //console.log("----------------------------------------------------")
         });

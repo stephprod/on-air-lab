@@ -31,12 +31,18 @@ class Notif{
                     to: '"'+this.objReceiver.nom+' '+this.objReceiver.prenom+'" <'+this.objReceiver.email+'>, <ijv6lvrhtrfvwaqq@ethereal.email>', // list of receivers
                     subject: result.subject, // Subject line
                     text: null, // plain text body
-                    html: html // html body
+                    html: html, // html body
+                    // attachments: [
+					// 	{
+					// 	  filePath: 'leCheminDuFichierAEnvoyer'
+                    //     },
+                    // ]
                 };
+                //console.log(mailOptions)
                 transporter.sendMail(mailOptions, (error, info) => {
                     if (error) {
-                        //console.log(ret);
-                        throw ret
+                        console.log(error);
+                        throw error
                     }else{
                         //ret.success.push(true)
                         //ret.global_msg.push("Message sent: "+info.messageId, "Preview URL: "+nodemailer.getTestMessageUrl(info))
@@ -44,6 +50,7 @@ class Notif{
                             receiverAction: {id: this.objReceiver.id, nom: this.objReceiver.nom},
                             senderAction: {id:this.sender.id, nom: this.sender.nom},
                             msg: result.subject,
+                            typeOfAction: this.type,
                         }
                         //console.log('Message sent: %s', info.messageId);
                         // Preview only available when sending through an Ethereal account
