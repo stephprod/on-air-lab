@@ -53,38 +53,56 @@ router.route('/payment-module/:id')
         //console.log(req.body);
         if (req.session.token == req.headers["x-access-token"]){
             var new_tok = uid(16);
-            stripe.customers.create({
-                description: req.body.paymentDesc+' from '+req.body.paymentSrc+' for '+req.body.paymentDest,
-                source: req.body.stripeToken
-            }, function(err, customer) {
+            // stripe.customers.create({
+            //     description: req.body.paymentDesc+' from '+req.body.paymentSrc+' for '+req.body.paymentDest,
+            //     //source: req.body.stripeToken
+            // }, function(err, customer) {
                 //console.log("customer : ")
-                //console.log(customer)
-                stripe.charges.create({
+                console.log(req.body.stripeToken)
+                stripe.sources.create({
                     amount: parseFloat(req.body.paymentPrice * 100),
                     currency: "eur",
-                    customer: customer.id
-                }).then(function(charge) {
-                    //console.log("charge : ")
-                    //console.log(charge)
-                    User.updateUser("jeton='"+new_tok+"' WHERE jeton='"+req.session.token+"'"
-                    , (result) => {
-                        let ret = {}
-                        if (result > 0)
-                        {
-                            req.session.token = new_tok
-                            ret.msg = ["Mot de passe mis à jour avec succés !"]
-                            ret.success = true
-                        }
-                        else
-                        {
-                            //let errors = {}
-                            ret.success = false
-                        }
-                        //console.log(ret)   
-                        res.end()
-                    })
+                    type: "three_d_secure",
+                    three_d_secure: {
+                      card: req.body.stripeToken,
+                    },
+                    redirect: {
+                      return_url: "https://shop.example.com/crtA6B28E1"
+                    },
+                }, function(err, source) {
+                    console.log(source.id)
+                    if (source.status == "chargeable"){
+                        //Card ne supportant pas le 3DSecure
+                    }
+                    stripe.charges.create({
+                        amount: parseFloat(req.body.paymentPrice * 100),
+                        currency: "eur",
+                        source: source.id,
+                        description: req.body.paymentDesc+' from '+req.body.paymentSrc+' for '+req.body.paymentDest,
+                        //customer: customer.id
+                    }).then(function(charge) {
+                        //console.log("charge : ")
+                        //console.log(charge)
+                        User.updateUser("jeton='"+new_tok+"' WHERE jeton='"+req.session.token+"'"
+                        , (result) => {
+                            let ret = {}
+                            if (result > 0)
+                            {
+                                req.session.token = new_tok
+                                ret.msg = ["Mot de passe mis à jour avec succés !"]
+                                ret.success = true
+                            }
+                            else
+                            {
+                                //let errors = {}
+                                ret.success = false
+                            }
+                            //console.log(ret)   
+                            res.end()
+                        })
+                    });
                 });
-            });
+            //});
         }else{
             console.log("Token compromised !")
             res.end()

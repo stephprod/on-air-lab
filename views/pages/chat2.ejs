@@ -28,7 +28,7 @@
     <![endif]-->
 	<!-- Socket IO JS -->
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script> -->
-    <script src="/socket.io/socket.io.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
 <div id="wrapper">
@@ -318,10 +318,13 @@
 <!-- jQuery  -->
     <script type="text/javascript" src="/asset/js/jQuery/jquery.min.js"></script>
 	<script type="text/javascript" src="/asset/js/jQuery/jquery-ui.min.js"></script>
-
+<!-- Payment scripts -->
+	<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+	<script type="text/javascript" src="https://checkout.stripe.com/checkout.js"></script>
 <!-- Bootstrap-->
     <script type="text/javascript" src="/asset/bootstrap/bootstrap.min.js"></script>
 
+	<!-- <script type="text/javascript" src="/asset/js/payment_secure.js"></script> -->
 <!-- Google Maps 
 	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDfDCV5hXiPamCIT8_vwGXuzimLQ9MF76g&amp;sensor=false&amp;libraries=places"></script>-->
 
@@ -331,7 +334,8 @@
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/i18n/defaults-fr_FR.min.js"></script>
 <!-- template scripts -->
 	<script type="text/javascript" src="/asset/mail/validate.js"></script>
-    <script>
+	<script>
+		//console.log (Stripe)
     	var user = {};
     	var session = {};
     	session.page = <%- locals.page !== undefined ? '"'+ locals.page+ '"' : "null" %>;
@@ -347,7 +351,8 @@
 		user.pay_module = "<%- locals.session.pay_module ?
 			locals.session.pay_module : "null" %>";
     	//console.log(session);
-    	session.user = user;
+		session.user = user;
+		//session.stripe = Stripe;
     	sessionStorage.setItem("session", JSON.stringify(session));
     </script>
     <script type="module" src="/asset/js/chat.js"></script>

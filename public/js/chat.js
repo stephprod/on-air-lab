@@ -1,4 +1,5 @@
 import {update_front_with_msg, update_front_with_errors} from './front-update.js';
+//import {update_front_with_msg, update_front_with_errors} from './front-update.js';
 //import {Push} from './push.min.js';
 /*import {get_events} from './events.js';
 import {socket, switchRoom} from './socket_modules.js';*/
@@ -203,7 +204,7 @@ if (data !== undefined && data != null){
 }
 if (data.user_sender != "SERVER")
   socket.emit('update_preview_in_room', data, cont);
-console.log(data.notif);
+//console.log(data.notif);
 if (data.notif !== undefined)
   socket.emit('sendNotif', data.notif);
 }
@@ -635,21 +636,22 @@ function on_module_accept_typeMessage_link_click(e){
       // Redirection vers le paiement
     }
   }else if(type_message_libelle == 'payment'){
-    $.ajax({
-      type : "POST",
-      url : "/secure_profile",
-      data: {"temp": user_receiv.id_coresp},
-      success: function(data) {
-        // Redirection vers le paiement
-        var datas = {}, query ='';
-        datas.id_type_m = glob_datas.id_type_message;
-        query = serialize(datas);
-        //console.log(datas);
-        //console.log(iframe);
-        iframe.src = '/payment-module/'+user_receiv.id_coresp + '?' + query;
-        //console.log("Accept payment request !");
-      }
-    });
+    // $.ajax({
+    //   type : "POST",
+    //   url : "/secure_profile",
+    //   data: {"temp": user_receiv.id_coresp},
+    //   success: function(data) {
+    //     // Redirection vers le paiement
+    //     var datas = {}, query ='';
+    //     datas.id_type_m = glob_datas.id_type_message;
+    //     query = serialize(datas);
+    //     //console.log(datas);
+    //     //console.log(iframe);
+    //     //iframe.src = '/payment-module/'+user_receiv.id_coresp + '?' + query;
+    //     //console.log("Accept payment request !");
+    //   }
+    // });
+    form_payment(100)
   }else{
     //Cas du rdv /offre_rdv /contact
     $.ajax({
@@ -1288,3 +1290,129 @@ $.ajax({
 }
 //*******************************************************************//
 //export {socket, get_events, switchRoom};
+function form_payment(price){
+  var stripePublishableKey = 'pk_test_L0T2zWeT0uLcyhZCD1Nfqzx2';
+  var currency = 'eur';
+  //var Stripe = Stripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
+  //console.log(Stripe);
+  Stripe.setPublishableKey(stripePublishableKey);
+   // Create Checkout's handler
+  var handler = StripeCheckout.configure({
+    key: stripePublishableKey,
+    image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
+    locale: 'auto',
+    allowRememberMe: false,
+    token: function(token) {
+        // use Checkout's card token to create a card source
+        Stripe.source.create({
+        type: 'card',
+        token: token.id
+        }, stripeCardResponseHandler);
+    
+        //displayProcessing();
+    }
+    });
+    
+    // Open Checkout with further options:
+    handler.open({
+        name: 'Stripe.com',
+        description: '2 widgets',
+        amount: price,
+        currency: currency
+    });
+
+    // Close Checkout on page navigation:
+    $(window).on('popstate', function() {
+      handler.close();
+    });
+    //e.preventDefault(); 
+    function stripeCardResponseHandler(status, response) {
+      if (response.error) {
+          var message = response.error.message;
+          displayResult("Unexpected card source creation response status: " + status + ". Error: " + message);
+          return;
+      }
+      
+      // check if the card supports 3DS
+      if (response.card.three_d_secure == 'not_supported') {
+          displayResult("This card does not support 3D Secure.");
+          return;
+      }
+      
+      // since we're going to use an iframe in this example, the
+      // return URL will only be displayed briefly before the iframe
+      // is closed. Set it to a static page on your site that says
+      // something like "Please wait while your transaction is processed"
+      var returnURL = "https://shop.example.com/static_page";
+      
+      // create the 3DS source from the card source
+      Stripe.source.create({
+          type: 'three_d_secure',
+          amount: price,
+          currency: "eur",
+          three_d_secure: {
+          card: response.id
+          },
+          redirect: {
+          return_url: returnURL
+          }
+      }, stripe3DSecureResponseHandler);
+    }  
+}
+
+function displayProcessing() {
+  document.getElementById("processing").style.display = 'block';
+  
+  document.getElementById("charge-form").style.display = 'none';
+  document.getElementById("result").style.display = 'none';
+}
+
+function displayResult(resultText) {
+  document.getElementById("processing").style.display = 'none';
+  
+  document.getElementById("charge-form").style.display = 'block';
+  document.getElementById("result").style.display = 'block';
+  document.getElementById("result").innerText = resultText;
+}  
+function stripe3DSecureResponseHandler(status, response) {
+  if (response.error) {
+      var message = response.error.message;
+      displayResult("Unexpected 3DS source creation response status: " + status + ". Error: " + message);
+      return;
+  }
+  // check the 3DS source's status
+  if (response.status == 'chargeable') {
+      displayResult("This card does not support 3D Secure authentication, but liability will be shifted to the card issuer.");
+      return;
+  } else if (response.status != 'pending') {
+      displayResult("Unexpected 3D Secure status: " + response.status);
+      return;
+  }
+  // start polling the source (to detect the change from pending
+  // to either chargeable or failed)
+  Stripe.source.poll(
+      response.id,
+      response.client_secret,
+      stripe3DSStatusChangedHandler
+  );
+  // open the redirect URL in an iframe
+  // (in this example we're using Featherlight for convenience,
+  // but this is of course not a requirement)
+  parent.document.location.href = response.redirect.url
+}
+  
+function stripe3DSStatusChangedHandler(status, source) {
+  if (source.status == 'chargeable') {
+      $.featherlight.current().close();
+      var msg = '3D Secure authentication succeeded: ' + source.id + '. In a real app you would send this source ID to your backend to create the charge.';
+      displayResult(msg);
+  } else if (source.status == 'failed') {
+      $.featherlight.current().close();
+      var msg = '3D Secure authentication failed.';
+      displayResult(msg);
+  } else if (source.status != 'pending') {
+      $.featherlight.current().close();
+      var msg = "Unexpected 3D Secure status: " + source.status;
+      displayResult(msg);
+  }
+}
