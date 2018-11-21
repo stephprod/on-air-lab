@@ -46,6 +46,7 @@ const payment = require('./route/payment')
 const mail_template_generator = require('./route/generate_mail')
 const pay_module_art = require('./route/payment_art_module')
 const pay_module_pro = require('./route/payment_pro_module')
+const pay_intent = require('./route/payment_intent')
 /*Modeles*/
 const User = require('./models/req_user')
 const notifications = require('./models/notifications').actions
@@ -118,6 +119,7 @@ app.use('/', payment)
 app.use('/', mail_template_generator)
 app.use('/', pay_module_art)
 app.use('/', pay_module_pro)
+app.use('/', pay_intent)
 app.get('/', (request, response) => {
     response.locals.session = request.session
 	response.render('pages/index')

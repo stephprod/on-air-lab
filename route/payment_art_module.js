@@ -7,7 +7,7 @@ const uid = require('rand-token').uid
 router.param('id', (req, res, next, token) => {
 	req.session.id_u = token
 	//console.log(req.session.id_u_temp)
-	if (req.session.id_u == req.session.id_u_temp){
+	//if (req.session.id_u == req.session.id_u_temp){
 		User.getUser("id='"+token+"'", (res) => {
 			if (res !== undefined && res){
 				let obj = {}
@@ -19,73 +19,36 @@ router.param('id', (req, res, next, token) => {
 			}
 			next()
 		})
-	}
-	else
-	{
-		res.status(404).send("Not found")
-	}
+	// }
+	// else
+	// {
+	// 	res.status(404).send("Not found")
+	// }
 })
 
 router.route('/payment-module/:id')
     .get((req, res) => {
-        var obj = {}
-        res.locals.session = req.session 
-        if (req.session.token !== undefined && req.query.id_type_m !== undefined){
-            User.get_payment_in_tm(req.query.id_type_m, (result, resolve, reject) =>{
-                if (result.length > 0){
-                    resolve(result)
-                }else{
-                    reject()
-                }
-            }).then((resu) => {
-                obj = resu
-                res.render('pages/payment_module', {paymentObj: obj})
-            }, () => {
-                obj = null
-                res.render('pages/payment_module', {paymentObj: obj})
-            })
-        }else{
-            res.end()
-        }
-    })
-	.post((req, res) => {
-        //console.log(req.headers);
-        //console.log(req.body);
-        if (req.session.token == req.headers["x-access-token"]){
-            var new_tok = uid(16);
-            // stripe.customers.create({
-            //     description: req.body.paymentDesc+' from '+req.body.paymentSrc+' for '+req.body.paymentDest,
-            //     //source: req.body.stripeToken
-            // }, function(err, customer) {
-                //console.log("customer : ")
-                console.log(req.body.stripeToken)
-                stripe.sources.create({
-                    amount: parseFloat(req.body.paymentPrice * 100),
-                    currency: "eur",
-                    type: "three_d_secure",
-                    three_d_secure: {
-                      card: req.body.stripeToken,
-                    },
-                    redirect: {
-                      return_url: "https://shop.example.com/crtA6B28E1"
-                    },
-                }, function(err, source) {
-                    console.log(source.id)
-                    if (source.status == "chargeable"){
-                        //Card ne supportant pas le 3DSecure
-                    }
+        let ret = {}
+        res.locals.session = req.session
+        //console.log(req.query)
+        let new_tok = uid(16);
+        let source = req.query.source.id !== undefined ? req.query.source.id : req.query.source
+        stripe.sources.retrieve(
+            source,
+            function(err, source) {
+                // asynchronously called
+                //console.log("retreive source : ")
+                //console.log(source)
+                if (source.status == "chargeable"){
                     stripe.charges.create({
-                        amount: parseFloat(req.body.paymentPrice * 100),
+                        amount: source.amount,
                         currency: "eur",
-                        source: source.id,
-                        description: req.body.paymentDesc+' from '+req.body.paymentSrc+' for '+req.body.paymentDest,
-                        //customer: customer.id
+                        source: source.id
                     }).then(function(charge) {
                         //console.log("charge : ")
                         //console.log(charge)
                         User.updateUser("jeton='"+new_tok+"' WHERE jeton='"+req.session.token+"'"
                         , (result) => {
-                            let ret = {}
                             if (result > 0)
                             {
                                 req.session.token = new_tok
@@ -94,18 +57,35 @@ router.route('/payment-module/:id')
                             }
                             else
                             {
-                                //let errors = {}
+                                let errors = {}
                                 ret.success = false
                             }
-                            //console.log(ret)   
-                            res.end()
+                            //console.log(ret)
+                            res.render('pages/payment_module', {srcObj: source, chargeObj: charge, result: ret})
+                            //res.end()
                         })
+                    }, function (error){
+                        //console.log("charge : ")
+                        //console.log(error)
+                        ret.success = false
+                        ret.msg = error.outcome.seller_message
+                        //console.log(ret)
+                        res.render('pages/payment_module', {srcObj: source, result: ret})
                     });
-                });
-            //});
-        }else{
-            console.log("Token compromised !")
-            res.end()
-        }
-});
+                }else if (source.status == "failed"){
+                    //Ident. 3D secure failes
+                    ret.success = false
+                    ret.msg = "Identification 3DSecure échouée !"
+                    //console.log(ret)
+                    res.render('pages/payment_module', {srcObj: source, result: ret})
+                }else if(source.status == "canceled" || source.status == "consumed"){
+                    ret.success = false
+                    ret.msg = "Opération annulée !"
+                    //console.log(ret)
+                    res.render('pages/payment_module', {srcObj: source, result: ret})
+                }
+            }
+        );
+        //res.render('pages/payment_module')
+    });
 module.exports = router
