@@ -645,8 +645,11 @@ function on_module_accept_typeMessage_link_click(e){
         desc: div.attr("price-desc"),
         price: div.attr("payment-price"),
         email: user.mail,
+        nom: user.nom,
+        prenom: user.prenom,
         intent: data.result};
-        form_payment(datas)
+        console.log(window.parent);
+        window.parent.form_payment(datas);
       }
     });
   }else{

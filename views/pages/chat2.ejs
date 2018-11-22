@@ -318,10 +318,7 @@
 <!-- jQuery  -->
     <script type="text/javascript" src="/asset/js/jQuery/jquery.min.js"></script>
 	<script type="text/javascript" src="/asset/js/jQuery/jquery-ui.min.js"></script>
-<!-- Payment scripts -->
-	<script type="text/javascript" src="https://js.stripe.com/v3/"></script>
-	<script type="text/javascript" src="https://checkout.stripe.com/checkout.js"></script>
-	<script type="text/javascript" src="/asset/js/payment_secure.js"></script>
+
 <!-- Bootstrap-->
     <script type="text/javascript" src="/asset/bootstrap/bootstrap.min.js"></script>
 
@@ -342,7 +339,9 @@
     	user.id = "<%- locals.session.userId != undefined ?
     		locals.session.userId : "null" %>";
     	user.nom = "<%- locals.session.userName ?
-    		locals.session.userName : "null" %>";
+			locals.session.userName : "null" %>";
+		user.prenom = "<%- locals.session.userFirstName ?
+    		locals.session.userFirstName : "null" %>";
     	user.type = "<%- locals.session.userType ?
 			locals.session.userType : "null" %>";
 		user.pay_module = "<%- locals.session.pay_module ?
