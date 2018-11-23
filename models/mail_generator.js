@@ -44,6 +44,11 @@ class MailTemplate{
 						'Ta demande de rendez-vous liée à une offre a été refusée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
 					param.subject = "Demande de rendez-vous liée à une offre !"
 					break;
+				case "payment_webhook":
+					param.content += action == "accept" ? 'Un paiement a été effectué et validé à destination de <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !' : 
+						'Un paiement a échoué à destination de <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
+					param.subject = "Nouveau paiement !"
+					break;
 				default:
 					param.subject = "Label-onair - Nouveau message !"
 					break;

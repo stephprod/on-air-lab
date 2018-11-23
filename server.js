@@ -44,7 +44,7 @@ const payment_recap = require('./route/payment_recap')
 const mailer = require('./route/send_mail')
 const payment = require('./route/payment')
 const mail_template_generator = require('./route/generate_mail')
-//const pay_module_art = require('./route/payment_art_module')
+const pay_webhook_art = require('./route/paymentArt_webhook')
 const pay_module_pro = require('./route/payment_pro_module')
 const pay_intent = require('./route/payment_intent')
 /*Modeles*/
@@ -64,6 +64,7 @@ var __dirname
 app.use('/asset', express.static(__dirname + '/public'))
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
+
 let sess = session({
   secret: 'SecureKeyStarlife',
   resave: false,
@@ -117,6 +118,7 @@ app.use('/', payment_recap)
 app.use('/', mailer)
 app.use('/', payment)
 app.use('/', mail_template_generator)
+app.use('/', pay_webhook_art)
 //app.use('/', pay_module_art)
 app.use('/', pay_module_pro)
 app.use('/', pay_intent)
@@ -669,7 +671,7 @@ io.sockets.on('connection', function (socket) {
                             msg.payment = obj
                             if (result[0].id_temp != null){
                                 msg.id_temp = result[0].id_temp
-                                msg.request_state = 0
+                                msg.request_state = result[0].acceptation
                             }else{
                                 msg.request_state = -1
                             }

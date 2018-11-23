@@ -31,7 +31,7 @@ router.route('/action-in-module')
 				//console.log(res)
 				res.result.libelle = request.body.action
 				res.result.events = []
-				if (request.body.type_m == "contact_response")
+				if (request.body.type_m == "contact_response" || request.body.type_m == "payment_response")
 					return res
 				else if (request.body.action == "accept")
 					return get_events(request, res)

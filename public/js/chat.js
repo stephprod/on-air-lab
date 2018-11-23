@@ -641,15 +641,17 @@ function on_module_accept_typeMessage_link_click(e){
       url : "/payment-intent/"+user_receiv.id_coresp,
       data: {"price": div.attr("payment-price")},
       success: function(data) {
-        var datas = {id: user_receiv.id_coresp,
-        desc: div.attr("price-desc"),
-        price: div.attr("payment-price"),
-        email: user.mail,
-        nom: user.nom,
-        prenom: user.prenom,
-        intent: data.result};
-        console.log(window.parent);
-        window.parent.form_payment(datas);
+        var datas = {
+          id: user_receiv.id_coresp,
+          desc: div.attr("price-desc"),
+          price: div.attr("payment-price"),
+          email: user.mail,
+          nom: user.nom,
+          prenom: user.prenom,
+          intent: data.result
+        };
+        //console.log(window.parent);
+        window.parent.form_payment(datas, glob_datas);
       }
     });
   }else{
@@ -759,6 +761,11 @@ function on_socket_update_paymentstypemessage(data){
   var content = '';
   if (data.payment.id == 0){
     div.find(".div-submi").empty();
+  }
+  if (data.request_state == 1){
+    div.find(".div-submi").empty();
+    div.find("p.date_creneau").empty();
+    div.find(".div-submi").append("demande acceptée !");
   }
   content += '<p style="background: #18457c;color: white;padding: 12px;">Description ('+data.payment.desc+') </br>';
   content += '<p style="background: #18457c;color: white;padding: 12px;">Prix ('+data.payment.price+' €) </br>';

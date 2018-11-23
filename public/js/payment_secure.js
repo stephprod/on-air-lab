@@ -1,5 +1,9 @@
 //import {update_front_with_msg} from './front-update.js';
-function form_payment(data){
+var socket = io.connect();
+var iframe;
+var session = JSON.parse(sessionStorage.getItem('session'));
+//console.log(session);
+function form_payment(data, glob_datas){
     //console.log(data);
     var stripePublishableKey = 'pk_test_L0T2zWeT0uLcyhZCD1Nfqzx2';
     var currency = 'eur';
@@ -45,6 +49,7 @@ function form_payment(data){
             }
         ).then(function(result) {
             //console.log(result);
+            iframe = $("iframe[src='/chat']")[0] !== undefined ? $("iframe[src='/chat']")[0].contentDocument : null;
             var ret = {};
             if (result.error) {
                 // Display error.message in your UI.
@@ -54,6 +59,22 @@ function form_payment(data){
                 // The payment has succeeded. Display a success message.
                 ret.success = [true];
                 ret.global_msg = ["Paiement effectué avec succès "];
+                $.ajax({
+                    type: "POST",
+                    url: "/action-in-module",
+                    data: glob_datas,
+                    beforeSend: function (req){
+                        req.setRequestHeader("x-access-token", session.token);
+                    },
+                    success: function (data){
+                        if (data.success[0]){
+                            socket.emit("sendNotif", data.notif);
+                            const content = 'demande acceptée !';
+                            $("div[data-id-type-message='"+glob_datas.id_type_message+"']", iframe).find("div.card-chat div.div-submi").empty();
+                            $("div[data-id-type-message='"+glob_datas.id_type_message+"']", iframe).find("div.card-chat div.div-submi").append(content);
+                        }
+                    }
+                })
             }
             //console.log(ret);
             //return ret;
