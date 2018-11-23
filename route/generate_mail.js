@@ -15,8 +15,8 @@ router.route('/generateMail')
 			if (req.query.typeMail == 'classic'){
 				res.render('pages/simple_mail_template', {obj: obj})
 			}
-			else{
-				res.status(404).send("Not found")
+			else if (req.query.typeMail == 'payment'){
+				res.render('pages/simple_mail_payment_template', {obj: obj})
 			}
 		}else
 		{

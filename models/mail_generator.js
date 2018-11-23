@@ -11,7 +11,7 @@ class MailTemplate{
 		param.typeMail = 'classic'
 		param.content = ''
 		if (action != null){
-			param.content = '<p style="margin:0px;">'
+			param.content = '<p>'
 			switch (typeMessage){
 				case "rdv_response":
 					param.content += action == "accept" ? 'Ta demande de rendez-vous a été acceptée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !' : 
@@ -116,38 +116,38 @@ class MailTemplate{
 		param.content += '<p style="margin:0px;"><b>LabelOnAir</b></p>'
 		return param
 	}
-	static generateClassicHtmlPaymentTemplate(userInfoReceiver, action, typeMessage, website_path){
-		let param = {}
+	static generateClassicHtmlPaymentTemplate(userInfoReceiver, action, typeMessage, website_path, amount){
+		let p = {}
 		//console.log(events);
-		//param.events = events
-		param.userInfoReceiv = userInfoReceiver
-		//param.userInfoSend = userInfoSender
-		param.action = action
-		param.typeMessage = typeMessage
-		param.website_path = website_path
-		param.typeMail = 'payment'
-		param.content = ''
+		//p.events = events
+		p.userInfoReceiv = userInfoReceiver
+		//p.userInfoSend = userInfoSender
+		p.action = action
+		p.typeMessage = typeMessage
+		p.website_path = website_path
+		p.typeMail = 'payment'
+		p.content = ''
 		if (action != null){
-			param.content = '<p style="margin:0px;">'
+			p.content = '<p>'
 			switch (typeMessage){
 				case "payment_intent":
-					param.content += action == "accept" ? 'Un paiement a été effectué et validé !' : 
-					'Un paiement a échoué  !'
-					param.subject = "Nouveau paiement !"
+					p.content += action == "accept" ? 'Ton paiement de '+amount+' € a été validé !' : 
+					'Ton paiment de '+amount+' € a été refusé  !'
+					p.subject = "Nouveau paiement !"
 					break;
 				default:
-					param.subject = "Label-onair - Nouveau message !"
+					p.subject = "Label-onair - Nouveau message !"
 					break;
 			}
-			param.content += '</p>'
-			//console.log(param)
+			p.content += '</p>'
+			//console.log(p)
 		}else{
-			param.content = '<p style="margin:0px;">'
-			param.content += '</p>'
+			p.content = '<p>'
+			p.content += '</p>'
 		}
-		param.content += '<p style="margin:0px;">Bien cordialement, </p>'
-		param.content += '<p style="margin:0px;"><b>LabelOnAir</b></p>'
-		return param
+		p.content += '<p style="margin:0px;">Bien cordialement, </p>'
+		p.content += '<p style="margin:0px;"><b>LabelOnAir</b></p>'
+		return p
 	}
 }
 
