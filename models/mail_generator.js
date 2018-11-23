@@ -44,11 +44,6 @@ class MailTemplate{
 						'Ta demande de rendez-vous liée à une offre a été refusée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
 					param.subject = "Demande de rendez-vous liée à une offre !"
 					break;
-				case "payment_webhook":
-					param.content += action == "accept" ? 'Un paiement a été effectué et validé à destination de <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !' : 
-						'Un paiement a échoué à destination de <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
-					param.subject = "Nouveau paiement !"
-					break;
 				default:
 					param.subject = "Label-onair - Nouveau message !"
 					break;
@@ -116,6 +111,39 @@ class MailTemplate{
 					param.content += '<p style="margin:0px;"><b>Début :</b> ' + ev.start + ' <b>Fin :</b> ' + ev.end + '</p>';
 				}
 			}
+		}
+		param.content += '<p style="margin:0px;">Bien cordialement, </p>'
+		param.content += '<p style="margin:0px;"><b>LabelOnAir</b></p>'
+		return param
+	}
+	static generateClassicHtmlPaymentTemplate(userInfoReceiver, action, typeMessage, website_path){
+		let param = {}
+		//console.log(events);
+		//param.events = events
+		param.userInfoReceiv = userInfoReceiver
+		//param.userInfoSend = userInfoSender
+		param.action = action
+		param.typeMessage = typeMessage
+		param.website_path = website_path
+		param.typeMail = 'payment'
+		param.content = ''
+		if (action != null){
+			param.content = '<p style="margin:0px;">'
+			switch (typeMessage){
+				case "payment_intent":
+					param.content += action == "accept" ? 'Un paiement a été effectué et validé !' : 
+					'Un paiement a échoué  !'
+					param.subject = "Nouveau paiement !"
+					break;
+				default:
+					param.subject = "Label-onair - Nouveau message !"
+					break;
+			}
+			param.content += '</p>'
+			//console.log(param)
+		}else{
+			param.content = '<p style="margin:0px;">'
+			param.content += '</p>'
 		}
 		param.content += '<p style="margin:0px;">Bien cordialement, </p>'
 		param.content += '<p style="margin:0px;"><b>LabelOnAir</b></p>'

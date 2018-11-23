@@ -63,7 +63,7 @@ app.set('view engine', 'ejs')
 var __dirname
 app.use('/asset', express.static(__dirname + '/public'))
 app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+//app.use(bodyParser.json())
 
 let sess = session({
   secret: 'SecureKeyStarlife',
@@ -119,7 +119,6 @@ app.use('/', mailer)
 app.use('/', payment)
 app.use('/', mail_template_generator)
 app.use('/', pay_webhook_art)
-//app.use('/', pay_module_art)
 app.use('/', pay_module_pro)
 app.use('/', pay_intent)
 app.get('/', (request, response) => {
