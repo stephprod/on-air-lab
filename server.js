@@ -45,6 +45,7 @@ const module_actions = require('./route/action_in_module')
 const payment_recap = require('./route/payment_recap')
 const mailer = require('./route/send_mail')
 const payment = require('./route/payment')
+const notifications = require('./models/notifications').x
 const mail_template_generator = require('./route/generate_mail')
 /*Modeles*/
 const User = require('./models/req_user')
@@ -148,7 +149,26 @@ function getPreviousMsgAdmin(len, id_user, id_room, callback)
 {
     User.getFirstPreviousMsgAdmin(id_room, id_user, len, callback)
 }
+var event = [
+    {
+        start: '01/12/1990 15:00',
+        end: '01/12/1990 15:50'
+    },
+    {
+        start: '01/12/1990 17:00',
+        end: '01/12/1990 17:50'
+    },
+]
+var userInfo = [{
+    id: 1,
+    prenom: 'nilo'
+}];
+notifications(event,userInfo,'a','b','c');
 io.sockets.on('connection', function (socket) {
+    socket.on('sendnotif', (e) => {
+
+        console.log('server'+e);
+    })
     // QUAND LE USER SE CO DANS LOGIN ET ARRIVE SUR LA PAGE DU CHAT
     socket.on('adduser', function(id, type){
         let user = {}
@@ -156,7 +176,6 @@ io.sockets.on('connection', function (socket) {
         user.userType = type;
         socket.user = user;
         console.log("Socket ID du GARS "+socket.id);
-        let p
         if (type == 2 || type == 1 || type == 3){
                 User.getRoomForPro('`rooms`.`with_userid`='+id+' GROUP BY `rooms`.`id_room`'
                 ,(result) => {

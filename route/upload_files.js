@@ -1,12 +1,10 @@
 const express = require('express')
 const User = require('../models/req_user')
-//let fileUpload = require('express-fileupload')
 const fs = require('fs')
 const router = express.Router()
 
 router.route('/upload-files')
 	.get((request, response) => {
-		//DEBUG
 		response.locals.session = request.session
 		if (request.session.userId == undefined) {
 			response.render('pages/index')

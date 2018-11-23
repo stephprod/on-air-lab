@@ -1,153 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Page Title</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.6/featherlight.min.css" />
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="https://checkout.stripe.com/checkout.js"></script>
+  <script src="https://js.stripe.com/v2/"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.6/featherlight.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
 <style>
-.StripeElement {
-  background-color: white;
-  height: 40px;
-  padding: 10px 12px;
-  border-radius: 4px;
-  border: 1px solid transparent;
-  box-shadow: 0 1px 3px 0 #e6ebf1;
-  -webkit-transition: box-shadow 150ms ease;
-  transition: box-shadow 150ms ease;
+#processing {
+  display: none;
 }
 
-.StripeElement--focus {
-  box-shadow: 0 1px 3px 0 #cfd7df;
+#result {
+  padding: 15px;
+  display: none;
 }
 
-.StripeElement--invalid {
-  border-color: #fa755a;
-}
-
-.StripeElement--webkit-autofill {
-  background-color: #fefde5 !important;
-}
-.form-row {
-    width: 70%;
-    float: left;
-}
-label {
-    font-weight: 500;
-    font-size: 14px;
-    display: block;
-    margin-bottom: 8px;
-}
-button {
-    border: none;
-    border-radius: 4px;
-    outline: none;
-    text-decoration: none;
-    color: #fff;
-    background: #32325d;
-    white-space: nowrap;
-    display: inline-block;
-    height: 40px;
-    line-height: 40px;
-    padding: 0 14px;
-    box-shadow: 0 4px 6px rgba(50, 50, 93, .11), 0 1px 3px rgba(0, 0, 0, .08);
-    border-radius: 4px;
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: 0.025em;
-    text-decoration: none;
-    -webkit-transition: all 150ms ease;
-    transition: all 150ms ease;
-    margin-left: 12px;
-    margin-top: 28px;
-}
+#iframe-container iframe {
+  width: 100%;
+  height: 400px;
+}  
 </style>
-<form id="payment-form">
-  <div class="form-row">
-    <label for="card-element">
-      Credit or debit card
-    </label>
-    <div id="card-element">
-      <!-- A Stripe Element will be inserted here. -->
-    </div>
-
-    <!-- Used to display form errors. -->
-    <div id="card-errors" role="alert"></div>
-  </div>
-
-  <button>Submit Payment</button>
-</form>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
-<script src="https://js.stripe.com/v3/"></script>
 <script>
-// Create a Stripe client.
-var stripe = Stripe('pk_test_L0T2zWeT0uLcyhZCD1Nfqzx2');
+  $(document).ready(function(){
+stripePublishableKey = 'pk_test_L0T2zWeT0uLcyhZCD1Nfqzx2';
+var amount = 1099;
+var currency = 'eur';
 
-// Create an instance of Elements.
-var elements = stripe.elements();
+Stripe.setPublishableKey(stripePublishableKey);
 
-// Custom styling can be passed to options when creating an Element.
-// (Note that this demo uses a wider set of styles than the guide below.)
-var style = {
-  base: {
-    color: '#32325d',
-    lineHeight: '18px',
-    fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-    fontSmoothing: 'antialiased',
-    fontSize: '16px',
-    '::placeholder': {
-      color: '#aab7c4'
-    }
-  },
-  invalid: {
-    color: '#fa755a',
-    iconColor: '#fa755a'
-  }
-};
+// Create Checkout's handler
+var handler = StripeCheckout.configure({
+  key: stripePublishableKey,
+  image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
+  locale: 'auto',
+  allowRememberMe: false,
+  token: function(token) {
+    // use Checkout's card token to create a card source
+    Stripe.source.create({
+      type: 'card',
+      token: token.id
+    }, stripeCardResponseHandler);
 
-// Create an instance of the card Element.
-var card = elements.create('card', {style: style});
-
-// Add an instance of the card Element into the `card-element` <div>.
-card.mount('#card-element');
-
-// Handle real-time validation errors from the card Element.
-card.addEventListener('change', function(event) {
-  var displayError = document.getElementById('card-errors');
-  if (event.error) {
-    displayError.textContent = event.error.message;
-  } else {
-    displayError.textContent = '';
+    displayProcessing();
   }
 });
 
-// Handle form submission.
-var form = document.getElementById('payment-form');
-form.addEventListener('submit', function(event) {
-  event.preventDefault();
-
-  stripe.createToken(card).then(function(result) {
-    if (result.error) {
-      // Inform the user if there was an error.
-      var errorElement = document.getElementById('card-errors');
-      errorElement.textContent = result.error.message;
-    } else {
-      // Send the token to your server.
-      console.log(result.token);
-      stripeTokenHandler(result.token);
-    }
+$('#customButton').on('click', function(e) {
+  // Open Checkout with further options:
+  handler.open({
+    name: 'Stripe.com',
+    description: '2 widgets',
+    amount: amount,
+    currency: currency
   });
+  e.preventDefault();
 });
-function stripeTokenHandler(token) {
-  // Insert the token ID into the form so it gets submitted to the server
-  var form = document.querySelector('form');
-  var hiddenInput = document.createElement('input');
-  hiddenInput.setAttribute('type', 'hidden');
-  hiddenInput.setAttribute('name', 'stripeToken');
-  hiddenInput.setAttribute('value', token.id);
-  form.appendChild(hiddenInput);
-  var formData = new FormData(form);
-  //formData.append("stripeToken", token.id);
 
-      axios.post("http://localhost:4000/payment", formData, {
-        headers: {"x-access-token": "<%- locals.session.token %>"}
-      }).then(res => {
-          console.log('test axios ok')
-      })
-  // Submit the form
+// Close Checkout on page navigation:
+$(window).on('popstate', function() {
+  handler.close();
+});
+
+function displayProcessing() {
+  document.getElementById("processing").style.display = 'block';
+
+  document.getElementById("charge-form").style.display = 'none';
+  document.getElementById("result").style.display = 'none';
 }
 
+function displayResult(resultText) {
+  document.getElementById("processing").style.display = 'none';
+
+  document.getElementById("charge-form").style.display = 'block';
+  document.getElementById("result").style.display = 'block';
+  document.getElementById("result").innerText = resultText;
+}
+
+function stripeCardResponseHandler(status, response) {
+  if (response.error) {
+    var message = response.error.message;
+    displayResult("Unexpected card source creation response status: " + status + ". Error: " + message);
+    return;
+  }
+
+  // check if the card supports 3DS
+  if (response.card.three_d_secure == 'not_supported') {
+    displayResult("This card does not support 3D Secure.");
+    return;
+  }
+  
+  // since we're going to use an iframe in this example, the
+  // return URL will only be displayed briefly before the iframe
+  // is closed. Set it to a static page on your site that says
+  // something like "Please wait while your transaction is processed"
+  var returnURL = "https://shop.example.com/static_page";
+
+  // create the 3DS source from the card source
+  Stripe.source.create({
+    type: 'three_d_secure',
+    amount: 1099,
+    currency: "eur",
+    three_d_secure: {
+      card: response.id
+    },
+    redirect: {
+      return_url: returnURL,
+    }
+  }, stripe3DSecureResponseHandler);
+}
+
+function stripe3DSecureResponseHandler(status, response) {
+  if (response.error) {
+    var message = response.error.message;
+    displayResult("Unexpected 3DS source creation response status: " + status + ". Error: " + message);
+    return;
+  }
+
+  // check the 3DS source's status
+  if (response.status == 'chargeable') {
+    displayResult("This card does not support 3D Secure authentication, but liability will be shifted to the card issuer.");
+    return;
+  } else if (response.status != 'pending') {
+    displayResult("Unexpected 3D Secure status: " + response.status);
+    return;
+  }
+
+  // start polling the source (to detect the change from pending
+  // to either chargeable or failed)
+  Stripe.source.poll(
+    response.id,
+    response.client_secret,
+    stripe3DSStatusChangedHandler
+  );
+
+  // open the redirect URL in an iframe
+  // (in this example we're using Featherlight for convenience,
+  // but this is of course not a requirement)
+  $.featherlight({
+    iframe: response.redirect.url,
+    iframeWidth: '800',
+    iframeHeight: '600'
+  });
+
+  console.log(response);
+}
+
+function stripe3DSStatusChangedHandler(status, source) {
+  if (source.status == 'chargeable') {
+    $.featherlight.current().close();
+    var msg = '3D Secure authentication succeeded: ' + source.id + '. In a real app you would send this source ID to your backend to create the charge.';
+    displayResult(msg);
+  } else if (source.status == 'failed') {
+    $.featherlight.current().close();
+    var msg = '3D Secure authentication failed.';
+    displayResult(msg);
+  } else if (source.status != 'pending') {
+    $.featherlight.current().close();
+    var msg = "Unexpected 3D Secure status: " + source.status;
+    displayResult(msg);
+  }
+}
+})
 </script>
+<body>
+    <div class="container">
+
+        <div class="page-header">
+          <h1>Stripe 3D Secure demo</h1>
+          <p class="lead">
+            This page demonstrates Stripe's sources API for 3D Secure payments.
+          </p>
+        </div>
+      
+        <p id="result" class="bg-info"></p>
+      
+        <form class="form-horizontal" id="charge-form">
+          <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+              <button id="customButton" class="btn btn-default">Purchase with 3D Secure</button>
+            </div>
+          </div>
+        </form>
+      
+        <div id="processing">
+          <p class="text-center">Processing...</p>
+        </div>
+      
+        <div id="modal" class="modal fade" tabindex="-1" role="dialog">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-body" id="iframe-container">
+              </div>
+            </div>
+          </div>
+        </div>
+      
+        <h2>Test Cards</h2>
+        <table id="test-card-numbers" class="table">
+          <tr>
+            <td>
+              4242424242424242
+            </td>
+            <td>
+              3D Secure authentication not supported, but will charge successfully
+            </td>
+          </tr>
+          <tr>
+            <td>
+              4000000000003055
+            </td>
+            <td>
+              3D Secure authentication supported, will go through the full 3D Secure flow
+            </td>
+          </tr>
+          <tr>
+            <td>
+              4000000000003063
+            </td>
+            <td>
+              3D Secure authentication required, charge will be declined without it
+            </td>
+          </tr>
+        </table>
+      </div>
+      
+</body>
+</html>
