@@ -300,3 +300,17 @@ import {update_front_with_msg, update_front_with_errors, update_front_with_succe
 		$("#switcher-button2").trigger('click');
 		$($('iframe[src="/chat"]')[0].contentDocument).find(".friend:nth-child(1)").trigger('click');
 	});
+
+
+															// GESTION DES HISTORIQUE PAIEMENT / ABONNEMENT
+
+
+$('.btn-filter').on('click', function () {
+	var $target = $(this).data('target');
+	if ($target != 'all') {
+	$('.table tr').css('display', 'none');
+	$('.table tr[data-status="' + $target + '"]').fadeIn('slow');
+	} else {
+		$('.table tr').css('display', 'none').fadeIn('slow');
+	}
+});

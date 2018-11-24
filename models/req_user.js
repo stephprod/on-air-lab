@@ -968,11 +968,12 @@ class User{
         });
     }
     static delete_document(tab, cb){
-        let r = db.query('DELETE FROM document WHERE id_profil = ? AND type="image"', [tab], (err, result) => {
+        let r = db.query('DELETE FROM document WHERE id_profil = ? AND path = ?', [tab[0], tab[1]], (err, result) => {
             if(err){
                 console.log(r.sql)
                 throw err;
             }
+            console.log(r.sql)
             cb(result.affectedRows);
         });
     }

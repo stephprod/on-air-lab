@@ -137,7 +137,42 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-
+<!-- pro-payment modal -->
+<div class="modal fade apartment-modal" id="pro-payment-modal">
+  <div class="modal-dialog" style="width: 35%;">
+    <div class="modal-content">
+      <div class="modal-body">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <div class="modal-title logout-msg">
+          <h1>Paiements<span class="special-color">.</span></h1>
+          <div class="short-title-separator"></div>
+        </div>
+        <p id="result" class="bg-info" style="display: none;padding: 15px;font-size: 17px;text-align: center;color: black;"></p>
+        <div id="processing" style="display:none;">
+          <p class="text-center">Processing...</p>
+        </div>
+      <% var status = false; //(Function) check if abonnement is actif
+      if (status){ %>
+        <a href="#" class="button-primary button-shadow button-full" id="customButton">
+          <span>Modifier infos bancaire</span>
+          <div class="button-triangle"></div>
+          <div class="button-triangle2"></div>
+          <div class="button-icon"><i class="fa fa-user"></i></div>
+        </a>
+      <p class="bg-warning" style="display: block;padding: 15px;font-size: 17px;text-align: center;color: black;">Votre prochain prélèvement seras effectué le <strong style="color: #d9534f;">02/04/2019</strong></p>
+      <% }else { %>
+        <a href="#" class="button-primary button-shadow button-full" id="customButton">
+          <span>Créer un abonnement</span>
+          <div class="button-triangle"></div>
+          <div class="button-triangle2"></div>
+          <div class="button-icon"><i class="fa fa-user"></i></div>
+        </a>
+      <% } %>
+      <% include historique_abo %>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 <!-- jQuery  -->
   <script type="text/javascript" src="/asset/js/jQuery/jquery.min.js"></script>
 <script type="text/javascript" src="/asset/js/jQuery/jquery-ui.min.js"></script>

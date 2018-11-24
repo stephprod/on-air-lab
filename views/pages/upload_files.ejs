@@ -350,16 +350,27 @@
 							</a>
 						</div>
 					</div>
-				</div>
-					<div class="row margin-top-60"></div>
+					<div class="row col-xs-12 margin-top-60" style="display:inline-block; padding:5px;background: whitesmoke;" id="docImg">
 					<% for (k in locals.etabObj){ %>
-						<p>
-							<%= locals.etabObj[k].path %>
-						</p>
-					<% } %>
-				</div>			
+					<% if(locals.etabObj[k].path){ %>
+					<div class="file-preview-thumbnails">
+						<div class="file-preview-frame" id="preview-1541678623004-0" data-fileindex="0">
+						   <img src="<%= locals.etabObj[k].path %>" class="file-preview-image" title="Capture.PNG" alt="Capture.PNG" style="width:auto;height:160px;">
+						   <div class="file-thumbnail-footer">
+							   <div class="file-actions">
+									<div class="file-footer-buttons" style="position: absolute; right: 0; bottom: 0;">
+										<button type="button" onclick="removeFile('<%= locals.etabObj[k].path %>')" style="background: #c6454a;" class="kv-file-remove btn btn-xs btn-default" title="Remove file"><i class="glyphicon glyphicon-trash" style="color:#ffff"></i></button>
+									</div>
+									<div class="clearfix"></div>
+								</div>
+							</div>
+						</div>
+					</div><% }} %>
+				</div>
 			</div>
+			</div>			
 		</div>
+	</div>
 	</section>
 	<footer class="small-cont">
 		<div class="container">
@@ -505,9 +516,9 @@
 <!-- Bootstrap-->
     <script type="text/javascript" src="/asset/bootstrap/bootstrap.min.js"></script>
 
-<!-- Google Maps 
+<!-- Google Maps -->
 	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDfDCV5hXiPamCIT8_vwGXuzimLQ9MF76g&amp;sensor=false&amp;libraries=places"></script>
--->
+	
 <!-- plugins script -->
 	<script type="text/javascript" src="/asset/js/plugins.js"></script>
 
@@ -516,51 +527,54 @@
     <script type="text/javascript" src="/asset/js/apartment.js"></script>
     <script type="text/javascript">
     	function on_upload_imgs_link_click(event){
-    		event.preventDefault();
+			event.preventDefault();
 			var link = $(event.target).parents("a[data-action='images']");
 			if (link.length == 0)
 				link = $(event.target);
 			var div = $("div#"+$(link[0]).data("form"));
 			var files = div.find("input[name='uploaded_file']");
-			//var f = [];
 			var datas = {}
 			datas.file_profileId = div.data("profil");
-			//datas.append("id_profil", div.data("profil"));
+			$(files[0]).fileinput("upload");
+			$.ajax({
+				type: "POST",
+				url: '/upload-files',
+				data: datas,
+				success: function(data){
+				}
+			})
+		}
+		function removeFile(path_img){    		
+			event.preventDefault();
+			var nodeImg = event.target.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode
+			var datas = {}
+			datas.file_profileId = <%= locals.etabObj[0].id_profil %>;
+			datas.path = path_img
 			$.ajax({
 				type: "POST",
 				url: '/delete-in-serv',
 				data: datas,
-				beforeSend: function (req){
-					req.setRequestHeader("x-access-token", "<%- locals.session.token %>");
-				},
-				success: function(data){
-					//console.log(`"SERV" - ${data.success}`);
+				success : function(data){
 					$.ajax({
 						type: "POST",
 						url: '/delete-files',
 						data: datas,
-						beforeSend: function (req){
-							req.setRequestHeader("x-access-token", "<%- locals.session.token %>");
-						},
 						success: function(data){
-							//console.log(`"BDD" - ${data.success}`);
-							$(files[0]).fileinput("upload");
+							nodeImg.remove();
 						}
-					})
+					});
 				}
-			})
-	    }
+			});
+		}
 	    function single_file_preupload(e, data, previewId, index){
 	    	var form = data.form, files = data.files, extra = data.extra;
-	        //response = data.response, reader = data.reader;
 	        form.append("file_profileId", $("div#images").data("profil"));
-		    console.log('File pre upload triggered');
 	    }
 	    function single_file_uploaded(e, data, previewId, index){
 	    	var form = data.form, files = data.files, extra = data.extra;
-		    //response = data.response, reader = data.reader;
-		    console.log('File uploaded triggered');
-		    console.log(data.response);
+			var content = '<div class="file-preview-thumbnails"><div class="file-preview-frame" id="preview-1541678623004-0" data-fileindex="0"><img src='+data.response.path+' class="file-preview-image" title="Capture.PNG" alt="Capture.PNG" style="width:auto;height:160px;"><div class="file-thumbnail-footer"><div class="file-actions"><div class="file-footer-buttons" style="position: absolute; right: 0; bottom: 0;"><button type="button" onclick="removeFile("path a checker")" style="background: #c6454a;" class="kv-file-remove btn btn-xs btn-default" title="Remove file"><i class="glyphicon glyphicon-trash" style="color:#ffff"></i></button></div><div class="clearfix"></div></div></div></div></div>';
+			$('#docImg').append(content);
+			console.log(data.response)
 	    }
     	var upload_imgs_link = $("a[data-action]");
     	upload_imgs_link.on("click", on_upload_imgs_link_click);
@@ -571,8 +585,6 @@
     <script>
     	var user = {};
 		var session = {};
-		session.token = "<%- locals.session.token != undefined ? 
-			locals.session.token : "null" %>";
 		user.id = "<%- locals.session.userId != undefined ? 
 			locals.session.userId : "null" %>";
 		user.nom = "<%- locals.session.userName ? 
@@ -585,6 +597,4 @@
     </script>
     <script type="module" src="/asset/js/logout.js"></script>
 	</body>
-
-<!-- Mirrored from apartment-html.chart.civ.pl/my-profile.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 21 Aug 2018 17:53:43 GMT -->
 </html>
