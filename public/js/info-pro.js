@@ -314,3 +314,110 @@ $('.btn-filter').on('click', function () {
 		$('.table tr').css('display', 'none').fadeIn('slow');
 	}
 });
+var price = 5000 * 100;
+$(document).on('click', '#customButton', function(e) {
+	e.preventDefault();
+    sendPlan();
+})
+
+function sendPlan() {
+	var stripePublishableKey = 'pk_test_L0T2zWeT0uLcyhZCD1Nfqzx2';
+	var currency = 'eur';
+	var data = {
+		email: 'nilo@getMaxListeners.com',
+		desc: 'test plan',
+		nom: 'blemand',
+		prenom: 'nilo',
+		price: price
+	};
+	var stripe = Stripe(stripePublishableKey, {
+		betas: ['payment_intent_beta_3']
+	});
+	// Create Checkout's handler
+	var handler = StripeCheckout.configure({
+		key: stripePublishableKey,
+		image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
+		locale: 'auto',
+		allowRememberMe: false,
+		email: data.email,
+		token: handlePlanToken
+	});
+	// Open Checkout with further options:
+	handler.open({
+		name: 'Stripe.com',
+		description: data.desc,
+		currency: currency,
+	});
+	function handlePlanToken(token) {
+		stripe.createSource({
+			type: 'card',
+			token: token.id
+		}).then((result) => {
+			console.log(result);
+			console.log(token)
+			//data.stripeToken = token.id;
+			check_3d_secure(result);
+		});
+		// console.log(token);
+		// data.stripeToken = token.id;
+		// $.ajax({
+		// 	type: "POST",
+		// 	url: "/payment",
+		// 	data: data,
+		// 	beforeSend: function (req) {
+		// 		req.setRequestHeader("x-access-token", session.token);
+		// 	},
+		// 	success: function (data) {
+		// 		console.log('plan souscription ok!! ' + data);
+		// 	}
+		// });
+	}
+	function check_3d_secure(response) {
+		var returnURL = "http://localhost:4000/payment";
+		//console.log(response)
+		// check the 3DS source's status
+		if (response.error) {
+			var message = response.error.message;
+			displayResult("Unexpected 3DS source creation response status: " + status + ". Error: " + message);
+			return;
+		}
+		if (response.source.card.three_d_secure == 'not_supported') {
+			displayResult("This card does not support 3D Secure authentication, but liability will be shifted to the card issuer.");
+			data.stripeToken = response.source.id;
+			$.ajax({
+				type: "POST",
+				url: "/payment",
+				data: data,
+				beforeSend: function (req) {
+					req.setRequestHeader("x-access-token", session.token);
+				},
+				success: function (data) {
+					console.log('plan souscription ok!! ' + data);
+				}
+			});
+			return;
+		}else if(response.source.card.three_d_secure == 'required'){
+			stripe.createSource({
+				type: 'three_d_secure',
+				amount: price,
+				currency: "eur",
+				three_d_secure: {
+				  card: response.source.id
+				},
+				redirect: {
+				  return_url: returnURL,
+				},
+			  }).then((response) =>{
+				  console.log('response: ')
+				  console.log(response)
+				  window.location.assign(response.source.redirect.url)
+			});
+		} else if (response.source.status != 'pending') {
+			displayResult("Unexpected 3D Secure status: " + response.source.status);
+			return;
+		}
+  }
+}
+function displayResult(msg){
+	console.log(msg);
+}

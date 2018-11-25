@@ -7,7 +7,6 @@ router.param('id', (req, res, next, token) => {
     req.session.id_u = token
     //const intent
 	//console.log(req.session.id_u_temp)
-	//if (req.session.id_u == req.session.id_u_temp){
     User.getUser("id='"+token+"'", (res) => {
         if (res !== undefined && res){
             let obj = {}
@@ -19,11 +18,6 @@ router.param('id', (req, res, next, token) => {
         }
         next()
     })
-	// }
-	// else
-	// {
-	// 	res.status(404).send("Not found")
-	// }
 })
 
 router.route('/payment-intent/:id')
@@ -31,7 +25,7 @@ router.route('/payment-intent/:id')
         let ret = {}
         ret.result = {}
         stripe.paymentIntents.create({
-            amount: parseFloat(req.body.price) * 100,
+             amount: parseFloat(req.body.price) * 100,
             currency: 'eur',
             allowed_source_types: ['card'],
         }).then((result) => {

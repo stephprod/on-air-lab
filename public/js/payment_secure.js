@@ -28,11 +28,6 @@ function form_payment(data, glob_datas){
       currency: currency,
       token: handleToken
     }); 
-    // Close Checkout on page navigation:
-    // $(window).on('popstate', function() {
-    //   handler.close();
-    // });
-    //e.preventDefault(); 
     function handleToken(token){
         tok = token;
         //console.log(token);
@@ -103,5 +98,4 @@ var updateFront = function (ret, dataName){
             elem.after(content);		
         }
     });
-    //$('[data-toggle="tooltip"]').tooltip();
 };
