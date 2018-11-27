@@ -355,19 +355,6 @@ function sendPlan() {
 			//data.stripeToken = token.id;
 			check_3d_secure(result);
 		});
-		// console.log(token);
-		// data.stripeToken = token.id;
-		// $.ajax({
-		// 	type: "POST",
-		// 	url: "/payment",
-		// 	data: data,
-		// 	beforeSend: function (req) {
-		// 		req.setRequestHeader("x-access-token", session.token);
-		// 	},
-		// 	success: function (data) {
-		// 		console.log('plan souscription ok!! ' + data);
-		// 	}
-		// });
 	}
 	function check_3d_secure(response) {
 		var returnURL = "http://localhost:4000/payment";
@@ -392,26 +379,24 @@ function sendPlan() {
 					console.log('plan souscription ok!! ' + data);
 				}
 			});
-			return;
 		}else if(response.source.card.three_d_secure == 'required'){
 			stripe.createSource({
 				type: 'three_d_secure',
 				amount: price,
 				currency: "eur",
 				three_d_secure: {
-				  card: response.source.id
+				card: response.source.id
 				},
 				redirect: {
-				  return_url: returnURL,
+					return_url: returnURL,
 				},
-			  }).then((response) =>{
-				  console.log('response: ')
-				  console.log(response)
-				  window.location.assign(response.source.redirect.url)
+				}).then((response) =>{
+					console.log('response: ')
+					console.log(response)
+					window.location.assign(response.source.redirect.url)
 			});
 		} else if (response.source.status != 'pending') {
 			displayResult("Unexpected 3D Secure status: " + response.source.status);
-			return;
 		}
   }
 }
