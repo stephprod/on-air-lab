@@ -373,7 +373,6 @@ function sendPlan() {
 		// });
 	}
 	function check_3d_secure(response) {
-		var returnURL = "http://localhost:4000/payment";
 		//console.log(response)
 		// check the 3DS source's status
 		if (response.error) {
@@ -396,22 +395,31 @@ function sendPlan() {
 				}
 			});
 			return;
-		}else if(response.source.card.three_d_secure == 'required'){
-			stripe.createSource({
-				type: 'three_d_secure',
-				amount: price,
-				currency: "eur",
-				three_d_secure: {
-				  card: response.source.id
-				},
-				redirect: {
-				  return_url: returnURL,
-				},
-			  }).then((response) =>{
-				  console.log('response: ')
-				  console.log(response)
-				  window.location.assign(response.source.redirect.url)
-			});
+		}else if(response.source.card.three_d_secure == 'required' || response.source.card.three_d_secure == 'optional' ||response.source.card.three_d_secure == 'recommended'){
+			$.ajax({
+				type : 'GET',
+				url : 'http://localhost:4000/payment',
+				data : {source : response.source.id},
+				success : function(data){
+					var returnURL = "http://localhost:4000/plan3dsecure?cust="+data.customer.id;
+					stripe.createSource({
+						type: 'three_d_secure',
+						amount: price,
+						currency: "eur",
+						three_d_secure: {
+							customer : data.customer.id,
+						  card: response.source.id
+						},
+						redirect: {
+						  return_url: returnURL,
+						},
+					  }).then((response) =>{
+						  console.log('response: ')
+						  console.log(response)
+						  window.location.assign(response.source.redirect.url)
+					});
+				}
+			})
 		} else if (response.source.status != 'pending') {
 			displayResult("Unexpected 3D Secure status: " + response.source.status);
 			return;
