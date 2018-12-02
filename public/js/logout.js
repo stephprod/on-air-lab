@@ -20,6 +20,12 @@ function logout_link_click(e){
 			}
 			else{
 				update_front_with_success();
+				var usr = GoogleAuth.currentUser.get();
+				console.log(usr);
+				if (usr.w3 !== undefined) {
+					console.log(usr);
+					revokeAccess();
+				}
 				document.location.reload();
 			}
 		}

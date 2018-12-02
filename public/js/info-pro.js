@@ -311,7 +311,7 @@ $('.btn-filter').on('click', function () {
 		$('.table tr').css('display', 'none').fadeIn('slow');
 	}
 });
-var price = 5000 * 100;
+var price = 20.85 * 100;
 $(document).on('click', '#customButton', function(e) {
 	e.preventDefault();
     sendPlan();
@@ -350,8 +350,8 @@ function sendPlan() {
 			type: 'card',
 			token: token.id
 		}).then((result) => {
-			console.log(result);
-			console.log(token)
+			// console.log(result);
+			// console.log(token);
 			//data.stripeToken = token.id;
 			check_3d_secure(result);
 		});
@@ -384,7 +384,7 @@ function sendPlan() {
 				url : 'http://localhost:4000/payment',
 				data : {source : response.source.id},
 				success : function(data){
-					var returnURL = "http://localhost:4000/plan3dsecure?cust="+data.customer.id;
+					var returnURL = "http://localhost:4000/plan3dsecure?cust="+data.customer.id+"&amount="+price;
 					stripe.createSource({
 						type: 'three_d_secure',
 						amount: price,
@@ -397,8 +397,8 @@ function sendPlan() {
 						  return_url: returnURL,
 						},
 					  }).then((response) =>{
-						  console.log('response: ')
-						  console.log(response)
+						//   console.log('response: ')
+						//   console.log(response)
 						  window.location.assign(response.source.redirect.url)
 					});
 				}

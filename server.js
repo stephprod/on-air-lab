@@ -48,6 +48,7 @@ const pay_webhook_art = require('./route/paymentArt_webhook')
 const pay_module_pro = require('./route/payment_pro_module')
 const pay_intent = require('./route/payment_intent')
 const plan3dsecure = require('./route/plan3dsecure')
+const loginFast = require('./route/login_fast')
 /*Modeles*/
 const User = require('./models/req_user')
 const notifications = require('./models/notifications').actions
@@ -123,6 +124,7 @@ app.use('/', pay_webhook_art)
 app.use('/', pay_module_pro)
 app.use('/', pay_intent)
 app.use('/', plan3dsecure)
+app.use('/', loginFast)
 app.get('/', (request, response) => {
     response.locals.session = request.session
 	response.render('pages/index')

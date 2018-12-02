@@ -5,53 +5,48 @@ const router = express.Router()
 
 router.route('/payment')
     .get((req, res) => {
-        console.log(req.query)
+        //console.log(req.query)
         res.locals.session = req.session
-            stripe.customers.create({
-                description: `pro prenom : ${req.session.userFirstName} nom : ${req.session.userName}`,
-                source: req.query.source
-            }, function(err, customer) {
-                console.log("customer : ")
-                console.log(customer)
-                console.log(err)
-                    res.send({customer : customer})                
-            })
-        //res.render('pages/info-pro2')
+        stripe.customers.create({
+            description: `${req.session.userFirstName} ${req.session.userName}`,
+            source: req.query.source
+        }, function(err, customer) {
+            console.log("customer : ")
+            console.log(customer)
+            console.log(err)
+            res.send({customer : customer})                
+        })
     })
 	.post((req, res) => {
-            stripe.customers.create({
-                description: `pro prenom : ${req.body.prenom} nom : ${req.body.nom}`,
-                source: req.body.stripeToken
-            }, function(err, customer) {
-                    console.log("customer : ")
-                    console.log(customer)
-                    console.log(err)
-                        // asynchronously called
-                        stripe.plans.create({
-                            amount: parseFloat(req.body.price),
-                            interval: "month",
-                            product: {
-                            name: "Gold special"
-                            },
-                            currency: "eur",
-                        }, function(err, plan) {
-                            console.log(err)
-                            console.log("plan : ")
-                            console.log(plan);
-                            stripe.subscriptions.create({
-                                customer: customer.id,
-                                items: [
-                                    {
-                                        plan: plan.id,
-                                    },
-                                ]
-                                }, function(err, subscription) {
-                                    console.log("subscription : ")
-                                    console.log(subscription)
-                                    console.log(err)
-                                    res.end()
-                                });
-                        });
-                    });
-});
+        stripe.customers.create({
+            description: `${req.body.prenom} ${req.body.nom}`,
+            source: req.body.stripeToken
+        }, function(err, customer) {
+            // console.log("customer : ")
+            // console.log(customer)
+            // console.log(err)
+            // asynchronously called
+            stripe.plans.create({
+                amount: parseFloat(req.body.price),
+                interval: "month",
+                product: "prod_E3Lh8uPFzCj9gs",
+                currency: "eur",
+            }, function(err, plan) {
+                // console.log(err)
+                // console.log("plan : ")
+                // console.log(plan);
+                stripe.subscriptions.create({
+                    customer: customer.id,
+                    items: [{
+                        plan: plan.id,
+                    }]
+                }, function(err, subscription) {
+                    // console.log("subscription : ")
+                    // console.log(subscription)
+                    // console.log(err)
+                    res.end()
+                });
+            });
+        });
+    });
 module.exports = router

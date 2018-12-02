@@ -4,32 +4,29 @@ const router = express.Router()
 
 router.route('/plan3dsecure')
     .get((req, res) => {
-                    stripe.plans.create({
-                        amount: 145,
-                        interval: "month",
-                        product: {
-                        name: "Gold special"
-                        },
-                        currency: "eur",
-                        trial_period_days: 30,
-                    }, function(err, plan) {
-                        console.log(err)
-                        console.log("plan : ")
-                        console.log(plan);
-                        stripe.subscriptions.create({
-                            customer: req.query.cust,
-                            items: [
-                                {
-                                    plan: plan.id,
-                                },
-                            ]
-                            }, function(err, subscription) {
-                                console.log("subscription : ")
-                                console.log(subscription)
-                                console.log(err)
-                                res.render('pages/info-pro2')
-                            });
-                    });
+        stripe.plans.create({
+            amount: parseFloat(req.query.amount),
+            interval: "month",
+            product: "prod_E3Lh8uPFzCj9gs",
+            currency: "eur",
+        }, function(err, plan) {
+            console.log(err)
+            console.log("plan : ")
+            console.log(plan);
+            stripe.subscriptions.create({
+                customer: req.query.cust,
+                items: [
+                    {
+                        plan: plan.id,
+                    },
+                ]
+                }, function(err, subscription) {
+                    console.log("subscription : ")
+                    console.log(subscription)
+                    console.log(err)
+                    res.render('pages/info-pro2')
+                });
+        });
     })
 
     module.exports = router
