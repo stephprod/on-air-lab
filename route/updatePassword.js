@@ -6,7 +6,7 @@ const router = express.Router()
 
 router.param('token', (req, res, next, token) => {
 	req.session.token = token
-	User.getUser("jeton='"+token+"'", (res) => {
+	User.getUser("WHERE jeton='"+token+"'", (res) => {
 		if (res !== undefined && res)
 			req.user = res
 		next()

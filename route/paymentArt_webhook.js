@@ -16,7 +16,7 @@ router.route('/stripe-webhook')
         if (extract_and_check_signature(sig, req.body, 60000) === true){
             let data = JSON.parse(req.body)
             //console.log(data.data.object.charges.data[0])
-            User.getUser('`user`.`email`="'+data.data.object.charges.data[0].source.owner.email+'"', (result) => {
+            User.getUser('WHERE `user`.`email`="'+data.data.object.charges.data[0].source.owner.email+'"', (result) => {
                 //console.log(result);
                 if (data.type == "payment_intent.succeeded"){
                     notifications.webhook_payment_mail(result, "payment_intent", "accept", (data.data.object.amount/100))

@@ -7,7 +7,7 @@ router.param('id', (req, res, next, token) => {
 	req.session.id_u = token
 	//console.log(req.session)
 	if (req.session.id_u == req.session.id_u_temp){
-		User.getUser("id='"+token+"'", (res) => {
+		User.getUser("WHERE id='"+token+"'", (res) => {
 			if (res !== undefined && res){
 				let obj = {}
 				obj.id_coresp = res.id

@@ -14,7 +14,7 @@ router.route('/forgottenPassword')
 		for (let prop in request.body){
 			table.push(request.body[prop])
 		}
-		User.getUser("email='"+table[0]+"'", (res) => {
+		User.getUser("WHERE email='"+table[0]+"'", (res) => {
 			if (res !== undefined && res)
 			{
 				//MISE A JOUR DU JETON UTILISATEUR

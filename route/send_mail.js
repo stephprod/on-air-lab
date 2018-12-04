@@ -44,7 +44,7 @@ router.route('/mail')
 		//if (req.session.token == req.headers["x-access-token"]){
 			if (table.length > 0){
 				let subject = ''
-				User.getUser("id="+table[0], (result) => {
+				User.getUser("WHERE id="+table[0], (result) => {
 					if (result !== undefined){
 						switch(table[1]){
 							case "booking":
