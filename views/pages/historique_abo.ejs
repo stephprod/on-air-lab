@@ -1,3 +1,18 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>Label - ON-AIR</title>
+	<meta name="keywords" content="studio, enregistrement, clip, video, realisateur, beatmaker" />
+	<meta name="description" content="Plateforme de services studio d'enregistrement et clip video pour les artistes" />
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="/asset/bootstrap/bootstrap.min.css">
 <style>
 /*    --------------------------------------------------
 	:: General
@@ -136,8 +151,7 @@
 	font-size: 14px;
 }
 </style>
-	<div class="row">
-
+</head>
 		<div class="content">
 				<div class="panel panel-default">
 					<div class="panel-body">
@@ -152,57 +166,26 @@
 						<div class="table-container">
 							<table class="table table-filter">
 								<tbody>
-									<tr data-status="valide">
-										<td>
-											<div class="media">
-												<a href="#" class="pull-left">
-													<img src="https://s3.amazonaws.com/uifaces/faces/twitter/fffabs/128.jpg" class="media-photo">
-												</a>
-												<div class="media-body">
-													<span class="media-meta pull-right">Febrero 13, 2016</span>
-													<h4 class="title">
-														Lorem Impsum
-														<span class="pull-right pagado">( Validé )</span>
-													</h4>
-													<p class="summary">Ut enim ad minim veniam, quis nostrud exercitation...</p>
+									<% for(k in locals.objPayment){
+										console.log(locals.objPayment) %>
+										<tr data-status="<%- locals.objPayment[k].class %>">
+											<td>
+												<div class="media">
+													<!-- <a href="#" class="pull-left">
+														<img src="https://s3.amazonaws.com/uifaces/faces/twitter/fffabs/128.jpg" class="media-photo">
+													</a> -->
+													<div class="media-body">
+														<span class="media-meta pull-right"><%- locals.objPayment[k].date %></span>
+														<h4 class="title">
+																<%- locals.objPayment[k].type %>
+															<span class="pull-right <%- locals.objPayment[k].color %>">( <%- locals.objPayment[k].etat %> )</span>
+														</h4>
+														<p class="summary"><%- locals.objPayment[k].desc %></p>
+													</div>
 												</div>
-											</div>
-										</td>
-									</tr>
-									<tr data-status="attente">
-										<td>
-											<div class="media">
-												<a href="#" class="pull-left">
-													<img src="https://s3.amazonaws.com/uifaces/faces/twitter/fffabs/128.jpg" class="media-photo">
-												</a>
-												<div class="media-body">
-													<span class="media-meta pull-right">Febrero 13, 2016</span>
-													<h4 class="title">
-														Lorem Impsum
-														<span class="pull-right pendiente">(En attente)</span>
-													</h4>
-													<p class="summary">Ut enim ad minim veniam, quis nostrud exercitation...</p>
-												</div>
-											</div>
-										</td>
-									</tr>
-									<tr data-status="annule">
-										<td>
-											<div class="media">
-												<a href="#" class="pull-left">
-													<img src="https://s3.amazonaws.com/uifaces/faces/twitter/fffabs/128.jpg" class="media-photo">
-												</a>
-												<div class="media-body">
-													<span class="media-meta pull-right">Febrero 13, 2016</span>
-													<h4 class="title">
-														Lorem Impsum
-														<span class="pull-right cancelado">(Annulé)</span>
-													</h4>
-													<p class="summary">Ut enim ad minim veniam, quis nostrud exercitation...</p>
-												</div>
-											</div>
-										</td>
-									</tr>
+											</td>
+										</tr>
+									<%}%>
 								</tbody>
 							</table>
 						</div>
@@ -214,6 +197,20 @@
 						Powered By <a href="#" target="_blank">Label On-air</a>
 					</p>
 				</div>
-        </div>
-		
-	</div>
+		</div>
+<!-- jQuery  -->
+<script type="text/javascript" src="/asset/js/jQuery/jquery.min.js"></script>
+<script>
+// GESTION DES HISTORIQUE PAIEMENT / ABONNEMENT
+$('.btn-filter').on('click', function () {
+	var $target = $(this).data('target');
+	if ($target != 'all') {
+	$('.table tr').css('display', 'none');
+	$('.table tr[data-status="' + $target + '"]').fadeIn('slow');
+	} else {
+		$('.table tr').css('display', 'none').fadeIn('slow');
+	}
+});
+</script>
+</body>
+</html>

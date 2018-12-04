@@ -154,7 +154,7 @@
       <% var status = false; //(Function) check if abonnement is actif
       if (status){ %>
         <a href="#" class="button-primary button-shadow button-full" id="customButton">
-          <span>Modifier infos bancaire</span>
+          <span>Supprimer abonnement</span>
           <div class="button-triangle"></div>
           <div class="button-triangle2"></div>
           <div class="button-icon"><i class="fa fa-user"></i></div>
@@ -168,7 +168,7 @@
           <div class="button-icon"><i class="fa fa-user"></i></div>
         </a>
       <% } %>
-      <% include historique_abo %>
+      <iframe src="/historique_payment" style="width: 100%;position: relative;border: none;height: 420px;overflow: auto;"></iframe>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
