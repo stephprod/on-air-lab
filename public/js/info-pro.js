@@ -300,7 +300,10 @@ import {update_front_with_msg, update_front_with_errors, update_front_with_succe
 		$("#switcher-button2").trigger('click');
 		$($('iframe[src="/chat"]')[0].contentDocument).find(".friend:nth-child(1)").trigger('click');
 	});
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5c41248ffa1e4d9032c57fe1e122a92f97414271
 var price = 20.85 * 100;
 $(document).on('click', '#customButton', function(e) {
 	e.preventDefault();
