@@ -270,10 +270,11 @@ function updateListEtabInView(value){
             }   
         });
     }
-    function cp_change_action(e, clickedIndex, isSelected, previousValue){
+    function cp_change_action(e){
         var d = {};
         d.code_p = $(e.target).val();
         var ind = 0;
+        panel_search_active = $("div[role='tabpanel'].active");
         ind = panel_search_active.data("service-type");
         $(slider_distance[ind]).slider('disable');
         //console.log($(this).parents("#switcher"));

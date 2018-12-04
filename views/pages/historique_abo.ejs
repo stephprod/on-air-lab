@@ -166,8 +166,7 @@
 						<div class="table-container">
 							<table class="table table-filter">
 								<tbody>
-									<% for(k in locals.objPayment){
-										console.log(locals.objPayment) %>
+									<% for(k in locals.objPayment){ %>
 										<tr data-status="<%- locals.objPayment[k].class %>">
 											<td>
 												<div class="media">
@@ -175,12 +174,12 @@
 														<img src="https://s3.amazonaws.com/uifaces/faces/twitter/fffabs/128.jpg" class="media-photo">
 													</a> -->
 													<div class="media-body">
-														<span class="media-meta pull-right"><%- locals.objPayment[k].date %></span>
+														<span class="media-meta pull-right"><%- locals.objPayment[k].date_payment %></span>
 														<h4 class="title">
-																<%- locals.objPayment[k].type %>
-															<span class="pull-right <%- locals.objPayment[k].color %>">( <%- locals.objPayment[k].etat %> )</span>
+																<%- locals.objPayment[k].type_payment %>
+															<span class="pull-right <%- locals.objPayment[k].color %>">( <%- locals.objPayment[k].state_payment %> )</span>
 														</h4>
-														<p class="summary"><%- locals.objPayment[k].desc %></p>
+														<p class="summary"><%- locals.objPayment[k].desc_payment %></p>
 													</div>
 												</div>
 											</td>

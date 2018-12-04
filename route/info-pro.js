@@ -20,53 +20,63 @@ router.route('/info-pro')
 		if (request.session.userId == undefined || request.session.userType == 4) {
 			response.render('pages/index')
 		}else{
-			User.displayOffre(request.session.userId, (result) => {
-				//console.log("offre")
-				//console.log(result)
-				offr = result
-				User.getInfoPro_etablissement(request.session.userId, (result) => {
-					//console.log("etablissement")
+			User.checkAbo(request.session.userId, (result) => {
+				if(result.length == 0)
+					request.session.abonnement = false
+				else if(result[0].state_payment == 'valide')
+					request.session.abonnement = true
+				else
+					request.session.abonnement = false
+				response.locals.session = request.session
+				console.log(result)
+				User.displayOffre(request.session.userId, (result) => {
+					//console.log("offre")
 					//console.log(result)
-					etab = result
-					User.displayServiceForPro(request.session.userId, (result) => {
-						//console.log("service")
+					offr = result
+					User.getInfoPro_etablissement(request.session.userId, (result) => {
+						//console.log("etablissement")
 						//console.log(result)
-						serv = result
-						if (request.session.userType == 2){
-							User.displayAllAudioServices((result) => {
-								allServ = result
-								User.displayDevis(request.session.userId, (result) => {
-									//console.log("devis")
-									//console.log(result)
-									devis = result
+						etab = result
+						User.displayServiceForPro(request.session.userId, (result) => {
+							//console.log("service")
+							//console.log(result)
+							serv = result
+							if (request.session.userType == 2){
+								User.displayAllAudioServices((result) => {
+									allServ = result
+									User.displayDevis(request.session.userId, (result) => {
+										//console.log("devis")
+										//console.log(result)
+										devis = result
 
-									if (result.length > 0){
-										response.render('pages/info-pro2', {offObj : offr, etabObj: etab, allServObj: allServ, servObj: serv, devisObj: devis})
-									}
-									else
-									{
-										response.render('pages/info-pro2', {offObj : offr, etabObj: etab, allServObj: allServ, servObj: serv})
-									}
+										if (result.length > 0){
+											response.render('pages/info-pro2', {offObj : offr, etabObj: etab, allServObj: allServ, servObj: serv, devisObj: devis})
+										}
+										else
+										{
+											response.render('pages/info-pro2', {offObj : offr, etabObj: etab, allServObj: allServ, servObj: serv})
+										}
+									})
 								})
-							})
-					}else{
-						User.displayAllVideoServices((result) => {
-								allServ = result
-								User.displayDevis(request.session.userId, (result) => {
-									devis = result
-									if (result.length > 0){
-										response.render('pages/info-pro2', {offObj : offr, etabObj: etab, allServObj: allServ, servObj: serv, devisObj: devis})
-									}
-									else
-									{
-										response.render('pages/info-pro2', {offObj : offr, etabObj: etab, allServObj: allServ, servObj: serv})
-									}
+						}else{
+							User.displayAllVideoServices((result) => {
+									allServ = result
+									User.displayDevis(request.session.userId, (result) => {
+										devis = result
+										if (result.length > 0){
+											response.render('pages/info-pro2', {offObj : offr, etabObj: etab, allServObj: allServ, servObj: serv, devisObj: devis})
+										}
+										else
+										{
+											response.render('pages/info-pro2', {offObj : offr, etabObj: etab, allServObj: allServ, servObj: serv})
+										}
+									})
 								})
-							})
-					}
-				})
+						}
+					})
 				})
 			})
+		})
 		}
         //console.log("ID du GARS "+request.session.userId)
         //console.log("NOM du GARS "+request.session.userName)

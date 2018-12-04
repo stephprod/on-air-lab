@@ -16,6 +16,7 @@ router.route('/stripe-webhook')
         if (extract_and_check_signature(sig, req.body, 60000) === true){
             let data = JSON.parse(req.body)
             //console.log(data.data.object.charges.data[0])
+            console.log(data)
             User.getUser('WHERE `user`.`email`="'+data.data.object.charges.data[0].source.owner.email+'"', (result) => {
                 //console.log(result);
                 if (data.type == "payment_intent.succeeded"){
@@ -23,7 +24,21 @@ router.route('/stripe-webhook')
                     .then((result2) => {
                         res.status(200).send({received: true})
                     }).catch((err) => console.log(err))
-                }else{
+                }else if (data.type == "subscription_schedule.created"){
+                    // `type_payment`, `state_payment`, `desc_payment`, `id_pro`, `date_payment`
+                    // let table = []
+                    // table.push("ABONNEMENT", "valide", result[0].id, )
+                    // User.create_payment_abo(table, (res, resolve, reject) => {
+                    //     if (res) {
+
+                    //     }else{
+
+                    //     }
+                    // }).then((result) => {
+
+                    // })
+                }
+                else if (data.type == "payment_intent.payment_failed"){
                     notifications.webhook_payment_mail(result, "payment_intent", "deny", (data.data.object.amount/100))
                     .then((result2) => {
                         res.status(200).send({received: false})

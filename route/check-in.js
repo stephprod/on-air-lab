@@ -25,11 +25,11 @@ router.route('/check-in')
 		for (var k in request.body){
 			table.push(request.body[k])
 		}
-		//console.log(table)
+		console.log(table)
 		//INSERTION EVENNEMENT
 		if (request.body.from == "rdv_offer"){
 			len = (table.length - 12) / 2 ;
-			insert_event(ret, request, len)
+			insert_event(request, ret, len)
 			.then((res) => {
 				return insert_type_rdv_offer_message(request, res)
 			})
@@ -91,6 +91,9 @@ function insert_event(req, ret, len){
 	return new Promise((resolve, reject) =>{
 		//console.log(request.body);
 		for (var k=0; k < len; k++){
+			// console.log("Résultat : ")
+			// console.log(ret)
+			//console.log(len)
 			ret.result.id_dispos = []
 			setTimeout((function(k) {
 				return function(){

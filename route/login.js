@@ -49,7 +49,8 @@ router.route('/login')
 					userSess.pay_module = result[0].payment_module
 					userSess.userMail = result[0].email
 					if (res.type != 4){
-						if (result[0].state_payment == "Validé")
+						console.log(result[0])
+						if (result[0].state_payment == "valide")
 							userSess.abonnement = true
 						else
 							userSess.abonnement = false
