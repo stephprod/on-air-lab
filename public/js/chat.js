@@ -234,14 +234,24 @@ if($(this).val() == ""){
 
 }
 });
+const StringParser = (text) => {
+  //string test
+  //var text = 'sdabhikagathara@rediffmail.com jshf 0665-78.9878 s  sd ghwsfwfsgfjsljdh@ergfe.fr assdsdf" 0665-78.98- 78 <dsfassdfhsdfarkal@gmail.com>, "rodnsdfald ferdfnson" <rfernsdfson@gmal.com>, "Affdmdol Gondfgale" <gyfanamosl@gmail.com>, "truform techno" <pidfpinfg@truformdftechnoproducts.com>, "NiTsdfeSh ThIdfsKaRe" <nthfsskare@ysahoo.in>, "akasdfsh kasdfstla" <akashkatsdfsa@yahsdfsfoo.in>, "Bisdsdfamal 0665-78.98/78 Prakaasdsh" <bimsdaalprakash@live.com>,; +3366578.9878 "milisdfsfnd ansdfasdfnsftwar" test <dfdmilifsd.ensfdfcogndfdfatia@gmail.com>Easy Parsing';
+  let patternEmail = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi;
+  let StringNoEmail = text.replace(patternEmail,"Email Delete");
+  let patternTel = /(?:(?:\+|00)33|0)\s*[1-9](?:[\s.\s-\/]*\d{2}){4}/gi;
+  let StringNoTelNoEmail = StringNoEmail.replace(patternTel,"Tel delete");
+  return(StringNoTelNoEmail)
+}
+
 function on_msg_send_click(){
-var message = $("#sendmessage textarea").val();
+var message = StringParser($("#sendmessage textarea").val())
 var data = {};
 //var room = $('#chat-messages').data('current');
 if(userId != "null"){
-  $('#sendmessage textarea').val('');
-  data.txt = message;
-  socket.emit('sendchat', data, userId, user_receiv, null);
+$('#sendmessage textarea').val('');
+data.txt = message;
+socket.emit('sendchat', data, userId, user_receiv, null);
 }
 }
 function on_msg_send_keypress(e){
