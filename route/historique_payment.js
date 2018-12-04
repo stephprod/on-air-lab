@@ -5,6 +5,7 @@ const router = express.Router()
 
 router.route('/historique_payment')
 	.get((request, response) => {
+        response.locals.session = request.session
         let obj = [
         {
             desc : 'desc bdd',

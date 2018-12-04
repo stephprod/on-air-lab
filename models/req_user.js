@@ -12,7 +12,7 @@ class User{
 	}
 
 	static getUser(clause, cb){
-		let q=db.query('SELECT * FROM user WHERE '+clause, (err, result) =>{
+		let q=db.query('SELECT * FROM user '+clause, (err, result) =>{
 			if (err) 
 			{
 				console.log(q.sql)
@@ -20,7 +20,19 @@ class User{
 			}
 			cb(result[0])
 		})
-	}
+    }
+    
+    static getUserForLogin(clause, cb){
+		let q=db.query('SELECT * FROM user '+clause, (err, result) =>{
+			if (err) 
+			{
+				console.log(q.sql)
+				throw err
+			}
+			cb(result)
+		})
+    }
+    
     static getUserJoin(clause, cb){
         let q=db.query('SELECT * FROM user '+clause, (err, result) =>{
             if (err) 
@@ -291,10 +303,10 @@ class User{
     }
     static getPaymentInTypeMessage(message, cb){
         return new Promise((resolve, reject) => {
-            let r = db.query('SELECT * FROM payment '+
-                'INNER JOIN type_message ON type_message.id_payment = payment.id '+
+            let r = db.query('SELECT * FROM payment_request '+
+                'INNER JOIN type_message ON type_message.id_payment = payment_request.id '+
                 'LEFT JOIN temp ON temp.id_type_message = type_message.id_type_m '+
-                'WHERE payment.id ='+message.id_payment+' AND type_message.id_type_m ='+message.id_type_m, (err, result) => {
+                'WHERE payment_request.id ='+message.id_payment+' AND type_message.id_type_m ='+message.id_type_m, (err, result) => {
                 if(err){
                     console.log(r.sql)
                     throw err;
@@ -1079,7 +1091,7 @@ class User{
         })
     }
     static insert_payment_db(table, cb){
-        let r = db.query('INSERT INTO `payment`(`id_art`, `id_pro`, `desc`, `price`)  '+
+        let r = db.query('INSERT INTO `payment_request`(`id_art`, `id_pro`, `desc`, `price`)  '+
             'VALUES (?) ', [table], (err, result) => {
             if(err){
                 console.log(r.sql)
@@ -1091,7 +1103,7 @@ class User{
     static get_payment_in_tm(table, cb){
         return new Promise((resolve, reject) => {
             let r = db.query('SELECT * FROM `type_message` '+
-                'INNER JOIN `payment` ON `payment`.`id`=`type_message`.`id_payment` '+
+                'INNER JOIN `payment_request` ON `payment_request`.`id`=`type_message`.`id_payment` '+
                 'AND `type_message`.`id_type_m`=?', [table], (err, result) => {
                 if(err){
                     console.log(r.sql)

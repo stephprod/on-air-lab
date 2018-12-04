@@ -17,7 +17,7 @@ router.route('/login-fast')
 			table.push(request.body[prop])
 		}
 		User.getUser(
-			"email='" + table[0] + "'"
+			"WHERE email='" + table[0] + "'"
 			, (result) => {
 				let errors = {}
 				if (result == undefined || !result){
