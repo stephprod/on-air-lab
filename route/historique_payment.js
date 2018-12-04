@@ -6,32 +6,31 @@ const router = express.Router()
 router.route('/historique_payment')
 	.get((request, response) => {
         response.locals.session = request.session
-        let obj = [
-        {
-            desc : 'desc bdd',
-            date : 'date create',
-            etat : 'valide',
-            type : 'abonnement',
-            class : 'valide',
-            color : 'pagado'
-        },
-        {
-            desc : 'desc bdd',
-            date : 'date create',
-            etat : 'annulé',
-            type : 'payment',
-            class : 'annule',
-            color : 'cancelado'
-        },
-        {
-            desc : 'desc bdd',
-            date : 'date create',
-            etat : 'en attente',
-            type : 'payment',
-            class : 'attente',
-            color : 'pendiente'
-        }];
-		response.render('pages/historique_abo', {objPayment : obj})
+        let obj = [];
+        User.historique_payment(request.session.userId, (result, resolve, reject) => {
+            if(result.length > 0){
+                for(k in result){
+                    let curr = result[k]
+                    curr.class = result[k].state_payment
+                    if(result[k].state_payment == 'annule')
+                        curr.color = 'cancelado'
+                    else if(result[k].state_payment == 'valide')
+                        curr.color = 'pagado'
+                    else
+                        curr.color = 'pendiente'
+                    obj.push(curr);
+                    if(k == (result.length - 1))
+                        resolve(obj)
+                }
+
+            }else{
+                reject('Aucun payment')
+            }
+        }).then((result) => {
+            response.render('pages/historique_abo', {objPayment : result})
+        }, (err) => {
+            response.render('pages/historique_abo', {objPayment : null})
+        })
 	})
 	.post((request, response) => {
 	})

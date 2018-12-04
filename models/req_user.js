@@ -1136,6 +1136,26 @@ class User{
             });
         });
     }
+    static historique_payment(id, cb){
+        return new Promise((resolve, reject) => {
+            let r = db.query('SELECT * FROM `payments` WHERE id_pro=?', [id], (err, result) => {
+                if(err){
+                    console.log(r.sql)
+                    throw err;
+                }
+                cb(result, resolve, reject);
+            });
+        });
+    }
+    static checkAbo(id, cb){
+        let r = db.query('SELECT state_payment FROM `payments` WHERE id_pro=? AND type_payment="ABONNEMENT" ORDER BY date_payment DESC LIMIT 1', [id], (err, result) => {
+            if(err){
+                console.log(r.sql)
+                throw err;
+            }
+            cb(result);
+        });
+    }
 }
 
 module.exports = User

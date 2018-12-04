@@ -151,7 +151,7 @@
         <div id="processing" style="display:none;">
           <p class="text-center">Processing...</p>
         </div>
-      <% var status = false; //(Function) check if abonnement is actif
+      <% var status = locals.session.abonnement; //(Function) check if abonnement is actif
       if (status){ %>
         <a href="#" class="button-primary button-shadow button-full" id="customButton">
           <span>Supprimer abonnement</span>
