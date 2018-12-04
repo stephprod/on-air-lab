@@ -300,7 +300,7 @@ import {update_front_with_msg, update_front_with_errors, update_front_with_succe
 		$("#switcher-button2").trigger('click');
 		$($('iframe[src="/chat"]')[0].contentDocument).find(".friend:nth-child(1)").trigger('click');
 	});
-	
+
 var price = 20.85 * 100;
 $(document).on('click', '#customButton', function(e) {
 	e.preventDefault();
@@ -371,7 +371,7 @@ function sendPlan() {
 		}else if(response.source.card.three_d_secure == 'required' || response.source.card.three_d_secure == 'optional' ||response.source.card.three_d_secure == 'recommended'){
 			$.ajax({
 				type : 'GET',
-				url : 'http://localhost:4000/payment',
+				url : '/payment',
 				data : {source : response.source.id},
 				success : function(data){
 					var returnURL = "http://localhost:4000/plan3dsecure?cust="+data.customer.id+"&amount="+price;
