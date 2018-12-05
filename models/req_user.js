@@ -1168,6 +1168,18 @@ class User{
             });
         })
     }
+    static create_payment(table, cb){
+        return new Promise((resolve, reject) => {
+            let r = db.query('INSERT INTO `payments`(`type_payment`, `state_payment`, `desc_payment`, `id_pro`, `id_art`, `price_payment`, `date_payment`) '+
+                'VALUES (?)', [table], (err, result) => {
+                if(err){
+                    console.log(r.sql)
+                    throw err;
+                }
+                cb(result, resolve, reject);
+            });
+        })
+    }
 }
 
 module.exports = User

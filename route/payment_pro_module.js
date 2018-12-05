@@ -99,8 +99,8 @@ function tempo(req, ret){
     var tableTemp = []
     return new Promise((resolve) => {
         //TEMPOSRISATION
-		var req_ok = 'UPDATE `payment` SET `payment`.`acceptation`=1 WHERE `payment`.`id`='+ret.result.id_p,
-		req_ko = 'DELETE FROM `payment` WHERE `payment`.`id`='+ret.result.id_p
+		var req_ok = 'UPDATE `payment_request` SET `payment_request`.`acceptation`=1 WHERE `payment_request`.`id`='+ret.result.id_p,
+		req_ko = 'DELETE FROM `payment_request` WHERE `payment_request`.`id`='+ret.result.id_p
 		tableTemp.push(req_ok, req_ko, req.body.receiver, req.body.sender, ret.result.id_type_m)
 		User.insertTemp(tableTemp, (result)=>{
 			if (result > 0){

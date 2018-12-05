@@ -3,7 +3,7 @@ let validator = require('../form_validator')
 let session = require('express-session')
 let User = require('../models/req_user')
 
-let valid_form = (request, response, next) => {
+const valid_form = (request, response, next) => {
 
 	let errors = {}
 	let err_flag = false;
@@ -116,7 +116,7 @@ let valid_form = (request, response, next) => {
 	}
 }
 
-url_video_form = (request, response, next) => {
+const url_video_form = (request, response, next) => {
 	let errors = {}
 	let err_flag = false;
 	let url = request.body.url
@@ -139,7 +139,7 @@ url_video_form = (request, response, next) => {
 		next()
 }
 
-valid_delete_account_form = (request, response, next)=>{
+const valid_delete_account_form = (request, response, next)=>{
 	let errors = {}
 	let err_flag = false
 	//Contrôle du formulaire de désinscription à faire

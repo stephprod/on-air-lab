@@ -14,39 +14,9 @@ router.route('/stripe-webhook')
         //stripe-signature timestamp _(must be less than 1minute = 60000ms) to protect against timing attacks
         //let secu = extract_and_check_signature(sig, req.body, 60000)
         if (extract_and_check_signature(sig, req.body, 60000) === true){
-            let data = JSON.parse(req.body)
-            //console.log(data.data.object.charges.data[0])
-            console.log(data)
-            User.getUser('WHERE `user`.`email`="'+data.data.object.charges.data[0].source.owner.email+'"', (result) => {
-                //console.log(result);
-                if (data.type == "payment_intent.succeeded"){
-                    notifications.webhook_payment_mail(result, "payment_intent", "accept", (data.data.object.amount/100))
-                    .then((result2) => {
-                        res.status(200).send({received: true})
-                    }).catch((err) => console.log(err))
-                }else if (data.type == "subscription_schedule.created"){
-                    // `type_payment`, `state_payment`, `desc_payment`, `id_pro`, `date_payment`
-                    // let table = []
-                    // table.push("ABONNEMENT", "valide", result[0].id, )
-                    // User.create_payment_abo(table, (res, resolve, reject) => {
-                    //     if (res) {
-
-                    //     }else{
-
-                    //     }
-                    // }).then((result) => {
-
-                    // })
-                }
-                else if (data.type == "payment_intent.payment_failed"){
-                    notifications.webhook_payment_mail(result, "payment_intent", "deny", (data.data.object.amount/100))
-                    .then((result2) => {
-                        res.status(200).send({received: false})
-                    }).catch((err) => console.log(err))
-                }
-                // console.log(JSON.parse(req.body))
-                // console.log(req.body)
-            })
+            let webh_res = JSON.parse(req.body)
+            console.log(webh_res)
+            manage_event_response(webh_res, res)
         }else{
             res.status(500).send({received: false})
         }
@@ -89,4 +59,60 @@ function extract_and_check_signature(sig, body, delta_in_ms){
         return true;
     // --//
 }
+function manage_event_response(wh_datas, response){
+    if (wh_datas.type.indexOf("payment_intent") !== -1)
+        payment_intent_responses(wh_datas, response)
+}
+function payment_intent_responses(wh_datas, resp){
+    if (wh_datas.type != "payment_intent.created"){
+        get_user_in_event(wh_datas.data.object.charges.data[0].source.owner.email).then((user) => {
+            if (wh_datas.type == "payment_intent.succeeded"){
+                return send_notification(user, wh_datas.data.object.amount, resp, "accept")
+                .then(() => {
+                    insert_new_payment(resp, "valide", wh_datas, user)
+                })
+            }else if(wh_datas.type == "payment_intent.created"){
+                resp.status(200).send({received: true})
+            }else{
+                return send_notification(user, wh_datas.data.object.amount, resp, "deny")
+                .then(() => {
+                    insert_new_payment(resp, "annule", wh_datas, user)
+                })
+            }
+        })
+    }
+}
+function send_notification(userDest, amount, resp, action){
+    return notifications.webhook_payment_mail(userDest, "payment_intent", action, (amount/100))
+    .catch((err) => console.log(err))
+}
+
+function insert_new_payment(resp, action, wh_datas, user_from){
+    let table = [], date = new Date(parseInt(wh_datas.data.object.created))
+    table.push("PRESTATION", action, wh_datas.data.object.description, wh_datas.data.object.statement_descriptor, user_from.id, wh_datas.data.object.amount, date)
+    User.create_payment(table, (result, resolve, reject) => {
+        let valid = result.changedRows != 0 ? result.changedRows : result.affectedRows
+        if (valid > 0){
+            resolve()
+        }else{
+            reject(new Error("Insertion du paiement echouée !"))
+        }
+    }).then(() => {
+        resp.status(200).send({received: true})
+    }, (err) => {
+        resp.status(500).send({received: true, error: err})
+    })
+}
+function get_user_in_event(user_mail){
+    return new Promise((resolve, reject) => {
+        User.getUser('WHERE `user`.`email`="'+user_mail+'"', (result) => {
+            if (result !== undefined){
+                resolve (result)
+            }else{
+                reject (new Error("Utilisateur non récupéré !"))
+            }
+        })
+    })
+}
+
 module.exports = router

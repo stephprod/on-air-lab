@@ -1,5 +1,5 @@
 const express = require('express')
-const User = require('../models/req_user')
+//const User = require('../models/req_user')
 const router = express.Router()
 
 router.route('/secure_profile')
@@ -7,7 +7,7 @@ router.route('/secure_profile')
 		//console.log(req.body)
 		let table = []
 		let ret = {}
-		for (k in req.body){
+		for (var k in req.body){
 			table.push(req.body[k])
 		}
 		if (table.length == 1){

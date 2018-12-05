@@ -49,7 +49,7 @@ router.route('/login')
 					userSess.pay_module = result[0].payment_module
 					userSess.userMail = result[0].email
 					if (res.type != 4){
-						console.log(result[0])
+						//console.log(result[0])
 						if (result[0].state_payment == "valide")
 							userSess.abonnement = true
 						else
@@ -57,7 +57,7 @@ router.route('/login')
 					}
 					console.log('Tu est connecter avec id bdd ' +userSess.userId)
 					console.log('Tu est connecter avec le nom '+userSess.userName)
-					console.log(userSess)
+					//console.log(userSess)
 					User.updateUser("disponibilite='1' WHERE id='"+result.id+"'"
 					, (result) => {
 							//ret.global_msg.push("dispo mis à jour avec succés !")

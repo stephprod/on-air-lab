@@ -25,9 +25,11 @@ router.route('/payment-intent/:id')
         let ret = {}
         ret.result = {}
         stripe.paymentIntents.create({
-             amount: parseFloat(req.body.price) * 100,
+            amount: parseFloat(req.body.price) * 100,
             currency: 'eur',
             allowed_source_types: ['card'],
+            description: req.body.desc,
+            statement_descriptor: req.session.user_receiv.id,
         }).then((result) => {
             ret.result = result.client_secret
             //console.log(req.query)

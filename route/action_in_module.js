@@ -85,6 +85,7 @@ function do_actions(req, ret){
 			//console.log("action -> "+action)
 			if (action != null){
 				User.do_action_in_module(action, (result, err) => {
+					//console.log(result)
 					const resOfAction = result.affectedRows == 0 ? result.changedRows : result.affectedRows
 					// console.log("error -> ")
 					// console.log(err)

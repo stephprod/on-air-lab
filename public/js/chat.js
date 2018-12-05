@@ -649,7 +649,7 @@ function on_module_accept_typeMessage_link_click(e){
     $.ajax({
       type : "POST",
       url : "/payment-intent/"+user_receiv.id_coresp,
-      data: {"price": div.attr("payment-price")},
+      data: {"price": div.attr("payment-price"), "desc": div.attr("price-desc")},
       success: function(data) {
         var datas = {
           id: user_receiv.id_coresp,

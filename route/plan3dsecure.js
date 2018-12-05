@@ -24,7 +24,7 @@ router.route('/plan3dsecure')
                     console.log("subscription : ")
                     console.log(subscription)
                     console.log(err)
-                    res.render('pages/info-pro2')
+                    res.redirect('/info-pro')
                 });
         });
     })
