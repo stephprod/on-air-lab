@@ -25,7 +25,7 @@ router.route('/check-in')
 		for (var k in request.body){
 			table.push(request.body[k])
 		}
-		console.log(table)
+		//console.log(table)
 		//INSERTION EVENNEMENT
 		if (request.body.from == "rdv_offer"){
 			len = (table.length - 12) / 2 ;

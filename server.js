@@ -219,7 +219,7 @@ io.sockets.on('connection', function (socket) {
                         let room = []
                         tabCorresp = []
                         if (id != 1){
-                            room.push(1, 1, "Admin", "admin", 1, "Modérateur", 0, 'admin@label-onair.com')
+                            room.push(1, 1, "Admin", "admin", 1, "Modérateur", "admin@label-onair.com")
                             setTimeout((function(room){
                                 return function(){
                                     getPreviousMsgAdmin(1, id, 1, (result2) => {
@@ -250,7 +250,6 @@ io.sockets.on('connection', function (socket) {
                             room.push(result[k].prenom)
                             room.push(result[k].id_user_type)
                             room.push(result[k].libelle)
-                            room.push(result[k].payment_module)
                             room.push(result[k].email)
                             //FONCTION DE CLOSURE POUR PERMETTRE LA RECUPERATION DES RSLT AVANT ITERATION DE LA BOUCLE
                             setTimeout((function(k, room){
@@ -316,7 +315,7 @@ io.sockets.on('connection', function (socket) {
                         let room = []
                         tabCorresp = []
                         if (id != 1){
-                            room.push(1, 1, "Admin", "admin", 1, "Modérateur", 0, 'admin@label-onair.com')
+                            room.push(1, 1, "Admin", "admin", 1, "Modérateur", "admin@label-onair.com")
                             setTimeout((function(room){
                                 return function(){
                                     getPreviousMsgAdmin(1, id, 1, (result2) => {
@@ -347,7 +346,6 @@ io.sockets.on('connection', function (socket) {
                             room.push(result[k].prenom)
                             room.push(result[k].id_user_type)
                             room.push(result[k].libelle)
-                            room.push(result[k].payment_module)
                             room.push(result[k].email)
                             //FONCTION DE CLOSURE POUR PERMETTRE LA RECUPERATION DES RSLT AVANT ITERATION DE LA BOUCLE
                             setTimeout((function(k, room){
@@ -670,9 +668,10 @@ io.sockets.on('connection', function (socket) {
                         //console.log(result)                
                         let obj = {}
                         if (result.length > 0){
-                            obj.id = result[0].id,
-                            obj.desc = result[0].desc,
-                            obj.price = result[0].price,
+                            obj.id = result[0].id
+                            obj.desc = result[0].desc
+                            obj.price = result[0].price
+                            obj.type_t = result[0].type_transaction
                             msg.payment = obj
                             if (result[0].id_temp != null){
                                 msg.id_temp = result[0].id_temp
@@ -848,9 +847,10 @@ io.sockets.on('connection', function (socket) {
                     User.getPaymentInTypeMessage(message.id_payment, message.id_type_m, (result) =>{
                         if (result.length > 0){
                             let obj = {}
-                            obj.id = result[0].id,
-                            obj.desc = result[0].nom,
-                            obj.price = result[0].prenom,
+                            obj.id = result[0].id
+                            obj.desc = result[0].nom
+                            obj.price = result[0].prenom
+                            obj.type_t = result[0].type_transaction
                             message.payment = obj
                             if (result[0].id_temp != null){
                                 message.id_temp = result[0].id_temp

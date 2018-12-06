@@ -54,10 +54,7 @@ $(document).on("click", ".friend", function(){
     $($(".box-module .module")[0]).hide(); 
     $($(".box-module .module")[1]).hide();
     $($(".box-module .module")[2]).show();
-    if (user.pay_module == 1)
-      $($(".box-module .module")[3]).show();
-    else
-      $($(".box-module .module")[3]).hide();
+    $($(".box-module .module")[3]).show();
     $($(".box-module .module")[4]).show();
     $($(".box-module .module")[5]).show();
     $("#devis-modal").find("h1").empty();
@@ -98,7 +95,7 @@ $(document).on("click", ".friend", function(){
     $('#devis-modal').find("a#devis-send span").empty();
     $('#devis-modal').find("a#devis-send span").append("Envoyer la demande");
   }
-  switchRoom($(this).data("room"), $(this).data("coresp"), name.split(" ")[0], name.split(" ")[1], $(this).data('coresp-type'), $(this).data('coresp-payment'), $(this).data('coresp-mail'), user);
+  switchRoom($(this).data("room"), $(this).data("coresp"), name.split(" ")[0], name.split(" ")[1], $(this).data('coresp-type'), $(this).data('coresp-mail'), user);
 });
 function on_socket_update_rooms(rooms){
   //console.log("updateroom");
@@ -106,7 +103,7 @@ function on_socket_update_rooms(rooms){
   //console.log(rooms);
   $("div#friends").empty();
   for (var i = 0; i < rooms.length; i++){
-    $("div#friends").append('<div class="friend" data-coresp="'+rooms[i][0]+'" data-coresp-type="'+rooms[i][4]+'" data-room="'+rooms[i][1]+'" data-coresp-payment="'+rooms[i][6]+'" data-coresp-mail="'+rooms[i][7]+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><p><strong>'+rooms[i][2]+' '+rooms[i][3]+'</strong><span>'+rooms[i][5]+'</span><p class="preview">'+rooms[i][9]+'</p></p><div class="status available"></div></div>');
+    $("div#friends").append('<div class="friend" data-coresp="'+rooms[i][0]+'" data-coresp-type="'+rooms[i][4]+'" data-room="'+rooms[i][1]+'" data-coresp-mail="'+rooms[i][6]+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><p><strong>'+rooms[i][2]+' '+rooms[i][3]+'</strong><span>'+rooms[i][5]+'</span><p class="preview">'+rooms[i][8]+'</p></p><div class="status available"></div></div>');
   }
 }
 function on_socket_connect(id){
@@ -590,7 +587,7 @@ function on_module_accept_typeMessage_link_click(e){
   iframe = window.parent.$("iframe[src='/chat']")[0];
   var glob_datas = {};
   var div = $(e.target).parents("div[id-message]");
-  var type_message_libelle = div.data("type-message-libelle")
+  var type_message_libelle = div.data("type-message-libelle");
   glob_datas.id_type_message = div.data("id-typeMessage");
   glob_datas.action = "accept";
   glob_datas.type_m = type_message_libelle + '_response';
@@ -616,11 +613,11 @@ function on_module_accept_typeMessage_link_click(e){
           }else{
             //update_front_with_msg(data, );
           }
-      }
-    });
+        }
+      });
     //}
   }else if(type_message_libelle == 'devis'){
-    if (user_receiv.payment_module == 0){
+    //if (user_receiv.payment_module == 0){
       if (user.type == 4){
         //Securisation du lien vers la page
         $.ajax({
@@ -633,7 +630,7 @@ function on_module_accept_typeMessage_link_click(e){
             datas.from = "accept-devis";
             datas.id_pro = user_receiv.id_coresp;
             datas.id_type = glob_datas.id_type_message;
-            datas.id_payment_module = user_receiv.payment_module
+            //datas.id_payment_module = user_receiv.payment_module
             //datas.events = global_datas.events;
             //console.log(datas);
             query = serialize(datas);
@@ -641,29 +638,51 @@ function on_module_accept_typeMessage_link_click(e){
             iframe.src = '/payment-recap/'+user_receiv.id_coresp + '?' + query;
           }
         });
-      }
+      //}
     }else{
       // Redirection vers le paiement
     }
   }else if(type_message_libelle == 'payment'){
-    $.ajax({
-      type : "POST",
-      url : "/payment-intent/"+user_receiv.id_coresp,
-      data: {"price": div.attr("payment-price"), "desc": div.attr("price-desc")},
-      success: function(data) {
-        var datas = {
-          id: user_receiv.id_coresp,
-          desc: div.attr("price-desc"),
-          price: div.attr("payment-price"),
-          email: user.mail,
-          nom: user.nom,
-          prenom: user.prenom,
-          intent: data.result
-        };
-        //console.log(window.parent);
-        window.parent.form_payment(datas, glob_datas);
-      }
-    });
+    var type_transaction = div.attr("type-transaction");
+    if (type_transaction == "MOD"){
+      $.ajax({
+        type : "POST",
+        url : "/payment-intent/"+user_receiv.id_coresp,
+        data: {"price": div.attr("payment-price"), "desc": div.attr("price-desc")},
+        success: function(data) {
+          var datas = {
+            id: user_receiv.id_coresp,
+            desc: div.attr("price-desc"),
+            price: div.attr("payment-price"),
+            email: user.mail,
+            nom: user.nom,
+            prenom: user.prenom,
+            intent: data.result
+          };
+          //console.log(window.parent);
+          window.parent.form_payment(datas, glob_datas);
+        }
+      });
+    }else{
+      $.ajax({
+        type: "POST",
+        url: "/action-in-module",
+        data: glob_datas,
+        beforeSend: function (req){
+          req.setRequestHeader("x-access-token", token);
+        },
+        success: function (data){
+          if (data.success[0]){
+            socket.emit("sendNotif", data.notif);
+            const content = 'demande acceptée !';
+            div.find("div.card-chat div.div-submi").empty();
+            div.find("div.card-chat div.div-submi").append(content);
+          }else{
+            //update_front_with_msg(data, );
+          }
+        }
+      });
+    }
   }else{
     //Cas du rdv /offre_rdv /contact
     $.ajax({
@@ -726,6 +745,7 @@ function on_payment_link_click(e){
   var parent = $("#paiement-modal");
   datas.desc = parent.find("[name='desc']").val();
   datas.price = parent.find("[name='price']").val();
+  datas.type_t = parent.find("[name='module']").data("module") == 0 ? "ESP" : "MOD";
   datas.sender = userId;
   datas.receiver = user_receiv.id_coresp;
   datas.room = roomDisplay;
@@ -754,6 +774,7 @@ function on_payment_link_click(e){
           id_p: data.result.id_p,
           desc: datas.desc,
           price: datas.price,
+          type_t: datas.type_t,
           type_m: "payment"
         }
         //console.log(paiement_request);
@@ -764,10 +785,11 @@ function on_payment_link_click(e){
 }
 function on_socket_update_paymentstypemessage(data){
   //console.log(data);
-  var div = $("div[id-message='"+data.id_m+"']");
+  var div = $("div[id-message='"+data.id_m+"']"), type_transac = data.payment.type_t == "MOD" ? "Carte bancaire" : "Espèces" ;
   div.attr("price-desc", data.payment.desc)
   div.attr("payment-price", data.payment.price)
   div.attr("payment-email", user_receiv.mail)
+  div.attr("type-transaction", data.payment.type_t);
   var content = '';
   if (data.payment.id == 0){
     div.find(".div-submi").empty();
@@ -777,8 +799,9 @@ function on_socket_update_paymentstypemessage(data){
     div.find("p.date_creneau").empty();
     div.find(".div-submi").append("demande acceptée !");
   }
-  content += '<p style="background: #18457c;color: white;padding: 12px;">Description ('+data.payment.desc+') </br>';
-  content += '<p style="background: #18457c;color: white;padding: 12px;">Prix ('+data.payment.price+' €) </br>';
+  content += '<p>Type transaction ('+type_transac+')</p>';
+  content += '<p style="background: #18457c;color: white;padding: 12px;">Description ('+data.payment.desc+')</p>';
+  content += '<p style="background: #18457c;color: white;padding: 12px;">Prix ('+data.payment.price+' €)</p>';
   //div.find("p.date_creneau").empty();
   div.find("p.date_creneau").prepend(content);
 }
@@ -802,6 +825,34 @@ function on_socket_new_notif(data){
       }
     });
   }
+}
+function on_module_payment_bank_link_click(e){
+  e.preventDefault();
+  var state = false, buttonText = "", button,
+   buttonClass, new_state, newButtonClass, msg = "En activant le module bancaire vous acceptez que Label-Onair vous prélève directement 3% du montant de votre demande !";
+  // console.log(e.target);
+  // console.log($(e.target).parents("#paiement-modal"));
+  // console.log($(e.target).parents("#paiement-modal").find("a[name='module']"));
+  button = $(e.target).parents("#paiement-modal").find("a[name='module']");
+  if (button.data("module") == 1){
+    state = true;
+    new_state = 0;
+    buttonClass = "button-primary";
+    newButtonClass = "button-secondary";
+  }else{
+    new_state = 1;
+    buttonClass = "button-secondary";
+    newButtonClass = "button-primary";
+  }
+  buttonText = state ? "Module bancaire Off" : "Module bancaire On";
+  button.removeClass(buttonClass);
+  button.addClass(newButtonClass);
+  button.find("span").html(buttonText);
+  button.data("module", new_state);
+  if (!state)
+    update_front_with_msg({success: [true], global_msg: [msg]}, "msg-module");
+  else
+    update_front_with_msg({}, "msg-module");
 }
 // var song_module_send_link = $("#song_up");
 // var video_module_send_link = $("#video_up");
@@ -843,6 +894,7 @@ $(document).on("click", "#video_up", on_video_module_send_link_click);
 $(document).on("click", "#devis-send", on_devis_module_send_link_click);
 $(document).on("click", ".div-submi .btn-accept", on_module_accept_typeMessage_link_click);
 $(document).on("click", ".div-submi .btn-refus", on_module_deny_typeMessage_link_click);
+$(document).on("click", "a[data-action='update-module']", on_module_payment_bank_link_click);
 if (socket != null){
 socket.on('updaterooms', on_socket_update_rooms);
 socket.on('connect', on_socket_connect);
@@ -1099,13 +1151,11 @@ actions.rdv_offer.push(function (data){
 actions.paiement.push(function (data){
   //console.log(data);
   var ret = '<div class="message" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="payment"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de paiment</h3>';
-  // if (data.offer !== undefined){
-  //   ret += '<p>'+data.offer.titre+'</p>';
-  //   ret += '<p>'+data.offer.desc+'</p>';
-  //   ret += '<p>Prix : '+data.offer.price+'</p>';
-  // }
   ret += '<p class="date_creneau">';
-  //$.each(data.events, function(ind, val){
+  if (data.type_t !== undefined){
+    var type_t_libelle = data.type_t == "MOD" ? "Carte bancaire" : "Espèce";
+    ret += '<p>Type transaction ('+type_t_libelle+')</p>';
+  }
   if (data.desc !== undefined && data.price !== undefined){
     ret += '<p style="background: #18457c;color: white;padding: 12px;">Description ('+data.desc+') </br></p>';
     ret += '<p style="background: #18457c;color: white;padding: 12px;">Prix ('+data.price+' €) </br></p>';
@@ -1125,13 +1175,11 @@ actions.paiement.push(function (data){
 }, function (data){
   //console.log(data);
   var ret = '<div class="message right" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="payment"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de paiement</h3>';
-  // if (data.offer !== undefined){
-  //   ret += '<p>'+data.offer.titre+'</p>';
-  //   ret += '<p>'+data.offer.desc+'</p>';
-  //   ret += '<p>Prix : '+data.offer.price+'</p>';
-  // }
   ret += '<p class="date_creneau">';
-  //$.each(data.events, function(ind, val){
+  if (data.type_t !== undefined){
+    var type_t_libelle = data.type_t == "MOD" ? "Carte bancaire" : "Espèce";
+    ret += '<p>Type transaction ('+type_t_libelle+')</p>';
+  }
   if (data.desc !== undefined && data.price !== undefined){
     ret += '<p style="background: #18457c;color: white;padding: 12px;">Description ('+data.desc+') </br></p>';
     ret += '<p style="background: #18457c;color: white;padding: 12px;">Prix ('+data.price+' €) </br></p>';
@@ -1267,7 +1315,7 @@ return (res);
 function updateUserReceived(data){
 user_receiv = data;
 }
-function switchRoom(room, id_coresp, nom, prenom, type, paymentModule, email, usr){
+function switchRoom(room, id_coresp, nom, prenom, type, email, usr){
 //console.log("switch room");
 //console.log(usr);
 var coresp= {};
@@ -1276,9 +1324,9 @@ coresp.prenom = prenom;
 coresp.id_coresp = id_coresp;
 coresp.type = type;
 coresp.mail = email;
-if (type != 4 && type != 1){
-  coresp.payment_module = paymentModule;
-}
+// if (type != 4 && type != 1){
+//   coresp.payment_module = paymentModule;
+// }
 //console.log(coresp);
 updateUserReceived(coresp);
 roomDisplay = room;

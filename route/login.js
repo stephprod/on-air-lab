@@ -46,7 +46,7 @@ router.route('/login')
 					userSess.userFirstName = result[0].prenom
 					userSess.userType = result[0].type
 					userSess.token = result[0].jeton
-					userSess.pay_module = result[0].payment_module
+					//userSess.pay_module = result[0].payment_module
 					userSess.userMail = result[0].email
 					if (res.type != 4){
 						//console.log(result[0])

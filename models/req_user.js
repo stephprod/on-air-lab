@@ -63,7 +63,7 @@ class User{
 	}
 	static getRoomForArt(clause, cb){
 		let q = db.query('SELECT `rooms`.`id_room`, `rooms`.`userid`, `rooms`.`with_userid`, `user`.`id` '+
-			', `user`.`nom`, `user`.`prenom`, `user`.`payment_module`, `user`.`email`, '+
+			', `user`.`nom`, `user`.`prenom`, `user`.`email`, '+
             '`user_type`.`id_user_type`, `user_type`.`libelle` '+
             'FROM `rooms` '+
             'INNER JOIN `user` ON `user` .`id`=`rooms`.`with_userid` '+
@@ -78,7 +78,7 @@ class User{
 	}
 	static getRoomForPro(clause, cb){
 		let q=db.query('SELECT `rooms`.`id_room`, `rooms`.`userid`, `rooms`.`with_userid`, `user`.`id`, '+
-			'`user`.`nom`, `user`.`prenom`, `user`.`payment_module`, `user`.`email`, '+
+			'`user`.`nom`, `user`.`prenom`, `user`.`email`, '+
             '`user_type`.`id_user_type`, `user_type`.`libelle` '+
             ' FROM `rooms` '+
             'INNER JOIN `user` ON `user` .`id`=`rooms`.`userid` '+
@@ -1090,8 +1090,8 @@ class User{
             cb(res, err)
         })
     }
-    static insert_payment_db(table, cb){
-        let r = db.query('INSERT INTO `payment_request`(`id_art`, `id_pro`, `desc`, `price`)  '+
+    static insert_payment_request_db(table, cb){
+        let r = db.query('INSERT INTO `payment_request`(`id_art`, `id_pro`, `desc`, `price`, `type_transaction`)  '+
             'VALUES (?) ', [table], (err, result) => {
             if(err){
                 console.log(r.sql)

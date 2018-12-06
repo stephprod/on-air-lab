@@ -119,7 +119,7 @@ function put_in_n_digits_minutes(ref, n){
 function updateUserReceived(data){
     user_receiv = data;
 }
-function switchRoom(room, id_coresp, nom, prenom, type, pay_mod, email, usr){
+function switchRoom(room, id_coresp, nom, prenom, type, email, usr){
 	//console.log("switch room");
 	//console.log(usr);
 	var coresp= {};
@@ -128,7 +128,6 @@ function switchRoom(room, id_coresp, nom, prenom, type, pay_mod, email, usr){
     coresp.id_coresp = id_coresp;
 	coresp.type = type;
 	coresp.mail = email;
-	coresp.pay_module = pay_mod;
     //console.log(coresp);
     updateUserReceived(coresp);
     roomDisplay = room;
@@ -185,7 +184,6 @@ function on_form_contact_submit(e){
 			user_request.prenom = user_receiv.prenom;
 			user_request.type = user_receiv.type;
 			user_request.mail = user_receiv.mail;
-			user_request.pay_module = user_receiv.pay_module;
             var contact = {
                 type_m : data.result.type_d,
                 user_request_info : user_request,
@@ -272,7 +270,7 @@ function on_reservation_link_click(e){
 		                request_state : 0
 		            }
 		            //console.log(contact);
-		            switchRoom(roomDisplay, user_receiv.id_coresp, user_receiv.nom, user_receiv.prenom, user_receiv.type,  user_receiv.pay_module, user_receiv.mail, user);
+		            switchRoom(roomDisplay, user_receiv.id_coresp, user_receiv.nom, user_receiv.prenom, user_receiv.type, user_receiv.mail, user);
 		            socket.emit('sendchat', rdv, userId, user_receiv, "iframe-chat");
 				}
 		    }
@@ -332,7 +330,7 @@ function on_valid_rdv_offer_link_click(e){
 		                request_state : 0
 		            }
 		            //console.log(rdv_off);
-		            switchRoom(roomDisplay, user_receiv.id_coresp, user_receiv.nom, user_receiv.prenom, user_receiv.type, user_receiv.pay_module, user_receiv.mail, user);
+		            switchRoom(roomDisplay, user_receiv.id_coresp, user_receiv.nom, user_receiv.prenom, user_receiv.type, user_receiv.mail, user);
 		            socket.emit('sendchat', rdv_off, userId, user_receiv, "iframe-chat");
 				}
 		    }

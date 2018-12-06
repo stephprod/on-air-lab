@@ -291,7 +291,7 @@
 		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
 
-<!-- paiement modal -->
+<!-- payment modal -->
 	<div class="modal fade apartment-modal" id="paiement-modal">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -302,13 +302,19 @@
 						<div class="short-title-separator"></div>
 					</div>
 					<p class="negative-margin forgot-info">Veillez à remplir la totalité des champs du formulaire.<br/>L'artiste aura le choix d'accepter/refuser la demande de paiement.</p>
+					<a href="#" name="module" data-action="update-module" data-module="0" class="button-secondary button-shadow button-full msg-module">
+						<span>Module bancaire Off</span>
+						<div class="button-triangle"></div>
+						<div class="button-triangle2"></div>
+						<div class="button-icon"><i class="jfont"></i></div>
+					</a>
 					<input name="desc" type="text" class="input-full main-input" placeholder="Produits (Ex: CADRAGE + MONTAGE + POST PROD)" />
 					<input name="price" type="tel" class="input-full main-input" placeholder="Prix en euros (Ex: 150)" />
 					<a href="#" class="button-primary button-shadow button-full payment-chat">
 						<span>Envoyer la demande</span>
 						<div class="button-triangle"></div>
 						<div class="button-triangle2"></div>
-						<div class="button-icon"><i class="fa fa-user"></i></div>
+						<div class="button-icon"><i class="jfont"></i></div>
 					</a>
 				</div>
 			</div><!-- /.modal-content -->
@@ -344,8 +350,6 @@
     		locals.session.userFirstName : "null" %>";
     	user.type = "<%- locals.session.userType ?
 			locals.session.userType : "null" %>";
-		user.pay_module = "<%- locals.session.pay_module ?
-			locals.session.pay_module : "null" %>";
 		user.mail = "<%- locals.session.userMail ?
 			locals.session.userMail : "null" %>";
     	//console.log(session);

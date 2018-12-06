@@ -31,8 +31,8 @@ function insert_payment(req, ret){
     return new Promise((resolve) => {
         if (req.session.token == req.headers["x-access-token"]){
             //Requête d'insertion d'un paiement
-            tableP.push(req.body.receiver, req.body.sender, req.body.desc, req.body.price)
-            User.insert_payment_db(tableP, (res) => {
+            tableP.push(req.body.receiver, req.body.sender, req.body.desc, req.body.price, req.body.type_t)
+            User.insert_payment_request_db(tableP, (res) => {
                 if (res > 0){
                     ret.result.id_p = res
                     ret.success.push(true)
