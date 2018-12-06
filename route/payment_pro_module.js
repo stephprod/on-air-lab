@@ -1,6 +1,6 @@
 const express = require('express')
 const User = require('../models/req_user')
-const validator = require('../middlewares/valid_form').register_updatePassword
+const validator = require('../middlewares/valid_form').payment_request_form
 //const uid = require('rand-token').uid
 const router = express.Router()
 
@@ -11,7 +11,7 @@ router.route('/payment-request')
         ret.global_msg = []
         ret.result = {}
         ret.msg = "Demande de paiement !"
-        insert_payment(request, ret)
+        insert_payment_request(request, ret)
             .then((res) => {
                 return insert_type_msg(request, res)
             }, (err) => {
@@ -26,7 +26,7 @@ router.route('/payment-request')
                 response.send(err)
             })
 })
-function insert_payment(req, ret){
+function insert_payment_request(req, ret){
     var tableP = []
     return new Promise((resolve) => {
         if (req.session.token == req.headers["x-access-token"]){

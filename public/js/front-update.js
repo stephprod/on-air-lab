@@ -1,29 +1,30 @@
 function update_front_with_errors(tabErr){
-		update_front_with_success();
-		if (tabErr !== undefined && tabErr.length > 0){
-			$.each(tabErr, function (ind, val){
-				var elem = $("[name="+ind+"]");
-				var title = "";
-				//console.log(elem);
-				elem.attr("data-toggle", "tooltip");
-				$.each(val, function (i, v){
-					title += "- "+v+"\n";
-				});
-				if (elem.is("select[name='cp']")){
-					//console.log(elem.selectpicker());
-					elem.selectpicker();
-					elem.selectpicker({title: title}).selectpicker('render');
-					var html = '';
-					elem.html(html);
-					elem.selectpicker("refresh");
-				}else{
-					elem.attr("data-title", title);
-					elem.attr("data-original-title", title);
-				}
+	//console.log(tabErr);
+	update_front_with_success();
+	if (tabErr !== undefined && tabErr != null){
+		$.each(tabErr, function (ind, val){
+			var elem = $("[name="+ind+"]");
+			var title = "";
+			//console.log(elem);
+			elem.attr("data-toggle", "tooltip");
+			$.each(val, function (i, v){
+				title += "- "+v+"\n";
 			});
-		}
-		$('[data-toggle="tooltip"]').tooltip('enable');
+			if (elem.is("select[name='cp']")){
+				//console.log(elem.selectpicker());
+				elem.selectpicker();
+				elem.selectpicker({title: title}).selectpicker('render');
+				var html = '';
+				elem.html(html);
+				elem.selectpicker("refresh");
+			}else{
+				elem.attr("data-title", title);
+				elem.attr("data-original-title", title);
+			}
+		});
 	}
+	$('[data-toggle="tooltip"]').tooltip('enable');
+}
 	function update_front_with_msg(ret, dataName){
 		$('.global_msg').remove();
 		var content = "";

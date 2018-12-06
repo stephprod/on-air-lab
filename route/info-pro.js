@@ -28,7 +28,7 @@ router.route('/info-pro')
 				else
 					request.session.abonnement = false
 				response.locals.session = request.session
-				console.log(result)
+				//console.log(result)
 				User.displayOffre(request.session.userId, (result) => {
 					//console.log("offre")
 					//console.log(result)

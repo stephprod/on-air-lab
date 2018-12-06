@@ -322,7 +322,7 @@ if ($(this).hasClass("meet-up-chat")){
       req.setRequestHeader("x-access-token", token);
     },
     success: function (data){
-      console.log(data);
+      //console.log(data);
       if (data.result.type_r == "rdv")
         update_front_with_msg(data, "msg-rdv");
       else
@@ -394,7 +394,7 @@ function on_form_song_submit(e){
           update_front_with_errors(data.errors);
         else{
           /*Emmistion de socket*/
-          console.log("audio enregistré !" +userId);
+          //console.log("audio enregistré !" +userId);
           var song = {
               type_m : data.result.type_a,
               path: data.result.path,
@@ -408,7 +408,7 @@ function on_form_song_submit(e){
     });
 }
 function on_input_file_ghost_change(){
-  console.log("input change");
+  //console.log("input change");
   input_text.val($(this).val().split("\\").pop());
 }
 function on_input_text_mousedown(){
@@ -764,7 +764,7 @@ function on_payment_link_click(e){
         update_front_with_errors(data.errors);
       else{
         //Emmistion de socket
-        //console.log("demende de paiement enregistré !");
+        //console.log("demande de paiement enregistré !");
         //console.log(data);
         var paiement_request = {
           id_type_m : data.result.id_type_m,
