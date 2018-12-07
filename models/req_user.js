@@ -1158,7 +1158,7 @@ class User{
     }
     static create_payment_abo(table, cb){
         return new Promise((resolve, reject) => {
-            let r = db.query('INSERT INTO `payments`(`type_payment`, `state_payment`, `desc_payment`, `id_pro`, `date_payment`) '+
+            let r = db.query('INSERT INTO `payments`(`type_payment`, `state_payment`, `desc_payment`, `id_pro`, `price_payment`, `date_payment`) '+
                 'VALUES (?)', [table], (err, result) => {
                 if(err){
                     console.log(r.sql)

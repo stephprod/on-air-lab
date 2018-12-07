@@ -64,6 +64,24 @@ function extract_and_check_signature(sig, body, delta_in_ms){
 function manage_event_response(wh_datas, response){
     if (wh_datas.type.indexOf("payment_intent") !== -1)
         payment_intent_responses(wh_datas, response)
+    else if (wh_datas.type.indexOf("charge") !== -1)
+        charge_responses(wh_datas, response)
+}
+function charge_responses(wh_datas, resp){
+    get_user_in_event(wh_datas.data.object.source.owner.name)
+    .then((user) => {
+        if (wh_datas.type == "charge.succeeded"){
+            return send_notification(user, wh_datas.data.object.amount, resp, "accept")
+            .then(() => {
+                insert_new_abo(resp, "valide", wh_datas, user)
+            })
+        }else{
+            return send_notification(user, wh_datas.data.object.amount, resp, "deny")
+            .then(() => {
+                insert_new_abo(resp, "annule", wh_datas, user)
+            })
+        }
+    })
 }
 function payment_intent_responses(wh_datas, resp){
     if (wh_datas.type != "payment_intent.created"){
@@ -73,8 +91,6 @@ function payment_intent_responses(wh_datas, resp){
                 .then(() => {
                     insert_new_payment(resp, "valide", wh_datas, user)
                 })
-            }else if(wh_datas.type == "payment_intent.created"){
-                resp.status(200).send({received: true})
             }else{
                 return send_notification(user, wh_datas.data.object.amount, resp, "deny")
                 .then(() => {
@@ -82,6 +98,8 @@ function payment_intent_responses(wh_datas, resp){
                 })
             }
         })
+    }else{
+        resp.status(200).send({received: true})
     }
 }
 function send_notification(userDest, amount, resp, action){
@@ -102,6 +120,25 @@ function insert_new_payment(resp, action, wh_datas, user_from){
             resolve()
         }else{
             reject(new Error("Insertion du paiement echouée !"))
+        }
+    }).then(() => {
+        resp.status(200).send({received: true})
+    }, (err) => {
+        resp.status(500).send({received: true, error: err})
+    })
+}
+function insert_new_abo(resp, action, wh_datas, user_from){
+    let table = [], dateInMilis = parseInt(wh_datas.data.object.created), amount = 0
+    if(dateInMilis < 10000000000) 
+        dateInMilis *= 1000; // convert to milliseconds (Epoch is usually expressed in seconds, but Javascript uses Milliseconds)
+    amount = parseFloat(wh_datas.data.object.amount) / 100
+    table.push("ABONNEMENT", action, "Nouvelle abonnement LabelOnAir", user_from.id, amount, new Date(dateInMilis))
+    User.create_payment_abo(table, (result, resolve, reject) => {
+        let valid = result.changedRows != 0 ? result.changedRows : result.affectedRows
+        if (valid > 0){
+            resolve()
+        }else{
+            reject(new Error("Insertion de l'abonnement echouée !"))
         }
     }).then(() => {
         resp.status(200).send({received: true})

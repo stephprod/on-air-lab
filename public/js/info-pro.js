@@ -287,11 +287,11 @@ import {update_front_with_msg, update_front_with_errors} from './front-update.js
 	});
 	var session = JSON.parse(sessionStorage.getItem('session'));
 	//sessionStorage.clear();
-	//var user = null;
+	var user = null;
 	//var userId = null;
 	var token = null;
 	if (session != null && session.user != undefined){
-		//user = session.user;
+		user = session.user;
 		//userId = user.id;
 		token = session.token;
 	}
@@ -309,11 +309,12 @@ $(document).on('click', '#customButton', function(e) {
 function sendPlan() {
 	var stripePublishableKey = 'pk_test_L0T2zWeT0uLcyhZCD1Nfqzx2';
 	var currency = 'eur';
+	//console.log(user);
 	var data = {
-		email: 'nilo@getMaxListeners.com',
-		desc: 'test plan',
-		nom: 'blemand',
-		prenom: 'nilo',
+		email: user.mail,
+		desc: 'Label OnAir full access !',
+		nom: user.nom,
+		prenom: user.prenom,
 		price: price
 	};
 	var stripe = Stripe(stripePublishableKey, {
@@ -374,7 +375,7 @@ function sendPlan() {
 				url : '/payment',
 				data : {source : response.source.id},
 				success : function(data){
-					var returnURL = "/plan3dsecure?cust="+data.customer.id+"&amount="+price;
+					var returnURL = "http://localhost:4000/plan3dsecure?cust="+data.customer.id+"&amount="+price;
 					stripe.createSource({
 						type: 'three_d_secure',
 						amount: price,
@@ -387,10 +388,11 @@ function sendPlan() {
 							return_url: returnURL,
 						},
 					}).then((response) =>{
-						//   console.log('response: ')
-						//   console.log(response)
-							window.location.assign(response.source.redirect.url)
-					});
+						// console.log('response: ');
+						// console.log(response);
+						if (response.error === undefined)
+							window.location.assign(response.source.redirect.url);
+					}).catch((err) => console.log(err));
 				}
 			})
 		} else if (response.source.status != 'pending') {

@@ -8,7 +8,7 @@ router.route('/payment')
         //console.log(req.query)
         res.locals.session = req.session
         stripe.customers.create({
-            description: `${req.session.userFirstName} ${req.session.userName}`,
+            description: `${req.session.userId} ${req.session.userFirstName} ${req.session.userName}`,
             source: req.query.source
         }, function(err, customer) {
             // console.log("customer : ")
@@ -19,7 +19,7 @@ router.route('/payment')
     })
 	.post((req, res) => {
         stripe.customers.create({
-            description: `${req.body.prenom} ${req.body.nom}`,
+            description: `${req.session.userId} ${req.body.prenom} ${req.body.nom}`,
             source: req.body.stripeToken
         }, function(err, customer) {
             // console.log("customer : ")
@@ -30,7 +30,7 @@ router.route('/payment')
                 amount: parseFloat(req.body.price),
                 interval: "month",
                 product: "prod_E3Lh8uPFzCj9gs",
-                currency: "eur",
+                currency: "eur"
             }, function(err, plan) {
                 // console.log(err)
                 // console.log("plan : ")

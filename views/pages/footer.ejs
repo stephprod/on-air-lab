@@ -210,6 +210,10 @@
       locals.session.userName : "null" %>";
     user.type = "<%- locals.session.userType ?
       locals.session.userType : "null" %>";
+    user.prenom = "<%- locals.session.userFirstName ?
+      locals.session.userFirstName : "null" %>";
+    user.mail = "<%- locals.session.userMail ?
+			locals.session.userMail : "null" %>";
     //console.log(session);
     session.user = user;
     sessionStorage.setItem("session", JSON.stringify(session));

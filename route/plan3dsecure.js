@@ -8,7 +8,7 @@ router.route('/plan3dsecure')
             amount: parseFloat(req.query.amount),
             interval: "month",
             product: "prod_E3Lh8uPFzCj9gs",
-            currency: "eur",
+            currency: "eur"
         }, function(err, plan) {
             // console.log(err)
             // console.log("plan : ")
