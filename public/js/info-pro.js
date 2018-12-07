@@ -1,4 +1,4 @@
-import {update_front_with_msg, update_front_with_errors, update_front_with_success} from './front-update.js';
+import {update_front_with_msg, update_front_with_errors} from './front-update.js';
 	function on_offre_valid_link_click(event){
 		event.preventDefault();
 		//console.log($(event.target).parents("a[data-action='offre']"));
@@ -33,7 +33,7 @@ import {update_front_with_msg, update_front_with_errors, update_front_with_succe
 			}
 		});
 	}
-	function on_agent_photo_change(event){
+	function on_agent_photo_change(){
 		var formData = new FormData();
 		// Choix de l'utilisateur à partir d'un input HTML de type file...
 		formData.append("uploaded_file", this.files[0], this.files[0].name);
@@ -47,7 +47,7 @@ import {update_front_with_msg, update_front_with_errors, update_front_with_succe
 				req.setRequestHeader("x-access-token", token);
 			},
 			processData: false,  // indique à jQuery de ne pas traiter les données
-  			contentType: false,  // indique à jQuery de ne pas configurer le contentType
+			contentType: false,  // indique à jQuery de ne pas configurer le contentType
 			success: function(data){
 				localStorage.setItem("datas", JSON.stringify(data));
 				document.location = "/info-pro";
@@ -55,15 +55,15 @@ import {update_front_with_msg, update_front_with_errors, update_front_with_succe
 			}
 		});
 	}
-	function cp_change_action(e, clickedIndex, isSelected, previousValue){
+	function cp_change_action(e){
 		var d = {}
 		d.code_p = $(e.target).val();
 		//console.log(datas);
 		$.ajax({
-	        type : "POST",
-	        url : "/get_cities_in_cp",
-	        data:  d,
-	        success: function(data) {
+			type : "POST",
+			url : "/get_cities_in_cp",
+			data:  d,
+			success: function(data) {
 				//AFFICHER LES VILLES ISSUS DE LA BASE DE DONNEES
 				//console.log(select_cp);
 				select_cities.empty();
@@ -72,8 +72,8 @@ import {update_front_with_msg, update_front_with_errors, update_front_with_succe
 					//$(select_cities[1]).append("<option data-city='"+value.ville_nom+"' data-long='"+value.ville_longitude_deg+"' data-lat='"+value.ville_latitude_deg+"' value='"+value.ville_id+"'>"+value.ville_nom+" - "+value.ville_code_postal+"</option>");
 				});
 				select_cities.selectpicker('refresh');
-	        }   
-	    });
+			}   
+		});
 	}
 	function on_serv_valid_link_click(e){
 		e.preventDefault();
@@ -102,7 +102,7 @@ import {update_front_with_msg, update_front_with_errors, update_front_with_succe
 			}
 		})
 	}
-	function on_tarif_slider_change(e, ui){
+	function on_tarif_slider_change(){
 		var newVal = $(sliders_tarification[1]).slider("value") * $(sliders_tarification[2]).slider("value")
 		var sliderId = $(sliders_tarification[0]).attr("id");
 		$(sliders_tarification[0]).slider("value", newVal);
@@ -114,7 +114,7 @@ import {update_front_with_msg, update_front_with_errors, update_front_with_succe
 		if (link.length == 0)
 			link = $(event.target);
 		var datas = {};
-		var div = $("div#"+$(link[0]).data("form"));
+		//var div = $("div#"+$(link[0]).data("form"));
 		//console.log($(event.target).parents("a"));
 		datas.prix_min = $(sliders_tarification[0]).slider("value");
 		datas.prix_h = $(sliders_tarification[1]).slider("value");
@@ -175,8 +175,8 @@ import {update_front_with_msg, update_front_with_errors, update_front_with_succe
 		e.preventDefault();
 		console.log("click on delete offre !");
 		var datas = {};
-		var that = $(this);
-		var parentRow = $("div#home > div.row");
+		// var that = $(this);
+		// var parentRow = $("div#home > div.row");
 		datas.action = "delete";
 		datas.id_offre = $(this).data("id-offre");
 		console.log(datas);
@@ -214,11 +214,11 @@ import {update_front_with_msg, update_front_with_errors, update_front_with_succe
 			}
 		});
 	}
-   	var off_valid_link = $("a[data-action='offre']");
-   	off_valid_link.on("click", on_offre_valid_link_click);
-   	var tarif_valid_link = $("a[data-action='tarif']");
-   	tarif_valid_link.on("click", on_tarif_valid_link_click);
-   	var agent_photo = $( "#agent-photo" );
+	var off_valid_link = $("a[data-action='offre']");
+	off_valid_link.on("click", on_offre_valid_link_click);
+	var tarif_valid_link = $("a[data-action='tarif']");
+	tarif_valid_link.on("click", on_tarif_valid_link_click);
+	var agent_photo = $( "#agent-photo" );
 	agent_photo.on("change", on_agent_photo_change);
 	var select_cities = $("select[name='cp']");
 	var select_dpt = $("select[name='dept']");
@@ -248,51 +248,51 @@ import {update_front_with_msg, update_front_with_errors, update_front_with_succe
 	});
 	$(select_dpt[0]).on("changed.bs.select", cp_change_action);
 	$(document).on("change", "#profile input[id^=slider-t-price-h], #profile input[id^=slider-t-h]"
-		, function(e){
+		, function(){
 			var sliderId = $(this).attr("id").replace("-value", "");
-  		var slider = $(this).parents("#profile").find("div#"+sliderId).slider();
-	  	var newNumber = parseFloat($(this).val());
-	  	//console.log("input change !"+newNumber);
-	  	if (isNaN(newNumber)){
-	  		slider.slider("value", 0);
-	  	}
-	  	else{
-	  		slider.slider("value", newNumber);
-	  	}
+		var slider = $(this).parents("#profile").find("div#"+sliderId).slider();
+		var newNumber = parseFloat($(this).val());
+		//console.log("input change !"+newNumber);
+		if (isNaN(newNumber)){
+			slider.slider("value", 0);
+		}
+		else{
+			slider.slider("value", newNumber);
+		}
 
-  });
-	$(".slider[id^=slider-o-price]").each( function( index ) {
+	});
+	$(".slider[id^=slider-o-price]").each( function() {
 		var sliderId = $( this ).attr('id');
 		$( this ).slider({
-			 range: "min",
-			 min:  parseFloat($( this ).attr("data-min")),
-			 max: parseFloat($( this ).attr("data-max")),
-			 value: parseFloat($( this ).attr("data-val")),
-			 step: 0.1,
-			 slide: function( event, ui ) {
+				range: "min",
+				min:  parseFloat($( this ).attr("data-min")),
+				max: parseFloat($( this ).attr("data-max")),
+				value: parseFloat($( this ).attr("data-val")),
+				step: 0.1,
+				slide: function( event, ui ) {
 				$( "#" + sliderId + "-value" ).val( ui.value );
-			 }
+				}
 		});
 		$( "#" + sliderId + "-value" ).val( $( this ).slider( "value" ) );
 	});
-	$(document).on("change", "input[id^=slider-o-price]", function(e){
-	  	var slider = $(this).parents(".grid-offer-back").find("div[id^=slider-o-price]").slider();
-	  	var newNumber = parseFloat($(this).val());
-	  	if (isNaN(newNumber)){
-	  		slider.slider("value", 0);
-	  	}
-	  	else{
-	  		slider.slider("value", newNumber);
-	  	}
+	$(document).on("change", "input[id^=slider-o-price]", function(){
+		var slider = $(this).parents(".grid-offer-back").find("div[id^=slider-o-price]").slider();
+		var newNumber = parseFloat($(this).val());
+		if (isNaN(newNumber)){
+			slider.slider("value", 0);
+		}
+		else{
+			slider.slider("value", newNumber);
+		}
 	});
 	var session = JSON.parse(sessionStorage.getItem('session'));
 	//sessionStorage.clear();
-	var user = null;
-	var userId = null;
+	//var user = null;
+	//var userId = null;
 	var token = null;
 	if (session != null && session.user != undefined){
-		user = session.user;
-		userId = user.id;
+		//user = session.user;
+		//userId = user.id;
 		token = session.token;
 	}
 	$(document).on('click', '#redirectAdmin', function(event) {
@@ -374,22 +374,22 @@ function sendPlan() {
 				url : '/payment',
 				data : {source : response.source.id},
 				success : function(data){
-					var returnURL = "http://localhost:4000/plan3dsecure?cust="+data.customer.id+"&amount="+price;
+					var returnURL = "/plan3dsecure?cust="+data.customer.id+"&amount="+price;
 					stripe.createSource({
 						type: 'three_d_secure',
 						amount: price,
 						currency: "eur",
 						three_d_secure: {
 							customer : data.customer.id,
-						  card: response.source.id
+							card: response.source.id
 						},
 						redirect: {
-						  return_url: returnURL,
+							return_url: returnURL,
 						},
-					  }).then((response) =>{
+					}).then((response) =>{
 						//   console.log('response: ')
 						//   console.log(response)
-						  window.location.assign(response.source.redirect.url)
+							window.location.assign(response.source.redirect.url)
 					});
 				}
 			})

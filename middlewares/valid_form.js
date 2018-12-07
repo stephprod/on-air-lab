@@ -165,7 +165,7 @@ const valid_payment_form = (request, response, next)=>{
 		err_flag = true
 	}
 	if (pay_price !== undefined && !validator.isNum(pay_price)){
-		errors.price = ["Le prix de la prestation est requis !"]
+		errors.price = ["Le prix de la prestation est requis et doit contenir uniquement des caractères numériques non nuls !"]
 		err_flag = true
 	}
 	if (pay_type_transac == undefined){

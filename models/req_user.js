@@ -1138,7 +1138,7 @@ class User{
     }
     static historique_payment(id, cb){
         return new Promise((resolve, reject) => {
-            let r = db.query('SELECT * FROM `payments` WHERE id_pro=?', [id], (err, result) => {
+            let r = db.query('SELECT * FROM `payments` WHERE id_pro=? ORDER BY `payments`.`date_payment` DESC', [id], (err, result) => {
                 if(err){
                     console.log(r.sql)
                     throw err;

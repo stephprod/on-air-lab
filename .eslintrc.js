@@ -20,6 +20,9 @@ module.exports = {
         "after": false,
         "afterEach": false,
         "it": false,
+        "Push": false,
+        "Stripe": false,
+        "StripeCheckout": false,
     },
     "rules": {
         "accessor-pairs": "error",

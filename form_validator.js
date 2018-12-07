@@ -57,9 +57,11 @@ class Form_validator {
     }
 
     static isNum (input) {
-        if (!(input != null)) {
+        if (input == null) {
             return false;
-        } else {
+        } else if (parseFloat(input) < 0){
+            return false;
+        }else{
             return input.match(/^[0-9\.]+$/);
         }
     }

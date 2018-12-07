@@ -355,7 +355,7 @@ else{
           type : "POST",
           url : "/secure_profile",
           data: {"temp": user_receiv.id_coresp},
-          success: function(data) {
+          success: function() {
               //console.log(data);
               var datas = {},
               query = '';
@@ -624,7 +624,7 @@ function on_module_accept_typeMessage_link_click(e){
           type : "POST",
           url : "/secure_profile",
           data: {"temp": user_receiv.id_coresp},
-          success: function(data) {
+          success: function() {
             var datas = {}, query;
             datas.type = "devis";
             datas.from = "accept-devis";
@@ -867,20 +867,20 @@ var roomDisplay = null;
 var iframe_cal1 = $(".cal")[0].contentDocument ? $(".cal")[0].contentDocument : $(".cal")[0].contentWindow.document;
 var iframe_cal2 = $(".cal")[1].contentDocument ? $(".cal")[1].contentDocument : $(".cal")[1].contentWindow.document;
 //console.log($("a.booking-chat"));
-var check_in = $("a.booking-chat");
-var meet_up = $("a.meet-up-chat");
+// var check_in = $("a.booking-chat");
+// var meet_up = $("a.meet-up-chat");
 var session = JSON.parse(sessionStorage.getItem('session'));
 //sessionStorage.clear();
 //console.log(session);
 var user = null;
 var userId = null;
-var page = null;
+//var page = null;
 var token = null;
 var iframe;
 if (session != null && session.user != undefined){
   user = session.user;
   userId = user.id;
-  page = session.page;
+//  page = session.page;
   token = session.token;
 }
 $(document).on("click", "a.booking-chat", on_reservation_link_click);

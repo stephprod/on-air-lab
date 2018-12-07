@@ -49,7 +49,9 @@ function extract_and_check_signature(sig, body, delta_in_ms){
     if (two.v1 != expected.toString())
         return expected.toString();
     let date = new Date();
-    diffs_in_timestmp = date.getTime() - parseInt(two.t+"000");
+    if(parseInt(two.t) < 10000000000) 
+        two.t += "000"
+    diffs_in_timestmp = date.getTime() - parseInt(two.t);
     // console.log(parseInt(two.t+"000"));
     // console.log(date.getTime());
     // console.log(Math.abs(diffs_in_timestmp));
@@ -88,8 +90,12 @@ function send_notification(userDest, amount, resp, action){
 }
 
 function insert_new_payment(resp, action, wh_datas, user_from){
-    let table = [], date = new Date(parseInt(wh_datas.data.object.created))
-    table.push("PRESTATION", action, wh_datas.data.object.description, wh_datas.data.object.statement_descriptor, user_from.id, wh_datas.data.object.amount, date)
+    let table = [], dateInMilis = parseInt(wh_datas.data.object.created), id_pro, amount = 0
+    id_pro = wh_datas.data.object.statement_descriptor.split(" ")[1]
+    if(dateInMilis < 10000000000) 
+        dateInMilis *= 1000; // convert to milliseconds (Epoch is usually expressed in seconds, but Javascript uses Milliseconds)
+    amount = parseFloat(wh_datas.data.object.amount) / 100
+    table.push("PRESTATION", action, wh_datas.data.object.description, id_pro, user_from.id, amount, new Date(dateInMilis))
     User.create_payment(table, (result, resolve, reject) => {
         let valid = result.changedRows != 0 ? result.changedRows : result.affectedRows
         if (valid > 0){

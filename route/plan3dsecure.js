@@ -10,9 +10,9 @@ router.route('/plan3dsecure')
             product: "prod_E3Lh8uPFzCj9gs",
             currency: "eur",
         }, function(err, plan) {
-            console.log(err)
-            console.log("plan : ")
-            console.log(plan);
+            // console.log(err)
+            // console.log("plan : ")
+            // console.log(plan);
             stripe.subscriptions.create({
                 customer: req.query.cust,
                 items: [
@@ -20,10 +20,10 @@ router.route('/plan3dsecure')
                         plan: plan.id,
                     },
                 ]
-                }, function(err, subscription) {
-                    console.log("subscription : ")
-                    console.log(subscription)
-                    console.log(err)
+                }, function() {
+                    // console.log("subscription : ")
+                    // console.log(subscription)
+                    // console.log(err)
                     res.redirect('/info-pro')
                 });
         });

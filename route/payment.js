@@ -11,9 +11,9 @@ router.route('/payment')
             description: `${req.session.userFirstName} ${req.session.userName}`,
             source: req.query.source
         }, function(err, customer) {
-            console.log("customer : ")
-            console.log(customer)
-            console.log(err)
+            // console.log("customer : ")
+            // console.log(customer)
+            // console.log(err)
             res.send({customer : customer})                
         })
     })
@@ -40,7 +40,7 @@ router.route('/payment')
                     items: [{
                         plan: plan.id,
                     }]
-                }, function(err, subscription) {
+                }, function() {
                     // console.log("subscription : ")
                     // console.log(subscription)
                     // console.log(err)

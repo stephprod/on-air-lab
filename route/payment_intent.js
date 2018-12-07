@@ -29,11 +29,11 @@ router.route('/payment-intent/:id')
             currency: 'eur',
             allowed_source_types: ['card'],
             description: req.body.desc,
-            statement_descriptor: req.session.user_receiv.id,
+            statement_descriptor: "user "+req.session.user_receiv.id_coresp,
         }).then((result) => {
             ret.result = result.client_secret
             //console.log(req.query)
             res.send(ret)
-        });
+        }).catch((err) => err);
     });
 module.exports = router
