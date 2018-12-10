@@ -17,17 +17,26 @@ router.route('/logout')
 				table.push(request.body[prop])
 			}
 			if (table.length > 0){
-				request.session.userId = null
-				request.session.userName = null
-				request.session.userFirstName = null
-				request.session.userType = null
-				ret.success.push(true)
-				ret.global_msg.push('Session clos !')
+				User.updateUser("disponibilite='0' WHERE id='"+request.session.userId+"'"
+					, () => {
+						request.session.userId = null
+						request.session.userName = null
+						request.session.userFirstName = null
+						request.session.userType = null
+						request.session.token = null
+						request.session.userMail = null
+						if (request.session.abonnement !== undefined)
+							request.session.abonnement = null
+						console.log('le champs Disponible est actuellement a 0')
+						ret.success.push(true)
+						ret.global_msg.push('Session clos !')
+						response.send(ret)
+					})
 			}else{
 				ret.success.push(false)
 				ret.global_msg.push('Erreur lors de la deconnexion de l\'utilisateur, contactez le support/modérateur !')
+				response.send(ret)
 			}
-			response.send(ret)
 		}else{
 			ret.success.push(false)
 			ret.global_msg.push("Token compromised !")

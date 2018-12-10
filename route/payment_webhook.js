@@ -15,7 +15,7 @@ router.route('/stripe-webhook')
         //let secu = extract_and_check_signature(sig, req.body, 60000)
         if (extract_and_check_signature(sig, req.body, 60000) === true){
             let webh_res = JSON.parse(req.body)
-            console.log(webh_res)
+            //console.log(webh_res)
             manage_event_response(webh_res, res)
         }else{
             res.status(500).send({received: false})

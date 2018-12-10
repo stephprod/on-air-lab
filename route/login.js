@@ -32,6 +32,7 @@ router.route('/login')
 				}
 				else{
 					/*Redirection vers page d'accueil*/
+					//var userSess
 					ret.success.push(true)
 					ret.global_msg.push("Utilisateur authentifié !")
 					let res = {}
@@ -59,7 +60,7 @@ router.route('/login')
 					console.log('Tu est connecter avec le nom '+userSess.userName)
 					//console.log(userSess)
 					User.updateUser("disponibilite='1' WHERE id='"+result.id+"'"
-					, (result) => {
+					, () => {
 							//ret.global_msg.push("dispo mis à jour avec succés !")
 							//ret.success.push(true)
 							console.log('le champs Disponible est actuellement a 1')

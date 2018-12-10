@@ -3,857 +3,6 @@ import {update_front_with_msg, update_front_with_errors} from './front-update.js
 //import {Push} from './push.min.js';
 /*import {get_events} from './events.js';
 import {socket, switchRoom} from './socket_modules.js';*/
-$(document).on("click", ".friend", function(){
-  var childOffset = $(this).offset();
-  var parentOffset = $(this).parent().parent().offset();
-  var childTop = childOffset.top - parentOffset.top;
-  var clone = $(this).find('img').eq(0).clone();
-  var top = childTop+12+"px";
-
-  $(clone).css({'top': top}).addClass("floatingImg").appendTo("#chatbox");
-
-  setTimeout(function(){$("#profile p").addClass("animate");$("#profile").addClass("animate");}, 100);
-  setTimeout(function(){
-    $("#chat-messages").addClass("animate");
-    $('.cx, .cy').addClass('s1');
-    setTimeout(function(){$('.cx, .cy').addClass('s2');}, 100);
-    setTimeout(function(){$('.cx, .cy').addClass('s3');}, 200);
-  }, 150);
-
-  $('.floatingImg').animate({
-    'width': "68px",
-    'left':'108px',
-    'top':'20px'
-  }, 200);
-
-  var name = $(this).find("p strong").html();
-  var email = $(this).find("p span").html();
-  $("#profile p").html(name);
-  $("#profile span").html(email);
-
-  $(".message").not(".right").find("img").attr("src", $(clone).attr("src"));
-  $('#friendslist').fadeOut();
-  $('#chatview').fadeIn();
-
-  $('#close').unbind("click").click(function(){
-    $("#chat-messages, #profile, #profile p").removeClass("animate");
-    $('.cx, .cy').removeClass("s1 s2 s3");
-    $('.floatingImg').animate({
-      'width': "40px",
-      'top':top,
-      'left': '12px'
-    }, 200, function(){$('.floatingImg').remove()});
-
-    setTimeout(function(){
-      $('#chatview').fadeOut();
-      $('#friendslist').fadeIn();
-    }, 50);
-  });
-  if ($(this).data('coresp-type') == "4"){
-    //console.log(user);
-    $($(".box-module .module")[0]).hide(); 
-    $($(".box-module .module")[1]).hide();
-    $($(".box-module .module")[2]).show();
-    $($(".box-module .module")[3]).show();
-    $($(".box-module .module")[4]).show();
-    $($(".box-module .module")[5]).show();
-    $("#devis-modal").find("h1").empty();
-    $("#devis-modal").find("h1").append("Envoyer un devis");
-  }
-  else if($(this).data('coresp-type') == "1"){
-    $($(".box-module .module")[0]).hide();
-    $($(".box-module .module")[1]).hide();
-    $($(".box-module .module")[2]).hide();
-    $($(".box-module .module")[3]).hide();
-    $($(".box-module .module")[4]).hide();
-    $($(".box-module .module")[5]).hide();
-  }
-  else if ($(this).data('coresp-type') == "2"){
-    $("select[name='services']").remove();
-    $('#devis-modal').find('[name="msg"]').after('<select name="services" class="bootstrap-select" title="Services:" multiple data-actions-box="true"></select>');
-    $($(".box-module .module")[0]).show();
-    $($(".box-module .module")[1]).show();
-    $($(".box-module .module")[2]).show();
-    $($(".box-module .module")[3]).hide();
-    $($(".box-module .module")[4]).show();
-    $($(".box-module .module")[5]).hide();
-    $("#devis-modal").find("h1").empty();
-    $("#devis-modal").find("h1").append("Demande de devis");
-    $('#devis-modal').find("a#devis-send span").empty();
-    $('#devis-modal').find("a#devis-send span").append("Envoyer la demande");
-  }else{
-    $("select[name='services']").remove();
-    $('#devis-modal').find('[name="msg"]').after('<select name="services" class="bootstrap-select" title="Services:" multiple data-actions-box="true"></select>');
-    $($(".box-module .module")[0]).hide();
-    $($(".box-module .module")[1]).show();
-    $($(".box-module .module")[2]).show();
-    $($(".box-module .module")[3]).hide();
-    $($(".box-module .module")[4]).hide();
-    $($(".box-module .module")[5]).show();
-    $("#devis-modal").find("h1").empty();
-    $("#devis-modal").find("h1").append("Demande de devis");
-    $('#devis-modal').find("a#devis-send span").empty();
-    $('#devis-modal').find("a#devis-send span").append("Envoyer la demande");
-  }
-  switchRoom($(this).data("room"), $(this).data("coresp"), name.split(" ")[0], name.split(" ")[1], $(this).data('coresp-type'), $(this).data('coresp-mail'), user);
-});
-function on_socket_update_rooms(rooms){
-  //console.log("updateroom");
-  //console.log(coresp);
-  //console.log(rooms);
-  $("div#friends").empty();
-  for (var i = 0; i < rooms.length; i++){
-    $("div#friends").append('<div class="friend" data-coresp="'+rooms[i][0]+'" data-coresp-type="'+rooms[i][4]+'" data-room="'+rooms[i][1]+'" data-coresp-mail="'+rooms[i][6]+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><p><strong>'+rooms[i][2]+' '+rooms[i][3]+'</strong><span>'+rooms[i][5]+'</span><p class="preview">'+rooms[i][8]+'</p></p><div class="status available"></div></div>');
-  }
-}
-function on_socket_connect(id){
-//console.log("connect --> "+ userId);
-if (userId != null && userId != "null") {
-        id = userId ;
-        var type = user.type;
-        var coresp = {};
-        coresp.nom = "Admin";
-        coresp.prenom = "amdin";
-        coresp.id_coresp = 1;
-        coresp.type = 1;
-        coresp.mail = "admin@label-onair.com";
-        socket.emit('adduser', id, type);
-        console.log("TU ES DEJA CONNECTE :)");
-        updateUserReceived(coresp);
-    } else {
-        console.log("CONNECTE TOI POUR UTILISER LE TCHAT NO HACK :)");
-    }
-}
-function on_socket_updatechat(coresp, data, cont){
-//console.log("updatechat");
-//console.log(data);
-//console.log(user);
-//console.log(cont);
-if (data !== undefined && data != null){
-  var htmlToAppend = "";
-  if (data.type_m !== undefined && data.type_m != null){
-    if (data.type_m == 'audio'){
-      if (user.id == data.user_sender.id)
-        htmlToAppend += actions.audio[0](data);
-      else
-        htmlToAppend += actions.audio[1](data);
-    }
-    else if (data.type_m == 'video'){
-      if (user.id == data.user_sender.id)
-        htmlToAppend += actions.video[0](data);
-      else
-        htmlToAppend += actions.video[1](data);
-    }
-    else if (data.type_m == 'booking'){
-      if (user.id == data.user_sender.id)
-        htmlToAppend += actions.booking[0](data);
-      else
-        htmlToAppend += actions.booking[1](data);
-    }
-    else if (data.type_m == 'rdv'){
-      if (user.id == data.user_sender.id)
-        htmlToAppend += actions.rdv[0](data);
-      else
-        htmlToAppend += actions.rdv[1](data);
-    }
-    else if (data.type_m == 'devis_request'){
-      if (user.id == data.user_sender.id)
-        htmlToAppend += actions.devis_request[0](data);
-      else
-        htmlToAppend += actions.devis_request[1](data);
-    }
-    else if (data.type_m == 'contact'){
-      //console.log(user);
-      if (user.type == 4){
-        if (user.id == data.user_sender.id)
-          htmlToAppend += actions.contactArt[0](data);
-        else
-          htmlToAppend += actions.contactArt[1](data);
-      }else{
-        if (user.id == data.user_sender.id)
-          htmlToAppend += actions.contactPro[0](data);
-        else
-          htmlToAppend += actions.contactPro[1](data);
-      }
-    }else if(data.type_m == 'rdv_offer'){
-      if (user.id == data.user_sender.id)
-        htmlToAppend += actions.rdv_offer[0](data);
-      else
-        htmlToAppend += actions.rdv_offer[1](data);
-    }else{
-      if (user.id == data.user_sender.id)
-        htmlToAppend += actions.paiement[0](data);
-      else
-        htmlToAppend += actions.paiement[1](data);
-    }
-  }else{
-    if (user.id == data.user_sender.id)
-      htmlToAppend += actions.texte[0](data);
-    else
-      htmlToAppend += actions.texte[1](data);
-  }
-  if (cont !== undefined && cont == "iframe-chat"){
-    iframe = $("iframe[src='/chat']")[0] !== undefined ? $("iframe[src='/chat']")[0].contentDocument : null;
-    $('#chat-messages', iframe).append(htmlToAppend);
-  }else{
-    $('#chat-messages').append(htmlToAppend);
-  }
-}
-if (data.user_sender != "SERVER")
-  socket.emit('update_preview_in_room', data, cont);
-//console.log(data.notif);
-if (data.notif !== undefined)
-  socket.emit('sendNotif', data.notif);
-}
-function on_socket_updatepreview(tabCorresp, cont){
-//console.log("update_preview"+tabCorresp[1]);
-//console.log(tabCorresp);
-var div_to_update = null;
-if (cont !== undefined && cont == "iframe-chat"){
-  iframe = $("iframe[src='/chat']")[0] !== undefined ? $("iframe[src='/chat']")[0].contentDocument : null;
-  div_to_update = $("div#friends .friend[data-room='"+tabCorresp[1]+"']", iframe);
-}
-  else
-    div_to_update = $("div#friends .friend[data-room='"+tabCorresp[1]+"']");
-  //console.log(div_to_update);
-  //console.log(cont);
-  div_to_update.find("p.preview").empty();
-  div_to_update.find("p.preview").append(tabCorresp[7]);
-}
-$("#searchfield").focus(function(){
-if($(this).val() == "Search contacts..."){
-  $(this).val("");
-}
-});
-$("#searchfield").focusout(function(){
-if($(this).val() == ""){
-  $(this).val("Search contacts...");
-
-}
-});
-const StringParser = (text) => {
-  //string test
-  //var text = 'sdabhikagathara@rediffmail.com jshf 0665-78.9878 s  sd ghwsfwfsgfjsljdh@ergfe.fr assdsdf" 0665-78.98- 78 <dsfassdfhsdfarkal@gmail.com>, "rodnsdfald ferdfnson" <rfernsdfson@gmal.com>, "Affdmdol Gondfgale" <gyfanamosl@gmail.com>, "truform techno" <pidfpinfg@truformdftechnoproducts.com>, "NiTsdfeSh ThIdfsKaRe" <nthfsskare@ysahoo.in>, "akasdfsh kasdfstla" <akashkatsdfsa@yahsdfsfoo.in>, "Bisdsdfamal 0665-78.98/78 Prakaasdsh" <bimsdaalprakash@live.com>,; +3366578.9878 "milisdfsfnd ansdfasdfnsftwar" test <dfdmilifsd.ensfdfcogndfdfatia@gmail.com>Easy Parsing';
-  let patternEmail = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi;
-  let StringNoEmail = text.replace(patternEmail,"Email Delete");
-  let patternTel = /(?:(?:\+|00)33|0)\s*[1-9](?:[\s.\s-\/]*\d{2}){4}/gi;
-  let StringNoTelNoEmail = StringNoEmail.replace(patternTel,"Tel delete");
-  return(StringNoTelNoEmail)
-}
-
-function on_msg_send_click(){
-var message = StringParser($("#sendmessage textarea").val())
-var data = {};
-//var room = $('#chat-messages').data('current');
-if(userId != "null"){
-$('#sendmessage textarea').val('');
-data.txt = message;
-socket.emit('sendchat', data, userId, user_receiv, null);
-}
-}
-function on_msg_send_keypress(e){
-    if(e.which == 13) {
-        $(this).blur();
-        $('#sendmessage button#send').focus().click();
-    }
-}
-$("#sendmessage input").focus(function(){
-if($(this).val() == "Send message..."){
-  $(this).val("");
-}
-});
-$("#sendmessage input").focusout(function(){
-if($(this).val() == ""){
-  $(this).val("Send message...");
-
-}
-});
-// function getBody(content) 
-// { 
-//  var x = content.indexOf("<html");
-//  x = content.indexOf(">", x);    
-//  var y = content.lastIndexOf("</html>"); 
-//  return content.slice(x + 1, y);
-// }
-function serialize(obj, prefix) {
-var str = [],
-  p;
-for (p in obj) {
-  if (obj.hasOwnProperty(p)) {
-    var k = prefix ? prefix + "[" + p + "]" : p,
-      v = obj[p];
-    str.push((v !== null && typeof v === "object") ?
-      serialize(v, k) :
-      encodeURIComponent(k) + "=" + encodeURIComponent(v));
-  }
-}
-return str.join("&");
-}
-function on_reservation_link_click(e){
-  e.preventDefault();
-  //console.log("Resa click !");
-  iframe = $(this).hasClass("booking-chat") ? iframe_cal2 : iframe_cal1 ;
-  //console.log($(iframe).find("#selectHours"));
-  var datePickerVal = $(iframe).find(".datepicker input").val().replace(new RegExp("/", "g"), "-");
-  var datePickerValTab = datePickerVal.split("-");
-  var hours = $(iframe).find("#selectHours .sel");
-  var global_datas = {};
-  global_datas = get_events(hours, datePickerValTab);
-  if (user.type == 4){
-    global_datas.id_art = user.id;
-  global_datas.id_pro = user_receiv.id_coresp;
-  }
-else{
-  global_datas.id_art = user_receiv.id_coresp;
-  global_datas.id_pro = user.id;
-}
-global_datas.user_receiv = user_receiv.id_coresp;
-global_datas.user_sender = user.id;
-global_datas.room = roomDisplay;
-//console.log(global_datas);
-if ($(this).hasClass("meet-up-chat")){
-  global_datas.from = "rdv";
-  global_datas.title = "event-meet";
-  $.ajax({
-    type: "POST",
-    url: "/check-in",
-    data: global_datas,
-    beforeSend: function(req){
-      req.setRequestHeader("x-access-token", token);
-    },
-    success: function (data){
-      //console.log(data);
-      if (data.result.type_r == "rdv")
-        update_front_with_msg(data, "msg-rdv");
-      else
-        update_front_with_msg(data, "msg-booking");
-      if (data.success[0]){
-        //Emission de la socket
-        //console.log("rdv envoyé !" +userId);
-                  var rdv = {
-                      type_m : data.result.type_r,
-                      user_receiver : user_receiv,
-                      txt : data.msg,
-                      events: global_datas.events,
-                      id_disp: data.result.id_dispos,
-                      created: data.created,
-                      request_state : 0
-                  }
-                  //console.log(rdv);
-                  socket.emit('sendchat', rdv, userId, user_receiv, null);
-              }
-              else
-                update_front_with_errors(data.errors);
-    }
-  });
-}
-else{
-  global_datas.from = "booking";
-  global_datas.title = "event-work";
-  //Récapitaulatif de paiement en cas de booking
-  $.ajax({
-          type : "POST",
-          url : "/secure_profile",
-          data: {"temp": user_receiv.id_coresp},
-          success: function() {
-              //console.log(data);
-              var datas = {},
-              query = '';
-              datas.type = "booking";
-              datas.events = global_datas.events;
-              datas.id_pro = global_datas.user_receiv;
-              datas.from = "new-booking";
-              //console.log(datas);
-              query = serialize(datas);
-              //console.log(query);
-              //Récupération du nombre d'h de booking a faire
-              iframe.location = '/payment-recap/'+user_receiv.id_coresp + '?' + query;
-          }   
-      });
-  }		
-}
-/*Module sons*/
-function on_form_song_submit(e){
-  e.preventDefault();
-    var formData = new FormData(e.target);
-    var that = $(this);
-    //console.log(e.target);
-    $.ajax({
-      type : that.attr('method'),
-      url : that.attr('action'),
-      processData: false,
-      contentType: false,
-      data: formData,
-      beforeSend: function (req){
-        req.setRequestHeader("x-access-token", token);
-      },
-      success: function(data) {
-        //console.log(data);
-        update_front_with_msg(data, "msg-song");
-        if (!data.success[0])
-          update_front_with_errors(data.errors);
-        else{
-          /*Emmistion de socket*/
-          //console.log("audio enregistré !" +userId);
-          var song = {
-              type_m : data.result.type_a,
-              path: data.result.path,
-              user_receiver : user_receiv,
-              txt : data.msg
-          }
-          //console.log(song);
-          socket.emit('sendchat', song, userId, user_receiv, null);
-        }
-      }
-    });
-}
-function on_input_file_ghost_change(){
-  //console.log("input change");
-  input_text.val($(this).val().split("\\").pop());
-}
-function on_input_text_mousedown(){
-  input_file_ghost.click();
-  return false;
-}
-function on_song_module_send_link_click(e){
-  e.preventDefault();
-  form_song.submit();
-}
-function on_socket_update_eventstypemessage(data){
-  //console.log("events_type_message");
-  //console.log(data);
-  var div = $("div[id-message='"+data.id_m+"']");
-  div.find("p.date_creneau").empty();
-  var content = '', content2 = '';
-  $.each(data.events, function(ind, val){
-    content += '<p style="background: #18457c;color: white;padding: 12px;">Début ('+val.start.substr(0,10)+') A ('+val.start.substr(11,5)+') </br>';
-    content += 'Fin ('+val.end.substr(0,10)+') A ('+val.end.substr(11,5)+') </p> ';
-  });
-  div.find("p.date_creneau").append(content);
-  if (data.request_state == 0 && data.user_receiver.id == userId){
-    content = 'demande en attente de votre réponse';
-    div.find("p.date_creneau").append(content);
-    content2 += '<a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a>';
-  }
-  else if (data.request_state == 1){
-    content2 += 'demande acceptée !';
-  }
-  else{
-    content = 'demande en attente de réponse du correspondant';
-      div.find("p.date_creneau").append(content);
-  }
-  div.find("div.card-chat div.div-submi").empty();
-  div.find("div.card-chat div.div-submi").append(content2);
-  div.find("div.card-chat span").empty();
-  div.find("div.card-chat span").append(data.created);
-}
-function on_video_module_send_link_click(e){
-  e.preventDefault();
-  var datas = {}
-  datas.msg = $("#video-modal").find('input[name="msg"]').val();
-  datas.url = $("#video-modal").find('input[name="video"]').val();
-  //console.log(datas);
-  $.ajax({
-    type: "POST",
-    url: "/module_video",
-    data: datas,
-    success: function(obj){
-      //console.log(obj);
-      update_front_with_msg(obj, "msg-video");
-    if (!obj.success[0])
-      update_front_with_errors(obj.errors);
-    else{
-      /*Emmistion de socket*/
-      //console.log("vidéo enregistré !" +userId);
-      var video = {
-            type_m : obj.type_v,
-          path: obj.path,
-          user_receiver : user_receiv,
-          txt : obj.msg
-      }
-      //console.log(song);
-      socket.emit('sendchat', video, userId, user_receiv, null);
-    }
-    }
-  })
-}
-function on_socket_update_service_front(data){
-  var content = '';
-  var select = $("#devis-modal select[name='services']");
-  //console.log('updateservicefront');
-  //console.log(select);
-  $.each(data, function (ind, val){
-    content += '<option value="'+val.id_service+'">'+val.nom_service+'</option>';
-  });
-  //console.log(content);
-  select.append(content);
-  select.selectpicker('refresh');
-}
-function on_devis_module_send_link_click(e){
-  e.preventDefault();
-  var datas = {};
-  if (user.type == 4){
-    var input = $("#devis-modal input[name='msg']");
-    var select = $("#devis-modal select[name='services']");
-    datas.msg = input.val();
-    datas.services = select.val();
-    datas.sender = userId;
-    datas.receiver = user_receiv.id_coresp;
-    datas.room = roomDisplay;
-    //console.log(datas);
-    $.ajax({
-      type: "POST",
-      url: "/devis-request",
-      data: datas,
-      beforeSend: function (req){
-        req.setRequestHeader("x-access-token", token);
-      },
-      success: function(data){
-        //console.log(data);
-        update_front_with_msg(data, "msg-devis");
-        if (!data.success[0])
-          update_front_with_errors(data.errors);
-        else{
-          //Emmistion de socket
-          //console.log("demende enregistré !" +userId);
-          var devis_request = {
-                type_m : data.type_d,
-              txt : data.msg,
-              created: data.created,
-              id_m: data.id_message,
-              servs: data.result.servs
-        }
-        //console.log(devis_request);
-        socket.emit('sendchat', devis_request, userId, user_receiv, null);
-        //$('#chat-messages').empty();
-        //socket.emit('list_msg', roomDisplay, user_receiv, user.type);
-      }
-      }
-    });
-  }
-}
-function on_socket_update_servicestypemessage(data){
-  //console.log("services_type_message");
-  //console.log(data);
-  var div = $("div[id-message='"+data.id_m+"']");
-  div.find("p.services").empty();
-  var content = '';
-  $.each(data.servs, function(ind, val){
-    content += '('+val.libelle+') / ';
-  });
-  div.find("p.services").append(content);
-}
-function on_socket_update_contactstypemessage(data){
-  //console.log("contacts_type_message");
-  //console.log(data);
-  var div = $("div[id-message='"+data.id_m+"']");
-  //div.find("p.date_creneau").empty();
-  div.find("div.div-submi").empty();
-  var content = '', contentSubmit = '';
-  content += '<p style="background: #18457c;color: white;padding: 12px;">'+data.user_request_info.prenom+' '+data.user_request_info.nom+' (';
-  switch(data.user_request_info.type){
-    case 3:
-      content += "Professionnel vidéo"
-      break;
-    case 2:
-      content += "Professionnel audio"
-      break;
-    case 4:
-      content += "Artiste"
-      break;
-    default:
-      break;
-  }
-  content += ')</p>';
-  // content += '<p style="background: #18457c;color: white;padding: 12px;">' +
-  //   data.user_request_info.prenom+' '+data.user_request_info.nom+' ('+data.user_request_info.type+') ';
-  //'statut de la demande ('+data.request_state+')'+
-  if (data.request_state == 0 && data.user_request_info.type == 4){
-    //content += 'demande en attente de votre réponse';
-    contentSubmit += '<a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a>'
-  }else if(data.request_state == 0){
-    //contentSubmit += 'demande acceptée !';
-  }else{
-    //content += 'demande en attente de réponse du correspondant';
-    contentSubmit += '<div class="div-submi" style="color: black;"></div><div class="corner"></div><span>'+data.created+'</span>';
-    //'</p>';
-  }
-  div.find("p.date_creneau").prepend(content);
-  div.find("div.div-submi").append(contentSubmit);
-}
-function on_module_accept_typeMessage_link_click(e){
-  e.preventDefault();
-  //Appel de l'iframe à partir d'elle-même
-  iframe = window.parent.$("iframe[src='/chat']")[0];
-  var glob_datas = {};
-  var div = $(e.target).parents("div[id-message]");
-  var type_message_libelle = div.data("type-message-libelle");
-  glob_datas.id_type_message = div.data("id-typeMessage");
-  glob_datas.action = "accept";
-  glob_datas.type_m = type_message_libelle + '_response';
-  //console.log(user);
-  //console.log(user_receiv);
-  //console.log(glob_datas);
-  if (type_message_libelle == 'booking'){
-    // Parite executée uniquement par les utilisateurs de type (2-3)
-    /*if (user_receiv.payment_module == 0 && user.type == 4){*/
-      $.ajax({
-        type: "POST",
-        url: "/action-in-module",
-        data: glob_datas,
-        beforeSend: function (req){
-          req.setRequestHeader("x-access-token", token);
-        },
-        success: function (data){
-          if (data.success[0]){
-            socket.emit("sendNotif", data.notif);
-            const content = 'demande acceptée !';
-            div.find("div.card-chat div.div-submi").empty();
-            div.find("div.card-chat div.div-submi").append(content);
-          }else{
-            //update_front_with_msg(data, );
-          }
-        }
-      });
-    //}
-  }else if(type_message_libelle == 'devis'){
-    //if (user_receiv.payment_module == 0){
-      if (user.type == 4){
-        //Securisation du lien vers la page
-        $.ajax({
-          type : "POST",
-          url : "/secure_profile",
-          data: {"temp": user_receiv.id_coresp},
-          success: function() {
-            var datas = {}, query;
-            datas.type = "devis";
-            datas.from = "accept-devis";
-            datas.id_pro = user_receiv.id_coresp;
-            datas.id_type = glob_datas.id_type_message;
-            //datas.id_payment_module = user_receiv.payment_module
-            //datas.events = global_datas.events;
-            //console.log(datas);
-            query = serialize(datas);
-            //console.log(query);
-            iframe.src = '/payment-recap/'+user_receiv.id_coresp + '?' + query;
-          }
-        });
-      //}
-    }else{
-      // Redirection vers le paiement
-    }
-  }else if(type_message_libelle == 'payment'){
-    var type_transaction = div.attr("type-transaction");
-    if (type_transaction == "MOD"){
-      $.ajax({
-        type : "POST",
-        url : "/payment-intent/"+user_receiv.id_coresp,
-        data: {"price": div.attr("payment-price"), "desc": div.attr("price-desc")},
-        success: function(data) {
-          var datas = {
-            id: user_receiv.id_coresp,
-            desc: div.attr("price-desc"),
-            price: div.attr("payment-price"),
-            email: user.mail,
-            nom: user.nom,
-            prenom: user.prenom,
-            intent: data.result
-          };
-          //console.log(window.parent);
-          window.parent.form_payment(datas, glob_datas);
-        }
-      });
-    }else{
-      $.ajax({
-        type: "POST",
-        url: "/action-in-module",
-        data: glob_datas,
-        beforeSend: function (req){
-          req.setRequestHeader("x-access-token", token);
-        },
-        success: function (data){
-          if (data.success[0]){
-            socket.emit("sendNotif", data.notif);
-            const content = 'demande acceptée !';
-            div.find("div.card-chat div.div-submi").empty();
-            div.find("div.card-chat div.div-submi").append(content);
-          }else{
-            //update_front_with_msg(data, );
-          }
-        }
-      });
-    }
-  }else{
-    //Cas du rdv /offre_rdv /contact
-    $.ajax({
-      type: "POST",
-      url: "/action-in-module",
-      data: glob_datas,
-      beforeSend: function (req){
-        req.setRequestHeader("x-access-token", token);
-      },
-      success: function (data){
-        if (data.success[0]){
-          socket.emit("sendNotif", data.notif);
-          const content = 'demande acceptée !';
-          div.find("div.card-chat div.div-submi").empty();
-          div.find("div.card-chat div.div-submi").append(content);
-        }
-      }
-    });
-  }
-}
-function on_module_deny_typeMessage_link_click(e){
-  e.preventDefault();
-  var datas = {};
-  var div = $(e.target).parents("div[id-message]");
-  var type_message_libelle = div.data("type-message-libelle");
-  datas.id_type_message = div.data("id-typeMessage");
-  datas.action = "deny";
-  datas.type_m = type_message_libelle + "_response";
-  //console.log(datas);
-  $.ajax({
-    type: "POST",
-    url: "/action-in-module",
-    data: datas,
-    beforeSend: function (req){
-      req.setRequestHeader("x-access-token", token);
-    },
-    success: function (data){
-      //console.log(data);
-      if (data.success[0]){
-        socket.emit("sendNotif", data.notif);
-        const content = 'demande refusée !';
-        div.find("div.card-chat div.div-submi").empty();
-        div.find("div.card-chat div.div-submi").append(content);
-      }
-    }
-  });
-}
-function on_socket_update_eventstypeoffermessage(data){
-  //console.log(data);
-  var content = '';
-  var div = $("div[id-message='"+data.id_m+"']");
-  content += '<p>'+data.offer.titre+'</p>'; 
-  content += '<p>'+data.offer.desc+'</p>';
-  content += '<p>Prix : '+data.offer.prix+' €</p>';
-  div.find(".card-chat > h3").after(content);
-}
-function on_payment_link_click(e){
-  e.preventDefault();
-  var datas = {};
-  var parent = $("#paiement-modal");
-  datas.desc = parent.find("[name='desc']").val();
-  datas.price = parent.find("[name='price']").val();
-  datas.type_t = parent.find("[name='module']").data("module") == 0 ? "ESP" : "MOD";
-  datas.sender = userId;
-  datas.receiver = user_receiv.id_coresp;
-  datas.room = roomDisplay;
-  //console.log(datas);
-  $.ajax({
-    type: "POST",
-    url: "/payment-request",
-    data: datas,
-    beforeSend: function (req){
-      req.setRequestHeader("x-access-token", token);
-    },
-    success: function (data){
-      //console.log(data);
-      update_front_with_msg(data, "msg-paiement");
-      if (!data.success[0])
-        update_front_with_errors(data.errors);
-      else{
-        //Emmistion de socket
-        //console.log("demande de paiement enregistré !");
-        //console.log(data);
-        var paiement_request = {
-          id_type_m : data.result.id_type_m,
-          txt : data.msg,
-          created: data.created,
-          id_m: data.result.id_m,
-          id_p: data.result.id_p,
-          desc: datas.desc,
-          price: datas.price,
-          type_t: datas.type_t,
-          type_m: "payment"
-        }
-        //console.log(paiement_request);
-        socket.emit('sendchat', paiement_request, userId, user_receiv, null);
-      }
-    }
-  });
-}
-function on_socket_update_paymentstypemessage(data){
-  //console.log(data);
-  var div = $("div[id-message='"+data.id_m+"']"), type_transac = data.payment.type_t == "MOD" ? "Carte bancaire" : "Espèces" ;
-  div.attr("price-desc", data.payment.desc)
-  div.attr("payment-price", data.payment.price)
-  div.attr("payment-email", user_receiv.mail)
-  div.attr("type-transaction", data.payment.type_t);
-  var content = '';
-  if (data.payment.id == 0){
-    div.find(".div-submi").empty();
-  }
-  if (data.request_state == 1){
-    div.find(".div-submi").empty();
-    div.find("p.date_creneau").empty();
-    div.find(".div-submi").append("demande acceptée !");
-  }
-  content += '<p>Type transaction ('+type_transac+')</p>';
-  content += '<p style="background: #18457c;color: white;padding: 12px;">Description ('+data.payment.desc+')</p>';
-  content += '<p style="background: #18457c;color: white;padding: 12px;">Prix ('+data.payment.price+' €)</p>';
-  //div.find("p.date_creneau").empty();
-  div.find("p.date_creneau").prepend(content);
-}
-function on_socket_new_notif(data){
-  if (data.senderAction.id != user.id){
-    Push.create("Notification de Label-onair !", {
-      body: data.msg+" par "+data.senderAction.nom+" "+data.time,
-      icon: "/icon.png",
-      timeout: 5000,
-      onClick: function() {
-          console.log(this);
-      }
-    });
-  }else{
-    Push.create("Notification de Label-onair !", {
-      body: data.msg+"  "+data.time,
-      icon: "/icon.png",
-      timeout: 5000,
-      onClick: function() {
-          console.log(this);
-      }
-    });
-  }
-}
-function on_module_payment_bank_link_click(e){
-  e.preventDefault();
-  var state = false, buttonText = "", button,
-   buttonClass, new_state, newButtonClass, msg = "En activant le module bancaire vous acceptez que Label-Onair vous prélève directement 3% du montant de votre demande !";
-  // console.log(e.target);
-  // console.log($(e.target).parents("#paiement-modal"));
-  // console.log($(e.target).parents("#paiement-modal").find("a[name='module']"));
-  button = $(e.target).parents("#paiement-modal").find("a[name='module']");
-  if (button.data("module") == 1){
-    state = true;
-    new_state = 0;
-    buttonClass = "button-primary";
-    newButtonClass = "button-secondary";
-  }else{
-    new_state = 1;
-    buttonClass = "button-secondary";
-    newButtonClass = "button-primary";
-  }
-  buttonText = state ? "Module bancaire Off" : "Module bancaire On";
-  button.removeClass(buttonClass);
-  button.addClass(newButtonClass);
-  button.find("span").html(buttonText);
-  button.data("module", new_state);
-  if (!state)
-    update_front_with_msg({success: [true], global_msg: [msg]}, "msg-module");
-  else
-    update_front_with_msg({}, "msg-module");
-}
 // var song_module_send_link = $("#song_up");
 // var video_module_send_link = $("#video_up");
 // var devis_module_send_link = $("#devis-send");
@@ -1197,6 +346,895 @@ actions.paiement.push(function (data){
   //console.log(data.request_state);
   return (ret);
 });
+$(document).on("click", ".friend", function(){
+  var childOffset = $(this).offset();
+  var parentOffset = $(this).parent().parent().offset();
+  var childTop = childOffset.top - parentOffset.top;
+  var clone = $(this).find('img').eq(0).clone();
+  var top = childTop+12+"px";
+
+  $(clone).css({'top': top}).addClass("floatingImg").appendTo("#chatbox");
+
+  setTimeout(function(){$("#profile p").addClass("animate");$("#profile").addClass("animate");}, 100);
+  setTimeout(function(){
+    $("#chat-messages").addClass("animate");
+    $('.cx, .cy').addClass('s1');
+    setTimeout(function(){$('.cx, .cy').addClass('s2');}, 100);
+    setTimeout(function(){$('.cx, .cy').addClass('s3');}, 200);
+  }, 150);
+
+  $('.floatingImg').animate({
+    'width': "68px",
+    'left':'108px',
+    'top':'20px'
+  }, 200);
+
+  var name = $(this).find("p strong").html();
+  var email = $(this).find("p span").html();
+  $("#profile p").html(name);
+  $("#profile span").html(email);
+
+  $(".message").not(".right").find("img").attr("src", $(clone).attr("src"));
+  $('#friendslist').fadeOut();
+  $('#chatview').fadeIn();
+
+  $('#close').unbind("click").click(function(){
+    $("#chat-messages, #profile, #profile p").removeClass("animate");
+    $('.cx, .cy').removeClass("s1 s2 s3");
+    $('.floatingImg').animate({
+      'width': "40px",
+      'top':top,
+      'left': '12px'
+    }, 200, function(){$('.floatingImg').remove()});
+
+    setTimeout(function(){
+      $('#chatview').fadeOut();
+      $('#friendslist').fadeIn();
+    }, 50);
+  });
+  if ($(this).data('coresp-type') == "4"){
+    //console.log(user);
+    $($(".box-module .module")[0]).hide(); 
+    $($(".box-module .module")[1]).hide();
+    $($(".box-module .module")[2]).show();
+    $($(".box-module .module")[3]).show();
+    $($(".box-module .module")[4]).show();
+    $($(".box-module .module")[5]).show();
+    $("#devis-modal").find("h1").empty();
+    $("#devis-modal").find("h1").append("Envoyer un devis");
+  }
+  else if($(this).data('coresp-type') == "1"){
+    $($(".box-module .module")[0]).hide();
+    $($(".box-module .module")[1]).hide();
+    $($(".box-module .module")[2]).hide();
+    $($(".box-module .module")[3]).hide();
+    $($(".box-module .module")[4]).hide();
+    $($(".box-module .module")[5]).hide();
+  }
+  else if ($(this).data('coresp-type') == "2"){
+    $("select[name='services']").remove();
+    $('#devis-modal').find('[name="msg"]').after('<select name="services" class="bootstrap-select" title="Services:" multiple data-actions-box="true"></select>');
+    $($(".box-module .module")[0]).show();
+    $($(".box-module .module")[1]).show();
+    $($(".box-module .module")[2]).show();
+    $($(".box-module .module")[3]).hide();
+    $($(".box-module .module")[4]).show();
+    $($(".box-module .module")[5]).hide();
+    $("#devis-modal").find("h1").empty();
+    $("#devis-modal").find("h1").append("Demande de devis");
+    $('#devis-modal').find("a#devis-send span").empty();
+    $('#devis-modal').find("a#devis-send span").append("Envoyer la demande");
+  }else{
+    $("select[name='services']").remove();
+    $('#devis-modal').find('[name="msg"]').after('<select name="services" class="bootstrap-select" title="Services:" multiple data-actions-box="true"></select>');
+    $($(".box-module .module")[0]).hide();
+    $($(".box-module .module")[1]).show();
+    $($(".box-module .module")[2]).show();
+    $($(".box-module .module")[3]).hide();
+    $($(".box-module .module")[4]).hide();
+    $($(".box-module .module")[5]).show();
+    $("#devis-modal").find("h1").empty();
+    $("#devis-modal").find("h1").append("Demande de devis");
+    $('#devis-modal').find("a#devis-send span").empty();
+    $('#devis-modal').find("a#devis-send span").append("Envoyer la demande");
+  }
+  switchRoom($(this).data("room"), $(this).data("coresp"), name.split(" ")[0], name.split(" ")[1], $(this).data('coresp-type'), $(this).data('coresp-mail'), user);
+});
+function on_socket_update_rooms(rooms){
+  //console.log("updateroom");
+  //console.log(coresp);
+  //console.log(rooms);
+  $("div#friends").empty();
+  for (var i = 0; i < rooms.length; i++){
+    $("div#friends").append('<div class="friend" data-coresp="'+rooms[i][0]+'" data-coresp-type="'+rooms[i][4]+'" data-room="'+rooms[i][1]+'" data-coresp-mail="'+rooms[i][6]+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><p><strong>'+rooms[i][2]+' '+rooms[i][3]+'</strong><span>'+rooms[i][5]+'</span><p class="preview">'+rooms[i][8]+'</p></p><div class="status available"></div></div>');
+  }
+}
+function on_socket_connect(id){
+//console.log("connect --> "+ userId);
+if (userId != null && userId != "null") {
+        id = userId ;
+        var type = user.type;
+        var coresp = {};
+        coresp.nom = "Admin";
+        coresp.prenom = "amdin";
+        coresp.id_coresp = 1;
+        coresp.type = 1;
+        coresp.mail = "admin@label-onair.com";
+        socket.emit('adduser', id, type);
+        console.log("TU ES DEJA CONNECTE :)");
+        updateUserReceived(coresp);
+    } else {
+        console.log("CONNECTE TOI POUR UTILISER LE TCHAT NO HACK :)");
+    }
+}
+function on_socket_updatechat(coresp, data, cont){
+//console.log("updatechat");
+//console.log(data);
+//console.log(user);
+//console.log(cont);
+if (data !== undefined && data != null){
+  var htmlToAppend = "";
+  if (data.type_m !== undefined && data.type_m != null){
+    if (data.type_m == 'audio'){
+      if (user.id == data.user_sender.id)
+        htmlToAppend += actions.audio[0](data);
+      else
+        htmlToAppend += actions.audio[1](data);
+    }
+    else if (data.type_m == 'video'){
+      if (user.id == data.user_sender.id)
+        htmlToAppend += actions.video[0](data);
+      else
+        htmlToAppend += actions.video[1](data);
+    }
+    else if (data.type_m == 'booking'){
+      if (user.id == data.user_sender.id)
+        htmlToAppend += actions.booking[0](data);
+      else
+        htmlToAppend += actions.booking[1](data);
+    }
+    else if (data.type_m == 'rdv'){
+      if (user.id == data.user_sender.id)
+        htmlToAppend += actions.rdv[0](data);
+      else
+        htmlToAppend += actions.rdv[1](data);
+    }
+    else if (data.type_m == 'devis_request'){
+      if (user.id == data.user_sender.id)
+        htmlToAppend += actions.devis_request[0](data);
+      else
+        htmlToAppend += actions.devis_request[1](data);
+    }
+    else if (data.type_m == 'contact'){
+      //console.log(user);
+      if (user.type == 4){
+        if (user.id == data.user_sender.id)
+          htmlToAppend += actions.contactArt[0](data);
+        else
+          htmlToAppend += actions.contactArt[1](data);
+      }else{
+        if (user.id == data.user_sender.id)
+          htmlToAppend += actions.contactPro[0](data);
+        else
+          htmlToAppend += actions.contactPro[1](data);
+      }
+    }else if(data.type_m == 'rdv_offer'){
+      if (user.id == data.user_sender.id)
+        htmlToAppend += actions.rdv_offer[0](data);
+      else
+        htmlToAppend += actions.rdv_offer[1](data);
+    }else{
+      if (user.id == data.user_sender.id)
+        htmlToAppend += actions.paiement[0](data);
+      else
+        htmlToAppend += actions.paiement[1](data);
+    }
+  }else{
+    if (user.id == data.user_sender.id)
+      htmlToAppend += actions.texte[0](data);
+    else
+      htmlToAppend += actions.texte[1](data);
+  }
+  if (cont !== undefined && cont == "iframe-chat"){
+    iframe = $("iframe[src='/chat']")[0] !== undefined ? $("iframe[src='/chat']")[0].contentDocument : null;
+    $('#chat-messages', iframe).append(htmlToAppend);
+  }else{
+    $('#chat-messages').append(htmlToAppend);
+  }
+}
+if (data.user_sender != "SERVER")
+  socket.emit('update_preview_in_room', data, cont);
+//console.log(data.notif);
+if (data.notif !== undefined)
+  socket.emit('sendNotif', data.notif);
+}
+function on_socket_updatepreview(tabCorresp, cont){
+//console.log("update_preview"+tabCorresp[1]);
+//console.log(tabCorresp);
+var div_to_update = null;
+if (cont !== undefined && cont == "iframe-chat"){
+  iframe = $("iframe[src='/chat']")[0] !== undefined ? $("iframe[src='/chat']")[0].contentDocument : null;
+  div_to_update = $("div#friends .friend[data-room='"+tabCorresp[1]+"']", iframe);
+}
+  else
+    div_to_update = $("div#friends .friend[data-room='"+tabCorresp[1]+"']");
+  //console.log(div_to_update);
+  //console.log(cont);
+  div_to_update.find("p.preview").empty();
+  div_to_update.find("p.preview").append(tabCorresp[7]);
+}
+$("#searchfield").focus(function(){
+if($(this).val() == "Search contacts..."){
+  $(this).val("");
+}
+});
+$("#searchfield").focusout(function(){
+if($(this).val() == ""){
+  $(this).val("Search contacts...");
+
+}
+});
+const StringParser = (text) => {
+  //string test
+  //var text = 'sdabhikagathara@rediffmail.com jshf 0665-78.9878 s  sd ghwsfwfsgfjsljdh@ergfe.fr assdsdf" 0665-78.98- 78 <dsfassdfhsdfarkal@gmail.com>, "rodnsdfald ferdfnson" <rfernsdfson@gmal.com>, "Affdmdol Gondfgale" <gyfanamosl@gmail.com>, "truform techno" <pidfpinfg@truformdftechnoproducts.com>, "NiTsdfeSh ThIdfsKaRe" <nthfsskare@ysahoo.in>, "akasdfsh kasdfstla" <akashkatsdfsa@yahsdfsfoo.in>, "Bisdsdfamal 0665-78.98/78 Prakaasdsh" <bimsdaalprakash@live.com>,; +3366578.9878 "milisdfsfnd ansdfasdfnsftwar" test <dfdmilifsd.ensfdfcogndfdfatia@gmail.com>Easy Parsing';
+  let patternEmail = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi;
+  let StringNoEmail = text.replace(patternEmail,"Email Delete");
+  let patternTel = /(?:(?:\+|00)33|0)\s*[1-9](?:[\s.\s-\/]*\d{2}){4}/gi;
+  let StringNoTelNoEmail = StringNoEmail.replace(patternTel,"Tel delete");
+  return(StringNoTelNoEmail)
+}
+function check_abo(usr){
+  if (usr != "null" && (usr.type == 2 || usr.type == 3)){
+    if ((usr.abonnement !== undefined && usr.abonnement) || roomDisplay == 1)
+      return true;
+    else
+      return false;
+  }
+  else if(usr.type == 4 || usr.type == 1 || roomDisplay == 1)
+    return true;
+  return false;
+}
+function on_msg_send_click(){
+  var message = StringParser($("#sendmessage textarea").val())
+  var data = {};
+  //var room = $('#chat-messages').data('current');
+  if(check_abo(user)){
+    $('#sendmessage textarea').val('');
+    data.txt = message;
+    socket.emit('sendchat', data, userId, user_receiv, null);
+  }else{
+    var ret = {success: [false], errors: {message: ["identification ou abonnement requis !"]}, global_msg: ['Vous devez être connecté et avoir un abonnement en cours de validité pour utiliser le chat !']};
+    update_front_with_errors(ret.errors);
+    update_front_with_msg(ret, "msg-inf-chat");
+  }
+}
+function on_msg_send_keypress(e){
+    if(e.which == 13) {
+        $(this).blur();
+        $('#sendmessage button#send').focus().click();
+    }
+}
+$("#sendmessage input").focus(function(){
+if($(this).val() == "Send message..."){
+  $(this).val("");
+}
+});
+$("#sendmessage input").focusout(function(){
+if($(this).val() == ""){
+  $(this).val("Send message...");
+
+}
+});
+// function getBody(content) 
+// { 
+//  var x = content.indexOf("<html");
+//  x = content.indexOf(">", x);    
+//  var y = content.lastIndexOf("</html>"); 
+//  return content.slice(x + 1, y);
+// }
+function serialize(obj, prefix) {
+var str = [],
+  p;
+for (p in obj) {
+  if (obj.hasOwnProperty(p)) {
+    var k = prefix ? prefix + "[" + p + "]" : p,
+      v = obj[p];
+    str.push((v !== null && typeof v === "object") ?
+      serialize(v, k) :
+      encodeURIComponent(k) + "=" + encodeURIComponent(v));
+  }
+}
+return str.join("&");
+}
+function on_reservation_link_click(e){
+  e.preventDefault();
+  //console.log("Resa click !");
+  iframe = $(this).hasClass("booking-chat") ? iframe_cal2 : iframe_cal1 ;
+  //console.log($(iframe).find("#selectHours"));
+  var datePickerVal = $(iframe).find(".datepicker input").val().replace(new RegExp("/", "g"), "-");
+  var datePickerValTab = datePickerVal.split("-");
+  var hours = $(iframe).find("#selectHours .sel");
+  var global_datas = {};
+  global_datas = get_events(hours, datePickerValTab);
+  if (user.type == 4){
+    global_datas.id_art = user.id;
+  global_datas.id_pro = user_receiv.id_coresp;
+  }
+  else{
+    global_datas.id_art = user_receiv.id_coresp;
+    global_datas.id_pro = user.id;
+  }
+  global_datas.user_receiv = user_receiv.id_coresp;
+  global_datas.user_sender = user.id;
+  global_datas.room = roomDisplay;
+  //console.log(global_datas);
+  if (!check_abo(user)){
+    var ret = {success: [false], global_msg: ['Vous devez être connecté et avoir un abonnement en cours de validité pour utiliser les modules du chat !']};
+    update_front_with_msg(ret, "msg-rdv");
+    return false;
+  }
+  if ($(this).hasClass("meet-up-chat")){
+    global_datas.from = "rdv";
+    global_datas.title = "event-meet";
+    $.ajax({
+      type: "POST",
+      url: "/check-in",
+      data: global_datas,
+      beforeSend: function(req){
+        req.setRequestHeader("x-access-token", token);
+      },
+      success: function (data){
+        //console.log(data);
+        if (data.result.type_r == "rdv")
+          update_front_with_msg(data, "msg-rdv");
+        else
+          update_front_with_msg(data, "msg-booking");
+        if (data.success[0]){
+          //Emission de la socket
+          //console.log("rdv envoyé !" +userId);
+          var rdv = {
+            type_m : data.result.type_r,
+            user_receiver : user_receiv,
+            txt : data.msg,
+            events: global_datas.events,
+            id_disp: data.result.id_dispos,
+            created: data.created,
+            request_state : 0
+          }
+          //console.log(rdv);
+          socket.emit('sendchat', rdv, userId, user_receiv, null);
+        }else
+          update_front_with_errors(data.errors);
+      }
+    });
+  }
+  else{
+    global_datas.from = "booking";
+    global_datas.title = "event-work";
+    //Récapitaulatif de paiement en cas de booking
+    $.ajax({
+      type : "POST",
+      url : "/secure_profile",
+      data: {"temp": user_receiv.id_coresp},
+      success: function() {
+        //console.log(data);
+        var datas = {},
+        query = '';
+        datas.type = "booking";
+        datas.events = global_datas.events;
+        datas.id_pro = global_datas.user_receiv;
+        datas.from = "new-booking";
+        //console.log(datas);
+        query = serialize(datas);
+        //console.log(query);
+        //Récupération du nombre d'h de booking a faire
+        iframe.location = '/payment-recap/'+user_receiv.id_coresp + '?' + query;
+      }   
+    });
+  }		
+}
+/*Module sons*/
+function on_form_song_submit(e){
+  e.preventDefault();
+    var formData = new FormData(e.target);
+    var that = $(this);
+    //console.log(e.target);
+    if (!check_abo(user)){
+      var ret = {success: [false], global_msg: ['Vous devez être connecté et avoir un abonnement en cours de validité pour utiliser les modules du chat !']};
+      update_front_with_msg(ret, "msg-song");
+      return false;
+    }
+    $.ajax({
+      type : that.attr('method'),
+      url : that.attr('action'),
+      processData: false,
+      contentType: false,
+      data: formData,
+      beforeSend: function (req){
+        req.setRequestHeader("x-access-token", token);
+      },
+      success: function(data) {
+        //console.log(data);
+        update_front_with_msg(data, "msg-song");
+        if (!data.success[0])
+          update_front_with_errors(data.errors);
+        else{
+          /*Emmistion de socket*/
+          //console.log("audio enregistré !" +userId);
+          var song = {
+              type_m : data.result.type_a,
+              path: data.result.path,
+              user_receiver : user_receiv,
+              txt : data.msg
+          }
+          //console.log(song);
+          socket.emit('sendchat', song, userId, user_receiv, null);
+        }
+      }
+    });
+}
+function on_input_file_ghost_change(){
+  //console.log("input change");
+  input_text.val($(this).val().split("\\").pop());
+}
+function on_input_text_mousedown(){
+  input_file_ghost.click();
+  return false;
+}
+function on_song_module_send_link_click(e){
+  e.preventDefault();
+  form_song.submit();
+}
+function on_socket_update_eventstypemessage(data){
+  //console.log("events_type_message");
+  //console.log(data);
+  var div = $("div[id-message='"+data.id_m+"']");
+  div.find("p.date_creneau").empty();
+  var content = '', content2 = '';
+  $.each(data.events, function(ind, val){
+    content += '<p style="background: #18457c;color: white;padding: 12px;">Début ('+val.start.substr(0,10)+') A ('+val.start.substr(11,5)+') </br>';
+    content += 'Fin ('+val.end.substr(0,10)+') A ('+val.end.substr(11,5)+') </p> ';
+  });
+  div.find("p.date_creneau").append(content);
+  if (data.request_state == 0 && data.user_receiver.id == userId){
+    content = 'demande en attente de votre réponse';
+    div.find("p.date_creneau").append(content);
+    content2 += '<a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a>';
+  }
+  else if (data.request_state == 1){
+    content2 += 'demande acceptée !';
+  }
+  else{
+    content = 'demande en attente de réponse du correspondant';
+      div.find("p.date_creneau").append(content);
+  }
+  div.find("div.card-chat div.div-submi").empty();
+  div.find("div.card-chat div.div-submi").append(content2);
+  div.find("div.card-chat span").empty();
+  div.find("div.card-chat span").append(data.created);
+}
+function on_video_module_send_link_click(e){
+  e.preventDefault();
+  var datas = {}
+  datas.msg = $("#video-modal").find('input[name="msg"]').val();
+  datas.url = $("#video-modal").find('input[name="video"]').val();
+  //console.log(datas);
+  if (!check_abo(user)){
+    var ret = {success: [false], global_msg: ['Vous devez être connecté et avoir un abonnement en cours de validité pour utiliser les modules du chat !']};
+    update_front_with_msg(ret, "msg-video");
+    return false;
+  }
+  $.ajax({
+    type: "POST",
+    url: "/module_video",
+    data: datas,
+    success: function(obj){
+      //console.log(obj);
+      update_front_with_msg(obj, "msg-video");
+    if (!obj.success[0])
+      update_front_with_errors(obj.errors);
+    else{
+      /*Emmistion de socket*/
+      //console.log("vidéo enregistré !" +userId);
+      var video = {
+            type_m : obj.type_v,
+          path: obj.path,
+          user_receiver : user_receiv,
+          txt : obj.msg
+      }
+      //console.log(song);
+      socket.emit('sendchat', video, userId, user_receiv, null);
+    }
+    }
+  })
+}
+function on_socket_update_service_front(data){
+  var content = '';
+  var select = $("#devis-modal select[name='services']");
+  //console.log('updateservicefront');
+  //console.log(select);
+  $.each(data, function (ind, val){
+    content += '<option value="'+val.id_service+'">'+val.nom_service+'</option>';
+  });
+  //console.log(content);
+  select.append(content);
+  select.selectpicker('refresh');
+}
+function on_devis_module_send_link_click(e){
+  e.preventDefault();
+  var datas = {};
+  if (user.type == 4){
+    var input = $("#devis-modal input[name='msg']");
+    var select = $("#devis-modal select[name='services']");
+    datas.msg = input.val();
+    datas.services = select.val();
+    datas.sender = userId;
+    datas.receiver = user_receiv.id_coresp;
+    datas.room = roomDisplay;
+    //console.log(datas);
+    if (!check_abo(user)){
+      var ret = {success: [false], global_msg: ['Vous devez être connecté et avoir un abonnement en cours de validité pour utiliser les modules du chat !']};
+      update_front_with_msg(ret, "msg-devis");
+      return false;
+    }
+    $.ajax({
+      type: "POST",
+      url: "/devis-request",
+      data: datas,
+      beforeSend: function (req){
+        req.setRequestHeader("x-access-token", token);
+      },
+      success: function(data){
+        //console.log(data);
+        update_front_with_msg(data, "msg-devis");
+        if (!data.success[0])
+          update_front_with_errors(data.errors);
+        else{
+          //Emmistion de socket
+          //console.log("demende enregistré !" +userId);
+          var devis_request = {
+                type_m : data.type_d,
+              txt : data.msg,
+              created: data.created,
+              id_m: data.id_message,
+              servs: data.result.servs
+        }
+        //console.log(devis_request);
+        socket.emit('sendchat', devis_request, userId, user_receiv, null);
+        //$('#chat-messages').empty();
+        //socket.emit('list_msg', roomDisplay, user_receiv, user.type);
+      }
+      }
+    });
+  }
+}
+function on_socket_update_servicestypemessage(data){
+  //console.log("services_type_message");
+  //console.log(data);
+  var div = $("div[id-message='"+data.id_m+"']");
+  div.find("p.services").empty();
+  var content = '';
+  $.each(data.servs, function(ind, val){
+    content += '('+val.libelle+') / ';
+  });
+  div.find("p.services").append(content);
+}
+function on_socket_update_contactstypemessage(data){
+  //console.log("contacts_type_message");
+  //console.log(data);
+  var div = $("div[id-message='"+data.id_m+"']");
+  //div.find("p.date_creneau").empty();
+  div.find("div.div-submi").empty();
+  var content = '', contentSubmit = '';
+  content += '<p style="background: #18457c;color: white;padding: 12px;">'+data.user_request_info.prenom+' '+data.user_request_info.nom+' (';
+  switch(data.user_request_info.type){
+    case 3:
+      content += "Professionnel vidéo"
+      break;
+    case 2:
+      content += "Professionnel audio"
+      break;
+    case 4:
+      content += "Artiste"
+      break;
+    default:
+      break;
+  }
+  content += ')</p>';
+  // content += '<p style="background: #18457c;color: white;padding: 12px;">' +
+  //   data.user_request_info.prenom+' '+data.user_request_info.nom+' ('+data.user_request_info.type+') ';
+  //'statut de la demande ('+data.request_state+')'+
+  if (data.request_state == 0 && data.user_request_info.type == 4){
+    //content += 'demande en attente de votre réponse';
+    contentSubmit += '<a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a>'
+  }else if(data.request_state == 0){
+    //contentSubmit += 'demande acceptée !';
+  }else{
+    //content += 'demande en attente de réponse du correspondant';
+    contentSubmit += '<div class="div-submi" style="color: black;"></div><div class="corner"></div><span>'+data.created+'</span>';
+    //'</p>';
+  }
+  div.find("p.date_creneau").prepend(content);
+  div.find("div.div-submi").append(contentSubmit);
+}
+function on_module_accept_typeMessage_link_click(e){
+  e.preventDefault();
+  //Appel de l'iframe à partir d'elle-même
+  iframe = window.parent.$("iframe[src='/chat']")[0];
+  var glob_datas = {};
+  var div = $(e.target).parents("div[id-message]");
+  var type_message_libelle = div.data("type-message-libelle");
+  glob_datas.id_type_message = div.data("id-typeMessage");
+  glob_datas.action = "accept";
+  glob_datas.type_m = type_message_libelle + '_response';
+  //console.log(user);
+  //console.log(user_receiv);
+  //console.log(glob_datas);
+  if (type_message_libelle == 'booking'){
+    // Parite executée uniquement par les utilisateurs de type (2-3)
+    /*if (user_receiv.payment_module == 0 && user.type == 4){*/
+      $.ajax({
+        type: "POST",
+        url: "/action-in-module",
+        data: glob_datas,
+        beforeSend: function (req){
+          req.setRequestHeader("x-access-token", token);
+        },
+        success: function (data){
+          if (data.success[0]){
+            socket.emit("sendNotif", data.notif);
+            const content = 'demande acceptée !';
+            div.find("div.card-chat div.div-submi").empty();
+            div.find("div.card-chat div.div-submi").append(content);
+          }else{
+            //update_front_with_msg(data, );
+          }
+        }
+      });
+    //}
+  }else if(type_message_libelle == 'devis'){
+    //if (user_receiv.payment_module == 0){
+      if (user.type == 4){
+        //Securisation du lien vers la page
+        $.ajax({
+          type : "POST",
+          url : "/secure_profile",
+          data: {"temp": user_receiv.id_coresp},
+          success: function() {
+            var datas = {}, query;
+            datas.type = "devis";
+            datas.from = "accept-devis";
+            datas.id_pro = user_receiv.id_coresp;
+            datas.id_type = glob_datas.id_type_message;
+            //datas.id_payment_module = user_receiv.payment_module
+            //datas.events = global_datas.events;
+            //console.log(datas);
+            query = serialize(datas);
+            //console.log(query);
+            iframe.src = '/payment-recap/'+user_receiv.id_coresp + '?' + query;
+          }
+        });
+      //}
+    }else{
+      // Redirection vers le paiement
+    }
+  }else if(type_message_libelle == 'payment'){
+    var type_transaction = div.attr("type-transaction");
+    if (type_transaction == "MOD"){
+      $.ajax({
+        type : "POST",
+        url : "/payment-intent/"+user_receiv.id_coresp,
+        data: {"price": div.attr("payment-price"), "desc": div.attr("price-desc")},
+        success: function(data) {
+          var datas = {
+            id: user_receiv.id_coresp,
+            desc: div.attr("price-desc"),
+            price: div.attr("payment-price"),
+            email: user.mail,
+            nom: user.nom,
+            prenom: user.prenom,
+            intent: data.result
+          };
+          //console.log(window.parent);
+          window.parent.form_payment(datas, glob_datas);
+        }
+      });
+    }else{
+      $.ajax({
+        type: "POST",
+        url: "/action-in-module",
+        data: glob_datas,
+        beforeSend: function (req){
+          req.setRequestHeader("x-access-token", token);
+        },
+        success: function (data){
+          if (data.success[0]){
+            socket.emit("sendNotif", data.notif);
+            const content = 'demande acceptée !';
+            div.find("div.card-chat div.div-submi").empty();
+            div.find("div.card-chat div.div-submi").append(content);
+          }else{
+            //update_front_with_msg(data, );
+          }
+        }
+      });
+    }
+  }else{
+    //Cas du rdv /offre_rdv /contact
+    $.ajax({
+      type: "POST",
+      url: "/action-in-module",
+      data: glob_datas,
+      beforeSend: function (req){
+        req.setRequestHeader("x-access-token", token);
+      },
+      success: function (data){
+        if (data.success[0]){
+          socket.emit("sendNotif", data.notif);
+          const content = 'demande acceptée !';
+          div.find("div.card-chat div.div-submi").empty();
+          div.find("div.card-chat div.div-submi").append(content);
+        }
+      }
+    });
+  }
+}
+function on_module_deny_typeMessage_link_click(e){
+  e.preventDefault();
+  var datas = {};
+  var div = $(e.target).parents("div[id-message]");
+  var type_message_libelle = div.data("type-message-libelle");
+  datas.id_type_message = div.data("id-typeMessage");
+  datas.action = "deny";
+  datas.type_m = type_message_libelle + "_response";
+  //console.log(datas);
+  $.ajax({
+    type: "POST",
+    url: "/action-in-module",
+    data: datas,
+    beforeSend: function (req){
+      req.setRequestHeader("x-access-token", token);
+    },
+    success: function (data){
+      //console.log(data);
+      if (data.success[0]){
+        socket.emit("sendNotif", data.notif);
+        const content = 'demande refusée !';
+        div.find("div.card-chat div.div-submi").empty();
+        div.find("div.card-chat div.div-submi").append(content);
+      }
+    }
+  });
+}
+function on_socket_update_eventstypeoffermessage(data){
+  //console.log(data);
+  var content = '';
+  var div = $("div[id-message='"+data.id_m+"']");
+  content += '<p>'+data.offer.titre+'</p>'; 
+  content += '<p>'+data.offer.desc+'</p>';
+  content += '<p>Prix : '+data.offer.prix+' €</p>';
+  div.find(".card-chat > h3").after(content);
+}
+function on_payment_link_click(e){
+  e.preventDefault();
+  var datas = {};
+  var parent = $("#paiement-modal");
+  datas.desc = parent.find("[name='desc']").val();
+  datas.price = parent.find("[name='price']").val();
+  datas.type_t = parent.find("[name='module']").data("module") == 0 ? "ESP" : "MOD";
+  datas.sender = userId;
+  datas.receiver = user_receiv.id_coresp;
+  datas.room = roomDisplay;
+  //console.log(datas);
+  if (!check_abo(user)){
+    var ret = {success: [false], global_msg: ['Vous devez être connecté et avoir un abonnement en cours de validité pour utiliser les modules du chat !']};
+    update_front_with_msg(ret, "msg-paiement");
+    return false;
+  }
+  $.ajax({
+    type: "POST",
+    url: "/payment-request",
+    data: datas,
+    beforeSend: function (req){
+      req.setRequestHeader("x-access-token", token);
+    },
+    success: function (data){
+      //console.log(data);
+      update_front_with_msg(data, "msg-paiement");
+      if (!data.success[0])
+        update_front_with_errors(data.errors);
+      else{
+        //Emmistion de socket
+        //console.log("demande de paiement enregistré !");
+        //console.log(data);
+        var paiement_request = {
+          id_type_m : data.result.id_type_m,
+          txt : data.msg,
+          created: data.created,
+          id_m: data.result.id_m,
+          id_p: data.result.id_p,
+          desc: datas.desc,
+          price: datas.price,
+          type_t: datas.type_t,
+          type_m: "payment"
+        }
+        //console.log(paiement_request);
+        socket.emit('sendchat', paiement_request, userId, user_receiv, null);
+      }
+    }
+  });
+}
+function on_socket_update_paymentstypemessage(data){
+  //console.log(data);
+  var div = $("div[id-message='"+data.id_m+"']"), type_transac = data.payment.type_t == "MOD" ? "Carte bancaire" : "Espèces" ;
+  div.attr("price-desc", data.payment.desc)
+  div.attr("payment-price", data.payment.price)
+  div.attr("payment-email", user_receiv.mail)
+  div.attr("type-transaction", data.payment.type_t);
+  var content = '';
+  if (data.payment.id == 0){
+    div.find(".div-submi").empty();
+  }
+  if (data.request_state == 1){
+    div.find(".div-submi").empty();
+    div.find("p.date_creneau").empty();
+    div.find(".div-submi").append("demande acceptée !");
+  }
+  content += '<p>Type transaction ('+type_transac+')</p>';
+  content += '<p style="background: #18457c;color: white;padding: 12px;">Description ('+data.payment.desc+')</p>';
+  content += '<p style="background: #18457c;color: white;padding: 12px;">Prix ('+data.payment.price+' €)</p>';
+  //div.find("p.date_creneau").empty();
+  div.find("p.date_creneau").prepend(content);
+}
+function on_socket_new_notif(data){
+  if (data.senderAction.id != user.id){
+    Push.create("Notification de Label-onair !", {
+      body: data.msg+" par "+data.senderAction.nom+" "+data.time,
+      icon: "/icon.png",
+      timeout: 5000,
+      onClick: function() {
+          console.log(this);
+      }
+    });
+  }else{
+    Push.create("Notification de Label-onair !", {
+      body: data.msg+"  "+data.time,
+      icon: "/icon.png",
+      timeout: 5000,
+      onClick: function() {
+          console.log(this);
+      }
+    });
+  }
+}
+function on_module_payment_bank_link_click(e){
+  e.preventDefault();
+  var state = false, buttonText = "", button,
+   buttonClass, new_state, newButtonClass, msg = "En activant le module bancaire vous acceptez que Label-Onair vous prélève directement 3% du montant de votre demande !";
+  // console.log(e.target);
+  // console.log($(e.target).parents("#paiement-modal"));
+  // console.log($(e.target).parents("#paiement-modal").find("a[name='module']"));
+  button = $(e.target).parents("#paiement-modal").find("a[name='module']");
+  if (button.data("module") == 1){
+    state = true;
+    new_state = 0;
+    buttonClass = "button-primary";
+    newButtonClass = "button-secondary";
+  }else{
+    new_state = 1;
+    buttonClass = "button-secondary";
+    newButtonClass = "button-primary";
+  }
+  buttonText = state ? "Module bancaire Off" : "Module bancaire On";
+  button.removeClass(buttonClass);
+  button.addClass(newButtonClass);
+  button.find("span").html(buttonText);
+  button.data("module", new_state);
+  if (!state)
+    update_front_with_msg({success: [true], global_msg: [msg]}, "msg-module");
+  else
+    update_front_with_msg({}, "msg-module");
+}
 function get_events(hours, datePickerValTab){
 var start, end, datas = {};
 datas.events = [];

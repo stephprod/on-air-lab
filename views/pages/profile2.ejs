@@ -487,10 +487,13 @@
 		session.token = "<%- locals.session.token !== undefined ? locals.session.token : "null" %>";
 		user.id = "<%- locals.session.userId != undefined ?
     		locals.session.userId : "null" %>";
-    	user.nom = "<%- locals.session.userName ?
+    	user.nom = "<%- locals.session.userName !== undefined ?
     		locals.session.userName : "null" %>";
-    	user.type = "<%- locals.session.userType ?
-    		locals.session.userType : "null" %>";
+    	user.type = "<%- locals.session.userType !== undefined ?
+			locals.session.userType : "null" %>";
+		<% if (locals.session.abonnement !== undefined && locals.session.abonnement != null) { %>
+			user.abonnement = <%= locals.session.abonnement %>;
+		<% } %>
     	session.user = user;
     	var room, user_receiv = {};
     	room = "<%- locals.room !== null ? locals.room : "null" %>";

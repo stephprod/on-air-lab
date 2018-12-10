@@ -102,8 +102,8 @@
 		                <div class="cx"></div>
 		            </div>
 
-		            <p>Miro Badev</p>
-		            <span>Artiste</span>
+		            <p>Null</p>
+		            <span>Null</span>
 		            <div class="box-module">
 		            	<a class="module" href="#booking-modal" data-toggle="modal">booking</a>
 		            	<a class="module" href="#devis-modal" data-toggle="modal">devis</a>
@@ -112,7 +112,8 @@
 		            	<a class="module" href="#son-modal" data-toggle="modal">son</a>
 		            	<a class="module" href="#video-modal" data-toggle="modal">video</a>
 		            </div>
-		        </div>
+				</div>
+				<div class="msg-inf-chat"></div>
 		        <div id="chat-messages">
 		        	<label>Thursday 02</label>
 
@@ -342,16 +343,20 @@
     	session.id_u = <%- locals.session.id_u !== undefined ? '"'+locals.session.id_u +'"' : "null" %>;
 		session.id_coresp = <%- locals.session.id_coresp !== undefined ? locals.session.id_coresp : "null" %>;
 		session.token = <%- locals.session.token !== undefined ? '"'+ locals.session.token +'"' : "null" %>;
-    	user.id = "<%- locals.session.userId != undefined ?
+    	user.id = "<%- locals.session.userId !== undefined ?
     		locals.session.userId : "null" %>";
-    	user.nom = "<%- locals.session.userName ?
+    	user.nom = "<%- locals.session.userName !== undefined ?
 			locals.session.userName : "null" %>";
-		user.prenom = "<%- locals.session.userFirstName ?
+		user.prenom = "<%- locals.session.userFirstName !== undefined ?
     		locals.session.userFirstName : "null" %>";
-    	user.type = "<%- locals.session.userType ?
+    	user.type = "<%- locals.session.userType !== undefined ?
 			locals.session.userType : "null" %>";
-		user.mail = "<%- locals.session.userMail ?
+		user.mail = "<%- locals.session.userMail !== undefined ?
 			locals.session.userMail : "null" %>";
+		<% if (locals.session.abonnement !== undefined && locals.session.abonnement != null) { %>
+			console.log(<%- locals.session.abonnement %>);
+			user.abonnement = <%= locals.session.abonnement %>;
+		<% } %>
     	//console.log(session);
 		session.user = user;
 		//session.stripe = Stripe;
