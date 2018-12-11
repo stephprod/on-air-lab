@@ -412,6 +412,7 @@ io.sockets.on('connection', function (socket) {
         let tableM = [];
         //Table Type_Message
         let tableT = [];
+        //console.log(socket.room)
         //Si tu es sur la room admin
         if (socket.room == 1){
             if (data.type_m === undefined)
@@ -457,6 +458,14 @@ io.sockets.on('connection', function (socket) {
                         })
                         break;
                     case "contact":
+                        //console.log(data);
+                        notifications.mail(data.user_receiver, data.user_sender, data.type_m)
+                        .then((result2) => {
+                            data.notif = result2
+                            io.sockets.in(socket.id).emit('updatechat', user_receiver, data, context)
+                        }).catch((err) => {
+                            console.log(err)
+                        })
                         break;
                     default:
                         tableT.push(data.type_m, data.path)
@@ -485,7 +494,7 @@ io.sockets.on('connection', function (socket) {
                     })
                 }
             }
-            console.log(userGlobal)
+            //console.log(userGlobal)
             //Si tu n'est pas l'administrateur
             if (userId != 1)
             {

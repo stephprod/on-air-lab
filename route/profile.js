@@ -1,7 +1,7 @@
 const express = require('express')
 const User = require('../models/req_user')
 const router = express.Router()
-const notifications = require("../models/notifications").actions
+//const notifications = require("../models/notifications").actions
 
 router.param('id', (req, res, next, token) => {
 	req.session.id_u = token
@@ -66,7 +66,7 @@ router.route('/profile/:id')
 		//console.log(req.session.id_u)
 		//let created_date = new Date();
 		let userSender = {id: req.session.userId, nom: req.session.userName, prenom: req.session.userFirstName, email: req.session.userMail}
-		let userReceiver = {id: req.session.user_receiv.id_coresp, nom: req.session.user_receiv.nom, prenom: req.session.user_receiv.prenom, email: req.session.user_receiv.mail}
+		//let userReceiver = {id: req.session.user_receiv.id_coresp, nom: req.session.user_receiv.nom, prenom: req.session.user_receiv.prenom, email: req.session.user_receiv.mail}
 		//let table = [], tableTemp = [], tableT = [], tableM = []
 		// let req_ok = '', req_ko = ''
 		let ret = {}
@@ -106,12 +106,16 @@ router.route('/profile/:id')
 					return insert_contact_tm(req, result)
 					.then((result) => insert_message(req, result))
 					.then((result) => tempo(req, result))
-					.then((result) => notifications.mail(userReceiver, userSender, result.result.type_d)
-						.then((result2) => {
-							result.notif = result2
-							res.send(result)
-						})
-					).catch((err) => {
+					.then((result) => {
+						res.send(result)
+						// console.log(userSender)
+						// console.log(userReceiver)
+						// return notifications.mail(userReceiver, userSender, result.result.type_d)
+						// .then((result2) => {
+						// 	result.notif = result2
+						// 	res.send(result)
+						// })
+					}).catch((err) => {
 						console.log(err)
 						res.send(err)
 					})

@@ -39,7 +39,7 @@ class Notif{
                     //     },
                     // ]
                 };
-                console.log(mailOptions)
+                //console.log(mailOptions)
                 transporter.sendMail(mailOptions, (error) => {
                     if (error) {
                         console.log(error);
@@ -78,7 +78,7 @@ class Notif{
                     //     },
                     // ]
                 };
-                console.log(mailOptions)
+                //console.log(mailOptions)
                 transporter.sendMail(mailOptions, (error) => {
                     if (error) {
                         console.log(error);
