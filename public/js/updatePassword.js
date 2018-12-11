@@ -1,26 +1,23 @@
 import {update_front_with_msg, update_front_with_errors} from './front-update.js';
-function forgottenPassword_link_click(e){
+function updatePassword_link_click(e){
 	var datas = {};
 	e.preventDefault();
-	datas.email = login_forgottenPassword_input.val();
-	//datas.pass = login_forgottenPassword_input.val();
+	datas.password = updatePassword_input.val();
+    datas.confirm_password = confirm_updatePassword_input.val();
 
 	$.ajax({
 		type : "POST",
-		url: "/forgottenPassword",
+		url: "/updatePassword/"+token,
 		data: datas,
 		success: function (data){
-			update_front_with_msg(data, "forgot-info");
-			if (!data.success[0] && data.errors !== undefined){
-				update_front_with_errors(data.errors)
-			}
-			//console.log(data);
-			//if (data.errors == undefined){
-			//	localStorage.setItem("user", JSON.stringify(data.result));
-			//}
-			//localStorage.setItem("datas", JSON.stringify(data));
-			//document.location.reload();
-			console.log(data);
+            //console.log(data);
+            update_front_with_msg(data, "msg-responses");
+            if (!data.success[0]){
+                if (data.errors !== undefined)
+                    update_front_with_errors(data.errors)
+            }else{
+                document.location.href = "/"
+            }
 		}
 	});
 }
@@ -99,10 +96,17 @@ function forgottenPassword_link_click(e){
 // }
 function on_document_ready(){
 	//console.log(login_link);
-	forgottenPassword_link = $("a[data-action='forgottenPassword']");
-	login_forgottenPassword_input = $("#forgot-modal input[name='login']");
-	forgottenPassword_link.on("click", forgottenPassword_link_click);
+	updatePassword_link = $("a[data-action='password_update']");
+    updatePassword_input = $("form input[name='password']");
+	confirm_updatePassword_input = $("form input[name='confirm_password']");
+	updatePassword_link.on("click", updatePassword_link_click);
 }
-var forgottenPassword_link = null;
-var login_forgottenPassword_input = null;
+var updatePassword_link = null;
+var updatePassword_input = null;
+var confirm_updatePassword_input = null;
+var session = JSON.parse(sessionStorage.getItem('session'));
+var token = null;
+if (session != null){
+  token = session.token;
+}
 $(document).on("ready", on_document_ready);

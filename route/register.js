@@ -3,6 +3,7 @@ const User = require('../models/req_user')
 const validator = require('../middlewares/valid_form').register_updatePassword
 const uid = require('rand-token').uid
 const router = express.Router()
+const notifications = require('../models/notifications').actions
 
 router.route('/register')
 	.post(validator, (request, response) => {
@@ -27,14 +28,28 @@ router.route('/register')
 				errors.nom = ['Une erreur technique est survenue lors de l\'inscription de l\'utilisateur !']
 				ret.success.push(false)
 				ret.errors = errors
+				response.render("pages/index", {registerObj: ret})
 			}
 			else
 			{
-				/*Envoi d'un mail d'inscription*/
-				ret.global_msg.push('Un mail de validation d\'inscription a été envoyé à l\'adresse renseignée !')
-				ret.success.push(true)
+				User.getUser("WHERE id='"+userId+"'", (res) => {
+					if (res !== undefined && res){
+						/*Envoi d'un mail d'inscription*/
+						notifications.mail_with_links(res, "register", "http://localhost:4000/validRegister/"+jeton)
+						.then((result) => {
+							ret.notif = result
+							ret.global_msg.push('Un mail de validation d\'inscription a été envoyé à l\'adresse renseignée !')
+							ret.success.push(true)
+							response.render("pages/index", {registerObj: ret})
+						}, (err) => response.send(err))
+					}else{
+						/*Erreur lors de la récupération du nouvel utilisateur*/
+						ret.global_msg.push('Erreur lors de la récupération du nouvel utilisateur, contactez le support !')
+						ret.success.push(false)
+						response.render("pages/index", {registerObj: ret})
+					}
+				})
 			}
-			response.send(ret)
 		})
 })
 module.exports = router

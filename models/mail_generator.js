@@ -1,6 +1,21 @@
 class MailTemplate{
 	static generateClassicHtmlTemplate(events, userInfoReceiver, userInfoSender, action, typeMessage, website_path){
 		let param = {}
+		let type_receiver_libelle
+		switch(userInfoReceiver.type){
+			case 1:
+				type_receiver_libelle = "Adlinistrateur"
+				break;
+			case 2:
+				type_receiver_libelle = "Professionnel audio"
+				break;
+			case 3:
+				type_receiver_libelle = "Professionnel vidéo"
+				break;
+			case 4:
+				type_receiver_libelle = "Artiste"
+				break;
+		}
 		//console.log(events);
 		param.events = events
 		param.userInfoReceiv = userInfoReceiver
@@ -96,6 +111,17 @@ class MailTemplate{
 				case "video":
 					param.content += 'Tu as reçu une nouvelle vidéo de la part de <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
 					param.subject = "Envoi de vidéo !"
+					break;
+				case "forgottenPassword":
+					param.content += 'Tu peux suivre le lien suivant pour réinitialiser ton mot de passe : <a href="'+website_path+'"><b>Lien de modification du mot de passe</b></a> !'
+					param.subject = "Réinitialisation du mot de passe !"
+					break;
+				case "register":
+					param.content += 'Tu viens de t\'inscrire sur <a href="'+website_path+'"><b>notre site</b></a> sous le statut suivant : ('+type_receiver_libelle+') <br>'+
+						'Nous te remercions de l\'intérêt porté à nos services, cependant actuellement ton compte n\'est pas encore vérifié !<br>'+
+						'La finalisation de ton inscription se fait en suivant le <a href="'+website_path+'">Lien d\'activation</a>,<br>'+
+						'Des utilisateurs t\'attendent, connecte toi au plus vite !'
+					param.subject = "Bienvenue dans la communauté 'LabelOnAir' !"
 					break;
 				default:
 					param.content += 'Tu as reçu un nouveau message de la part de <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'

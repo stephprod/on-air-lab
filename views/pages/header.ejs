@@ -8,8 +8,8 @@
 	<title>Label - ON-AIR</title>
 	<meta name="keywords" content="studio, enregistrement, clip, video, realisateur, beatmaker" />
 	<meta name="description" content="Plateforme de services studio d'enregistrement et clip video pour les artistes" />
-	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-	<link rel="icon" href="favicon.ico" type="image/x-icon">
+	<link rel="shortcut icon" href="data:image/x-icon;" type="image/x-icon">
+	<!--<link rel="icon" href="favicon.ico" type="image/x-icon"> -->
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="/asset/bootstrap/bootstrap.min.css">
@@ -67,4 +67,23 @@
 				</div>
 			</div>
 		</nav>
-    </header>
+	</header>
+	<% if (locals.registerObj !== undefined ){ 
+		if (!locals.registerObj.success[0]){ %>
+			<div class="global_msg">
+				<div class="error-box">
+					<p style="margin:0;"><%= locals.registerObj.global_msg[0] %></p>
+					<div class="small-triangle"></div>
+					<div class="small-icon"><i class="jfont">&#xe80f;</i></div>
+				</div>
+			</div>
+		<% }else{ %>	
+			<div class="global_msg">
+				<div class="success-box">
+					<p style="margin:0;"><%= locals.registerObj.global_msg[0] %></p>
+					<div class="small-triangle"></div>
+					<div class="small-icon"><i class="jfont">&#xe80f;</i></div>
+				</div>
+			</div>
+		<% }
+	} %>

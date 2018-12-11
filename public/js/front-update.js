@@ -38,7 +38,7 @@ function update_front_with_errors(tabErr){
 					if (!ret.success[i])
 						content += '<div class="error-box"><p style="margin:0;">'+v+'</p><div class="small-triangle"></div><div class="small-icon"><i class="jfont">&#xe80f;</i></div></div>';
 					else{
-						content += '<div class="success-box margin-top-30"><p>'+v+'</p><div class="small-triangle"></div><div class="small-icon"><i class="jfont">&#xe816;</i></div></div>';
+						content += '<div class="success-box"><p style="margin:0;">'+v+'</p><div class="small-triangle"></div><div class="small-icon"><i class="jfont">&#xe816;</i></div></div>';
 					}
 				});
 				content += '</div>';

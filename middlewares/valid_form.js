@@ -52,10 +52,10 @@ const valid_form = (request, response, next) => {
 				errors.password.push('Le mot de passe et la confirmation du mot de passe doivent être identiques !')
 			else
 				errors.password = ['Le mot de passe et la confirmation du mot de passe doivent être identiques !']
-			if (errors.repeat_password !== undefined)
-				errors.repeat_password.push('Le mot de passe et la confirmation du mot de passe doivent être identiques !')
+			if (errors.confirm_password !== undefined)
+				errors.confirm_password.push('Le mot de passe et la confirmation du mot de passe doivent être identiques !')
 			else
-				errors.repeat_password = ['Le mot de passe et la confirmation du mot de passe doivent être identiques !']
+				errors.confirm_password = ['Le mot de passe et la confirmation du mot de passe doivent être identiques !']
 			
 			err_flag = true
 		}
@@ -80,7 +80,7 @@ const valid_form = (request, response, next) => {
 				ret.success = []
 				ret.global_msg = []
 				ret.errors = errors
-				ret.global_msg.push("Une erreur est survenue lors du remplissage du formulaire d'inscription !")
+				ret.global_msg.push("Une erreur est survenue lors du remplissage du formulaire !")
 				ret.success.push(false)
 				response.send(ret)
 			}

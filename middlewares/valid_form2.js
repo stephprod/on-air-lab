@@ -1,7 +1,7 @@
-let express = require('express')
+//let express = require('express')
 let validator = require('../form_validator')
-let session = require('express-session')
-let User = require('../models/req_user')
+// let session = require('express-session')
+// let User = require('../models/req_user')
 
 let valid_login_form = (request, response, next) => {
 
@@ -39,7 +39,7 @@ let valid_forgottenPassword_form = (request, response, next) => {
 
 	let errors = {}
 	let err_flag = false;
-	let email = request.body.login
+	let email = request.body.email
 	
 	if (!validator.isEmail(email))
 	{
@@ -149,8 +149,8 @@ let offer_valid_form = (request, response, next) =>{
 	let err_flag = false;
 	let title = request.body.title,
 	spe_off = request.body.spe_off,
-	prix_off = request.body.prix_off,
-	id_profil = request.body.id_profil
+	prix_off = request.body.prix_off
+	//id_profil = request.body.id_profil
 
 	if (request.body.action == "insert_update"){
 		if (!validator.notEmpty(title))

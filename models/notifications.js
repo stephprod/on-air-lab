@@ -11,17 +11,18 @@ const transporter = nodemailer.createTransport({
     }
 });
 class Notif{
-   constructor (objReceiverOfAction, senderOfAction, type = null, action = null, events = null, amount = 0){
+   constructor (objReceiverOfAction, senderOfAction, type = null, action = null, events = null, amount = 0, path = "http://localhost:4000"){
        this.events = events;
        this.objReceiver = objReceiverOfAction;
        this.action = action;
        this.type = type;
        this.sender = senderOfAction;
        this.amount = amount;
+       this.webpath = path;
    }
    sendEmail (path){
-        return new Promise((resolve, reject) => {
-            let result = mail_gen.generateClassicHtmlTemplate(this.events, this.objReceiver, this.sender, this.action, this.type, path)
+        return new Promise((resolve) => {
+            let result = mail_gen.generateClassicHtmlTemplate(this.events, this.objReceiver, this.sender, this.action, this.type, this.webpath)
             axios.get(path+"/generateMail", {params: result}).then((res) => {
                 //console.log(res.data)
                 let ret = {}
@@ -38,8 +39,8 @@ class Notif{
                     //     },
                     // ]
                 };
-                //console.log(mailOptions)
-                transporter.sendMail(mailOptions, (error, info) => {
+                console.log(mailOptions)
+                transporter.sendMail(mailOptions, (error) => {
                     if (error) {
                         console.log(error);
                         throw error
@@ -50,16 +51,15 @@ class Notif{
                             msg: result.subject,
                             typeOfAction: this.type,
                         }
+                        console.log(ret)
                         resolve(ret)
                     }
-                    // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-                    // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
                 }) 
-            })
+            }).catch((err) => console.log(err))
         })
     }
     sendPaymentEmail (path){
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             let result = mail_gen.generateClassicHtmlPaymentTemplate(this.objReceiver, this.action, this.type, path, this.amount)
             //console.log(result)
             axios.get(path+"/generateMail", {params: result}).then((res) => {
@@ -78,8 +78,8 @@ class Notif{
                     //     },
                     // ]
                 };
-                //console.log(mailOptions)
-                transporter.sendMail(mailOptions, (error, info) => {
+                console.log(mailOptions)
+                transporter.sendMail(mailOptions, (error) => {
                     if (error) {
                         console.log(error);
                         throw error
@@ -92,8 +92,6 @@ class Notif{
                         }
                         resolve(ret)
                     }
-                    // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-                    // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
                 })
             }).catch((err) => err)
         })
@@ -106,4 +104,9 @@ exports.actions = {mail: (receiver, sender, type_message = null, action = null, 
     .catch((err) => err),
     webhook_payment_mail: (receiver, type_message = null, action = null, amount = 0) => new Notif(receiver, null, type_message, action, null, amount).sendPaymentEmail("http://localhost:4000")
     .then((result) => result)
-    .catch((err) => err)}
+    .catch((err) => err),
+    mail_with_links: (receiver, type_message = null, webPath) => new Notif(receiver, null, type_message, null, null, null, webPath).sendEmail("http://localhost:4000")  
+    .then((result) => result, 
+        (err) => err)
+    .catch((err) => err)
+}

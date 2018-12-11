@@ -62,7 +62,7 @@ function get_events(hours, datePickerValTab){
 							put_in_n_digits_minutes(tabH[1], 2)+":00";
 					donn.start = start;
 				}else{
-					var tabTimeIndice = timeIndice.toString().split(".");
+					tabTimeIndice = timeIndice.toString().split(".");
 					end = datePickerValTab[2] + "-" +datePickerValTab[1]+ "-" +datePickerValTab[0] + "T" + put_in_n_digits_hours(tabTimeIndice[0], 2) + ":" + put_in_n_digits_minutes(tabTimeIndice[1], 2)+":00";
 					donn.end = end;
 					datas.events.push(donn);
@@ -141,7 +141,7 @@ function switchRoom(room, id_coresp, nom, prenom, type, email, usr){
 		type: "POST",
 		url: "/chat",
 		data: datas,
-		success: function (data){
+		success: function (){
 			//console.log(data);
 		}
 	});
@@ -153,23 +153,23 @@ function switchRoom(room, id_coresp, nom, prenom, type, email, usr){
             socket.emit('list_msg', room, user_receiv, usr.type); 
             socket.emit('update_services', usr.id, room, user_receiv);
             //socket.emit('update_modeles_devis', user.id, room, user_receiv);
-        }
-    	socket.emit('switchRoom', usr.id, room, user_receiv);
+		}
+		socket.emit('switchRoom', usr.id, room, user_receiv);
     }
 }
 function on_form_contact_submit(e){
 	e.preventDefault();
 	var that = $(this);
-	 $.ajax({
-      'type' : that.attr('method'),
-      'url' : that.attr('action'),
-	  'data': that.serializeArray(),
-	  'beforeSend': function (req){
+		$.ajax({
+		'type' : that.attr('method'),
+		'url' : that.attr('action'),
+		'data': that.serializeArray(),
+		'beforeSend': function (req){
 			req.setRequestHeader("x-access-token", token);
-	  },
-      'success': function(data) {
-      	//console.log(data);
-      	//console.log(user);
+		},
+		'success': function(data) {
+		//console.log(data);
+		//console.log(user);
 		update_front_with_msg(data, "msg-contact");
 		if (data.success[0]){
 			//Emission de la socket
@@ -196,17 +196,17 @@ function on_form_contact_submit(e){
             }
             //console.log(contact);
             if (user.id != null && user.id != "null"){
-            	console.log(data);
-            	switchRoom(1, 1, "Admin", "Admin", 1, 0, 'admin@label-onair.com', user);
+				//console.log(data);
+				switchRoom(1, 1, "Admin", "Admin", 1, 0, 'admin@label-onair.com', user);
 				socket.emit('sendchat', contact, user.id, user_request, "iframe-chat");
 				socket.emit('sendNotif', data.notif);
-            }
-        }else{
-        	if (data.result.room !== undefined){
-        		roomDisplay = data.result.room;
-        	}
-        }
-      }
+			}
+		}else{
+			if (data.result.room !== undefined){
+				roomDisplay = data.result.room;
+			}
+		}
+		}
 	});
 }
 
@@ -246,7 +246,7 @@ function on_reservation_link_click(e){
 				update_front_with_msg(data, "msg-contact");
 				if (data.success[0]){
 					//Emission de la socket
-					console.log("demande envoyé !" +userId);
+					//console.log("demande envoyé !" +userId);
 					/*var user_request = {}
 					if (user_receiv.type != 4){
 						user_request.id = user.id;
@@ -259,21 +259,21 @@ function on_reservation_link_click(e){
 						user_request.prenom = user.prenom;
 						user_request.type = user.type;
 					}*/
-		            var rdv = {
-		                type_m : data.result.type_r,
-		                user_receiver : user_receiv,
-		                txt : data.msg,
-		                events: datas.events,
-		                id_disp: data.result.id_dispos,
-		                id_temp: data.result.id_t,
-		                created: data.created,
-		                request_state : 0
-		            }
-		            //console.log(contact);
-		            switchRoom(roomDisplay, user_receiv.id_coresp, user_receiv.nom, user_receiv.prenom, user_receiv.type, user_receiv.mail, user);
-		            socket.emit('sendchat', rdv, userId, user_receiv, "iframe-chat");
+					var rdv = {
+						type_m : data.result.type_r,
+						user_receiver : user_receiv,
+						txt : data.msg,
+						events: datas.events,
+						id_disp: data.result.id_dispos,
+						id_temp: data.result.id_t,
+						created: data.created,
+						request_state : 0
+					}
+					//console.log(contact);
+					switchRoom(roomDisplay, user_receiv.id_coresp, user_receiv.nom, user_receiv.prenom, user_receiv.type, user_receiv.mail, user);
+					socket.emit('sendchat', rdv, userId, user_receiv, "iframe-chat");
 				}
-		    }
+			}
 		});
 	}else{
 		var data = {};
@@ -301,11 +301,11 @@ function on_valid_rdv_offer_link_click(e){
 		desc: $("#rdv-offer-modal").find("[name='offer-desc']").val(),
 		id: $("#rdv-offer-modal").find("[name='offer-id']").val(),
 		type: $("#rdv-offer-modal").find("[name='offer-type']").val()};
-	console.log(datas);
+	//console.log(datas);
 	if (roomDisplay != null){
 		datas.from = "rdv_offer";
 		datas.title = "event-meet";
-		console.log(datas);
+		//console.log(datas);
 		$.ajax({
 			type: "POST",
 			url: "/check-in",
@@ -318,22 +318,22 @@ function on_valid_rdv_offer_link_click(e){
 				update_front_with_msg(data, "msg-offer");
 				if (data.success[0]){
 					//Emission de la socket
-		            var rdv_off = {
-		                type_m : data.result.type_r,
-		                user_receiver : user_receiv,
-		                txt : data.msg,
-		                events: datas.events,
-		                id_disp: data.result.id_dispos,
-		                id_temp: data.result.id_t,
+					var rdv_off = {
+						type_m : data.result.type_r,
+						user_receiver : user_receiv,
+						txt : data.msg,
+						events: datas.events,
+						id_disp: data.result.id_dispos,
+						id_temp: data.result.id_t,
 						created: data.created,
 						offer: datas.offer,
-		                request_state : 0
-		            }
-		            //console.log(rdv_off);
-		            switchRoom(roomDisplay, user_receiv.id_coresp, user_receiv.nom, user_receiv.prenom, user_receiv.type, user_receiv.mail, user);
-		            socket.emit('sendchat', rdv_off, userId, user_receiv, "iframe-chat");
+						request_state : 0
+					}
+					//console.log(rdv_off);
+					switchRoom(roomDisplay, user_receiv.id_coresp, user_receiv.nom, user_receiv.prenom, user_receiv.type, user_receiv.mail, user);
+					socket.emit('sendchat', rdv_off, userId, user_receiv, "iframe-chat");
 				}
-		    }
+			}
 		});
 	}else{
 		var data = {};
@@ -353,7 +353,7 @@ function on_rdv_offer_link_click(e){
 	'<input type="hidden" name="offer-desc" value="'+parent.find(".grid-offer-text p").text().trim()+'"/>'+
 	'<input type="hidden" name="offer-type" value="'+parent.find("[class=transaction-type], [class=estate-type]").text().trim()+'"/>'+
 	'<input type="hidden" name="offer-id" value="'+$(e.target).parents("a[href='#rdv-offer-modal']").attr("id").trim()+'"/>';
-	console.log(inputs_to_hide);
+	//console.log(inputs_to_hide);
 	cible.append(inputs_to_hide);
 	//console.log(parent);
 	//console.log(id_offre);
@@ -363,9 +363,9 @@ form.on("submit", on_form_contact_submit);
 var iframe_cal1 = $(".cal")[0].contentDocument ? $(".cal")[0].contentDocument : $(".cal")[0].contentWindow.document;
 var iframe_cal2 = $(".cal")[1].contentDocument ? $(".cal")[1].contentDocument : $(".cal")[1].contentWindow.document;
 var iframe_cal3 = $(".cal")[2].contentDocument ? $(".cal")[2].contentDocument : $(".cal")[2].contentWindow.document;
-var check_in = $("a#booking");
-var meet_up = $("a#meet-up");
-var offer_meet_up = $("a#offer-meet-up");
+// var check_in = $("a#booking");
+// var meet_up = $("a#meet-up");
+// var offer_meet_up = $("a#offer-meet-up");
 var socket = io.connect();
 var session = JSON.parse(sessionStorage.getItem('session'));
 //sessionStorage.clear();
@@ -375,12 +375,12 @@ var user_receiv = JSON.parse(sessionStorage.getItem('user_receiv'));
 //console.log(user_receiv);
 var user = null;
 var userId = null;
-var page = null;
+//var page = null;
 var token = null;
 if (session != null && session.user != undefined){
 	user = session.user;
 	userId = user.id;
-	page = session.page;
+//	page = session.page;
 	token = session.token;
 }
 //console.log($(".cal"));

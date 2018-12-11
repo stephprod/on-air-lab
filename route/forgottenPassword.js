@@ -3,6 +3,7 @@ const User = require('../models/req_user')
 const validator = require('../middlewares/valid_form2').forgottenPassword
 const uid = require('rand-token').uid
 const router = express.Router()
+const notifications = require('../models/notifications').actions
 
 router.route('/forgottenPassword')
 	.post(validator, (request, response) => {
@@ -26,20 +27,27 @@ router.route('/forgottenPassword')
 						ret.global_msg.push('Erreur lors de la mise à jour de l\'utilisateur, veuillez contacter le support/modérateur !')
 						errors.login = ['Une erreur technique est survenue lors de l\'envoi du mail de modification du mot de passe !']
 						ret.errors = errors
+						response.send(ret)
 					}
 					else
 					{
 						ret.success.push(true);
 						ret.global_msg.push('Un mail de récupération de mot de passe a été envoyé à l\'adresse fournie !', jeton)
+						//console.log(ret)
+						notifications.mail_with_links(res, "forgottenPassword", "http://localhost:4000/updatePassword/"+jeton)
+						.then((result2) => {
+							//console.log(result2)
+							ret.notif = result2
+							response.send(ret)
+						}, (err) => response.send(err))
 					}
-					response.send(ret)
 				})
-				//ENVOI DU MAIL DE RECUPERATION DE MOT DE PASSE A FAIRE
 			}
 			else
 			{
 				ret.success.push(false);
 				errors.login = ['Utilisateur non trouvé !']
+				ret.global_msg.push('Erreur lors de la validation du formulaire !')
 				ret.errors = errors
 				response.send(ret)
 			}

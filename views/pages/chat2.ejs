@@ -8,8 +8,7 @@
 	<title>Label - ON-AIR</title>
 	<meta name="keywords" content="Download, Apartment, Premium, Real Estate, HMTL, Site Template, property, mortgage, CSS" />
 	<meta name="description" content="Label - ON-AIR" />
-	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-	<link rel="icon" href="favicon.ico" type="image/x-icon">
+	<link rel="shortcut icon" href="data:image/x-icon;" type="image/x-icon">
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="/asset/bootstrap/bootstrap.min.css">
@@ -298,11 +297,11 @@
 			<div class="modal-content">
 				<div class="modal-body">
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<div class="modal-title msg-paiement">
+					<div class="modal-title">
 						<h1>Envoyer une demande de paiement<span class="special-color">?</span></h1>
 						<div class="short-title-separator"></div>
 					</div>
-					<p class="negative-margin forgot-info">Veillez à remplir la totalité des champs du formulaire.<br/>L'artiste aura le choix d'accepter/refuser la demande de paiement.</p>
+					<p class="negative-margin msg-paiement">Veillez à remplir la totalité des champs du formulaire.<br/>L'artiste aura le choix d'accepter/refuser la demande de paiement.</p>
 					<a href="#" name="module" data-action="update-module" data-module="0" class="button-secondary button-shadow button-full msg-module">
 						<span>Module bancaire Off</span>
 						<div class="button-triangle"></div>
@@ -354,7 +353,7 @@
 		user.mail = "<%- locals.session.userMail !== undefined ?
 			locals.session.userMail : "null" %>";
 		<% if (locals.session.abonnement !== undefined && locals.session.abonnement != null) { %>
-			console.log(<%- locals.session.abonnement %>);
+			//console.log(<%- locals.session.abonnement %>);
 			user.abonnement = <%= locals.session.abonnement %>;
 		<% } %>
     	//console.log(session);

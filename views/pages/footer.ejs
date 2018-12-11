@@ -38,7 +38,7 @@
         </a>
         <a href="#" class="forgot-link pull-right">Mot de passe oublié?</a>
         <div class="clearfix"></div>
-        <p class="login-or">OU</p>
+        <!--<p class="login-or">OU</p>
         <a href="#" class="facebook-button">
           <i class="fa fa-facebook"></i>
           <span>Se connecter avec Facebook</span>
@@ -46,7 +46,7 @@
         <a href="#" class="google-button margin-top-15">
           <i class="fa fa-google-plus"></i>
           <span>Se connecter avec Google</span>
-        </a>
+        </a>-->
         <p class="modal-bottom">Pas encore inscrit? <a href="#" class="register-link">S'enregistrer</a></p>
       </div>
     </div><!-- /.modal-content -->
@@ -59,21 +59,21 @@
     <div class="modal-content">
       <div class="modal-body">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <div class="modal-title">
+        <div class="modal-title register-msg">
           <h1>S'enregistrer<span class="special-color">.</span></h1>
           <div class="short-title-separator"></div>
         </div>
-        <input type="radio" id="c1" name="type" class="main-checkbox" checked value="2" />
-        <label for="c1"><span></span>Professionnel Audio</label><br/>
+        <!--<input type="radio" id="c1" name="type" class="main-checkbox" checked value="2" />
+        <label for="c1"><span></span>Professionnel Audio</label><br/>-->
         <input type="radio" id="c2" name="type" class="main-checkbox" value="3" />
         <label for="c2"><span></span>Professionnel Vidéo</label><br/>
         <input type="radio" id="c3" name="type" class="main-checkbox" value="4" checked />
         <label for="c3"><span></span>Artiste</label><br/>
-        <input name="first_name" type="text" class="input-full main-input" placeholder="Prénom" />
-        <input name="last_name" type="text" class="input-full main-input" placeholder="Nom" />
-        <input name="login" type="email" class="input-full main-input" placeholder="Email" />
-        <input name="password" type="password" class="input-full main-input" placeholder="Mot de passe" />
-        <input name="repeat_password" type="password" class="input-full main-input" placeholder="Confirmation du mot de passe" />
+        <input name="first_name" type="text" class="input-full main-input" placeholder="Prénom*" />
+        <input name="last_name" type="text" class="input-full main-input" placeholder="Nom*" />
+        <input name="login" type="email" class="input-full main-input" placeholder="Email*" />
+        <input name="password" type="password" class="input-full main-input" placeholder="Mot de passe*" />
+        <input name="confirm_password" type="password" class="input-full main-input" placeholder="Confirmation du mot de passe*" />
         <a data-action="register" href="#" class="button-primary button-shadow button-full">
           <span>S'enregistrer</span>
           <div class="button-triangle"></div>
@@ -81,7 +81,7 @@
           <div class="button-icon"><i class="fa fa-user"></i></div>
         </a>
         <div class="clearfix"></div>
-        <p class="login-or">OU</p>
+        <!--<p class="login-or">OU</p>
         <a href="#" class="facebook-button">
           <i class="fa fa-facebook"></i>
           <span>S'enregistrer avec Facebook</span>
@@ -89,7 +89,7 @@
         <a href="#" class="google-button margin-top-15">
           <i class="fa fa-google-plus"></i>
           <span>S'enregistrer avec Google</span>
-        </a>
+        </a>-->
         <p class="modal-bottom">Déjà inscrit? <a href="#" class="login-link">Se connecter</a></p>
       </div>
     </div><!-- /.modal-content -->
@@ -213,15 +213,16 @@
     user.prenom = "<%- locals.session.userFirstName ?
       locals.session.userFirstName : "null" %>";
     user.mail = "<%- locals.session.userMail ?
-			locals.session.userMail : "null" %>";
+      locals.session.userMail : "null" %>";
     //console.log(session);
     session.user = user;
     sessionStorage.setItem("session", JSON.stringify(session));
 <% } %>
 </script>
 <script type="module" src="/asset/js/login.js"></script>
-<script type="text/javascript" src="/asset/js/forgottenPassword.js"></script>
-<script type="text/javascript" src="/asset/js/register.js"></script>
+<script type="module" src="/asset/js/forgottenPassword.js"></script>
+<script type="module" src="/asset/js/updatePassword.js"></script>
+<script type="module" src="/asset/js/register.js"></script>
 <script type="module" src="/asset/js/search.js"></script>
 <script type="module" src="/asset/js/logout.js"></script>
 </body>
