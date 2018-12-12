@@ -59,7 +59,7 @@ $.fn.easyPaginate = function (options) {
         };
         
         var displayNav = function() {
-            htmlNav = '<div class="'+plugin.settings.paginationNavClass+' margin-top-30">';
+            var htmlNav = '<div class="'+plugin.settings.paginationNavClass+' margin-top-30">';
             
             if(plugin.settings.firstButton) {
                 htmlNav += '<a data-action="pagination-nav" data-href="#'+plugin.settings.hashPage+':1" title="First page" rel="1" class="first">'+plugin.settings.firstButtonText+'</a>';
@@ -69,9 +69,9 @@ $.fn.easyPaginate = function (options) {
                 htmlNav += '<a data-action="pagination-nav" data-href="" title="Previous" rel="" class="prev">'+plugin.settings.prevButtonText+'</a>';
             }
             
-            for(i = 1;i <= plugin.settings.pages;i++) {
+            for(var i = 1;i <= plugin.settings.pages;i++) {
                 htmlNav += '<a data-action="pagination-nav" data-href="#'+plugin.settings.hashPage+':'+i+'" title="Page '+i+'" rel="'+i+'" class="page">'+i+'</a>';
-            };
+            }
             
             if(plugin.settings.nextButton) {
                 htmlNav += '<a data-action="pagination-nav" data-href="" title="Next" rel="" class="next">'+plugin.settings.nextButtonText+'</a>';
@@ -134,8 +134,8 @@ $.fn.easyPaginate = function (options) {
         var displayPage = function(page, forceEffect) {
             if(plugin.settings.currentPage != page) {
                 plugin.settings.currentPage = parseInt(page);
-                offsetStart = (page - 1) * plugin.settings.elementsPerPage;
-                offsetEnd = page * plugin.settings.elementsPerPage;
+                var offsetStart = (page - 1) * plugin.settings.elementsPerPage;
+                var offsetEnd = page * plugin.settings.elementsPerPage;
                 if(typeof(forceEffect) != 'undefined') {
                     eval("transition_"+forceEffect+"("+offsetStart+", "+offsetEnd+")");
                 }else {
@@ -167,13 +167,31 @@ $.fn.easyPaginate = function (options) {
         };
         
         var transition_default = function(offsetStart, offsetEnd) {
+            //plugin.el.isotope("destroy");
             plugin.el.empty();
             //plugin.el.isotope('hideItemElements', plugin.currentElements);
             plugin.currentElements = plugin.settings.objElements.slice(offsetStart, offsetEnd);
             //plugin.el.isotope('revealItemElements', plugin.currentElements);
             //console.log(plugin.currentElements);
             plugin.el.append(plugin.currentElements);
-            plugin.el.isotope();
+            plugin.el.isotope({
+                itemSelector:".grid-offer-col",
+                getSortData:{
+                    name:".etiquette-name",
+                    price: function (itemElem){
+                        // get text of .tri-prix element
+                        var price = $( itemElem ).find('.tri-prix').text();
+                        // replace parens (), and parse as float
+                        return parseFloat( price );
+                    },
+                    distance: function (elem){
+                        var distance = $(elem).find(".distance").text();
+                        console.log(distance);
+                        return parseFloat(distance);
+                    } 
+                }
+            });
+            //plugin.el.isotope('reloadItems');
         };
         
         var transition_fade = function(offsetStart, offsetEnd) {
@@ -271,7 +289,7 @@ $.fn.easyPaginate = function (options) {
             first_page_ind = 1;
         }
         last_page_ind += plugin.el.find(".grid-offer-col").length;
-        elems_in_a_page = plugin.settings.elementsPerPage;
+        var elems_in_a_page = plugin.settings.elementsPerPage;
         $("span.first-page-ind").html(first_page_ind);
         $("span.last-page-ind").html(last_page_ind);
         $("span.total-ind").html(total_ind);

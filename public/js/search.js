@@ -35,7 +35,7 @@ if (search_res != null){
     });
     //$grid.isotope();
     //$grid.isotope("reloadItems");
-    initIsotop($grid);
+    //initIsotop($grid);
     //console.log($('div.offer-pagination'));
     /*$('div.offer-pagination').remove();
     $('div.grid-offer-row').easyPaginate({
@@ -253,8 +253,8 @@ function updateListEtabInView(value){
                     $.each(data.listEtab, function(key, value){
                         updateListEtabInView(value);
                     });
-                    initIsotop($grid);
-                    $('div.grid-offer-row').easyPaginate({
+                    //initIsotop($grid);
+                    $grid.easyPaginate({
                         paginateElement: 'div.grid-offer-col',
                         elementsPerPage: elems_in_a_page,
                         paginationNavClass: 'offer-pagination',
@@ -388,9 +388,9 @@ function updateListEtabInView(value){
         select_cp.on("changed.bs.select", cp_change_action);
         select_cities.on("changed.bs.select", cities_change);
         radios_type_service_switcher.on("change", on_type_service_change);
+        //PAGINATION
         //TRI AJAX ISOTOP
         //initIsotop($grid);
-        //PAGINATION
         elems_in_a_page = 16;
         $grid.easyPaginate({
             paginateElement: 'div.grid-offer-col',
@@ -417,6 +417,7 @@ function initIsotop($parent){
             },
             distance: function (elem){
                 var distance = $(elem).find(".distance").text();
+                console.log(distance);
                 return parseFloat(distance);
             } 
         }

@@ -12,6 +12,7 @@ module.exports = {
         "require": false,
         "module": false,
         "$": false,
+        "jQuery": false,
         "io": false,
         "exports": false,
         "describe": false,
