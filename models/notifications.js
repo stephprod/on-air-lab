@@ -21,7 +21,7 @@ class Notif{
        this.webpath = path;
    }
    sendEmail (path){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             let result = mail_gen.generateClassicHtmlTemplate(this.events, this.objReceiver, this.sender, this.action, this.type, this.webpath)
             axios.get(path+"/generateMail", {params: result}).then((res) => {
                 //console.log(res.data)
@@ -41,25 +41,29 @@ class Notif{
                 };
                 //console.log(mailOptions)
                 transporter.sendMail(mailOptions, (error) => {
-                    if (error) {
-                        console.log(error);
-                        throw error
+                    //console.log(info)
+                    //console.log(error)
+                    if (error != "null" && error != null) {
+                        //console.log("error");
+                        reject(error)
                     }else{
+                        //console.log("ok")
                         ret = {
                             receiverAction: {id: this.objReceiver.id, nom: this.objReceiver.nom},
-                            senderAction: {id:this.sender.id, nom: this.sender.nom},
                             msg: result.subject,
                             typeOfAction: this.type,
                         }
-                        console.log(ret)
+                        if (this.sender != null)
+                            ret.senderAction = {id:this.sender.id, nom: this.sender.nom}
+                        //console.log(ret)
                         resolve(ret)
                     }
                 }) 
-            }).catch((err) => console.log(err))
+            }).catch((err) => err)
         })
     }
     sendPaymentEmail (path){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             let result = mail_gen.generateClassicHtmlPaymentTemplate(this.objReceiver, this.action, this.type, path, this.amount)
             //console.log(result)
             axios.get(path+"/generateMail", {params: result}).then((res) => {
@@ -81,8 +85,8 @@ class Notif{
                 //console.log(mailOptions)
                 transporter.sendMail(mailOptions, (error) => {
                     if (error) {
-                        console.log(error);
-                        throw error
+                        //console.log(error);
+                        reject(error)
                     }else{
                         ret = {
                             receiverAction: {id: this.objReceiver.id, nom: this.objReceiver.nom},
@@ -90,6 +94,8 @@ class Notif{
                             msg: result.subject,
                             typeOfAction: this.type,
                         }
+                        if (this.sender != null)
+                            ret.senderAction = {id:this.sender.id, nom: this.sender.nom}
                         resolve(ret)
                     }
                 })
