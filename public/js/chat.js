@@ -44,6 +44,7 @@ $(document).on("click", "#devis-send", on_devis_module_send_link_click);
 $(document).on("click", ".div-submi .btn-accept", on_module_accept_typeMessage_link_click);
 $(document).on("click", ".div-submi .btn-refus", on_module_deny_typeMessage_link_click);
 $(document).on("click", "a[data-action='update-module']", on_module_payment_bank_link_click);
+$(document).on("click", "button[data-id-message]", on_message_view_button_click);
 if (socket != null){
 socket.on('updaterooms', on_socket_update_rooms);
 socket.on('connect', on_socket_connect);
@@ -68,7 +69,7 @@ var actions = {};
 actions.audio = [], actions.video = [], actions.rdv = [],
 actions.booking = [], actions.devis = [], actions.paiement = [],
 actions.texte = [], actions.devis_request = [], actions.contactArt = [],
-actions.contactPro = [], actions.rdv_offer = [];
+actions.contactPro = [], actions.rdv_offer = [], actions.previousMessagesButton, actions.nextMessagesButton;
 actions.texte.push(function (data){
   var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">'+data.txt+'<div class="corner"></div><span>'+data.created+'</span></div></div>';
   return (ret);
@@ -181,59 +182,14 @@ actions.contactArt.push(function (data){
 //console.log(data);
 var ret = '<div class="message" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="contact"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de contact</h3>';
 ret += '<p class="date_creneau">';
-// if (data.user_request_info !== undefined && 
-//   data.user_request_info != null){
-//   ret += '<p style="background: #18457c;color: white;padding: 12px;">'+data.user_request_info.prenom+' '+data.user_request_info.nom+' (';
-//   switch(data.user_request_info.type){
-//     case 3:
-//       ret += "Professionnel vidéo"
-//       break;
-//     case 2:
-//       ret += "Professionnel audio"
-//       break;
-//     default:
-//       break;
-//   }
-//   ret += +')</p>';
-// }
-// if (data.user_request_info != null){
-//   ret += 'nom ('+data.user_request_info.nom+') / prénom ('+data.user_request_info.prenom+') / type ('+data.user_request_info.type+') / id_temporisation ('+data.id_temp+')';
-// }
-// ret += 'statut de la demande ('+data.request_state+')';
-// ret += '</p><div class="corner"></div><span>'+data.created+'</span></div></div>';
-// if (data.events.length == 0){
-//   ret += '</p><div class="div-submi" style="color: black;">demande refusée !</div><div class="corner"></div><span>'+data.created+'</span>';
-// }else{
   ret += 'demande en attente de réponse du correspondant</p><div class="div-submi" style="color: black;"></div><div class="corner"></div><span>'+data.created+'</span>';
-//}
 ret += '</div></div></div>';
 return (ret);
 }, function (data){
 //console.log(data);
 var ret = '<div class="message right" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="contact"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de contact</h3>';
 ret += '<p class="date_creneau">';
-// if (data.user_request_info != null){
-//   ret += '<p style="background: #18457c;color: white;padding: 12px;">'+data.user_request_info.prenom+' '+data.user_request_info.nom+' (';
-//   switch(data.user_request_info.type){
-//     case 3:
-//       ret += "Professionnel vidéo"
-//       break;
-//     case 2:
-//       ret += "Professionnel audio"
-//       break;
-//     default:
-//       break;
-//   }
-//   ret += +')</p>';
-// }
-// if (data.user_request_info != null){
-//   ret += 'nom ('+data.user_request_info.nom+') / prénom ('+data.user_request_info.prenom+') / type ('+data.user_request_info.type+') / id_temporisation ('+data.id_temp+')';
-// }
-// if (data.events.length == 0){
-//   ret += '</p><div class="div-submi" style="color: black;">demande refusée !</div><div class="corner"></div><span>'+data.created+'</span>';
-// }else{
 ret += 'demande en attente de votre réponse</p><div class="div-submi" style="color: black;"><a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a></div><div class="corner"></div><span>'+data.created+'</span>';
-//}
 ret += '</div></div></div>';
 return (ret);
 });
@@ -346,6 +302,16 @@ actions.paiement.push(function (data){
   //console.log(data.request_state);
   return (ret);
 });
+actions.previousMessagesButton = function(data){
+  //console.log(data);
+  var ret = "<button name='previous' data-id-message='"+data.id_m+"'>Messages précédents</button>"
+  return ret;
+}; 
+actions.nextMessagesButton = function(data){
+  //console.log(data);
+  var ret = "<button name='next' data-id-message='"+data.id_m+"'>Messages suivants</button>";
+  return ret;
+};
 $(document).on("click", ".friend", function(){
   var childOffset = $(this).offset();
   var parentOffset = $(this).parent().parent().offset();
@@ -415,7 +381,7 @@ $(document).on("click", ".friend", function(){
     $("select[name='services']").remove();
     $('#devis-modal').find('[name="msg"]').after('<select name="services" class="bootstrap-select" title="Services:" multiple data-actions-box="true"></select>');
     $($(".box-module .module")[0]).show();
-    $($(".box-module .module")[1]).show();
+    $($(".box-module .module")[1]).hide();
     $($(".box-module .module")[2]).show();
     $($(".box-module .module")[3]).hide();
     $($(".box-module .module")[4]).show();
@@ -428,10 +394,10 @@ $(document).on("click", ".friend", function(){
     $("select[name='services']").remove();
     $('#devis-modal').find('[name="msg"]').after('<select name="services" class="bootstrap-select" title="Services:" multiple data-actions-box="true"></select>');
     $($(".box-module .module")[0]).hide();
-    $($(".box-module .module")[1]).show();
+    $($(".box-module .module")[1]).hide();
     $($(".box-module .module")[2]).show();
     $($(".box-module .module")[3]).hide();
-    $($(".box-module .module")[4]).hide();
+    $($(".box-module .module")[4]).show();
     $($(".box-module .module")[5]).show();
     $("#devis-modal").find("h1").empty();
     $("#devis-modal").find("h1").append("Demande de devis");
@@ -474,6 +440,10 @@ function on_socket_updatechat(coresp, data, cont){
 //console.log(cont);
 if (data !== undefined && data != null){
   var htmlToAppend = "";
+  if (data.fullPrevious !== undefined){
+    if (!data.fullPrevious)
+      htmlToAppend += actions.previousMessagesButton(data);
+  }
   if (data.type_m !== undefined && data.type_m != null){
     if (data.type_m == 'audio'){
       if (user.id == data.user_sender.id)
@@ -535,6 +505,10 @@ if (data !== undefined && data != null){
     else
       htmlToAppend += actions.texte[1](data);
   }
+  if (data.fullNext !== undefined){
+    if (!data.fullNext)
+      htmlToAppend += actions.nextMessagesButton(data);
+  }
   if (cont !== undefined && cont == "iframe-chat"){
     iframe = $("iframe[src='/chat']")[0] !== undefined ? $("iframe[src='/chat']")[0].contentDocument : null;
     $('#chat-messages', iframe).append(htmlToAppend);
@@ -593,6 +567,26 @@ function check_abo(usr){
   else if(usr.type == 4 || usr.type == 1 || roomDisplay == 1)
     return true;
   return false;
+}
+function on_message_view_button_click(e){
+  var index = parseInt($(e.target).data("id-message"));
+  $('#chat-messages').empty();
+  if ($(e.target).attr("name") == "next"){
+    //console.log("button next clicked at index "+$(e.target).data("id-message")+" !");
+    if (roomDisplay != 1)
+      socket.emit("list_msg_from_ind", roomDisplay, user_receiv, user.type, index, false);
+    else
+      socket.emit("list_msg_admin_from_ind", roomDisplay, user_receiv, user.id, index, false);
+  }else{
+    // console.log("button previous clicked at index "+$(e.target).data("id-message")+" !");
+    // console.log(user);
+    // console.log(user_receiv);
+    // console.log(roomDisplay);
+    if (roomDisplay != 1)
+      socket.emit("list_msg_from_ind", roomDisplay, user_receiv, user.type, index, true);
+    else
+      socket.emit("list_msg_admin_from_ind", roomDisplay, user_receiv, user.id, index, true);
+  }
 }
 function on_msg_send_click(){
   var message = StringParser($("#sendmessage textarea").val())

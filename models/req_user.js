@@ -183,45 +183,60 @@ class User{
             cb(result.affectedRows)
         })  
     }
-	static getFirstPreviousMsgPro(room, number, cb)
+    static getFirstPreviousMsgPro(room, number, cb)
     {
         //console.time("select counting")
         let r = db.query('SELECT * FROM messages INNER JOIN rooms ON rooms.id_room=messages.id_room '+
-        	'LEFT JOIN type_message ON messages.id_type = type_message.id_type_m '+ 
-        	'LEFT JOIN user ON rooms.userid = user.id WHERE messages.id_room = ? '+
-        	'ORDER BY created_at DESC LIMIT '+number, [room], (err, result) => {
+            'LEFT JOIN type_message ON messages.id_type = type_message.id_type_m '+ 
+            'LEFT JOIN user ON rooms.userid = user.id WHERE messages.id_room = ? '+
+            'ORDER BY created_at DESC LIMIT '+number, [room], (err, result) => {
             if(err){
-            	console.log(r.sql)
+                console.log(r.sql)
                 throw err;
-              }
+                }
             cb(result);
             //console.timeEnd("select counting")
         });
     }
     static getFirstPreviousMsgArt(room, number, cb)
     {
-    	//console.time("select counting")
+        //console.time("select counting")
         let r = db.query('SELECT * FROM messages INNER JOIN rooms ON rooms.id_room=messages.id_room '+
-        	'LEFT JOIN type_message ON messages.id_type = type_message.id_type_m '+ 
-        	'LEFT JOIN user ON rooms.with_userid = user.id WHERE messages.id_room = ? '+
-        	'ORDER BY created_at DESC LIMIT '+number, [room], (err, result) => {
+            'LEFT JOIN type_message ON messages.id_type = type_message.id_type_m '+ 
+            'LEFT JOIN user ON rooms.with_userid = user.id WHERE messages.id_room = ? '+
+            'ORDER BY created_at DESC LIMIT '+number, [room], (err, result) => {
             if(err){
-            	console.log(r.sql)
+                console.log(r.sql)
                 throw err;
-              }
+                }
             cb(result);
             //console.timeEnd("select counting")
         });
     }
     static getPreviousMsgArt(room, index, number, cb)
     {
-    	//console.time("select counting")
+        //console.time("select counting")
         let r = db.query('SELECT * FROM messages INNER JOIN rooms ON rooms.id_room=messages.id_room '+
-        	'LEFT JOIN type_message ON messages.id_type = type_message.id_type_m '+ 
-        	'LEFT JOIN user ON rooms.with_userid = user.id WHERE messages.id_room = ? '+
-        	'AND messages.id_message < '+index+' ORDER BY created_at DESC LIMIT '+number, [room], (err, result) => {
+            'LEFT JOIN type_message ON messages.id_type = type_message.id_type_m '+ 
+            'LEFT JOIN user ON rooms.with_userid = user.id WHERE messages.id_room = ? '+
+            'AND messages.id_message < '+index+' ORDER BY created_at DESC LIMIT '+number, [room], (err, result) => {
             if(err){
-              	console.log(r.sql)
+                console.log(r.sql)
+                throw err;
+            }
+            cb(result);
+            //console.timeEnd("select counting")
+        });
+    }
+    static getNextMsgArt(room, index, number, cb)
+    {
+        //console.time("select counting")
+        let r = db.query('SELECT * FROM messages INNER JOIN rooms ON rooms.id_room=messages.id_room '+
+            'LEFT JOIN type_message ON messages.id_type = type_message.id_type_m '+ 
+            'LEFT JOIN user ON rooms.with_userid = user.id WHERE messages.id_room = ? '+
+            'AND messages.id_message > '+index+' ORDER BY created_at DESC LIMIT '+number, [room], (err, result) => {
+            if(err){
+                console.log(r.sql)
                 throw err;
             }
             cb(result);
@@ -230,13 +245,28 @@ class User{
     }
     static getPreviousMsgPro(room, index, number, cb)
     {
-    	//console.time("select counting")
+        //console.time("select counting")
         let r = db.query('SELECT * FROM messages INNER JOIN rooms ON rooms.id_room=messages.id_room '+
-        	'LEFT JOIN type_message ON messages.id_type = type_message.id_type_m '+ 
-        	'LEFT JOIN user ON rooms.userid = user.id WHERE messages.id_room = ? '+
-        	'AND messages.id_message < '+index+' ORDER BY created_at DESC LIMIT '+number, [room], (err, result) => {
+            'LEFT JOIN type_message ON messages.id_type = type_message.id_type_m '+ 
+            'LEFT JOIN user ON rooms.userid = user.id WHERE messages.id_room = ? '+
+            'AND messages.id_message < '+index+' ORDER BY created_at DESC LIMIT '+number, [room], (err, result) => {
             if(err){
-              	console.log(r.sql)
+                console.log(r.sql)
+                throw err;
+            }
+            cb(result);
+            //console.timeEnd("select counting")
+        });
+    }
+    static getNextMsgPro(room, index, number, cb)
+    {
+        //console.time("select counting")
+        let r = db.query('SELECT * FROM messages INNER JOIN rooms ON rooms.id_room=messages.id_room '+
+            'LEFT JOIN type_message ON messages.id_type = type_message.id_type_m '+ 
+            'LEFT JOIN user ON rooms.userid = user.id WHERE messages.id_room = ? '+
+            'AND messages.id_message > '+index+' ORDER BY created_at DESC LIMIT '+number, [room], (err, result) => {
+            if(err){
+                console.log(r.sql)
                 throw err;
             }
             cb(result);
@@ -246,9 +276,37 @@ class User{
     static getFirstPreviousMsgAdmin(room, id, len, cb)
     {
         let r = db.query('SELECT * FROM messages LEFT JOIN type_message ON messages.id_type = type_message.id_type_m '+
-        	'LEFT JOIN user ON messages.iduser_send = user.id '+
-        	'WHERE messages.id_room = ? AND (messages.iduser_send='+id+' OR messages.iduser_received='+id+') '+
-        	'ORDER BY created_at DESC LIMIT '+len, [room], (err, result) => {
+            'LEFT JOIN user ON messages.iduser_send = user.id '+
+            'WHERE messages.id_room = ? AND (messages.iduser_send='+id+' OR messages.iduser_received='+id+') '+
+            'ORDER BY created_at DESC LIMIT '+len, [room], (err, result) => {
+            if(err){
+                console.log(r.sql)
+                throw err;
+            }
+            cb(result);
+        });
+    }
+    static getPreviousMsgAdmin(room, id, index, number, cb)
+    {
+        let r = db.query('SELECT * FROM messages LEFT JOIN type_message ON messages.id_type = type_message.id_type_m '+
+            'LEFT JOIN user ON messages.iduser_send = user.id '+
+            'WHERE messages.id_room = ? AND (messages.iduser_send='+id+' OR messages.iduser_received='+id+') '+
+            'AND messages.id_message < '+index+' '+
+            'AND ORDER BY created_at DESC LIMIT '+number, [room], (err, result) => {
+            if(err){
+                console.log(r.sql)
+                throw err;
+            }
+            cb(result);
+        });
+    }
+    static getNextMsgAdmin(room, id, index, number, cb)
+    {
+        let r = db.query('SELECT * FROM messages LEFT JOIN type_message ON messages.id_type = type_message.id_type_m '+
+            'LEFT JOIN user ON messages.iduser_send = user.id '+
+            'WHERE messages.id_room = ? AND (messages.iduser_send='+id+' OR messages.iduser_received='+id+') '+
+            'AND messages.id_message > '+index+' '+
+            'AND ORDER BY created_at DESC LIMIT '+number, [room], (err, result) => {
             if(err){
                 console.log(r.sql)
                 throw err;

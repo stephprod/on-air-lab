@@ -42,12 +42,12 @@ router.route('/register')
 							ret.global_msg.push('Un mail de validation d\'inscription a été envoyé à l\'adresse renseignée !')
 							ret.success.push(true)
 							response.send(ret)
-						}, (err) => {
+						}, () => {
 							ret.global_msg.push('Erreur lors de l\'envoi de mail, veuillez contacter le support/modérateur !')
 							ret.success.push(false)
 							response.send(ret)
 						})
-						.catch((err) => {
+						.catch(() => {
 							ret.global_msg.push('Erreur lors de l\'envoi de mail, veuillez contacter le support/modérateur !')
 							ret.success.push(false)
 							response.send(ret)
