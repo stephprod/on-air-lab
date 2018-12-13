@@ -204,9 +204,8 @@ function getNextMsgAdminFromInd(len, id_user, id_room, ind, callback)
 {
     User.getNextMsgAdmin(id_room, id_user, ind, len, callback)
 }
-function list_msg(socket, result, corespObj, data, src, size){
-    let len = result.length;
-    for (let k=len - 1; k >= 0; k--)
+function show_latest_msg(result, data, len, size, src, socket, corespObj){
+    for (let k=(len - 1); k >= 0; k--)
     {
         let message = {
             id_m: result[k].id_message,
@@ -381,137 +380,459 @@ function list_msg(socket, result, corespObj, data, src, size){
         io.sockets.in(socket.id).emit('updatechat', corespObj, message)
     }
 }
-function list_msg_admin(socket, result, corespObj, data, src, size){
-    let len = result.length;
-    for (let k=len - 1; k >= 0; k--)
-            {
-                let message = {
-                    id_m: result[k].id_message,
-                    id_type_m : result[k].id_type_m,
-                    txt : result[k].message_txt,
-                    created : result[k].created_at,
-                    user_sender : {id: result[k].iduser_send},
-                    user_receiver : {id: result[k].iduser_received},
-                    type_m : result[k].type_m,
-                    path : result[k].path,
-                    content_m: result[k].content_m,
-                    id_r : data,
-                    id_payment: result[k].id_payment,
-                }
-                if (len == size && k == (len - 1) && (src == "latestMsg" || src == "previousMsg")){
-                    message.fullPrevious = false
-                }else if(len < size && k == (len - 1) && (src == "latestMsg" || src == "previousMsg")){
-                    message.fullPrevious = true
-                }else if(len == size && k == (len - 1) && src == "nextMsg"){
-                    message.fullPrevious = false
-                }else if(len < size && k == (len - 1) && src == "nextMsg"){
-                    message.fullPrevious = false
-                }else if(len == size && k == 0 && src == "latestMsg"){
-                    message.fullNext = true
-                }else if(len < size && k == 0 && src == "latestMsg"){
-                    message.fullNext = true
-                }else if(len == size && k == 0 && src == "previousMsg"){
-                    message.fullNext = false
-                }else if(len < size && k == 0 && src == "previousMsg"){
-                    message.fullNext = false
-                }else if(len == size && k == 0 && src == "nextMsg"){
-                    message.fullNext = false
-                }else if(len < size && k == 0 && src == "nextMsg"){
-                    message.fullNext = true
-                }
-                message.events = null
-                message.user_request_info = null
-                if (message.type_m == "rdv" || message.type_m == "booking"){
-                    message.events = []
-                    setTimeout((function(message) {
-                        return function(){
-                            User.getEventsInTypeMessage(message.id_type_m, (result2) =>{
-                                if (result2.length > 0){
-                                    for (k in result2){
-                                        let ev = {}
-                                        ev.start = result2[k].start
-                                        ev.end = result2[k].end
-                                        message.events.push(ev)
-                                    }
-                                    //console.log(message)
-                                    io.sockets.in(socket.id).emit('update_eventstypemessage', message)
-                                }
-                            })
-                        };
-                    }) (message), 100);
-                }else if(message.type_m == "contact"){
-                    //console.log(socket.request.session)
-                    if (socket.request.session.userType != 4){
-                        setTimeout((function(message) {
-                            return function (){
-                                User.getUserInfoInTypeMessage(message.id_type_m, (result) =>{
-                                    if (result.length > 0){
-                                        let obj = {}
-                                        obj.id = result[0].id,
-                                        obj.nom = result[0].nom,
-                                        obj.prenom = result[0].prenom,
-                                        obj.type = result[0].type
-                                        message.user_request_info = obj
-                                        if (result[0].id_temp != null){
-                                            message.id_temp = result[0].id_temp
-                                            message.request_state = 0
-                                        } else{
-                                            message.request_state = -1
-                                        }
-                                        //console.log(message)
-                                        io.sockets.in(socket.id).emit('update_contactstypemessage', message)
-                                    }
-                                })
-                            };
-                        }) (message), 100);
-                    }else{
-                        setTimeout((function(message) {
-                            return function(){
-                                User.getUserJoin("LEFT JOIN temp ON temp.id_user_dest=user.id WHERE user.id="+message.user_receiver.id+" AND temp.id_type_message="+message.id_type_m, (result2)=>{
-                                    //console.log(result2)
-                                    if (result2 != null){
-                                        let obj = {}
-                                        obj.id = message.user_receiver
-                                        obj.nom = result2.nom
-                                        obj.prenom = result2.prenom
-                                        obj.type = result2.type
-                                        message.user_request_info = obj
-                                        if (result2.id_temp != null){
-                                            message.id_temp = result2.id_temp
-                                            message.request_state = 0
-                                        } else{
-                                            message.request_state = -1
-                                        }
-                                        //console.log(message)
-                                        io.sockets.in(socket.id).emit('update_contactstypemessage', message)
-                                    }
-                                })
-                            };
-                        }) (message), 100)
-                    }
-                }else if(message.type_m == "payment"){
-                    User.getPaymentInTypeMessage(message.id_payment, message.id_type_m, (result) =>{
-                        if (result.length > 0){
-                            let obj = {}
-                            obj.id = result[0].id
-                            obj.desc = result[0].nom
-                            obj.price = result[0].prenom
-                            obj.type_t = result[0].type_transaction
-                            message.payment = obj
-                            if (result[0].id_temp != null){
-                                message.id_temp = result[0].id_temp
-                                message.request_state = 0
-                            } else{
-                                message.request_state = -1
+function show_msg(result, data, len, size, src, socket, corespObj){
+    for (let k=0; k < len; k++)
+    {
+        let message = {
+            id_m: result[k].id_message,
+            id_type_m : result[k].id_type_m,
+            txt : result[k].message_txt,
+            created : result[k].created_at,
+            user_sender : {id: result[k].iduser_send},
+            user_receiver : {id: result[k].iduser_received},
+            type_m : result[k].type_m,
+            path : result[k].path,
+            content_m: result[k].content_m,
+            id_r : data,
+            id_payment: result[k].id_payment,
+        }
+        if (len == size && k == 0 && (src == "latestMsg" || src == "previousMsg")){
+            message.fullPrevious = false
+        }else if(len < size && k == 0 && (src == "latestMsg" || src == "previousMsg")){
+            message.fullPrevious = true
+        }else if(len == size && k == 0 && src == "nextMsg"){
+            message.fullPrevious = false
+        }else if(len < size && k == 0 && src == "nextMsg"){
+            message.fullPrevious = false
+        }else if(len == size && k == (len - 1) && src == "latestMsg"){
+            message.fullNext = true
+        }else if(len < size && k == (len - 1) && src == "latestMsg"){
+            message.fullNext = true
+        }else if(len == size && k == (len - 1) && src == "previousMsg"){
+            message.fullNext = false
+        }else if(len < size && k == (len - 1) && src == "previousMsg"){
+            message.fullNext = false
+        }else if(len == size && k == (len - 1) && src == "nextMsg"){
+            message.fullNext = false
+        }else if(len < size && k == (len - 1) && src == "nextMsg"){
+            message.fullNext = true
+        }
+        message.events = null
+        message.servs = null
+        //console.log(message)
+        if (message.type_m == "rdv" || message.type_m == "booking" || message.type_m == "rdv_offer"){
+            message.events = []
+            setTimeout((function(message) {
+                return function(){
+                    User.getEventsInTypeMessage(message.id_type_m, (result2) =>{
+                        if (result2.length > 0){
+                            for (k in result2){
+                                let ev = {}
+                                ev.start = result2[k].start
+                                ev.end = result2[k].end
+                                ev.state = result2[k].acceptation
+                                message.events.push(ev)
                             }
+                            message.request_state = message.events[0].state
                             //console.log(message)
-                            io.sockets.in(socket.id).emit('socket_update_paymentstypemessage', message)
+                            io.sockets.in(socket.id).emit('update_eventstypemessage', message)
+                            if (message.type_m == "rdv_offer"){
+                                User.getOfferInTypeMessage(message.id_type_m, (result2) => {
+                                    if (result2.length > 0){
+                                        let offer = {}
+                                        offer.id = result2[0].id_offre
+                                        offer.titre = result2[0].titre
+                                        offer.desc = result2[0].spe_off
+                                        offer.prix = result2[0].prix_off
+                                        message.offer = offer
+                                        //console.log(message)
+                                        io.sockets.in(socket.id).emit('update_eventstypeoffermessage', message)
+                                    }
+                                })
+                            }
                         }
                     })
+                };
+            }) (message), 100);
+        }else if(message.type_m == "devis_request"){
+            message.servs = []
+            setTimeout((function(message) {
+                return function(){
+                    User.getServicesInTypeMessage(message.id_type_m, (result2) =>{
+                        if (result2.length > 0){
+                            for (k in result2){
+                                let s = {}
+                                s.id = result2[k].id_service
+                                s.libelle = result2[k].nom_service
+                                message.servs.push(s)
+                            }
+                            //console.log(message)
+                            io.sockets.in(socket.id).emit('update_servicestypemessage', message)
+                        }
+                    })
+                };
+            }) (message), 100);
+        }else if(message.type_m == "payment"){
+            User.getPaymentInTypeMessage(message, (result, msg, resolve, reject) =>{
+                //console.log(result)                
+                let obj = {}
+                if (result.length > 0){
+                    obj.id = result[0].id
+                    obj.desc = result[0].desc
+                    obj.price = result[0].price
+                    obj.type_t = result[0].type_transaction
+                    msg.payment = obj
+                    if (result[0].id_temp != null){
+                        msg.id_temp = result[0].id_temp
+                        msg.request_state = result[0].acceptation
+                    }else{
+                        msg.request_state = -1
+                    }
+                    //console.log(msg)
+                    resolve(msg)
+                }else{
+                    obj.id = 0,
+                    obj.desc = "Une erreur est survenue lors de la récupération de la demande de paiement !",
+                    obj.price = 0,
+                    msg.payment = obj
+                    reject(msg)
                 }
-                //console.log(message)
-                io.sockets.in(socket.id).emit('updatechat', corespObj, message)
+            }).then((mess) => {
+                io.sockets.in(socket.id).emit('update_paymentstypemessage', mess)
+            }, (err) => {
+                io.sockets.in(socket.id).emit('update_paymentstypemessage', err)
+            })
+        }else if (message.type_m == "contact"){
+            if (socket.request.session.userType != 4){
+                setTimeout((function(message) {
+                    return function (){
+                        User.getUserInfoInTypeMessage(message.id_type_m, (result) =>{
+                            if (result.length > 0){
+                                let obj = {}
+                                obj.id = result[0].id,
+                                obj.nom = result[0].nom,
+                                obj.prenom = result[0].prenom,
+                                obj.type = result[0].type
+                                message.user_request_info = obj
+                                if (result[0].id_temp != null){
+                                    message.id_temp = result[0].id_temp
+                                    message.request_state = 0
+                                } else{
+                                    message.request_state = -1
+                                }
+                                //console.log(message)
+                                io.sockets.in(socket.id).emit('update_contactstypemessage', message)
+                            }
+                        })
+                    };
+                }) (message), 100);
+            }else{
+                setTimeout((function(message) {
+                    return function(){
+                        User.getUserJoin("LEFT JOIN temp ON temp.id_user_dest=user.id WHERE user.id="+message.user_receiver.id+" AND temp.id_type_message="+message.id_type_m, (result2)=>{
+                            //console.log(result2)
+                            if (result2 != null){
+                                let obj = {}
+                                obj.id = message.user_receiver
+                                obj.nom = result2.nom
+                                obj.prenom = result2.prenom
+                                obj.type = result2.type
+                                message.user_request_info = obj
+                                if (result2.id_temp != null){
+                                    message.id_temp = result2.id_temp
+                                    message.request_state = 0
+                                } else{
+                                    message.request_state = -1
+                                }
+                                //console.log(message)
+                                io.sockets.in(socket.id).emit('update_contactstypemessage', message)
+                            }
+                        })
+                    };
+                }) (message), 100)
             }
+        }
+        //console.log(message)
+        io.sockets.in(socket.id).emit('updatechat', corespObj, message)
+    }
+}
+function show_latest_msg_admin(result, data, len, size, src, socket, corespObj){
+    for (let k=(len - 1); k >= 0; k--)
+    {
+        let message = {
+            id_m: result[k].id_message,
+            id_type_m : result[k].id_type_m,
+            txt : result[k].message_txt,
+            created : result[k].created_at,
+            user_sender : {id: result[k].iduser_send},
+            user_receiver : {id: result[k].iduser_received},
+            type_m : result[k].type_m,
+            path : result[k].path,
+            content_m: result[k].content_m,
+            id_r : data,
+            id_payment: result[k].id_payment,
+        }
+        if (len == size && k == (len - 1) && (src == "latestMsg" || src == "previousMsg")){
+            message.fullPrevious = false
+        }else if(len < size && k == (len - 1) && (src == "latestMsg" || src == "previousMsg")){
+            message.fullPrevious = true
+        }else if(len == size && k == (len - 1) && src == "nextMsg"){
+            message.fullPrevious = false
+        }else if(len < size && k == (len - 1) && src == "nextMsg"){
+            message.fullPrevious = false
+        }else if(len == size && k == 0 && src == "latestMsg"){
+            message.fullNext = true
+        }else if(len < size && k == 0 && src == "latestMsg"){
+            message.fullNext = true
+        }else if(len == size && k == 0 && src == "previousMsg"){
+            message.fullNext = false
+        }else if(len < size && k == 0 && src == "previousMsg"){
+            message.fullNext = false
+        }else if(len == size && k == 0 && src == "nextMsg"){
+            message.fullNext = false
+        }else if(len < size && k == 0 && src == "nextMsg"){
+            message.fullNext = true
+        }
+        message.events = null
+        message.user_request_info = null
+        if (message.type_m == "rdv" || message.type_m == "booking"){
+            message.events = []
+            setTimeout((function(message) {
+                return function(){
+                    User.getEventsInTypeMessage(message.id_type_m, (result2) =>{
+                        if (result2.length > 0){
+                            for (k in result2){
+                                let ev = {}
+                                ev.start = result2[k].start
+                                ev.end = result2[k].end
+                                message.events.push(ev)
+                            }
+                            //console.log(message)
+                            io.sockets.in(socket.id).emit('update_eventstypemessage', message)
+                        }
+                    })
+                };
+            }) (message), 100);
+        }else if(message.type_m == "contact"){
+            //console.log(socket.request.session)
+            if (socket.request.session.userType != 4){
+                setTimeout((function(message) {
+                    return function (){
+                        User.getUserInfoInTypeMessage(message.id_type_m, (result) =>{
+                            if (result.length > 0){
+                                let obj = {}
+                                obj.id = result[0].id,
+                                obj.nom = result[0].nom,
+                                obj.prenom = result[0].prenom,
+                                obj.type = result[0].type
+                                message.user_request_info = obj
+                                if (result[0].id_temp != null){
+                                    message.id_temp = result[0].id_temp
+                                    message.request_state = 0
+                                } else{
+                                    message.request_state = -1
+                                }
+                                //console.log(message)
+                                io.sockets.in(socket.id).emit('update_contactstypemessage', message)
+                            }
+                        })
+                    };
+                }) (message), 100);
+            }else{
+                setTimeout((function(message) {
+                    return function(){
+                        User.getUserJoin("LEFT JOIN temp ON temp.id_user_dest=user.id WHERE user.id="+message.user_receiver.id+" AND temp.id_type_message="+message.id_type_m, (result2)=>{
+                            //console.log(result2)
+                            if (result2 != null){
+                                let obj = {}
+                                obj.id = message.user_receiver
+                                obj.nom = result2.nom
+                                obj.prenom = result2.prenom
+                                obj.type = result2.type
+                                message.user_request_info = obj
+                                if (result2.id_temp != null){
+                                    message.id_temp = result2.id_temp
+                                    message.request_state = 0
+                                } else{
+                                    message.request_state = -1
+                                }
+                                //console.log(message)
+                                io.sockets.in(socket.id).emit('update_contactstypemessage', message)
+                            }
+                        })
+                    };
+                }) (message), 100)
+            }
+        }else if(message.type_m == "payment"){
+            User.getPaymentInTypeMessage(message.id_payment, message.id_type_m, (result) =>{
+                if (result.length > 0){
+                    let obj = {}
+                    obj.id = result[0].id
+                    obj.desc = result[0].nom
+                    obj.price = result[0].prenom
+                    obj.type_t = result[0].type_transaction
+                    message.payment = obj
+                    if (result[0].id_temp != null){
+                        message.id_temp = result[0].id_temp
+                        message.request_state = 0
+                    } else{
+                        message.request_state = -1
+                    }
+                    //console.log(message)
+                    io.sockets.in(socket.id).emit('socket_update_paymentstypemessage', message)
+                }
+            })
+        }
+        //console.log(message)
+        io.sockets.in(socket.id).emit('updatechat', corespObj, message)
+    }
+}
+function show_msg_admin(result, data, len, size, src, socket, corespObj){
+    for (let k=0; k < len; k++)
+    {
+        let message = {
+            id_m: result[k].id_message,
+            id_type_m : result[k].id_type_m,
+            txt : result[k].message_txt,
+            created : result[k].created_at,
+            user_sender : {id: result[k].iduser_send},
+            user_receiver : {id: result[k].iduser_received},
+            type_m : result[k].type_m,
+            path : result[k].path,
+            content_m: result[k].content_m,
+            id_r : data,
+            id_payment: result[k].id_payment,
+        }
+        if (len == size && k == 0 && (src == "latestMsg" || src == "previousMsg")){
+            message.fullPrevious = false
+        }else if(len < size && k == 0 && (src == "latestMsg" || src == "previousMsg")){
+            message.fullPrevious = true
+        }else if(len == size && k == 0 && src == "nextMsg"){
+            message.fullPrevious = false
+        }else if(len < size && k == 0 && src == "nextMsg"){
+            message.fullPrevious = false
+        }else if(len == size && k == (len - 1) && src == "latestMsg"){
+            message.fullNext = true
+        }else if(len < size && k == (len - 1) && src == "latestMsg"){
+            message.fullNext = true
+        }else if(len == size && k == (len - 1) && src == "previousMsg"){
+            message.fullNext = false
+        }else if(len < size && k == (len - 1) && src == "previousMsg"){
+            message.fullNext = false
+        }else if(len == size && k == (len - 1) && src == "nextMsg"){
+            message.fullNext = false
+        }else if(len < size && k == (len - 1) && src == "nextMsg"){
+            message.fullNext = true
+        }
+        message.events = null
+        message.user_request_info = null
+        if (message.type_m == "rdv" || message.type_m == "booking"){
+            message.events = []
+            setTimeout((function(message) {
+                return function(){
+                    User.getEventsInTypeMessage(message.id_type_m, (result2) =>{
+                        if (result2.length > 0){
+                            for (k in result2){
+                                let ev = {}
+                                ev.start = result2[k].start
+                                ev.end = result2[k].end
+                                message.events.push(ev)
+                            }
+                            //console.log(message)
+                            io.sockets.in(socket.id).emit('update_eventstypemessage', message)
+                        }
+                    })
+                };
+            }) (message), 100);
+        }else if(message.type_m == "contact"){
+            //console.log(socket.request.session)
+            if (socket.request.session.userType != 4){
+                setTimeout((function(message) {
+                    return function (){
+                        User.getUserInfoInTypeMessage(message.id_type_m, (result) =>{
+                            if (result.length > 0){
+                                let obj = {}
+                                obj.id = result[0].id,
+                                obj.nom = result[0].nom,
+                                obj.prenom = result[0].prenom,
+                                obj.type = result[0].type
+                                message.user_request_info = obj
+                                if (result[0].id_temp != null){
+                                    message.id_temp = result[0].id_temp
+                                    message.request_state = 0
+                                } else{
+                                    message.request_state = -1
+                                }
+                                //console.log(message)
+                                io.sockets.in(socket.id).emit('update_contactstypemessage', message)
+                            }
+                        })
+                    };
+                }) (message), 100);
+            }else{
+                setTimeout((function(message) {
+                    return function(){
+                        User.getUserJoin("LEFT JOIN temp ON temp.id_user_dest=user.id WHERE user.id="+message.user_receiver.id+" AND temp.id_type_message="+message.id_type_m, (result2)=>{
+                            //console.log(result2)
+                            if (result2 != null){
+                                let obj = {}
+                                obj.id = message.user_receiver
+                                obj.nom = result2.nom
+                                obj.prenom = result2.prenom
+                                obj.type = result2.type
+                                message.user_request_info = obj
+                                if (result2.id_temp != null){
+                                    message.id_temp = result2.id_temp
+                                    message.request_state = 0
+                                } else{
+                                    message.request_state = -1
+                                }
+                                //console.log(message)
+                                io.sockets.in(socket.id).emit('update_contactstypemessage', message)
+                            }
+                        })
+                    };
+                }) (message), 100)
+            }
+        }else if(message.type_m == "payment"){
+            User.getPaymentInTypeMessage(message.id_payment, message.id_type_m, (result) =>{
+                if (result.length > 0){
+                    let obj = {}
+                    obj.id = result[0].id
+                    obj.desc = result[0].nom
+                    obj.price = result[0].prenom
+                    obj.type_t = result[0].type_transaction
+                    message.payment = obj
+                    if (result[0].id_temp != null){
+                        message.id_temp = result[0].id_temp
+                        message.request_state = 0
+                    } else{
+                        message.request_state = -1
+                    }
+                    //console.log(message)
+                    io.sockets.in(socket.id).emit('socket_update_paymentstypemessage', message)
+                }
+            })
+        }
+        //console.log(message)
+        io.sockets.in(socket.id).emit('updatechat', corespObj, message)
+    }
+}
+function list_latest_msg(socket, result, corespObj, data, src, size){
+    let len = result.length;
+    show_latest_msg(result, data, len, size, src, socket, corespObj, k)
+}
+function list_msg(socket, result, corespObj, data, src, size){
+    let len = result.length;
+    show_msg(result, data, len, size, src, socket, corespObj, k)
+}
+function list_latest_msg_admin(socket, result, corespObj, data, src, size){
+    let len = result.length;
+    show_latest_msg_admin(result, data, len, size, src, socket, corespObj)
+}
+function list_msg_admin(socket, result, corespObj, data, src, size){
+    let len = result.length;
+    show_msg_admin(result, data, len, size, src, socket, corespObj)
 }
 io.sockets.on('connection', function (socket) {
     socket.on('sendNotif', (res) => {
@@ -975,7 +1296,7 @@ io.sockets.on('connection', function (socket) {
         //let receiver = {id: corespObj.id_coresp, nom: corespObj.nom, prenom: corespObj.prenom, email: corespObj.mail}
         getPreviousMsg(15, type_user, data, (result) => {
             //CHARGEMENT DES MESSAGES DE LA BDD UNIQUEMENT SUR LE CHGMT DE ROOM
-            list_msg(socket, result, corespObj, data, 'latestMsg', 15)
+            list_latest_msg(socket, result, corespObj, data, 'latestMsg', 15)
         });
     });
 
@@ -986,7 +1307,7 @@ io.sockets.on('connection', function (socket) {
         //console.log(socket)
         getPreviousMsgAdmin(15, userId, data, (result) => {
             //CHARGEMENT DES MESSAGES DE LA BDD UNIQUEMENT SUR LE SWITCH DE LA ROOM
-            list_msg_admin(socket, result, corespObj, data, 'latestMsg', 15)
+            list_latest_msg_admin(socket, result, corespObj, data, 'latestMsg', 15)
         });
     });
 

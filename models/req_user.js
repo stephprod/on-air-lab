@@ -189,7 +189,7 @@ class User{
         let r = db.query('SELECT * FROM messages INNER JOIN rooms ON rooms.id_room=messages.id_room '+
             'LEFT JOIN type_message ON messages.id_type = type_message.id_type_m '+ 
             'LEFT JOIN user ON rooms.userid = user.id WHERE messages.id_room = ? '+
-            'ORDER BY created_at DESC LIMIT '+number, [room], (err, result) => {
+            'ORDER BY messages.id_message ASC LIMIT '+number, [room], (err, result) => {
             if(err){
                 console.log(r.sql)
                 throw err;
@@ -204,7 +204,7 @@ class User{
         let r = db.query('SELECT * FROM messages INNER JOIN rooms ON rooms.id_room=messages.id_room '+
             'LEFT JOIN type_message ON messages.id_type = type_message.id_type_m '+ 
             'LEFT JOIN user ON rooms.with_userid = user.id WHERE messages.id_room = ? '+
-            'ORDER BY created_at DESC LIMIT '+number, [room], (err, result) => {
+            'ORDER BY messages.id_message DESC LIMIT '+number, [room], (err, result) => {
             if(err){
                 console.log(r.sql)
                 throw err;
@@ -219,7 +219,7 @@ class User{
         let r = db.query('SELECT * FROM messages INNER JOIN rooms ON rooms.id_room=messages.id_room '+
             'LEFT JOIN type_message ON messages.id_type = type_message.id_type_m '+ 
             'LEFT JOIN user ON rooms.with_userid = user.id WHERE messages.id_room = ? '+
-            'AND messages.id_message < '+index+' ORDER BY created_at DESC LIMIT '+number, [room], (err, result) => {
+            'AND messages.id_message < '+index+' ORDER BY id_message ASC LIMIT '+number, [room], (err, result) => {
             if(err){
                 console.log(r.sql)
                 throw err;
@@ -234,7 +234,7 @@ class User{
         let r = db.query('SELECT * FROM messages INNER JOIN rooms ON rooms.id_room=messages.id_room '+
             'LEFT JOIN type_message ON messages.id_type = type_message.id_type_m '+ 
             'LEFT JOIN user ON rooms.with_userid = user.id WHERE messages.id_room = ? '+
-            'AND messages.id_message > '+index+' ORDER BY created_at DESC LIMIT '+number, [room], (err, result) => {
+            'AND messages.id_message > '+index+' ORDER BY id_message ASC LIMIT '+number, [room], (err, result) => {
             if(err){
                 console.log(r.sql)
                 throw err;
@@ -249,7 +249,7 @@ class User{
         let r = db.query('SELECT * FROM messages INNER JOIN rooms ON rooms.id_room=messages.id_room '+
             'LEFT JOIN type_message ON messages.id_type = type_message.id_type_m '+ 
             'LEFT JOIN user ON rooms.userid = user.id WHERE messages.id_room = ? '+
-            'AND messages.id_message < '+index+' ORDER BY created_at DESC LIMIT '+number, [room], (err, result) => {
+            'AND messages.id_message < '+index+' ORDER BY id_message DESC LIMIT '+number, [room], (err, result) => {
             if(err){
                 console.log(r.sql)
                 throw err;
@@ -264,7 +264,7 @@ class User{
         let r = db.query('SELECT * FROM messages INNER JOIN rooms ON rooms.id_room=messages.id_room '+
             'LEFT JOIN type_message ON messages.id_type = type_message.id_type_m '+ 
             'LEFT JOIN user ON rooms.userid = user.id WHERE messages.id_room = ? '+
-            'AND messages.id_message > '+index+' ORDER BY created_at DESC LIMIT '+number, [room], (err, result) => {
+            'AND messages.id_message > '+index+' ORDER BY id_message ASC LIMIT '+number, [room], (err, result) => {
             if(err){
                 console.log(r.sql)
                 throw err;
@@ -278,7 +278,7 @@ class User{
         let r = db.query('SELECT * FROM messages LEFT JOIN type_message ON messages.id_type = type_message.id_type_m '+
             'LEFT JOIN user ON messages.iduser_send = user.id '+
             'WHERE messages.id_room = ? AND (messages.iduser_send='+id+' OR messages.iduser_received='+id+') '+
-            'ORDER BY created_at DESC LIMIT '+len, [room], (err, result) => {
+            'ORDER BY messages.id_message DESC LIMIT '+len, [room], (err, result) => {
             if(err){
                 console.log(r.sql)
                 throw err;
@@ -292,7 +292,7 @@ class User{
             'LEFT JOIN user ON messages.iduser_send = user.id '+
             'WHERE messages.id_room = ? AND (messages.iduser_send='+id+' OR messages.iduser_received='+id+') '+
             'AND messages.id_message < '+index+' '+
-            'ORDER BY created_at DESC LIMIT '+number, [room], (err, result) => {
+            'ORDER BY messages.id_message ASC LIMIT '+number, [room], (err, result) => {
             if(err){
                 console.log(r.sql)
                 throw err;
@@ -306,7 +306,7 @@ class User{
             'LEFT JOIN user ON messages.iduser_send = user.id '+
             'WHERE messages.id_room = ? AND (messages.iduser_send='+id+' OR messages.iduser_received='+id+') '+
             'AND messages.id_message > '+index+' '+
-            'ORDER BY created_at DESC LIMIT '+number, [room], (err, result) => {
+            'ORDER BY messages.id_message ASC LIMIT '+number, [room], (err, result) => {
             if(err){
                 console.log(r.sql)
                 throw err;
@@ -373,18 +373,18 @@ class User{
             });
         });
     }
-    static getPreviousMsgAdmin(room, id, index, len, cb)
-    {
-        db.query('SELECT * FROM messages '+
-            'LEFT JOIN type_message ON messages.id_type = type_message.id_type_m '+
-        	'LEFT JOIN user ON messages.iduser_send = user.id '+
-        	'WHERE messages.id_room = ? AND (messages.iduser_send='+id+' OR messages.iduser_received='+id+') '+
-        	'AND messages.id_message < '+index+' ORDER BY created_at DESC LIMIT '+len, [room], (err, result) => {
-            if(err)
-                throw err;
-            cb(result);
-        });
-    }
+    // static getPreviousMsgAdmin(room, id, index, len, cb)
+    // {
+    //     db.query('SELECT * FROM messages '+
+    //         'LEFT JOIN type_message ON messages.id_type = type_message.id_type_m '+
+    //     	'LEFT JOIN user ON messages.iduser_send = user.id '+
+    //     	'WHERE messages.id_room = ? AND (messages.iduser_send='+id+' OR messages.iduser_received='+id+') '+
+    //     	'AND messages.id_message < '+index+' ORDER BY created_at DESC LIMIT '+len, [room], (err, result) => {
+    //         if(err)
+    //             throw err;
+    //         cb(result);
+    //     });
+    // }
     static getInfoPro_etablissement(id_user, cb)
     {
         let r = db.query('SELECT `etablissement`.`id`, `etablissement`.`nom`, `etablissement`.`adresse`, '+
