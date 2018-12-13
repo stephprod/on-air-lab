@@ -204,7 +204,7 @@ function getNextMsgAdminFromInd(len, id_user, id_room, ind, callback)
 {
     User.getNextMsgAdmin(id_room, id_user, ind, len, callback)
 }
-function list_msg(socket, result, corespObj, data){
+function list_msg(socket, result, corespObj, data, src, size){
     let len = result.length;
     for (let k=len - 1; k >= 0; k--)
     {
@@ -221,13 +221,25 @@ function list_msg(socket, result, corespObj, data){
             id_r : data,
             id_payment: result[k].id_payment,
         }
-        if (len == 15 && k == (len - 1)){
+        if (len == size && k == (len - 1) && (src == "latestMsg" || src == "previousMsg")){
             message.fullPrevious = false
-        }else if(len < 15 && k == (len - 1)){
+        }else if(len < size && k == (len - 1) && (src == "latestMsg" || src == "previousMsg")){
             message.fullPrevious = true
-        }else if(len == 15 && k == 0){
+        }else if(len == size && k == (len - 1) && src == "nextMsg"){
+            message.fullPrevious = false
+        }else if(len < size && k == (len - 1) && src == "nextMsg"){
+            message.fullPrevious = false
+        }else if(len == size && k == 0 && src == "latestMsg"){
+            message.fullNext = true
+        }else if(len < size && k == 0 && src == "latestMsg"){
+            message.fullNext = true
+        }else if(len == size && k == 0 && src == "previousMsg"){
             message.fullNext = false
-        }else if(len < 15 && k == 0){
+        }else if(len < size && k == 0 && src == "previousMsg"){
+            message.fullNext = false
+        }else if(len == size && k == 0 && src == "nextMsg"){
+            message.fullNext = false
+        }else if(len < size && k == 0 && src == "nextMsg"){
             message.fullNext = true
         }
         message.events = null
@@ -369,7 +381,7 @@ function list_msg(socket, result, corespObj, data){
         io.sockets.in(socket.id).emit('updatechat', corespObj, message)
     }
 }
-function list_msg_admin(socket, result, corespObj, data){
+function list_msg_admin(socket, result, corespObj, data, src, size){
     let len = result.length;
     for (let k=len - 1; k >= 0; k--)
             {
@@ -386,13 +398,25 @@ function list_msg_admin(socket, result, corespObj, data){
                     id_r : data,
                     id_payment: result[k].id_payment,
                 }
-                if (len == 15 && k == (len - 1)){
+                if (len == size && k == (len - 1) && (src == "latestMsg" || src == "previousMsg")){
                     message.fullPrevious = false
-                }else if(len < 15 && k == (len - 1)){
+                }else if(len < size && k == (len - 1) && (src == "latestMsg" || src == "previousMsg")){
                     message.fullPrevious = true
-                }else if(len == 15 && k == 0){
+                }else if(len == size && k == (len - 1) && src == "nextMsg"){
+                    message.fullPrevious = false
+                }else if(len < size && k == (len - 1) && src == "nextMsg"){
+                    message.fullPrevious = false
+                }else if(len == size && k == 0 && src == "latestMsg"){
+                    message.fullNext = true
+                }else if(len < size && k == 0 && src == "latestMsg"){
+                    message.fullNext = true
+                }else if(len == size && k == 0 && src == "previousMsg"){
                     message.fullNext = false
-                }else if(len < 15 && k == 0){
+                }else if(len < size && k == 0 && src == "previousMsg"){
+                    message.fullNext = false
+                }else if(len == size && k == 0 && src == "nextMsg"){
+                    message.fullNext = false
+                }else if(len < size && k == 0 && src == "nextMsg"){
                     message.fullNext = true
                 }
                 message.events = null
@@ -925,24 +949,24 @@ io.sockets.on('connection', function (socket) {
     socket.on("list_msg_from_ind", (data, corespObj, type_user, index, filter) => {
         if (filter){
             getPreviousMsgFromInd(15, parseInt(type_user), data, index, (result) => {
-                list_msg(socket, result, corespObj, data)
+                list_msg(socket, result, corespObj, data, 'previousMsg', 15)
             })
         }else{
             //Ascending (getNextMessage)
             getNextMsgFromInd(15, parseInt(type_user), data, index, (result) => {
-                list_msg(socket, result, corespObj, data)
+                list_msg(socket, result, corespObj, data, 'nextMsg', 15)
             })
         }
     })
     socket.on("list_msg_admin_from_ind", (data, corespObj, userId, index, filter) => {
         if (filter){
             getPreviousMsgAdminFromInd(15, parseInt(userId), data, index, (result) => {
-                list_msg(socket, result, corespObj, data)
+                list_msg_admin(socket, result, corespObj, data, 'previousMsg', 15)
             })
         }else{
             //Ascending (getNextMessage)
             getNextMsgAdminFromInd(15, parseInt(userId), data, index, (result) => {
-                list_msg(socket, result, corespObj, data)
+                list_msg_admin(socket, result, corespObj, data, 'nextMsg', 15)
             })
         }
     })
@@ -951,7 +975,7 @@ io.sockets.on('connection', function (socket) {
         //let receiver = {id: corespObj.id_coresp, nom: corespObj.nom, prenom: corespObj.prenom, email: corespObj.mail}
         getPreviousMsg(15, type_user, data, (result) => {
             //CHARGEMENT DES MESSAGES DE LA BDD UNIQUEMENT SUR LE CHGMT DE ROOM
-            list_msg(socket, result, corespObj, data)
+            list_msg(socket, result, corespObj, data, 'latestMsg', 15)
         });
     });
 
@@ -962,7 +986,7 @@ io.sockets.on('connection', function (socket) {
         //console.log(socket)
         getPreviousMsgAdmin(15, userId, data, (result) => {
             //CHARGEMENT DES MESSAGES DE LA BDD UNIQUEMENT SUR LE SWITCH DE LA ROOM
-            list_msg_admin(socket, result, corespObj, data)
+            list_msg_admin(socket, result, corespObj, data, 'latestMsg', 15)
         });
     });
 

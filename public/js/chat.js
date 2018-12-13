@@ -441,8 +441,10 @@ function on_socket_updatechat(coresp, data, cont){
 if (data !== undefined && data != null){
   var htmlToAppend = "";
   if (data.fullPrevious !== undefined){
+    //console.log(data);
     if (!data.fullPrevious)
       htmlToAppend += actions.previousMessagesButton(data);
+    $('#chat-messages').empty();
   }
   if (data.type_m !== undefined && data.type_m != null){
     if (data.type_m == 'audio'){
@@ -506,6 +508,8 @@ if (data !== undefined && data != null){
       htmlToAppend += actions.texte[1](data);
   }
   if (data.fullNext !== undefined){
+    // console.log(data);
+    // console.log("--------------");
     if (!data.fullNext)
       htmlToAppend += actions.nextMessagesButton(data);
   }
@@ -570,7 +574,7 @@ function check_abo(usr){
 }
 function on_message_view_button_click(e){
   var index = parseInt($(e.target).data("id-message"));
-  $('#chat-messages').empty();
+  //$('#chat-messages').empty();
   if ($(e.target).attr("name") == "next"){
     //console.log("button next clicked at index "+$(e.target).data("id-message")+" !");
     if (roomDisplay != 1)

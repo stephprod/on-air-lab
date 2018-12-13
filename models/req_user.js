@@ -292,7 +292,7 @@ class User{
             'LEFT JOIN user ON messages.iduser_send = user.id '+
             'WHERE messages.id_room = ? AND (messages.iduser_send='+id+' OR messages.iduser_received='+id+') '+
             'AND messages.id_message < '+index+' '+
-            'AND ORDER BY created_at DESC LIMIT '+number, [room], (err, result) => {
+            'ORDER BY created_at DESC LIMIT '+number, [room], (err, result) => {
             if(err){
                 console.log(r.sql)
                 throw err;
@@ -306,7 +306,7 @@ class User{
             'LEFT JOIN user ON messages.iduser_send = user.id '+
             'WHERE messages.id_room = ? AND (messages.iduser_send='+id+' OR messages.iduser_received='+id+') '+
             'AND messages.id_message > '+index+' '+
-            'AND ORDER BY created_at DESC LIMIT '+number, [room], (err, result) => {
+            'ORDER BY created_at DESC LIMIT '+number, [room], (err, result) => {
             if(err){
                 console.log(r.sql)
                 throw err;
