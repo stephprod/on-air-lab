@@ -1,14 +1,15 @@
 const User = require('./req_user')
-
+const notifications = require('./notifications').actions
 class SocketManager{
     constructor(io_obj, sock, usglob){
         this.userGlobal = usglob
         this.tabCorresp = []
-        this.admin = {id: 1, room: 1, firstName: "Admin", name: "admin", type: 1, type_libelle: "Modérateur", mail: "admin@label-onair.com"};
+        this.admin = {id: 1, room: 1, firstName: "Admin", name: "admin", type: 1, type_libelle: "Modérateur", mail: "admin@label-onair.com", img_chat: "/asset/content/img/default_admin.png"};
         this.socket = sock
         this.io = io_obj
+        this.Usr = User
     }
-    getPreviousMsg(len, type, id_room, callback)
+    static getPreviousMsg(len, type, id_room, callback)
     {
         switch (type){
             case 1:
@@ -24,7 +25,7 @@ class SocketManager{
                 break;
         }
     }
-    getPreviousMsgFromInd(len, type, id_room, ind, callback){
+    static getPreviousMsgFromInd(len, type, id_room, ind, callback){
         switch (type){
             case 1:
             case 2:
@@ -39,7 +40,7 @@ class SocketManager{
                 break;
         }
     }
-    getNextMsgFromInd(len, type, id_room, ind, callback){
+    static getNextMsgFromInd(len, type, id_room, ind, callback){
         switch (type){
             case 1:
             case 2:
@@ -54,19 +55,19 @@ class SocketManager{
                 break;
         }
     }
-    getPreviousMsgAdmin(len, id_user, id_room, callback)
+    static getPreviousMsgAdmin(len, id_user, id_room, callback)
     {
         User.getFirstPreviousMsgAdmin(id_room, id_user, len, callback)
     }
-    getPreviousMsgAdminFromInd(len, id_user, id_room, ind, callback)
+    static getPreviousMsgAdminFromInd(len, id_user, id_room, ind, callback)
     {
         User.getPreviousMsgAdmin(id_room, id_user, ind, len, callback)
     }
-    getNextMsgAdminFromInd(len, id_user, id_room, ind, callback)
+    static getNextMsgAdminFromInd(len, id_user, id_room, ind, callback)
     {
         User.getNextMsgAdmin(id_room, id_user, ind, len, callback)
     }
-    show_latest_msg(result, data, len, size, src, socket, corespObj){
+    static show_latest_msg(result, data, len, size, src, socket, corespObj){
         for (let k=(len - 1); k >= 0; k--)
         {
             let message = {
@@ -418,7 +419,7 @@ class SocketManager{
            this.io.sockets.in(this.socket.id).emit('updatechat', corespObj, message)
         }
     }
-    show_latest_msg_admin(result, data, len, size, src, socket, corespObj){
+    static show_latest_msg_admin(result, data, len, size, src, socket, corespObj){
         for (let k=(len - 1); k >= 0; k--)
         {
             let message = {
@@ -680,17 +681,21 @@ class SocketManager{
            this.io.sockets.in(this.socket.id).emit('updatechat', corespObj, message)
         }
     }
-    list_latest_msg(socket, result, corespObj, data, src, size){
-        let len = result.length
-        this.show_latest_msg(result, data, len, size, src, socket, corespObj)
+    list_latest_msg(data, corespObj, type_user){
+        SocketManager.getPreviousMsg(15, type_user, data, (result) => {
+            let len = result.length
+            SocketManager.show_latest_msg(result, data, len, 15, "srlatestMsgc", this.socket, this.corespObj)
+        })
     }
     list_msg(socket, result, corespObj, data, src, size){
         let len = result.length;
         this.show_msg(result, data, len, size, src, socket, corespObj)
     }
-    list_latest_msg_admin(socket, result, corespObj, data, src, size){
-        let len = result.length;
-        this.show_latest_msg_admin(result, data, len, size, src, socket, corespObj)
+    list_latest_msg_admin(data, corespObj, userId){
+        SocketManager.getPreviousMsgAdmin(15, userId, data, (result) =>{
+            let len = result.length;
+            SocketManager.show_latest_msg_admin(result, data, len, 15, "latestMsg", this.socket, this.corespObj)
+        })
     }
     list_msg_admin(socket, result, corespObj, data, src, size){
         let len = result.length;
@@ -720,11 +725,11 @@ class SocketManager{
                 }else{
                     let room = []
                     this.tabCorresp = []
-                    if (id != 1){
-                        room.push(this.admin.id, this.admin.room, this.admin.firstName, this.admin.name, this.admin.type, this.admin.type_libelle, this.admin.mail)
-                        setTimeout((function(room){
+                    if (type != 1){
+                        room.push(this.admin.id, this.admin.room, this.admin.firstName, this.admin.name, this.admin.type, this.admin.type_libelle, this.admin.mail, this.admin.img_chat)
+                        setTimeout((function(room, admin, getPreviousMsgAdmin, tabCorresp, sock){
                             return function(){
-                                this.getPreviousMsgAdmin(1, id, this.admin.room, (result2) => {
+                                getPreviousMsgAdmin(1, id, admin.room, (result2) => {
                                     if (result2.length > 0){
                                         room.push(result2[0].id_message)
                                         room.push(result2[0].message_txt)
@@ -733,11 +738,11 @@ class SocketManager{
                                     {
                                         room.push(null, 'Aucun message.')
                                     }
-                                    this.tabCorresp.push(room)
-                                    this.socket.emit('updaterooms', this.tabCorresp);
+                                    tabCorresp.push(room)
+                                    sock.emit('updaterooms', tabCorresp);
                                 })
                             };
-                        }) (room), 100);
+                        }) (room, this.admin, this.getPreviousMsgAdmin, this.tabCorresp, this.socket), 100);
                     }
                     for(var k in result){
                         room = []
@@ -748,6 +753,7 @@ class SocketManager{
                         room.push(result[k].id_user_type)
                         room.push(result[k].libelle)
                         room.push(result[k].email)
+                        room.push(result[k].img_chat)
                         //FONCTION DE CLOSURE POUR PERMETTRE LA RECUPERATION DES RSLT AVANT ITERATION DE LA BOUCLE
                         setTimeout((function(k, room, getPreviousMsg, tabCorresp, sock){
                             return function(){
@@ -773,7 +779,7 @@ class SocketManager{
                                     }
                                 })
                             };
-                        }) (k, room, this.getPreviousMsg, this.tabCorresp, this.socket), 100);
+                        }) (k, room, SocketManager.getPreviousMsg, this.tabCorresp, this.socket), 100);
                     }
                     //this.socket.emit('updaterooms', this.tabCorresp);
                     this.socket.room = 1
@@ -801,26 +807,25 @@ class SocketManager{
                 }else{
                     let room = []
                     this.tabCorresp = []
-                    if (id != 1){
-                        room.push(this.admin.id, this.admin.room, this.admin.firstName, this.admin.name, this.admin.type, this.admin.type_libelle, this.admin.mail)
-                        setTimeout((function(room){
-                            return function(){
-                                this.getPreviousMsgAdmin(1, id, this.admin.room, (result2) => {
-                                    if (result2.length > 0){
-                                        room.push(result2[0].id_message)
-                                        room.push(result2[0].message_txt)
-                                    }
-                                    else
-                                    {
-                                        room.push(null, 'Aucun message.')
-                                    }
-                                    this.tabCorresp.push(room)
-                                    //this.socket.emit('updaterooms', this.tabCorresp);
-                                })
-                            };
-                        }) (room), 100);
-                    }
-                    for(k in result){
+                    room.push(this.admin.id, this.admin.room, this.admin.firstName, this.admin.name, this.admin.type, this.admin.type_libelle, this.admin.mail, this.admin.img_chat)
+                    setTimeout((function(room, admin, getPreviousMsgAdmin, tabCorresp, sock){
+                        return function(){
+                            getPreviousMsgAdmin(1, id, admin.room, (result2) => {
+                                if (result2.length > 0){
+                                    room.push(result2[0].id_message)
+                                    room.push(result2[0].message_txt)
+                                }
+                                else
+                                {
+                                    room.push(null, 'Aucun message.')
+                                }
+                                tabCorresp.push(room)
+                                //console.log(tabCorresp)
+                                sock.emit('updaterooms', tabCorresp);
+                            })
+                        };
+                    }) (room, this.admin, SocketManager.getPreviousMsgAdmin, this.tabCorresp, this.socket), 100);
+                    for(var k in result){
                         room = []
                         room.push(result[k].id)
                         room.push(result[k].id_room)
@@ -829,6 +834,7 @@ class SocketManager{
                         room.push(result[k].id_user_type)
                         room.push(result[k].libelle)
                         room.push(result[k].email)
+                        room.push(result[k].img_chat)
                         //FONCTION DE CLOSURE POUR PERMETTRE LA RECUPERATION DES RSLT AVANT ITERATION DE LA BOUCLE
                         setTimeout((function(k, room, getPreviousMsg, tabCorresp, sock){
                             return function(){
@@ -1081,7 +1087,7 @@ class SocketManager{
         .catch((err) => console.log(err))
     }
     update_preview_in_room(data, context){
-        for (k in this.tabCorresp){
+        for (var k in this.tabCorresp){
             if (this.tabCorresp[k][1] == data.id_r){
                 this.tabCorresp[k][6] = data.id_m
                 this.tabCorresp[k][7] = data.txt
@@ -1105,7 +1111,7 @@ class SocketManager{
             })
         }
     }
-    list_msg_admin_from_ind(data, corespObj, type_user, index, filter){
+    list_msg_admin_from_ind(data, corespObj, userId, index, filter){
         if (filter){
             this.getPreviousMsgAdminFromInd(15, parseInt(userId), data, index, (result) => {
                 this.list_msg_admin(this.socket, result, corespObj, data, 'previousMsg', 15)
@@ -1116,24 +1122,6 @@ class SocketManager{
                 this.list_msg_admin(this.socket, result, corespObj, data, 'nextMsg', 15)
             })
         }
-    }
-    list_msg(data, corespObj, type_user){
-        //let message = []
-        //let receiver = {id: corespObj.id_coresp, nom: corespObj.nom, prenom: corespObj.prenom, email: corespObj.mail}
-        this.getPreviousMsg(15, type_user, data, (result) => {
-            //CHARGEMENT DES MESSAGES DE LA BDD UNIQUEMENT SUR LE CHGMT DE ROOM
-            this.list_latest_msg(this.socket, result, corespObj, data, 'latestMsg', 15)
-        });
-    }
-    list_msg_admin(data, corespObj, userId){
-        //let receiver = {id: corespObj.id_coresp, nom: corespObj.nom, prenom: corespObj.prenom, email: corespObj.mail}
-        //console.log("-----------------LIST MESSAGES ADMIN-----------------")
-        //console.log(userId)
-        //console.log(socket)
-        this.getPreviousMsgAdmin(15, userId, data, (result) => {
-            //CHARGEMENT DES MESSAGES DE LA BDD UNIQUEMENT SUR LE SWITCH DE LA ROOM
-            this.list_latest_msg_admin(this.socket, result, corespObj, data, 'latestMsg', 15)
-        });
     }
     switchRoom(idUser, newroom, coresp){
         let data = {}

@@ -46,17 +46,17 @@ $(document).on("click", ".div-submi .btn-refus", on_module_deny_typeMessage_link
 $(document).on("click", "a[data-action='update-module']", on_module_payment_bank_link_click);
 $(document).on("click", "button[data-id-message]", on_message_view_button_click);
 if (socket != null){
-socket.on('updaterooms', on_socket_update_rooms);
-socket.on('connect', on_socket_connect);
-socket.on('updatechat', on_socket_updatechat);
-socket.on('updatepreview', on_socket_updatepreview);
-socket.on('update_eventstypemessage', on_socket_update_eventstypemessage);
-socket.on('update_eventstypeoffermessage', on_socket_update_eventstypeoffermessage);
-socket.on('updateservicesfront', on_socket_update_service_front);
-socket.on('update_servicestypemessage', on_socket_update_servicestypemessage);
-socket.on('update_contactstypemessage', on_socket_update_contactstypemessage);
-socket.on('update_paymentstypemessage', on_socket_update_paymentstypemessage);
-socket.on('new_notif', on_socket_new_notif);
+  socket.on('updaterooms', on_socket_update_rooms);
+  socket.on('connect', on_socket_connect);
+  socket.on('updatechat', on_socket_updatechat);
+  socket.on('updatepreview', on_socket_updatepreview);
+  socket.on('update_eventstypemessage', on_socket_update_eventstypemessage);
+  socket.on('update_eventstypeoffermessage', on_socket_update_eventstypeoffermessage);
+  socket.on('updateservicesfront', on_socket_update_service_front);
+  socket.on('update_servicestypemessage', on_socket_update_servicestypemessage);
+  socket.on('update_contactstypemessage', on_socket_update_contactstypemessage);
+  socket.on('update_paymentstypemessage', on_socket_update_paymentstypemessage);
+  socket.on('new_notif', on_socket_new_notif);
 }
 $('#sendmessage button#send').on("click", on_msg_send_click);
 $('#sendmessage button#send').on("keypress", on_msg_send_keypress);
@@ -411,8 +411,12 @@ function on_socket_update_rooms(rooms){
   //console.log(coresp);
   //console.log(rooms);
   $("div#friends").empty();
-  for (var i = 0; i < rooms.length; i++){
-    $("div#friends").append('<div class="friend" data-coresp="'+rooms[i][0]+'" data-coresp-type="'+rooms[i][4]+'" data-room="'+rooms[i][1]+'" data-coresp-mail="'+rooms[i][6]+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><p><strong>'+rooms[i][2]+' '+rooms[i][3]+'</strong><span>'+rooms[i][5]+'</span><p class="preview">'+rooms[i][8]+'</p></p><div class="status available"></div></div>');
+  if (rooms != null){
+    for (var i = 0; i < rooms.length; i++){
+      $("div#friends").append('<div class="friend" data-coresp="'+rooms[i][0]+'" data-coresp-type="'+rooms[i][4]+'" data-room="'+rooms[i][1]+'" data-coresp-mail="'+rooms[i][6]+'"><img src="'+rooms[i][7]+'" /><p><strong>'+rooms[i][2]+' '+rooms[i][3]+'</strong><span>'+rooms[i][5]+'</span><p class="preview">'+rooms[i][9]+'</p></p><div class="status available"></div></div>');
+    }
+  }else{
+    console.log("Aucune room trouvée !");
   }
 }
 function on_socket_connect(id){

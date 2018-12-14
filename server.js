@@ -144,7 +144,7 @@ app.get('*', function(req, res){
 let userGlobal = []
 // EMESSION DE SOCKET
 io.sockets.on('connection', function (socket) {
-    socketManage = new socket_manage(io, socket, userGlobal)
+    let socketManage = new socket_manage(io, socket, userGlobal)
     socket.on('sendNotif', (res) => {
         socketManage.sendNotif(res)
     })
@@ -166,11 +166,11 @@ io.sockets.on('connection', function (socket) {
         socketManage.list_msg_admin_from_ind(data, corespObj, userId, index, filter)
     })
     socket.on('list_msg', (data, corespObj, type_user) => {
-        socketManage.list_msg(data, corespObj, type_user)
+        socketManage.list_latest_msg(data, corespObj, type_user)
     });
 
     socket.on('list_msg_admin', (data, corespObj, userId) => {
-        socketManage.list_msg_admin(data, corespObj, userId)
+        socketManage.list_latest_msg_admin(data, corespObj, userId)
     });
 
     socket.on('switchRoom', function(idUser, newroom, coresp){

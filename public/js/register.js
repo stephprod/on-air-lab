@@ -14,6 +14,7 @@ function register_link_click(e){
 		type : "POST",
 		url: "/register",
 		data: datas,
+		async: false,
 		success: function (data){
 			update_front_with_msg(data, "register-msg");
 			if (!data.success[0] && data.errors !== undefined)

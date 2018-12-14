@@ -10,6 +10,7 @@ function login_link_click(e){
 		type : "POST",
 		url: "/login",
 		data: datas,
+		async: false,
 		success: function (data){
 			update_front_with_msg(data, "login-msg");
 			if (data.errors !== undefined){
