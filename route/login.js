@@ -1,7 +1,7 @@
 const express = require('express')
 const User = require('../models/req_user')
 const validator = require('../middlewares/valid_form2').login
-
+const CryptoJS = require("crypto-js");
 const router = express.Router()
 
 router.route('/login')
@@ -16,8 +16,10 @@ router.route('/login')
 		for (let prop in request.body){
 			table.push(request.body[prop])
 		}
-		User.getUserForLogin(
-			"LEFT JOIN `payments` ON `payments`.`id_pro`=`user`.`id` "+ 
+		var hmac = CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA256, table[0])
+		hmac.update(table[1]);
+		table[1] = hmac.finalize().toString()
+		User.getUserForLogin("LEFT JOIN `payments` ON `payments`.`id_pro`=`user`.`id` "+ 
 			"WHERE `user`.`email`='" + table[0] + "' AND " +
 			"`user`.`mot_de_passe`='" + table[1] + "' ORDER BY `payments`.`date_payment` DESC"
 			, (result) => {

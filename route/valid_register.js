@@ -32,7 +32,7 @@ router.route('/validRegister/:token')
         User.updateUser("verifie='1' WHERE jeton='"+request.session.token+"'"
 		, (result) => {
             if (result > 0){
-				obj.global_msg = ["Utilisateur vérifié avec succès !"]
+				obj.global_msg = ["Utilisateur vérifié avec succès, veuillez cliquer sur le lien <a href='/'>Accueil</a> !"]
 				obj.success.push(true)
 			}else{
 				obj.global_msg = ["Une erreur technique est survenue lors de l'activation du compte, contactez le support !"]

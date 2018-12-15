@@ -4,6 +4,7 @@ const validator = require('../middlewares/valid_form').register_updatePassword
 const uid = require('rand-token').uid
 const router = express.Router()
 const notifications = require('../models/notifications').actions
+const CryptoJS = require("crypto-js");
 
 router.route('/register')
 	.post(validator, (request, response) => {
@@ -13,9 +14,13 @@ router.route('/register')
 		ret.success = []
 		ret.global_msg = []
 		delete request.body.confirm_password
+		//console.log(request.body)
 		for (let prop in request.body){
 			table.push(request.body[prop])
 		}
+		var hmac = CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA256, table[2])
+		hmac.update(table[3]);
+		table[3] = hmac.finalize().toString()
 		if(table.length < 5)
 			table.push(1)
 		let jeton = uid(16)

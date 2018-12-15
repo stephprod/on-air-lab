@@ -72,7 +72,7 @@
 		if (!locals.registerObj.success[0]){ %>
 			<div class="global_msg">
 				<div class="error-box">
-					<p style="margin:0;"><%= locals.registerObj.global_msg[0] %></p>
+					<p style="margin:0;"><%- locals.registerObj.global_msg[0] %></p>
 					<div class="small-triangle"></div>
 					<div class="small-icon"><i class="jfont">&#xe80f;</i></div>
 				</div>
@@ -80,7 +80,7 @@
 		<% }else{ %>	
 			<div class="global_msg">
 				<div class="success-box">
-					<p style="margin:0;"><%= locals.registerObj.global_msg[0] %></p>
+					<p style="margin:0;"><%- locals.registerObj.global_msg[0] %></p>
 					<div class="small-triangle"></div>
 					<div class="small-icon"><i class="jfont">&#xe80f;</i></div>
 				</div>
