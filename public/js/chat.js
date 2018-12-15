@@ -71,24 +71,24 @@ actions.booking = [], actions.devis = [], actions.paiement = [],
 actions.texte = [], actions.devis_request = [], actions.contactArt = [],
 actions.contactPro = [], actions.rdv_offer = [], actions.previousMessagesButton, actions.nextMessagesButton;
 actions.texte.push(function (data){
-  var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">'+data.txt+'<div class="corner"></div><span>'+data.created+'</span></div></div>';
+  var ret = '<div class="message" id-message="'+data.id_m+'"><img src="'+user.img_chat+'" /><div class="bubble">'+data.txt+'<div class="corner"></div><span>'+data.created+'</span></div></div>';
   return (ret);
   }, function (data){
-  var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">'+data.txt+'<div class="corner"></div><span>'+data.created+'</span></div></div>';
+  var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="'+user_receiv.img_chat+'" /><div class="bubble">'+data.txt+'<div class="corner"></div><span>'+data.created+'</span></div></div>';
   return (ret);
 });
 actions.audio.push(function (data){
   //console.log(data);
-  var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><audio src="'+data.path+'" style="width:100%;" controls></audio><span>'+data.created+'</span></div></div></div>';
+  var ret = '<div class="message" id-message="'+data.id_m+'"><img src="'+user.img_chat+'" /><div class="bubble"><div class="card-chat"><audio src="'+data.path+'" style="width:100%;" controls></audio><span>'+data.created+'</span></div></div></div>';
   return (ret);
   }, function (data){
   //console.log(data);
-  var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><audio src="'+data.path+'" style="width:100%;" controls></audio><span>'+data.created+'</span></div></div></div>';
+  var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="'+user_receiv.img_chat+'" /><div class="bubble"><div class="card-chat"><audio src="'+data.path+'" style="width:100%;" controls></audio><span>'+data.created+'</span></div></div></div>';
   return (ret);
 });
 actions.rdv.push(function (data){
   //console.log(data);
-  var ret = '<div class="message" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="rdv"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de rendez-vous</h3><p class="date_creneau">';
+  var ret = '<div class="message" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="rdv"><img src="'+user.img_chat+'" /><div class="bubble"><div class="card-chat"><h3>Demande de rendez-vous</h3><p class="date_creneau">';
   $.each(data.events, function(ind, val){
     ret += '<p style="background: #18457c;color: white;padding: 12px;">Début ('+val.start.substr(0,10)+') A ('+val.start.substr(11,5)+') </br>';
     ret += 'Fin ('+val.end.substr(0,10)+') A ('+val.end.substr(11,5)+') </p> ';
@@ -104,7 +104,7 @@ actions.rdv.push(function (data){
   return (ret);
 }, function (data){
   //console.log(data);
-  var ret = '<div class="message right" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="rdv"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de rendez-vous</h3><p class="date_creneau">';
+  var ret = '<div class="message right" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="rdv"><img src="'+user_receiv.img_chat+'" /><div class="bubble"><div class="card-chat"><h3>Demande de rendez-vous</h3><p class="date_creneau">';
   $.each(data.events, function(ind, val){
     ret += '<p style="background: #18457c;color: white;padding: 12px;">Début ('+val.start.substr(0,10)+') A ('+val.start.substr(11,5)+') </br>';
     ret += 'Fin ('+val.end.substr(0,10)+') A ('+val.end.substr(11,5)+') </p> ';
@@ -121,7 +121,7 @@ actions.rdv.push(function (data){
 });
 actions.booking.push(function (data){
 //console.log(data);
-var ret = '<div class="message" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="booking"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de booking</h3>';
+var ret = '<div class="message" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="booking"><img src="'+user.img_chat+'" /><div class="bubble"><div class="card-chat"><h3>Demande de booking</h3>';
 ret += '<p class="date_creneau">';
 $.each(data.events, function(ind, val){
   ret += '<p style="background: #18457c;color: white;padding: 12px;">Début ('+val.start.substr(0,10)+') A ('+val.start.substr(11,5)+') </br>';
@@ -138,7 +138,7 @@ ret += '</div></div></div>';
 return (ret);
 }, function (data){
 //console.log(data);
-var ret = '<div class="message right" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="booking"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de booking</h3><p class="date_creneau">';
+var ret = '<div class="message right" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="booking"><img src="'+user_receiv.img_chat+'" /><div class="bubble"><div class="card-chat"><h3>Demande de booking</h3><p class="date_creneau">';
 $.each(data.events, function(ind, val){
   ret += '<p style="background: #18457c;color: white;padding: 12px;">Début ('+val.start.substr(0,10)+') A ('+val.start.substr(11,5)+') </br>';
   ret += 'Fin ('+val.end.substr(0,10)+') A ('+val.end.substr(11,5)+') </p> ';
@@ -154,16 +154,16 @@ return (ret);
 });
 actions.video.push(function (data){
 //console.log(data);
-var ret = '<div class="message" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><iframe class="picture" src="'+data.path+'" frameborder="0" allowfullscreen></iframe><div class="navigation"><p style="position:relative;text-align:center;top:27%;">'+data.txt+'</p></div></div><div class="corner"></div><span>'+data.created+'</span></div></div>';
+var ret = '<div class="message" id-message="'+data.id_m+'"><img src="'+user.img_chat+'" /><div class="bubble"><div class="card-chat"><iframe class="picture" src="'+data.path+'" frameborder="0" allowfullscreen></iframe><div class="navigation"><p style="position:relative;text-align:center;top:27%;">'+data.txt+'</p></div></div><div class="corner"></div><span>'+data.created+'</span></div></div>';
 return (ret);
 }, function (data){
 //console.log(data);
-var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><iframe class="picture" src="'+data.path+'" frameborder="0" allowfullscreen></iframe><div class="navigation"><p style="position:relative;text-align:center;top:27%;">'+data.txt+'</p></div></div><div class="corner"></div><span>'+data.created+'</span></div></div>';
+var ret = '<div class="message right" id-message="'+data.id_m+'"><img src="'+user_receiv.img_chat+'" /><div class="bubble"><div class="card-chat"><iframe class="picture" src="'+data.path+'" frameborder="0" allowfullscreen></iframe><div class="navigation"><p style="position:relative;text-align:center;top:27%;">'+data.txt+'</p></div></div><div class="corner"></div><span>'+data.created+'</span></div></div>';
 return (ret);
 });
 actions.devis_request.push(function (data){
 //console.log(data);
-var ret = '<div class="message" id-message="'+data.id_m+'" data-type-message-libelle="devis"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">Objet : '+data.txt+' / Demande de devis pour les services : <p class="services">';
+var ret = '<div class="message" id-message="'+data.id_m+'" data-type-message-libelle="devis"><img src="'+user.img_chat+'" /><div class="bubble">Objet : '+data.txt+' / Demande de devis pour les services : <p class="services">';
 $.each(data.servs, function(ind, val){
   ret += '('+val.libelle+') / ';
 });
@@ -171,7 +171,7 @@ ret += '</p><div class="corner"></div><span>'+data.created+'</span></div></div>'
 return (ret);
 }, function (data){
 //console.log(data);
-var ret = '<div class="message right" id-message="'+data.id_m+'" data-type-message-libelle="devis"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble">Objet : '+data.txt+' / Demande de devis pour les services : <p class="services">';
+var ret = '<div class="message right" id-message="'+data.id_m+'" data-type-message-libelle="devis"><img src="'+user_receiv.img_chat+'" /><div class="bubble">Objet : '+data.txt+' / Demande de devis pour les services : <p class="services">';
 $.each(data.servs, function(ind, val){
   ret += '('+val.libelle+') / ';
 });
@@ -180,14 +180,14 @@ return (ret);
 });
 actions.contactArt.push(function (data){
 //console.log(data);
-var ret = '<div class="message" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="contact"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de contact</h3>';
+var ret = '<div class="message" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="contact"><img src="'+user.img_chat+'" /><div class="bubble"><div class="card-chat"><h3>Demande de contact</h3>';
 ret += '<p class="date_creneau">';
   ret += 'demande en attente de réponse du correspondant</p><div class="div-submi" style="color: black;"></div><div class="corner"></div><span>'+data.created+'</span>';
 ret += '</div></div></div>';
 return (ret);
 }, function (data){
 //console.log(data);
-var ret = '<div class="message right" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="contact"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de contact</h3>';
+var ret = '<div class="message right" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="contact"><img src="'+user_receiv.img_chat+'" /><div class="bubble"><div class="card-chat"><h3>Demande de contact</h3>';
 ret += '<p class="date_creneau">';
 ret += 'demande en attente de votre réponse</p><div class="div-submi" style="color: black;"><a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a></div><div class="corner"></div><span>'+data.created+'</span>';
 ret += '</div></div></div>';
@@ -195,14 +195,14 @@ return (ret);
 });
 actions.contactPro.push(function (data){
 //console.log(data);
-var ret = '<div class="message" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="contact"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de contact</h3>';
+var ret = '<div class="message" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="contact"><img src="'+user.img_chat+'" /><div class="bubble"><div class="card-chat"><h3>Demande de contact</h3>';
 ret += '<p class="date_creneau">';
 ret += 'demande en attente de réponse de votre corespondant</p><div class="div-submi" style="color: black;"></div><div class="corner"></div><span>'+data.created+'</span>';
 ret += '</div></div></div>';
 return (ret);
 }, function (data){
 //console.log(data);
-var ret = '<div class="message right" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="contact"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de contact</h3>';
+var ret = '<div class="message right" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="contact"><img src="'+user_receiv.img_chat+'" /><div class="bubble"><div class="card-chat"><h3>Demande de contact</h3>';
 ret += '<p class="date_creneau">';
 ret += 'demande en attente de votre réponse</p><div class="div-submi" style="color: black;"><a href="#" class="btn-refus">refuser</a><a href="#" class="btn-accept">accepter</a></div><div class="corner"></div><span>'+data.created+'</span>';
 ret += '</div></div></div>';
@@ -210,7 +210,7 @@ return (ret);
 });
 actions.rdv_offer.push(function (data){
   //console.log(data);
-  var ret = '<div class="message" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="rdv-offer"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de rendez-vous</h3>';
+  var ret = '<div class="message" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="rdv-offer"><img src="'+user.img_chat+'" /><div class="bubble"><div class="card-chat"><h3>Demande de rendez-vous</h3>';
   if (data.offer !== undefined){
     ret += '<p>'+data.offer.titre+'</p>';
     ret += '<p>'+data.offer.desc+'</p>';
@@ -232,7 +232,7 @@ actions.rdv_offer.push(function (data){
   return (ret);
 }, function (data){
   //console.log(data);
-  var ret = '<div class="message right" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="rdv-offer"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de rendez-vous</h3>';
+  var ret = '<div class="message right" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="rdv-offer"><img src="'+user_receiv.img_chat+'" /><div class="bubble"><div class="card-chat"><h3>Demande de rendez-vous</h3>';
   if (data.offer !== undefined){
     ret += '<p>'+data.offer.titre+'</p>';
     ret += '<p>'+data.offer.desc+'</p>';
@@ -255,7 +255,7 @@ actions.rdv_offer.push(function (data){
 });
 actions.paiement.push(function (data){
   //console.log(data);
-  var ret = '<div class="message" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="payment"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de paiment</h3>';
+  var ret = '<div class="message" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="payment"><img src="'+user.img_chat+'" /><div class="bubble"><div class="card-chat"><h3>Demande de paiment</h3>';
   ret += '<p class="date_creneau">';
   if (data.type_t !== undefined){
     var type_t_libelle = data.type_t == "MOD" ? "Carte bancaire" : "Espèce";
@@ -279,7 +279,7 @@ actions.paiement.push(function (data){
   return (ret);
 }, function (data){
   //console.log(data);
-  var ret = '<div class="message right" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="payment"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" /><div class="bubble"><div class="card-chat"><h3>Demande de paiement</h3>';
+  var ret = '<div class="message right" id-message="'+data.id_m+'" data-id-type-message="'+data.id_type_m+'" data-type-message-libelle="payment"><img src="'+user_receiv.img_chat+'" /><div class="bubble"><div class="card-chat"><h3>Demande de paiement</h3>';
   ret += '<p class="date_creneau">';
   if (data.type_t !== undefined){
     var type_t_libelle = data.type_t == "MOD" ? "Carte bancaire" : "Espèce";
@@ -404,7 +404,7 @@ $(document).on("click", ".friend", function(){
     $('#devis-modal').find("a#devis-send span").empty();
     $('#devis-modal').find("a#devis-send span").append("Envoyer la demande");
   }
-  switchRoom($(this).data("room"), $(this).data("coresp"), name.split(" ")[0], name.split(" ")[1], $(this).data('coresp-type'), $(this).data('coresp-mail'), user);
+  switchRoom($(this).data("room"), $(this).data("coresp"), name.split(" ")[0], name.split(" ")[1], $(this).data('coresp-type'), $(this).data('coresp-mail'), $(this).data('img-chat'), user);
 });
 function on_socket_update_rooms(rooms){
   //console.log("updateroom");
@@ -413,7 +413,7 @@ function on_socket_update_rooms(rooms){
   $("div#friends").empty();
   if (rooms != null){
     for (var i = 0; i < rooms.length; i++){
-      $("div#friends").append('<div class="friend" data-coresp="'+rooms[i][0]+'" data-coresp-type="'+rooms[i][4]+'" data-room="'+rooms[i][1]+'" data-coresp-mail="'+rooms[i][6]+'"><img src="'+rooms[i][7]+'" /><p><strong>'+rooms[i][2]+' '+rooms[i][3]+'</strong><span>'+rooms[i][5]+'</span><p class="preview">'+rooms[i][9]+'</p></p><div class="status available"></div></div>');
+      $("div#friends").append('<div class="friend" data-coresp="'+rooms[i][0]+'" data-coresp-type="'+rooms[i][4]+'" data-room="'+rooms[i][1]+'" data-coresp-mail="'+rooms[i][6]+'" data-img-chat="'+rooms[i][7]+'"><img src="'+rooms[i][7]+'" /><p><strong>'+rooms[i][2]+' '+rooms[i][3]+'</strong><span>'+rooms[i][5]+'</span><p class="preview">'+rooms[i][9]+'</p></p><div class="status available"></div></div>');
     }
   }else{
     console.log("Aucune room trouvée !");
@@ -583,8 +583,12 @@ function on_message_view_button_click(e){
     //console.log("button next clicked at index "+$(e.target).data("id-message")+" !");
     if (roomDisplay != 1)
       socket.emit("list_msg_from_ind", roomDisplay, user_receiv, user.type, index, false);
-    else
-      socket.emit("list_msg_admin_from_ind", roomDisplay, user_receiv, user.id, index, false);
+    else{
+      if (user.type == 1)
+        socket.emit("list_msg_from_ind_for_admin", roomDisplay, user_receiv, user.id, index, false);
+      else
+        socket.emit("list_msg_admin_from_ind", roomDisplay, user_receiv, user.id, index, false);
+    }
   }else{
     // console.log("button previous clicked at index "+$(e.target).data("id-message")+" !");
     // console.log(user);
@@ -592,8 +596,12 @@ function on_message_view_button_click(e){
     // console.log(roomDisplay);
     if (roomDisplay != 1)
       socket.emit("list_msg_from_ind", roomDisplay, user_receiv, user.type, index, true);
-    else
-      socket.emit("list_msg_admin_from_ind", roomDisplay, user_receiv, user.id, index, true);
+    else{
+      if (user.type == 1)
+        socket.emit("list_msg_from_ind_for_admin", roomDisplay, user_receiv, user.id, index, true);
+      else
+        socket.emit("list_msg_admin_from_ind", roomDisplay, user_receiv, user.id, index, true);
+    }
   }
 }
 function on_msg_send_click(){
@@ -1355,7 +1363,7 @@ return (res);
 function updateUserReceived(data){
 user_receiv = data;
 }
-function switchRoom(room, id_coresp, nom, prenom, type, email, usr){
+function switchRoom(room, id_coresp, nom, prenom, type, email, img, usr){
 //console.log("switch room");
 //console.log(usr);
 var coresp= {};
@@ -1364,6 +1372,7 @@ coresp.prenom = prenom;
 coresp.id_coresp = id_coresp;
 coresp.type = type;
 coresp.mail = email;
+coresp.img_chat = img;
 // if (type != 4 && type != 1){
 //   coresp.payment_module = paymentModule;
 // }
@@ -1388,7 +1397,9 @@ $.ajax({
   if (usr.id != "null" && usr.id != null){
     if (room == 1 && usr.id != 1)
       socket.emit('list_msg_admin', room, user_receiv, usr.id);
-    else{
+    else if(room == 1 && usr.id == 1){
+      socket.emit('list_msg_for_admin', room, user_receiv, usr.id);
+    }else{
       socket.emit('list_msg', room, user_receiv, usr.type);
       socket.emit('update_services', usr.id, room, user_receiv);
       //socket.emit('update_modeles_devis', user.id);

@@ -352,6 +352,8 @@
 			locals.session.userType : "null" %>";
 		user.mail = "<%- locals.session.userMail !== undefined ?
 			locals.session.userMail : "null" %>";
+		user.img_chat = "<%- locals.session.img_chat !== undefined ?
+			locals.session.img_chat : "null" %>";
 		<% if (locals.session.abonnement !== undefined && locals.session.abonnement != null) { %>
 			//console.log(<%- locals.session.abonnement %>);
 			user.abonnement = <%= locals.session.abonnement %>;

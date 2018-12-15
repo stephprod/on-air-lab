@@ -504,9 +504,11 @@
     	user_receiv.prenom = "<%- locals.session.user_receiv.prenom ?
     		locals.session.user_receiv.prenom : "null" %>";
     	user_receiv.type = "<%- locals.session.user_receiv.type ?
-			locals.session.user_receiv.type : "null" %>";
-		user_receiv.mail = "<%- locals.session.user_receiv.mail ?
-    		locals.session.user_receiv.mail : "null" %>";
+				locals.session.user_receiv.type : "null" %>";
+			user_receiv.mail = "<%- locals.session.user_receiv.mail ?
+				locals.session.user_receiv.mail : "null" %>";
+			user_receiv.img_chat = "<%- locals.session.user_receiv.img_chat ?
+    		locals.session.user_receiv.img_chat : "null" %>";
     	sessionStorage.setItem("room", JSON.stringify(room));
     	sessionStorage.setItem("user_receiv", JSON.stringify(user_receiv));
     	sessionStorage.setItem("session", JSON.stringify(session));

@@ -168,7 +168,12 @@ io.sockets.on('connection', function (socket) {
     socket.on('list_msg', (data, corespObj, type_user) => {
         socketManage.list_latest_msg(data, corespObj, type_user)
     });
-
+    socket.on('list_msg_for_admin', (data, corespObj, type_user) => {
+        socketManage.list_latest_msg_for_admin(data, corespObj, type_user)
+    });
+    socket.on("list_msg_from_ind_for_admin", (data, corespObj, type_user, index, filter) => {
+        socketManage.list_msg_from_ind_for_admin(data, corespObj, type_user, index, filter)
+    })
     socket.on('list_msg_admin', (data, corespObj, userId) => {
         socketManage.list_latest_msg_admin(data, corespObj, userId)
     });

@@ -16,6 +16,7 @@ router.param('id', (req, res, next, token) => {
 				obj.type = res.type
 				obj.pay_module = res.payment_module
 				obj.mail = res.email
+				obj.img_chat = res.img_chat
 				req.session.user_receiv = obj
 			}
 			next()

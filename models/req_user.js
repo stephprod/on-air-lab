@@ -66,7 +66,7 @@ class User{
 			', `user`.`nom`, `user`.`prenom`, `user`.`email`, `user`.`img_chat`, '+
             '`user_type`.`id_user_type`, `user_type`.`libelle` '+
             'FROM `rooms` '+
-            'INNER JOIN `user` ON `user` .`id`=`rooms`.`with_userid` '+
+            'INNER JOIN `user` ON `user`.`id`=`rooms`.`with_userid` '+
             'INNER JOIN `user_type` ON `user_type`.`id_user_type`=`user`.`type` '+
 			'WHERE '+clause, (err, result, fields) =>{
 				if (err){
@@ -81,7 +81,7 @@ class User{
 			'`user`.`nom`, `user`.`prenom`, `user`.`email`, `user`.`img_chat`, '+
             '`user_type`.`id_user_type`, `user_type`.`libelle` '+
             ' FROM `rooms` '+
-            'INNER JOIN `user` ON `user` .`id`=`rooms`.`userid` '+
+            'INNER JOIN `user` ON `user`.`id`=`rooms`.`userid` '+
             'INNER JOIN `user_type` ON `user_type`.`id_user_type`=`user`.`type` '+
 			'WHERE '+clause, (err, result, fields) =>{
 			if (err) 
@@ -92,7 +92,20 @@ class User{
 			cb(result)
 		})
 	}
-
+    static getRoomForAdmin(clause, cb){
+		let q = db.query('SELECT `user`.`id`, `user`.`nom`, `user`.`prenom`, `user`.`email`, `user`.`img_chat`, '+
+            '`user_type`.`id_user_type`, `user_type`.`libelle` '+
+            'FROM `messages` '+
+            'INNER JOIN `user` ON `user`.`id`=`messages`.`iduser_send` '+
+            'INNER JOIN `user_type` ON `user_type`.`id_user_type`=`user`.`type` '+
+			'WHERE '+clause, (err, result, fields) =>{
+				if (err){
+					console.log(q.sql)
+					throw err
+				}
+				cb(result)
+			});
+	}
 	static createRoom(room, cb){
 		let q = db.query('INSERT INTO rooms (userid, with_userid, cree_le) VALUE (?)', [room], (err, result) =>{
 			if (err){
@@ -183,13 +196,60 @@ class User{
             cb(result.affectedRows)
         })  
     }
+    static getFirstPreviousMsgForAdmin(id, number, cb)
+    {
+        //console.time("select counting")
+        let r = db.query('SELECT * FROM messages '+
+            'LEFT JOIN type_message ON messages.id_type = type_message.id_type_m '+
+            'WHERE messages.iduser_send = ? OR message.iduser_received = ? '+
+            'ORDER BY messages.id_message DESC LIMIT '+number, [id, id], (err, result) => {
+            if(err){
+                console.log(r.sql)
+                throw err;
+                }
+            cb(result);
+            //console.timeEnd("select counting")
+        });
+    }
+    static getPreviousMsgForAdmin(id, index, number, cb)
+    {
+        //console.time("select counting")
+        let r = db.query('SELECT * FROM messages '+
+            'LEFT JOIN type_message ON messages.id_type = type_message.id_type_m '+
+            'WHERE messages.iduser_send = ? OR message.iduser_received = ? '+
+            'AND messages.id_message < '+index+' '+
+            'ORDER BY messages.id_message ASC LIMIT '+number, [id, id], (err, result) => {
+            if(err){
+                console.log(r.sql)
+                throw err;
+                }
+            cb(result);
+            //console.timeEnd("select counting")
+        });
+    }
+    static getNextsMsgForAdmin(id, index, number, cb)
+    {
+        //console.time("select counting")
+        let r = db.query('SELECT * FROM messages '+
+            'LEFT JOIN type_message ON messages.id_type = type_message.id_type_m '+
+            'WHERE messages.iduser_send = ? OR message.iduser_received = ? '+
+            'AND messages.id_message > '+index+' '+
+            'ORDER BY messages.id_message ASC LIMIT '+number, [id, id], (err, result) => {
+            if(err){
+                console.log(r.sql)
+                throw err;
+                }
+            cb(result);
+            //console.timeEnd("select counting")
+        });
+    }
     static getFirstPreviousMsgPro(room, number, cb)
     {
         //console.time("select counting")
         let r = db.query('SELECT * FROM messages INNER JOIN rooms ON rooms.id_room=messages.id_room '+
             'LEFT JOIN type_message ON messages.id_type = type_message.id_type_m '+ 
             'LEFT JOIN user ON rooms.userid = user.id WHERE messages.id_room = ? '+
-            'ORDER BY messages.id_message ASC LIMIT '+number, [room], (err, result) => {
+            'ORDER BY messages.id_message DESC LIMIT '+number, [room], (err, result) => {
             if(err){
                 console.log(r.sql)
                 throw err;

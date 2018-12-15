@@ -49,12 +49,13 @@ router.route('/login')
 						res.prenom = result[0].prenom
 						res.type = result[0].type
 						ret.result = res
-						userSess = request.session
+						let userSess = request.session
 						userSess.userId = result[0].id
 						userSess.userName = result[0].nom
 						userSess.userFirstName = result[0].prenom
 						userSess.userType = result[0].type
 						userSess.token = result[0].jeton
+						userSess.img_chat = result[0].img_chat
 						//userSess.pay_module = result[0].payment_module
 						userSess.userMail = result[0].email
 						if (res.type != 4){

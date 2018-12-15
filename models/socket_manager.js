@@ -9,10 +9,15 @@ class SocketManager{
         this.io = io_obj
         this.Usr = User
     }
-    static getPreviousMsg(len, type, id_room, callback)
+    static getIo(){
+        return this.io;
+    }
+    static getPreviousMsg(len, type, id_room, callback, id_user = null)
     {
         switch (type){
             case 1:
+                User.getFirstPreviousMsgForAdmin(id_user, len, callback)
+                break;
             case 2:
             case 3:
                 User.getFirstPreviousMsgPro(id_room, len, callback)
@@ -25,9 +30,11 @@ class SocketManager{
                 break;
         }
     }
-    static getPreviousMsgFromInd(len, type, id_room, ind, callback){
+    static getPreviousMsgFromInd(len, type, id_room, ind, callback, id_user = null){
         switch (type){
             case 1:
+                User.getPreviousMsgForAdmin(id_user, ind, len, callback)
+                break;
             case 2:
             case 3:
                 User.getPreviousMsgPro(id_room, ind, len, callback)
@@ -40,9 +47,11 @@ class SocketManager{
                 break;
         }
     }
-    static getNextMsgFromInd(len, type, id_room, ind, callback){
+    static getNextMsgFromInd(len, type, id_room, ind, callback, id_user = null){
         switch (type){
             case 1:
+                User.getNextMsgForAdmin(id_user, ind, len, callback)
+                break;
             case 2:
             case 3:
                 User.getNextMsgPro(id_room, ind, len, callback)
@@ -67,7 +76,7 @@ class SocketManager{
     {
         User.getNextMsgAdmin(id_room, id_user, ind, len, callback)
     }
-    static show_latest_msg(result, data, len, size, src, socket, corespObj){
+    static show_latest_msg(result, data, len, size, src, socket, corespObj, io){ 
         for (let k=(len - 1); k >= 0; k--)
         {
             let message = {
@@ -122,7 +131,7 @@ class SocketManager{
                                 }
                                 message.request_state = message.events[0].state
                                 //console.log(message)
-                                this.io.sockets.in(this.socket.id).emit('update_eventstypemessage', message)
+                                io.sockets.in(socket.id).emit('update_eventstypemessage', message)
                                 if (message.type_m == "rdv_offer"){
                                     User.getOfferInTypeMessage(message.id_type_m, (result2) => {
                                         if (result2.length > 0){
@@ -133,7 +142,7 @@ class SocketManager{
                                             offer.prix = result2[0].prix_off
                                             message.offer = offer
                                             //console.log(message)
-                                            this.io.sockets.in(this.socket.id).emit('update_eventstypeoffermessage', message)
+                                            io.sockets.in(socket.id).emit('update_eventstypeoffermessage', message)
                                         }
                                     })
                                 }
@@ -154,7 +163,7 @@ class SocketManager{
                                     message.servs.push(s)
                                 }
                                 //console.log(message)
-                                this.io.sockets.in(this.socket.id).emit('update_servicestypemessage', message)
+                                io.sockets.in(socket.id).emit('update_servicestypemessage', message)
                             }
                         })
                     };
@@ -185,12 +194,12 @@ class SocketManager{
                         reject(msg)
                     }
                 }).then((mess) => {
-                    this.io.sockets.in(this.socket.id).emit('update_paymentstypemessage', mess)
+                    io.sockets.in(socket.id).emit('update_paymentstypemessage', mess)
                 }, (err) => {
-                    this.io.sockets.in(this.socket.id).emit('update_paymentstypemessage', err)
+                    io.sockets.in(socket.id).emit('update_paymentstypemessage', err)
                 })
             }else if (message.type_m == "contact"){
-                if (this.socket.request.session.userType != 4){
+                if (socket.request.session.userType != 4){
                     setTimeout((function(message) {
                         return function (){
                             User.getUserInfoInTypeMessage(message.id_type_m, (result) =>{
@@ -208,7 +217,7 @@ class SocketManager{
                                         message.request_state = -1
                                     }
                                     //console.log(message)
-                                    this.io.sockets.in(this.socket.id).emit('update_contactstypemessage', message)
+                                    io.sockets.in(socket.id).emit('update_contactstypemessage', message)
                                 }
                             })
                         };
@@ -232,7 +241,7 @@ class SocketManager{
                                         message.request_state = -1
                                     }
                                     //console.log(message)
-                                    this.io.sockets.in(this.socket.id).emit('update_contactstypemessage', message)
+                                    io.sockets.in(socket.id).emit('update_contactstypemessage', message)
                                 }
                             })
                         };
@@ -240,10 +249,10 @@ class SocketManager{
                 }
             }
             //console.log(message)
-            this.io.sockets.in(this.socket.id).emit('updatechat', corespObj, message)
+            io.sockets.in(socket.id).emit('updatechat', corespObj, message)
         }
     }
-    show_msg(result, data, len, size, src, socket, corespObj){
+    static show_msg(result, data, len, size, src, socket, corespObj, io){
         for (let k=0; k < len; k++)
         {
             let message = {
@@ -298,7 +307,7 @@ class SocketManager{
                                 }
                                 message.request_state = message.events[0].state
                                 //console.log(message)
-                                this.io.sockets.in(this.socket.id).emit('update_eventstypemessage', message)
+                                io.sockets.in(socket.id).emit('update_eventstypemessage', message)
                                 if (message.type_m == "rdv_offer"){
                                     User.getOfferInTypeMessage(message.id_type_m, (result2) => {
                                         if (result2.length > 0){
@@ -309,7 +318,7 @@ class SocketManager{
                                             offer.prix = result2[0].prix_off
                                             message.offer = offer
                                             //console.log(message)
-                                            this.io.sockets.in(this.socket.id).emit('update_eventstypeoffermessage', message)
+                                            io.sockets.in(socket.id).emit('update_eventstypeoffermessage', message)
                                         }
                                     })
                                 }
@@ -330,7 +339,7 @@ class SocketManager{
                                     message.servs.push(s)
                                 }
                                 //console.log(message)
-                                this.io.sockets.in(this.socket.id).emit('update_servicestypemessage', message)
+                                io.sockets.in(socket.id).emit('update_servicestypemessage', message)
                             }
                         })
                     };
@@ -361,12 +370,12 @@ class SocketManager{
                         reject(msg)
                     }
                 }).then((mess) => {
-                   this.io.sockets.in(this.socket.id).emit('update_paymentstypemessage', mess)
+                   io.sockets.in(socket.id).emit('update_paymentstypemessage', mess)
                 }, (err) => {
-                   this.io.sockets.in(this.socket.id).emit('update_paymentstypemessage', err)
+                   io.sockets.in(socket.id).emit('update_paymentstypemessage', err)
                 })
             }else if (message.type_m == "contact"){
-                if (this.socket.request.session.userType != 4){
+                if (socket.request.session.userType != 4){
                     setTimeout((function(message) {
                         return function (){
                             User.getUserInfoInTypeMessage(message.id_type_m, (result) =>{
@@ -384,7 +393,7 @@ class SocketManager{
                                         message.request_state = -1
                                     }
                                     //console.log(message)
-                                   this.io.sockets.in(this.socket.id).emit('update_contactstypemessage', message)
+                                   io.sockets.in(socket.id).emit('update_contactstypemessage', message)
                                 }
                             })
                         };
@@ -408,7 +417,7 @@ class SocketManager{
                                         message.request_state = -1
                                     }
                                     //console.log(message)
-                                   this.io.sockets.in(this.socket.id).emit('update_contactstypemessage', message)
+                                   io.sockets.in(socket.id).emit('update_contactstypemessage', message)
                                 }
                             })
                         };
@@ -416,10 +425,10 @@ class SocketManager{
                 }
             }
             //console.log(message)
-           this.io.sockets.in(this.socket.id).emit('updatechat', corespObj, message)
+           io.sockets.in(socket.id).emit('updatechat', corespObj, message)
         }
     }
-    static show_latest_msg_admin(result, data, len, size, src, socket, corespObj){
+    static show_latest_msg_admin(result, data, len, size, src, socket, corespObj, io){
         for (let k=(len - 1); k >= 0; k--)
         {
             let message = {
@@ -471,14 +480,14 @@ class SocketManager{
                                     message.events.push(ev)
                                 }
                                 //console.log(message)
-                               this.io.sockets.in(this.socket.id).emit('update_eventstypemessage', message)
+                               io.sockets.in(socket.id).emit('update_eventstypemessage', message)
                             }
                         })
                     };
                 }) (message), 100);
             }else if(message.type_m == "contact"){
                 //console.log(this.socket.request.session)
-                if (this.socket.request.session.userType != 4){
+                if (socket.request.session.userType != 4){
                     setTimeout((function(message) {
                         return function (){
                             User.getUserInfoInTypeMessage(message.id_type_m, (result) =>{
@@ -496,7 +505,7 @@ class SocketManager{
                                         message.request_state = -1
                                     }
                                     //console.log(message)
-                                   this.io.sockets.in(this.socket.id).emit('update_contactstypemessage', message)
+                                   io.sockets.in(socket.id).emit('update_contactstypemessage', message)
                                 }
                             })
                         };
@@ -520,7 +529,7 @@ class SocketManager{
                                         message.request_state = -1
                                     }
                                     //console.log(message)
-                                   this.io.sockets.in(this.socket.id).emit('update_contactstypemessage', message)
+                                   io.sockets.in(socket.id).emit('update_contactstypemessage', message)
                                 }
                             })
                         };
@@ -542,15 +551,15 @@ class SocketManager{
                             message.request_state = -1
                         }
                         //console.log(message)
-                       this.io.sockets.in(this.socket.id).emit('socket_update_paymentstypemessage', message)
+                       io.sockets.in(socket.id).emit('socket_update_paymentstypemessage', message)
                     }
                 })
             }
             //console.log(message)
-           this.io.sockets.in(this.socket.id).emit('updatechat', corespObj, message)
+           io.sockets.in(socket.id).emit('updatechat', corespObj, message)
         }
     }
-    show_msg_admin(result, data, len, size, src, socket, corespObj){
+    static show_msg_admin(result, data, len, size, src, socket, corespObj, io){
         for (let k=0; k < len; k++)
         {
             let message = {
@@ -602,14 +611,14 @@ class SocketManager{
                                     message.events.push(ev)
                                 }
                                 //console.log(message)
-                               this.io.sockets.in(this.socket.id).emit('update_eventstypemessage', message)
+                               io.sockets.in(socket.id).emit('update_eventstypemessage', message)
                             }
                         })
                     };
                 }) (message), 100);
             }else if(message.type_m == "contact"){
                 //console.log(this.socket.request.session)
-                if (this.socket.request.session.userType != 4){
+                if (socket.request.session.userType != 4){
                     setTimeout((function(message) {
                         return function (){
                             User.getUserInfoInTypeMessage(message.id_type_m, (result) =>{
@@ -627,7 +636,7 @@ class SocketManager{
                                         message.request_state = -1
                                     }
                                     //console.log(message)
-                                   this.io.sockets.in(this.socket.id).emit('update_contactstypemessage', message)
+                                   io.sockets.in(socket.id).emit('update_contactstypemessage', message)
                                 }
                             })
                         };
@@ -651,7 +660,7 @@ class SocketManager{
                                         message.request_state = -1
                                     }
                                     //console.log(message)
-                                   this.io.sockets.in(this.socket.id).emit('update_contactstypemessage', message)
+                                   io.sockets.in(socket.id).emit('update_contactstypemessage', message)
                                 }
                             })
                         };
@@ -673,33 +682,39 @@ class SocketManager{
                             message.request_state = -1
                         }
                         //console.log(message)
-                       this.io.sockets.in(this.socket.id).emit('socket_update_paymentstypemessage', message)
+                       io.sockets.in(socket.id).emit('socket_update_paymentstypemessage', message)
                     }
                 })
             }
             //console.log(message)
-           this.io.sockets.in(this.socket.id).emit('updatechat', corespObj, message)
+           io.sockets.in(socket.id).emit('updatechat', corespObj, message)
         }
     }
     list_latest_msg(data, corespObj, type_user){
         SocketManager.getPreviousMsg(15, type_user, data, (result) => {
             let len = result.length
-            SocketManager.show_latest_msg(result, data, len, 15, "srlatestMsgc", this.socket, this.corespObj)
+            SocketManager.show_latest_msg(result, data, len, 15, "latestMsg", this.socket,  corespObj, this.io)
         })
+    }
+    list_latest_msg_for_admin(data, corespObj, type_user){
+        SocketManager.getPreviousMsg(15, type_user, data, (result) => {
+            let len = result.length
+            SocketManager.show_latest_msg(result, data, len, 15, "latestMsg", this.socket, corespObj, this.io)
+        }, corespObj.id_coresp)
     }
     list_msg(socket, result, corespObj, data, src, size){
         let len = result.length;
-        this.show_msg(result, data, len, size, src, socket, corespObj)
+        SocketManager.show_msg(result, data, len, size, src, socket, corespObj, this.io)
     }
     list_latest_msg_admin(data, corespObj, userId){
         SocketManager.getPreviousMsgAdmin(15, userId, data, (result) =>{
             let len = result.length;
-            SocketManager.show_latest_msg_admin(result, data, len, 15, "latestMsg", this.socket, this.corespObj)
+            SocketManager.show_latest_msg_admin(result, data, len, 15, "latestMsg", this.socket, this.corespObj, this.io)
         })
     }
     list_msg_admin(socket, result, corespObj, data, src, size){
         let len = result.length;
-        this.show_msg_admin(result, data, len, size, src, socket, corespObj)
+        SocketManager.show_msg_admin(result, data, len, size, src, socket, corespObj, this.io)
     }
     add_user(id, type){
         // supprimer le nom d'utilisateur de la liste des noms d'utilisateur globaux s'il existe déjà
@@ -715,7 +730,7 @@ class SocketManager{
         user.userType = type;
         this.socket.user = user;
         //console.log("Socket ID du GARS "+this.socket.id);
-        if (type == 2 || type == 1 || type == 3){
+        if (type == 2 || type == 3){
             User.getRoomForPro('`rooms`.`with_userid`='+id+' GROUP BY `rooms`.`id_room`'
                 ,(result) => {
                 if (result == undefined || !result){
@@ -742,7 +757,7 @@ class SocketManager{
                                     sock.emit('updaterooms', tabCorresp);
                                 })
                             };
-                        }) (room, this.admin, this.getPreviousMsgAdmin, this.tabCorresp, this.socket), 100);
+                        }) (room, this.admin, SocketManager.getPreviousMsgAdmin, this.tabCorresp, this.socket), 100);
                     }
                     for(var k in result){
                         room = []
@@ -857,7 +872,7 @@ class SocketManager{
                                     }
                                 })
                             };
-                        }) (k, room, this.getPreviousMsg, this.tabCorresp, this.socket), 100);
+                        }) (k, room, SocketManager.getPreviousMsg, this.tabCorresp, this.socket), 100);
                     }
                     this.socket.room = 1
                     // AJOUT DU CLIENT DANS LA GLOBAL LIST
@@ -870,6 +885,54 @@ class SocketManager{
                     userInfos.id_user = id
                     this.userGlobal.push(userInfos)
                 }
+            })
+        }else if(type == 1){
+            User.getRoomForAdmin('`messages`.`iduser_received`='+id+' GROUP BY `user`.`id`', (result) =>{
+                let room;
+                for(var k in result){
+                    room = []
+                    room.push(result[k].id)
+                    room.push(1)
+                    room.push(result[k].nom)
+                    room.push(result[k].prenom)
+                    room.push(result[k].id_user_type)
+                    room.push(result[k].libelle)
+                    room.push(result[k].email)
+                    room.push(result[k].img_chat)
+                    //FONCTION DE CLOSURE POUR PERMETTRE LA RECUPERATION DES RSLT AVANT ITERATION DE LA BOUCLE
+                    setTimeout((function(k, room, getPreviousMsg, tabCorresp, sock){
+                        return function(){
+                            getPreviousMsg(sock.user.userId, sock.user.userType, 1, (result2) => {
+                                if (result2.length > 0){
+                                    room.push(result2[0].id_message)
+                                    room.push(result2[0].message_txt)
+                                }
+                                else
+                                {
+                                    room.push(null, 'Aucun message.')
+                                }
+                                //console.log("-------------Console TAB CORRESPONDANTS------------")
+                                tabCorresp.push(room)
+                                //console.log(tabCorresp)
+                                //console.log("-----------------------------------------------")
+                                if (k == result.length - 1){
+                                    //console.log(tabCorresp)
+                                    sock.emit('updaterooms', tabCorresp);
+                                }
+                            }, result[k].id)
+                        };
+                    }) (k, room, SocketManager.getPreviousMsg, this.tabCorresp, this.socket), 100);
+                }
+                this.socket.room = 1
+                // AJOUT DU CLIENT DANS LA GLOBAL LIST
+                let userInfos = {}
+                // let coresp = {}
+                // coresp.nom = "Admin";
+                // coresp.prenom = "admin";
+                // coresp.id_coresp = 1;
+                userInfos.socket = this.socket.id
+                userInfos.id_user = id
+                this.userGlobal.push(userInfos)
             })
         }
     }
@@ -1109,6 +1172,18 @@ class SocketManager{
             this.getNextMsgFromInd(15, parseInt(type_user), data, index, (result) => {
                 this.list_msg(this.socket, result, corespObj, data, 'nextMsg', 15)
             })
+        }
+    }
+    list_msg_from_ind_for_admin(data, corespObj, type_user, index, filter){
+        if (filter){
+            this.getPreviousMsgFromInd(15, parseInt(type_user), data, index, (result) => {
+                this.list_msg(this.socket, result, corespObj, data, 'previousMsg', 15)
+            }, corespObj.id_coresp)
+        }else{
+            //Ascending (getNextMessage)
+            this.getNextMsgFromInd(15, parseInt(type_user), data, index, (result) => {
+                this.list_msg(this.socket, result, corespObj, data, 'nextMsg', 15)
+            }, corespObj.id_coresp)
         }
     }
     list_msg_admin_from_ind(data, corespObj, userId, index, filter){

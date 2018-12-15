@@ -119,7 +119,7 @@ function put_in_n_digits_minutes(ref, n){
 function updateUserReceived(data){
     user_receiv = data;
 }
-function switchRoom(room, id_coresp, nom, prenom, type, email, usr){
+function switchRoom(room, id_coresp, nom, prenom, type, email, img, usr){
 	//console.log("switch room");
 	//console.log(usr);
 	var coresp= {};
@@ -128,6 +128,7 @@ function switchRoom(room, id_coresp, nom, prenom, type, email, usr){
     coresp.id_coresp = id_coresp;
 	coresp.type = type;
 	coresp.mail = email;
+	coresp.img_chat = img;
     //console.log(coresp);
     updateUserReceived(coresp);
     roomDisplay = room;
@@ -149,7 +150,9 @@ function switchRoom(room, id_coresp, nom, prenom, type, email, usr){
 	if (usr.id != "null" && usr.id != null){
 		if (room == 1 && usr.id != 1)
             socket.emit('list_msg_admin', room, user_receiv, usr.id);
-        else{
+        else if(room == 1 && usr.id == 1){
+			socket.emit('list_msg_for_admin', room, user_receiv, usr.id);
+		}else{
             socket.emit('list_msg', room, user_receiv, usr.type); 
             socket.emit('update_services', usr.id, room, user_receiv);
             //socket.emit('update_modeles_devis', user.id, room, user_receiv);
@@ -199,7 +202,7 @@ function on_form_contact_submit(e){
 				if (user.id != null && user.id != "null"){
 					//console.log(data);
 					//console.log(socket);
-					switchRoom(1, 1, "Admin", "Admin", 1, 'admin@label-onair.com', user);
+					switchRoom(1, 1, "Admin", "Admin", 1, 'admin@label-onair.com', '/asset/content/img/default_admin.png', user);
 					socket.emit('sendchat', contact, user.id, user_request, "iframe-chat");
 					//socket.emit('sendNotif', data.notif);
 				}
@@ -273,7 +276,7 @@ function on_reservation_link_click(e){
 						request_state : 0
 					}
 					//console.log(contact);
-					switchRoom(roomDisplay_from_session, user_receiv_from_session.id_coresp, user_receiv_from_session.nom, user_receiv_from_session.prenom, user_receiv_from_session.type, user_receiv_from_session.mail, user);
+					switchRoom(roomDisplay_from_session, user_receiv_from_session.id_coresp, user_receiv_from_session.nom, user_receiv_from_session.prenom, user_receiv_from_session.type, user_receiv_from_session.mail, user_receiv_from_session.img_chat, user);
 					socket.emit('sendchat', rdv, userId, user_receiv_from_session, "iframe-chat");
 				}
 			}
