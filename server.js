@@ -54,6 +54,7 @@ const validRegister = require('./route/valid_register')
 /*Modeles*/
 const notifications = require('./models/notifications').actions
 const socket_manage = require('./models/socket_manager').default
+const random_code_gen = require('./models/code_gen').default
 // SECURE HTTP POUR SOCKET IO
 const http = require('http').Server(app)
 const io = require('socket.io')(http)
@@ -137,10 +138,18 @@ app.get('/index', (request, response) => {
     response.locals.session = request.session
 	response.render('pages/index')
 })
-
 app.get('*', function(req, res){
     res.status('404').send('404 Not Found !')
 })
+//random_code_gen = new CodeGenerator()
+// console.log("converting string : "+new Date().getTime())
+// var tok = random_code_gen.convertBase("156..4.69", random_code_gen.getBase63(), random_code_gen.getBase10())
+// .then((res) => {
+//     console.log(res.toString(10))
+//     return random_code_gen.convertBase(res.toString(10), random_code_gen.getBase10(), random_code_gen.getBase63()) 
+// })
+// .then((res2) => console.log(res2))
+// .catch((err => console.log(err)))
 let userGlobal = []
 // EMESSION DE SOCKET
 io.sockets.on('connection', function (socket) {
