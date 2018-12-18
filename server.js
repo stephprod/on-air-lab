@@ -141,15 +141,14 @@ app.get('/index', (request, response) => {
 app.get('*', function(req, res){
     res.status('404').send('404 Not Found !')
 })
-//random_code_gen = new CodeGenerator()
-// console.log("converting string : "+new Date().getTime())
-// var tok = random_code_gen.convertBase("156..4.69", random_code_gen.getBase63(), random_code_gen.getBase10())
-// .then((res) => {
-//     console.log(res.toString(10))
-//     return random_code_gen.convertBase(res.toString(10), random_code_gen.getBase10(), random_code_gen.getBase63()) 
-// })
-// .then((res2) => console.log(res2))
-// .catch((err => console.log(err)))
+console.log("converting string : ")
+var tok = random_code_gen.obj.convertBase("156..4.69", random_code_gen.base63, random_code_gen.base54)
+.then((res) => {
+    console.log(res)
+    return random_code_gen.obj.convertBase(res, random_code_gen.base54, random_code_gen.base63) 
+})
+.then((res2) => console.log(res2))
+.catch((err => console.log(err)))
 let userGlobal = []
 // EMESSION DE SOCKET
 io.sockets.on('connection', function (socket) {

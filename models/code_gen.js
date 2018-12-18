@@ -5,18 +5,6 @@ const BASE54 = '23456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ';
 const BASE63 = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.';
 const BASE10 = '0123456789';
 class CodeGenerator{
-    static getBase16(){
-        return (BASE16);
-    }
-    static getBase54(){
-        return (BASE54);
-    }
-    static getBase63(){
-        return (BASE63);
-    }
-    static getBase10(){
-        return (BASE10);
-    }
     /**
      * Convert a number from any base to any other base.
      * @param int|string value The number to convert.
@@ -77,4 +65,10 @@ class CodeGenerator{
     }
 }
 
-exports.default = CodeGenerator;
+exports.default = {
+    obj: CodeGenerator,
+    base10: BASE10,
+    base16: BASE16,
+    base54: BASE54,
+    base63: BASE63,
+};
