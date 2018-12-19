@@ -3,6 +3,7 @@ const express = require('express')
 const router = express.Router()
 const notifications = require('../models/notifications').actions
 const CryptoJS = require("crypto-js");
+const random_code_gen = require('../models/code_gen').default
 const endpointSecret = 'whsec_X7hNnuFPvgx9XgV0Ti4MqBNmrzgJOefz'
 const User = require('../models/req_user')
 // Retrieve the raw body as a buffer and match all content types
@@ -64,19 +65,33 @@ function extract_and_check_signature(sig, body, delta_in_ms){
 function manage_event_response(wh_datas, response){
     if (wh_datas.type.indexOf("payment_intent") !== -1)
         payment_intent_responses(wh_datas, response)
+        .then(() => {
+            response.status(200).send({received: true})
+        }, (err) => {
+            response.status(500).send({received: true, error: err})
+        }).catch((err) => {
+            response.status(500).send({received: true, error: err})
+        })
     else if (wh_datas.type.indexOf("charge") !== -1)
         charge_responses(wh_datas, response)
+        .then(() => {
+            response.status(200).send({received: true})
+        }, (err) => {
+            response.status(500).send({received: true, error: err})
+        }).catch((err) => {
+            response.status(500).send({received: true, error: err})
+        })
 }
 function charge_responses(wh_datas, resp){
-    get_user_in_event(wh_datas.data.object.source.owner.name)
+    return get_user_in_event(wh_datas.data.object.source.owner.name)
     .then((user) => {
         if (wh_datas.type == "charge.succeeded"){
-            return send_notification(user, wh_datas.data.object.amount, resp, "accept")
+            send_notification(user, wh_datas.data.object.amount, "accept")
             .then(() => {
                 insert_new_abo(resp, "valide", wh_datas, user)
             })
         }else{
-            return send_notification(user, wh_datas.data.object.amount, resp, "deny")
+            send_notification(user, wh_datas.data.object.amount, "deny")
             .then(() => {
                 insert_new_abo(resp, "annule", wh_datas, user)
             })
@@ -85,46 +100,51 @@ function charge_responses(wh_datas, resp){
 }
 function payment_intent_responses(wh_datas, resp){
     if (wh_datas.type != "payment_intent.created"){
-        get_user_in_event(wh_datas.data.object.charges.data[0].source.owner.email).then((user) => {
+        return get_user_in_event(wh_datas.data.object.charges.data[0].source.owner.email).then((user) => {
             if (wh_datas.type == "payment_intent.succeeded"){
-                return send_notification(user, wh_datas.data.object.amount, resp, "accept")
-                .then(() => {
-                    insert_new_payment(resp, "valide", wh_datas, user)
-                })
+                insert_new_payment("valide", wh_datas, user)
+                    .then((res) => {
+                        let hash = res.id + '-' + res.datePayment.to2DigitsString()
+                        //console.log("HASH : "+hash)
+                        random_code_gen.obj.convertBase(hash, random_code_gen.base12, random_code_gen.base54)
+                        .then((code) => {
+                            send_notification(user, wh_datas.data.object.amount, "accept", code)
+                        })
+                    })
             }else{
-                return send_notification(user, wh_datas.data.object.amount, resp, "deny")
-                .then(() => {
-                    insert_new_payment(resp, "annule", wh_datas, user)
-                })
+                return send_notification(user, wh_datas.data.object.amount, "deny")
+                    .then(() => {
+                        insert_new_payment("annule", wh_datas, user)
+                    })
             }
         })
     }else{
         resp.status(200).send({received: true})
     }
 }
-function send_notification(userDest, amount, resp, action){
-    return notifications.webhook_payment_mail(userDest, "payment_intent", action, (amount/100))
+function send_notification(userDest, amount, action, code = ''){
+    return notifications.webhook_payment_mail(userDest, code, "payment_intent", action, (amount/100))
     .catch((err) => console.log(err))
 }
 
-function insert_new_payment(resp, action, wh_datas, user_from){
+function insert_new_payment(action, wh_datas, user_from){
     let table = [], dateInMilis = parseInt(wh_datas.data.object.created), id_pro, amount = 0
     id_pro = wh_datas.data.object.statement_descriptor.split(" ")[1]
     if(dateInMilis < 10000000000) 
         dateInMilis *= 1000; // convert to milliseconds (Epoch is usually expressed in seconds, but Javascript uses Milliseconds)
     amount = parseFloat(wh_datas.data.object.amount) / 100
     table.push("PRESTATION", action, wh_datas.data.object.description, id_pro, user_from.id, amount, new Date(dateInMilis))
-    User.create_payment(table, (result, resolve, reject) => {
-        let valid = result.changedRows != 0 ? result.changedRows : result.affectedRows
+    return User.create_payment(table, (result, resolve, reject) => {
+        let valid = result.insertId
         if (valid > 0){
-            resolve()
+            let ret = {
+                datePayment: new Date(dateInMilis),
+                id: valid
+            }
+            resolve(ret)
         }else{
             reject(new Error("Insertion du paiement echouée !"))
         }
-    }).then(() => {
-        resp.status(200).send({received: true})
-    }, (err) => {
-        resp.status(500).send({received: true, error: err})
     })
 }
 function insert_new_abo(resp, action, wh_datas, user_from){
@@ -133,17 +153,13 @@ function insert_new_abo(resp, action, wh_datas, user_from){
         dateInMilis *= 1000; // convert to milliseconds (Epoch is usually expressed in seconds, but Javascript uses Milliseconds)
     amount = parseFloat(wh_datas.data.object.amount) / 100
     table.push("ABONNEMENT", action, "Nouvelle abonnement LabelOnAir", user_from.id, amount, new Date(dateInMilis))
-    User.create_payment_abo(table, (result, resolve, reject) => {
+    return User.create_payment_abo(table, (result, resolve, reject) => {
         let valid = result.changedRows != 0 ? result.changedRows : result.affectedRows
         if (valid > 0){
             resolve()
         }else{
             reject(new Error("Insertion de l'abonnement echouée !"))
         }
-    }).then(() => {
-        resp.status(200).send({received: true})
-    }, (err) => {
-        resp.status(500).send({received: true, error: err})
     })
 }
 function get_user_in_event(user_mail){
@@ -157,5 +173,12 @@ function get_user_in_event(user_mail){
         })
     })
 }
+
+Date.prototype.to2DigitsString = function() {
+    return this.getUTCHours().toString(10).padStart(2, '0') +
+        this.getUTCDate().toString(10).padStart(2, '0') +
+        (this.getUTCMonth() + 1).toString(10).padStart(2, '0') +
+        this.getUTCFullYear().toString(10).substring(2);
+};
 
 module.exports = router

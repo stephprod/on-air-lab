@@ -1,7 +1,7 @@
 const express = require('express')
 const User = require('../models/req_user')
 const validator = require('../middlewares/valid_form').register_updatePassword
-
+const CryptoJS = require("crypto-js");
 const router = express.Router()
 
 router.param('token', (req, res, next, token) => {
@@ -35,6 +35,9 @@ router.route('/updatePassword/:token')
 		for (let prop in request.body){
 			table.push(request.body[prop])
 		}
+		var hmac = CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA256, request.session.token)
+		hmac.update(table[0]);
+		table[0] = hmac.finalize().toString()
 		User.updateUser("mot_de_passe='"+table[0]+"' WHERE jeton='"+request.session.token+"'"
 		, (result) => {
 			if (result > 0)

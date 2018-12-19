@@ -4,6 +4,7 @@ const BASE16 = "0123456789ABCDEF";
 const BASE54 = '23456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ';
 const BASE63 = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.';
 const BASE10 = '0123456789';
+const BASE12 = '0123456789.-';
 class CodeGenerator{
     /**
      * Convert a number from any base to any other base.
@@ -14,7 +15,7 @@ class CodeGenerator{
      * @throws Exception If a digit is outside the base.
     */
     static convertBase(value, inDigits, outDigits){
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             var inBase = inDigits.length;
             var outBase = outDigits.length;
             var decimal = '0';
@@ -25,7 +26,7 @@ class CodeGenerator{
             //value = ltrim(value, '-0');
             var len = value.length;
             //resolve(value);
-            if (len >= 10 && inBase > 10){
+            if (len >= 10 && inBase == 63){
                 throw new Error("To large input hash length !");
             }
             for (var k=0; k<len; k++){
@@ -68,6 +69,7 @@ class CodeGenerator{
 exports.default = {
     obj: CodeGenerator,
     base10: BASE10,
+    base12: BASE12,
     base16: BASE16,
     base54: BASE54,
     base63: BASE63,

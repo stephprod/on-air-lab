@@ -142,7 +142,7 @@ class MailTemplate{
 		param.content += '<p style="margin:0px;"><b>LabelOnAir</b></p>'
 		return param
 	}
-	static generateClassicHtmlPaymentTemplate(userInfoReceiver, action, typeMessage, website_path, amount){
+	static generateClassicHtmlPaymentTemplate(userInfoReceiver, action, typeMessage, website_path, amount, code){
 		let p = {}
 		//console.log(events);
 		//p.events = events
@@ -157,8 +157,14 @@ class MailTemplate{
 			p.content = '<p>'
 			switch (typeMessage){
 				case "payment_intent":
-					p.content += action == "accept" ? 'Ton paiement de '+amount+' € a été validé !' : 
-					'Ton paiment de '+amount+' € a été refusé  !'
+					if (code !== ''){
+						p.content += action == "accept" ? "Ton paiement de "+amount+" € a été validé !" +
+							"<p><b>Lors de ta rencontre avec le professionnel n'oublie pas de lui fournir le code suivant à la fin de la prestation : "+code+"</b></p>" : 
+							"Ton paiment de '+amount+' € a été refusé  !"
+					}else{
+						p.content += action == "accept" ? "Ton paiement de "+amount+" € a été validé ! <br>" : 
+							"Ton paiment de '+amount+' € a été refusé  !"
+					}
 					p.subject = "Nouveau paiement !"
 					break;
 				default:

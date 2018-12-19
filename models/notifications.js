@@ -62,9 +62,9 @@ class Notif{
             }).catch((err) => err)
         })
     }
-    sendPaymentEmail (path){
+    sendPaymentEmail (path, code){
         return new Promise((resolve, reject) => {
-            let result = mail_gen.generateClassicHtmlPaymentTemplate(this.objReceiver, this.action, this.type, path, this.amount)
+            let result = mail_gen.generateClassicHtmlPaymentTemplate(this.objReceiver, this.action, this.type, path, this.amount, code)
             //console.log(result)
             axios.get(path+"/generateMail", {params: result}).then((res) => {
                 //console.log(res.data)
@@ -108,7 +108,7 @@ exports.actions = {mail: (receiver, sender, type_message = null, action = null, 
     .then((result) => result, 
         (err) => err)
     .catch((err) => err),
-    webhook_payment_mail: (receiver, type_message = null, action = null, amount = 0) => new Notif(receiver, null, type_message, action, null, amount).sendPaymentEmail("http://localhost:4000")
+    webhook_payment_mail: (receiver, transac_code, type_message = null, action = null, amount = 0) => new Notif(receiver, null, type_message, action, null, amount).sendPaymentEmail("http://localhost:4000", transac_code)
     .then((result) => result)
     .catch((err) => err),
     mail_with_links: (receiver, type_message = null, webPath) => new Notif(receiver, null, type_message, null, null, null, webPath).sendEmail("http://localhost:4000")  
