@@ -150,7 +150,7 @@ import {update_front_with_msg, update_front_with_errors} from './front-update.js
 		datas.code = input.val();
 		datas.profil = parent.data("profil");
 		//datas.id_profil = div.data("profil");
-		console.log(datas);
+		//console.log(datas);
 		$.ajax({
 			type: "POST",
 			url: "/get-payment",
@@ -158,13 +158,14 @@ import {update_front_with_msg, update_front_with_errors} from './front-update.js
 			beforeSend: function (req){
 				req.setRequestHeader("x-access-token", token);
 			},
+			async: false,
 			success: function (data){
 				update_front_with_msg(data, "msg-tab");
 				// if (!data.success[0])
 				// 	update_front_with_errors(data.errors);
 				// else
 				// 	document.location = "/info-pro";
-				console.log(data);
+				//console.log(data);
 			}
 		});
 	}
