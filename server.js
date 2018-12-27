@@ -50,11 +50,13 @@ const pay_module_pro = require('./route/payment_pro_module')
 const pay_intent = require('./route/payment_intent')
 const plan3dsecure = require('./route/plan3dsecure')
 const validRegister = require('./route/valid_register')
+const get_paid = require('./route/get_payment')
+const delete_plan = require('./route/delete_plan')
 //const loginFast = require('./route/login_fast')
 /*Modeles*/
 const notifications = require('./models/notifications').actions
 const socket_manage = require('./models/socket_manager').default
-const random_code_gen = require('./models/code_gen').default
+// const random_code_gen = require('./models/code_gen').default
 // SECURE HTTP POUR SOCKET IO
 const http = require('http').Server(app)
 const io = require('socket.io')(http)
@@ -130,6 +132,8 @@ app.use('/', pay_intent)
 app.use('/', plan3dsecure)
 app.use('/', validRegister)
 //app.use('/', loginFast)
+app.use('/', get_paid)
+app.use('/', delete_plan)
 app.get('/', (request, response) => {
     response.locals.session = request.session
 	response.render('pages/index')

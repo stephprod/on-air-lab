@@ -152,7 +152,7 @@ function insert_new_abo(resp, action, wh_datas, user_from){
     if(dateInMilis < 10000000000) 
         dateInMilis *= 1000; // convert to milliseconds (Epoch is usually expressed in seconds, but Javascript uses Milliseconds)
     amount = parseFloat(wh_datas.data.object.amount) / 100
-    table.push("ABONNEMENT", action, "Nouvelle abonnement LabelOnAir", user_from.id, amount, new Date(dateInMilis))
+    table.push("ABONNEMENT", action, "Nouvelle abonnement LabelOnAir", user_from.id, amount, new Date(dateInMilis), wh_datas.data.object.source.id, wh_datas.data.object.source.metadata.plan_id)
     return User.create_payment_abo(table, (result, resolve, reject) => {
         let valid = result.changedRows != 0 ? result.changedRows : result.affectedRows
         if (valid > 0){

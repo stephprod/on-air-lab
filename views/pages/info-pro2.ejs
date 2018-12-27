@@ -230,13 +230,13 @@
 									<span>Mes devis</span>
 									<div class="button-triangle2"></div>
 								</a>
-							</li> 
+							</li> -->
 							<li role="presentation">
 								<a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">
-									<span>Paiement</span>
+									<span>Récupérer un paiement</span>
 									<div class="button-triangle2"></div>
 								</a>
-							</li> -->
+							</li> 
 						</ul>
 
 						<!-- Tab panes -->
@@ -451,39 +451,39 @@
 							</div>
 							<div role="tabpanel" class="tab-pane" id="profile">
 									<% if (locals.etabObj.length > 0) { %>
-									<div id="tarif-form-<%= locals.offObj[0].id_profil %>" action="#" method="Post" data-profil="<%= locals.offObj[0].id_profil %>" >
-											<div id="form-result"></div>
-											<div class="adv-search-range-cont">
-												<label for="slider-t-price-min-value" class="adv-search-label">Prix minimum:</label>
-												<span>€</span>
-												<input type="text" id="slider-t-price-min-value" readonly class="adv-search-amount">
+										<div id="tarif-form-<%= locals.offObj[0].id_profil %>" action="#" method="Post" data-profil="<%= locals.etabObj[0].id_profil %>" >
+												<div id="form-result"></div>
+												<div class="adv-search-range-cont">
+													<label for="slider-t-price-min-value" class="adv-search-label">Prix minimum:</label>
+													<span>€</span>
+													<input type="text" id="slider-t-price-min-value" readonly class="adv-search-amount">
+													<div class="clearfix"></div>
+													<div id="slider-t-price-min" data-val="<%= (locals.etabObj[0].prix_h * locals.etabObj[0].nbr_h_min) %>" data-min="0" data-max="240000" class="slider"></div>
+												</div>
+												<div class="adv-search-range-cont">
+													<label for="slider-t-price-h-value" class="adv-search-label">Prix horaire:</label>
+													<span>€/h</span>
+													<input type="text" id="slider-t-price-h-value" class="adv-search-amount" />
+													<div class="clearfix"></div>
+													<div id="slider-t-price-h" data-val="<%= locals.etabObj[0].prix_h %>" data-min="0" data-max="10000" class="slider"></div>
+												</div>
+												<div class="adv-search-range-cont">
+													<label for="slider-t-h-min-value" class="adv-search-label">Nombre d'heures minimum de prestation :</label>
+													<span>h</span>
+													<input type="text" id="slider-t-h-min-value"  class="adv-search-amount" />
+													<div class="clearfix"></div>
+													<div id="slider-t-h-min" data-val="<%= locals.etabObj[0].nbr_h_min %>" data-min="0" data-max="24" class="slider"></div>
+												</div>
+												<div class="form-submit-cont">
+													<a href="#" data-action="tarif" class="button-primary button-full" id="form-submit" data-form="tarif-form-<%= locals.offObj[0].id_profil %>">
+														<span>Modifier</span>
+														<div class="button-triangle"></div>
+														<div class="button-triangle2"></div>
+														<div class="button-icon"><i class="fa fa-paper-plane"></i></div>
+													</a>
 												<div class="clearfix"></div>
-												<div id="slider-t-price-min" data-val="<%= (locals.etabObj[0].prix_h * locals.etabObj[0].nbr_h_min) %>" data-min="0" data-max="240000" class="slider"></div>
 											</div>
-											<div class="adv-search-range-cont">
-												<label for="slider-t-price-h-value" class="adv-search-label">Prix horaire:</label>
-												<span>€/h</span>
-												<input type="text" id="slider-t-price-h-value" class="adv-search-amount">
-												<div class="clearfix"></div>
-												<div id="slider-t-price-h" data-val="<%= locals.etabObj[0].prix_h %>" data-min="0" data-max="10000" class="slider"></div>
-											</div>
-											<div class="adv-search-range-cont">
-												<label for="slider-t-h-min-value" class="adv-search-label">Nombre d'heures minimum de prestation :</label>
-												<span>h</span>
-												<input type="text" id="slider-t-h-min-value"  class="adv-search-amount">
-												<div class="clearfix"></div>
-												<div id="slider-t-h-min" data-val="<%= locals.etabObj[0].nbr_h_min %>" data-min="0" data-max="24" class="slider"></div>
-											</div>
-											<div class="form-submit-cont">
-												<a href="#" data-action="tarif" class="button-primary button-full" id="form-submit" data-form="tarif-form-<%= locals.offObj[0].id_profil %>">
-													<span>Modifier</span>
-													<div class="button-triangle"></div>
-													<div class="button-triangle2"></div>
-													<div class="button-icon"><i class="fa fa-paper-plane"></i></div>
-												</a>
-											<div class="clearfix"></div>
 										</div>
-									</div>
 									<% } else { %>
 										<div id="tarif-form-0">
 											Veuillez remplir votre profil afin d'éditer la tarification de votre service principal.
@@ -556,10 +556,25 @@
 							</div>
 							<div role="tabpanel" class="tab-pane" id="settings">
 								<% if (locals.etabObj.length > 0) { %>
-									<img src="/asset/images/sidebar-featured1.jpg" alt="" class="p-image"/>If you’re looking for a home then pop in and see us or Contact Us. We do market all our properties on the big property websites and our own site but we may have  new on our books that you could see first before we start our marketing and you don’t want to miss out on your perfect home! If you sell your home with us and use our partner company for either a survey or to arrange your mortgage then we will reduce our fees by 0.5%.
+									<div id="get-payment-form" action="#" method="Post" data-profil="<%= locals.etabObj[0].id_profil %>" >
+										<div id="form-result"></div>
+										<div class="adv-search-range-cont">
+											<label for="code-payment" class="adv-search-label">Code :</label>
+											<input type="text" id="code-payment" class="adv-search-amount">
+											<div class="clearfix"></div>
+										</div>
+										<div class="form-submit-cont">
+											<a href="#" data-action="get-payment" class="button-primary button-full" data-form="get-payment-form">
+												<span>Vérifier</span>
+												<div class="button-triangle"></div>
+												<div class="button-triangle2"></div>
+												<div class="button-icon"><i class="fa fa-paper-plane"></i></div>
+											</a>
+										<div class="clearfix"></div>
+									</div>						
 								<% } else { %>
 									<div id="page-wrap">
-										Veuillez remplir votre profil afin d'éditer votre méthode de prélèvement.
+										Veuillez remplir votre profil afin de pouvoir récupérer des paiements.
 									</div>
 								<% } %>
 							</div>

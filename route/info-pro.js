@@ -10,7 +10,7 @@ router.route('/info-pro')
 		let serv = []
 		let allServ = []
 		let devis = []
-		let presta = []
+		//let presta = []
 		let etab = []
 		//DEBUG
 		//request.session.userId = 18
@@ -145,10 +145,10 @@ router.route('/info-pro')
 				let tableDelete = []
 				let finalResult = 0
 				tableDelete.push(request.session.userId)
-				User.delete_services_for_user(tableDelete, (res) =>{
+				User.delete_services_for_user(tableDelete, () =>{
 					if (servicesChecked !== undefined){
 						tableInsert.push(request.session.userId)
-						for (k in servicesChecked){
+						for (var k in servicesChecked){
 							setTimeout((function(k, tableInsert) {
 								return function(){
 									tableInsert[1] = servicesChecked[k]
@@ -188,3 +188,4 @@ router.route('/info-pro')
 })
 
 module.exports = router
+

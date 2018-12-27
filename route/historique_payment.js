@@ -9,7 +9,7 @@ router.route('/historique_payment')
         let obj = [];
         User.historique_payment(request.session.userId, (result, resolve, reject) => {
             if(result.length > 0){
-                for(k in result){
+                for(var k in result){
                     let curr = result[k]
                     curr.class = result[k].state_payment
                     if(result[k].state_payment == 'annule')
@@ -28,10 +28,8 @@ router.route('/historique_payment')
             }
         }).then((result) => {
             response.render('pages/historique_abo', {objPayment : result})
-        }, (err) => {
+        }, () => {
             response.render('pages/historique_abo', {objPayment : null})
         })
-	})
-	.post((request, response) => {
 	})
 module.exports = router

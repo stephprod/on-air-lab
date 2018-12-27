@@ -35,16 +35,21 @@ router.route('/payment')
                 // console.log(err)
                 // console.log("plan : ")
                 // console.log(plan);
-                stripe.subscriptions.create({
-                    customer: customer.id,
-                    items: [{
-                        plan: plan.id,
-                    }]
-                }, function() {
-                    // console.log("subscription : ")
-                    // console.log(subscription)
-                    // console.log(err)
-                    res.end()
+                stripe.sources.update(req.body.stripeToken, {
+                    metadata: {plan_id: plan.id}
+                }, function(){
+                    stripe.subscriptions.create({
+                        customer: customer.id,
+                        items: [{
+                            plan: plan.id,
+                        }]
+                    }, function() {
+                        // console.log("subscription : ")
+                        // console.log(subscription)
+                        // console.log(err)
+                        // asynchronously called
+                        res.end()
+                    });
                 });
             });
         });

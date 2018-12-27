@@ -137,6 +137,37 @@ import {update_front_with_msg, update_front_with_errors} from './front-update.js
 			}
 		});
 	}
+	function on_code_payment_check_link_click(e){
+		e.preventDefault();
+		var parent = $(e.target).parents("#get-payment-form");
+		var link = parent.find("a[data-action='get-payment']");
+		var input = parent.find("input#code-payment");
+		if (link.length == 0)
+			link = $(e.target);
+		var datas = {};
+		//var div = $("div#"+$(link[0]).data("form"));
+		//console.log($(event.target).parents("a"));
+		datas.code = input.val();
+		datas.profil = parent.data("profil");
+		//datas.id_profil = div.data("profil");
+		console.log(datas);
+		$.ajax({
+			type: "POST",
+			url: "/get-payment",
+			data: datas,
+			beforeSend: function (req){
+				req.setRequestHeader("x-access-token", token);
+			},
+			success: function (data){
+				update_front_with_msg(data, "msg-tab");
+				// if (!data.success[0])
+				// 	update_front_with_errors(data.errors);
+				// else
+				// 	document.location = "/info-pro";
+				console.log(data);
+			}
+		});
+	}
 	function on_etab_valid_link_click(e){
 		var datas = {};
 		e.preventDefault();
@@ -227,6 +258,8 @@ import {update_front_with_msg, update_front_with_errors} from './front-update.js
 	var sliders_tarification = $("div[id^='slider-t-']");
 	var etab_valid_link = $("a[data-action='etablissement']");
 	var off_delete_div = $("div.delete-off");
+	var code_payment_check_link = $("a[data-action='get-payment']");
+	code_payment_check_link.on("click", on_code_payment_check_link_click);
 	etab_valid_link.on("click", on_etab_valid_link_click);
 	off_delete_div.on("click", on_off_delete_div_click);
 	$(sliders_tarification[0]).slider({});
@@ -303,9 +336,32 @@ import {update_front_with_msg, update_front_with_errors} from './front-update.js
 var price = 1999;
 $(document).on('click', '#customButton', function(e) {
 	e.preventDefault();
-    sendPlan();
+	if ($("#customButton").data("action") == "create")
+		sendPlan();
+	else
+		deletePlan();
 })
-
+function deletePlan(){
+	var datas = {
+		id: user.id,
+		email: user.mail,
+		token: token
+	};
+	$.ajax({
+		type: "POST",
+		url: "/delete-plan",
+		beforeSend: function (req){
+			req.setRequestHeader("x-access-token", token);
+		},
+		data: datas,
+		success: function (data){
+			update_front_with_msg(data, "pro-payment-msg");
+			console.log(data);
+			//Refresh de page cause --> trop d'éléments à maj
+			document.location.refresh()
+		}
+	})
+}
 function sendPlan() {
 	var stripePublishableKey = 'pk_test_L0T2zWeT0uLcyhZCD1Nfqzx2';
 	var currency = 'eur';

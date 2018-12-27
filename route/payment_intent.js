@@ -1,4 +1,4 @@
-const stripe = require('stripe')("sk_test_o35xg7SsHTft63zVgw2Qm05p");
+const stripe = require('stripe')("sk_test_o35xg7SsHTft63zVgw2Qm05p")
 const express = require('express')
 const router = express.Router()
 const User = require('../models/req_user')

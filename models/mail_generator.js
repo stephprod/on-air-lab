@@ -4,7 +4,7 @@ class MailTemplate{
 		let type_receiver_libelle
 		switch(userInfoReceiver.type){
 			case 1:
-				type_receiver_libelle = "Adlinistrateur"
+				type_receiver_libelle = "Administrateur"
 				break;
 			case 2:
 				type_receiver_libelle = "Professionnel audio"
@@ -123,6 +123,13 @@ class MailTemplate{
 						'Des utilisateurs t\'attendent, connecte toi au plus vite !'
 					param.subject = "Bienvenue dans la communauté 'LabelOnAir' !"
 					break;
+				case "plan_deleted":
+					param.content += "Tu viens de clôturer ton abonnement à nos services. <br><br>"+
+						"Cette action est effective à reception de ce mail. <br>"+
+						"Afin de pouvoir continuer à profiter de nos services tu peux à tout moment retourner sur <a href='"+website_path+"'><b>notre site</b></a> et créer un nouvel abonnement.<br><br>"+
+						"Des utilisateurs t'attendent, connecte toi au plus vite !<br><br>"
+					param.subject = "Résiliation d'abonnement !"
+					break;
 				default:
 					param.content += 'Tu as reçu un nouveau message de la part de <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
 					param.subject = "Label-onair - Nouveau message !"
@@ -151,19 +158,19 @@ class MailTemplate{
 		p.action = action
 		p.typeMessage = typeMessage
 		p.website_path = website_path
-		p.typeMail = 'payment'
-		p.content = ''
+		p.typeMail = "payment"
+		p.content = ""
 		if (action != null){
-			p.content = '<p>'
+			p.content = "<p>"
 			switch (typeMessage){
 				case "payment_intent":
-					if (code !== ''){
+					if (code !== ""){
 						p.content += action == "accept" ? "Ton paiement de "+amount+" € a été validé !" +
 							"<p><b>Lors de ta rencontre avec le professionnel n'oublie pas de lui fournir le code suivant à la fin de la prestation : "+code+"</b></p>" : 
-							"Ton paiment de '+amount+' € a été refusé  !"
+							"Ton paiment de "+amount+" € a été refusé  !"
 					}else{
 						p.content += action == "accept" ? "Ton paiement de "+amount+" € a été validé ! <br>" : 
-							"Ton paiment de '+amount+' € a été refusé  !"
+							"Ton paiment de "+amount+" € a été refusé  !"
 					}
 					p.subject = "Nouveau paiement !"
 					break;
@@ -171,14 +178,14 @@ class MailTemplate{
 					p.subject = "Label-onair - Nouveau message !"
 					break;
 			}
-			p.content += '</p>'
+			p.content += "</p>"
 			//console.log(p)
 		}else{
-			p.content = '<p>'
-			p.content += '</p>'
+			p.content = "<p>"
+			p.content += "</p>"
 		}
-		p.content += '<p style="margin:0px;">Bien cordialement, </p>'
-		p.content += '<p style="margin:0px;"><b>LabelOnAir</b></p>'
+		p.content += "<p style='margin:0px;'>Bien cordialement, </p>"
+		p.content += "<p style='margin:0px;'><b>LabelOnAir</b></p>"
 		return p
 	}
 }

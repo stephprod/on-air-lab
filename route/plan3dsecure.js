@@ -4,6 +4,7 @@ const router = express.Router()
 
 router.route('/plan3dsecure')
     .get((req, res) => {
+        //console.log(req.query)
         stripe.plans.create({
             amount: parseFloat(req.query.amount),
             interval: "month",
@@ -13,20 +14,33 @@ router.route('/plan3dsecure')
             // console.log(err)
             // console.log("plan : ")
             // console.log(plan);
-            stripe.subscriptions.create({
-                customer: req.query.cust,
-                items: [
-                    {
-                        plan: plan.id,
-                    },
-                ]
-                }, function() {
-                    // console.log("subscription : ")
-                    // console.log(subscription)
-                    // console.log(err)
-                    res.redirect('/info-pro')
+            stripe.customers.retrieve(req.query.cust,
+            function(err, customer) {
+                // asynchronously called
+                stripe.sources.retrieve(customer.sources.data[0].id
+                , function(err, source) {
+                    //console.log(source.id)
+                    stripe.sources.update(source.id, {
+                        metadata: {plan_id: plan.id}
+                    }, function(){
+                        stripe.subscriptions.create({
+                            customer: req.query.cust,
+                            items: [
+                                {
+                                    plan: plan.id,
+                                },
+                            ]
+                        }, function() {
+                            // console.log("subscription : ")
+                            // console.log(subscription)
+                            // console.log(err)
+                            // asynchronously called
+                            res.redirect("/info-pro")
+                        });
+                    })
                 });
-        });
+            });
+        })
     })
 
     module.exports = router

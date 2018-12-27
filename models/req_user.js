@@ -1276,7 +1276,7 @@ class User{
     }
     static create_payment_abo(table, cb){
         return new Promise((resolve, reject) => {
-            let r = db.query('INSERT INTO `payments`(`type_payment`, `state_payment`, `desc_payment`, `id_pro`, `price_payment`, `date_payment`) '+
+            let r = db.query('INSERT INTO `payments`(`type_payment`, `state_payment`, `desc_payment`, `id_pro`, `price_payment`, `date_payment`, `source`, `plan`) '+
                 'VALUES (?)', [table], (err, result) => {
                 if(err){
                     console.log(r.sql)
@@ -1296,6 +1296,39 @@ class User{
                 }
                 cb(result, resolve, reject);
             });
+        })
+    }
+    static get_payment(table, cb){
+        return new Promise((resolve, reject) =>{
+            let r = db.query("SELECT * FROM `payments` WHERE `id_p`=?", [table], (err, res) => {
+                if (err){
+                    console.log(r.sql)
+                    throw err
+                }
+                cb(res, resolve, reject)
+            })
+        })
+    }
+    static get_pro_payment_source(table, cb){
+        return new Promise((resolve, reject) =>{
+            let r = db.query("SELECT * FROM `payments` WHERE `id_pro`=? AND `type_payment`='ABONNEMENT' ORDER BY `date_payment` DESC LIMIT 1", [table], (err, res) => {
+                if (err){
+                    console.log(r.sql)
+                    throw err
+                }
+                cb(res, resolve, reject)
+            })
+        })
+    }
+    static update_pro_payment_source_after_delete(table, cb){
+        return new Promise((resolve, reject) =>{
+            let r = db.query("UPDATE `payments` SET `state_payment`='annule' WHERE `id_pro`=? AND `type_payment`='ABONNEMENT' ORDER BY `date_payment` DESC LIMIT 1", [table], (err, res) => {
+                if (err){
+                    console.log(r.sql)
+                    throw err
+                }
+                cb(res, resolve, reject)
+            })
         })
     }
 }
