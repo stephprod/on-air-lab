@@ -169,7 +169,8 @@ class MailTemplate{
 							"<p><b>Lors de ta rencontre avec le professionnel n'oublie pas de lui fournir le code suivant à la fin de la prestation : "+code+"</b></p>" : 
 							"Ton paiment de "+amount+" € a été refusé  !"
 					}else{
-						p.content += action == "accept" ? "Ton paiement de "+amount+" € a été validé ! <br>" : 
+						p.content += action == "accept" ? "Ton paiement de "+amount+" € a été validé ! <br><br>"+
+							"Il ne te manque plus qu'à te reconnecter pour profiter de nos services sans restrictions !" : 
 							"Ton paiment de "+amount+" € a été refusé  !"
 					}
 					p.subject = "Nouveau paiement !"

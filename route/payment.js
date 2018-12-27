@@ -18,6 +18,9 @@ router.route('/payment')
         })
     })
 	.post((req, res) => {
+        let ret = {}
+        ret.success = []
+        ret.global_msg = []
         stripe.customers.create({
             description: `${req.session.userId} ${req.body.prenom} ${req.body.nom}`,
             source: req.body.stripeToken
@@ -43,12 +46,19 @@ router.route('/payment')
                         items: [{
                             plan: plan.id,
                         }]
-                    }, function() {
+                    }, function(err, subscription) {
                         // console.log("subscription : ")
                         // console.log(subscription)
                         // console.log(err)
                         // asynchronously called
-                        res.end()
+                        if (err){
+                            ret.success.push(false)
+                            ret.global_msg.push("Une erreur est survenue lors de la création de l'abonnement ! (etape souscrition)")
+                        }else{
+                            ret.success.push(true)
+                            ret.global_msg.push("La création de ton abonnement est en cours, tu devrais recevoir un mail de confirmation dans un délai de 1h maximum !", "A réception de ce mail tu devras te reconnecter pour que les changements soient effectifs !")
+                        }
+                        res.send(ret)
                     });
                 });
             });

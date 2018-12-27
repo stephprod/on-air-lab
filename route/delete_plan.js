@@ -51,6 +51,7 @@ router.route('/delete-plan')
                 return notifications.mail_with_links(user, "plan_deleted", "http://localhost:4000/info-pro")
             })
             .then(() => {
+                req.session.abonnement = false
                 ret.success.push(true)
                 ret.global_msg.push("Abonnement supprimé avec succès, vous ne serez plus débité automatiquement !")
                 res.send(ret)

@@ -355,11 +355,12 @@ function deletePlan(){
 			req.setRequestHeader("x-access-token", token);
 		},
 		data: datas,
+		async: false,
 		success: function (data){
 			update_front_with_msg(data, "pro-payment-msg");
 			console.log(data);
 			//Refresh de page cause --> trop d'éléments à maj
-			window.location.reload()
+			window.location.reload();
 		}
 	})
 }
@@ -419,10 +420,12 @@ function sendPlan() {
 				type: "POST",
 				url: "/payment",
 				data: data,
+				async: false,
 				beforeSend: function (req) {
 					req.setRequestHeader("x-access-token", session.token);
 				},
 				success: function (data) {
+					update_front_with_msg(data, "pro-payment-msg");
 					console.log('plan souscription ok!! ' + data);
 				}
 			});
@@ -431,6 +434,7 @@ function sendPlan() {
 				type : 'GET',
 				url : '/payment',
 				data : {source : response.source.id},
+				async: false,
 				success : function(data){
 					var returnURL = "http://localhost:4000/plan3dsecure?cust="+data.customer.id+"&amount="+price;
 					stripe.createSource({
