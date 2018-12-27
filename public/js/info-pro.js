@@ -358,7 +358,7 @@ function deletePlan(){
 			update_front_with_msg(data, "pro-payment-msg");
 			console.log(data);
 			//Refresh de page cause --> trop d'éléments à maj
-			document.location.refresh()
+			window.location.reload()
 		}
 	})
 }
