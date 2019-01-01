@@ -9,18 +9,26 @@ router.route('/delete-files')
 	})
 	.post((request, response) => {
 		let table = [], ret = {}
-		console.log(request.body)
-		table.push(request.body.file_profileId)
-		table.push(request.body.path)
-		User.delete_document(table, (res) => {
-			if (res > 0){
-				ret.success = true
-			}
-			else
-			{
-				ret.success = false
-			}
+		ret.success = []
+		ret.global_msg = []
+		if (request.session.token ==  request.headers["x-access-token"]){
+			//console.log(request.body)
+			table.push(request.body.file_profileId)
+			table.push(request.body.path)
+			User.delete_document(table, (res) => {
+				if (res > 0){
+					ret.success.push(true)
+				}
+				else
+				{
+					ret.success.push(false)
+				}
+				response.send(ret)
+			})
+		}else{
+			ret.success.push(false)
+			ret.global_msg.push("Session compromise !")
 			response.send(ret)
-		})
+		}
 	})
 module.exports = router

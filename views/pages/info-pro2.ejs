@@ -3,8 +3,8 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-xs-12 col-lg-12 short-image-title">
-					<h5 class="subtitle-margin second-color">dashboard</h5>
-					<h1 class="second-color">Mon compte</h1>
+					<h5 class="subtitle-margin second-color">Tableau de bord</h5>
+					<h1 class="second-color">Mon profile</h1>
 					<div class="short-title-separator"></div>
 				</div>
 			</div>
@@ -16,17 +16,24 @@
 			<div class="row">
 				<div class="col-xs-12 col-md-3 col-md-push-1">
 					<div class="sidebar-left">
-						<h3 class="sidebar-title">Welcome back<span class="special-color">.</span></h3>
+						<h3 class="sidebar-title">Bon retour parmis nous<span class="special-color">.</span></h3>
 						<div class="title-separator-primary"></div>
 
 						<div class="profile-info margin-top-60">
-							<div class="profile-info-title negative-margin">Timothy Johnson</div>
+							<div class="profile-info-title negative-margin"><%= locals.session.userFirstName %> <%= locals.session.userName %></div>
 							<img src="<%= locals.etabObj.length > 0 ? locals.etabObj[0].path_img : '/asset/content/img/default_pro_profile.jpeg' %>" alt="" class="pull-left" />
 							<div class="profile-info-text pull-left">
-								<p class="subtitle-margin">Agent</p>
-								<p class="">42 Estates</p>
+								<p class="subtitle-margin">
+									<% if (locals.session.userType == 2){ %> 
+										Professionnel Audio
+									<% }else if(locals.session.userType == 3){ %>
+										Professionnel Vidéo
+									<% }else{ %>
+										Administrateur
+									<% } %>
+								</p>
 
-								<a href="#logout-modal" data-toggle="modal" class="logout-link margin-top-30"><i class="fas fa-lg fa-sign-out-alt"></i>Logout</a>
+								<a href="#logout-modal" data-toggle="modal" class="logout-link margin-top-30"><i class="fas fa-lg fa-sign-out-alt"></i>Se déconnecter</a>
 							</div>
 							<div class="clearfix"></div>
 						</div>
@@ -46,6 +53,7 @@
 								<div class="button-icon"><i class="fa fa-th-list"></i></div>
 							</a>
 						</div>
+						<div class="title-separator-primary"></div>
 						<div class="center-button-cont margin-top-15">
 							<a href="#pro-payment-modal" data-toggle="modal" class="button-primary button-shadow button-full">
 								<span>Mes abonnements</span>
@@ -62,7 +70,6 @@
 								<div class="button-icon"><i class="jfont fa-lg">&#xe804;</i></div>
 							</a>
 						</div>
-						<div class="title-separator-primary"></div>
 
 					</div>
 				</div>

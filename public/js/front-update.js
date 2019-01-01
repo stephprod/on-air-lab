@@ -30,7 +30,7 @@ function update_front_with_errors(tabErr){
 		var content = "";
 		$.each(ret, function (ind, val){
 			var elem = $("."+dataName);
-			//console.log(elem);
+			console.log(elem);
 			//elem.after();
 			if (ind == "global_msg"){
 				content += '<div class="global_msg">';
@@ -42,6 +42,7 @@ function update_front_with_errors(tabErr){
 					}
 				});
 				content += '</div>';
+				console.log(content);
 				elem.after(content);		
 			}
 		});

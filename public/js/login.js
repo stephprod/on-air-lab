@@ -12,6 +12,8 @@ function login_link_click(e){
 		data: datas,
 		async: false,
 		success: function (data){
+			// console.log("msg");
+			// console.log(data);
 			update_front_with_msg(data, "login-msg");
 			if (data.errors !== undefined){
 				update_front_with_errors(data.errors);

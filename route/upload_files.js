@@ -17,39 +17,47 @@ router.route('/upload-files')
 	})
 	.post((request, response) => {
 		let ret = {}
-		if(request.files){
-			let sampleFile = request.files.uploaded_file
-			originalName = sampleFile.name.split(".")[0].toLowerCase().split(' ').join('')
-			console.log(originalName)
-			let filename = originalName+'-'+request.body.file_profileId+'.'+sampleFile.name.split(".")[1].toLowerCase()
-			let table = []
-			if (fs.existsSync('public/content/img/'+filename)) {
-				console.log('fichier exist deja');
-				ret.success = false
-				response.send(ret)
+		ret.success = []
+		ret.global_msg = []
+		if (request.session.token == request.headers["x-access-token"]){
+			if(request.files){
+				let sampleFile = request.files.uploaded_file
+				originalName = sampleFile.name.split(".")[0].toLowerCase().split(' ').join('')
+				console.log(originalName)
+				let filename = originalName+'-'+request.body.file_profileId+'.'+sampleFile.name.split(".")[1].toLowerCase()
+				let table = []
+				if (fs.existsSync('public/content/img/'+filename)) {
+					console.log('fichier exist deja');
+					ret.success.push(false)
+					response.send(ret)
+				}else{
+					sampleFile.mv('public/content/img/'+filename, function(err) {
+						if (err)
+							response.send(err)
+						else
+						{
+							table.push(request.body.file_profileId, "image", "/asset/content/img/"+filename)
+							User.insert_document(table, (res) => {
+								if (res > 0){
+									ret.success.push(true)
+									ret.path = "/asset/content/img/"+filename
+								}
+								else
+								{
+									ret.success.push(false)
+								}
+								response.send(ret)
+							})
+						}
+					})
+				}
 			}else{
-				sampleFile.mv('public/content/img/'+filename, function(err) {
-					if (err)
-						response.send(err)
-					else
-					{
-						table.push(request.body.file_profileId, "image", "/asset/content/img/"+filename)
-						User.insert_document(table, (res) => {
-							if (res > 0){
-								ret.success = true
-								ret.path = "/asset/content/img/"+filename
-							}
-							else
-							{
-								ret.success = false
-							}
-							response.send(ret)
-						})
-					}
-				})
+				ret.success.push(false)
+				response.send(ret)
 			}
 		}else{
-			ret.success = false
+			ret.success.push(false)
+			ret.global_msg.push("Session compromise !")
 			response.send(ret)
 		}
 	})
