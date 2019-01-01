@@ -77,6 +77,9 @@ router.route('/agenda')
 	})
 	.post((request, response) => {
 		//console.log(request.body)
+		let ret = {}
+		ret.success = []
+		ret.global_msg = []
 		if (request.session.token == request.headers["x-access-token"]){
 			let table = [];
 			for (let prop in request.body){
@@ -94,7 +97,9 @@ router.route('/agenda')
 
 			})
 		}else{
-			response.send("Compromised token !")
+			ret.success.push(false)
+			ret.global_msg.push("Session compromise !")
+			response.send(ret)
 		}
 	})
 

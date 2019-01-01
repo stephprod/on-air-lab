@@ -12,9 +12,9 @@ var upload_file_input = $("input[name='uploaded_file']");
 upload_file_input.on('filepreupload', single_file_preupload);
 upload_file_input.on('fileuploaded', single_file_uploaded);
 if (session != null && session.user != undefined){
-  user = session.user;
-  userId = user.id;
-  token = session.token;
+    user = session.user;
+    userId = user.id;
+    token = session.token;
 }
 function on_upload_imgs_link_click(event){
     event.preventDefault();

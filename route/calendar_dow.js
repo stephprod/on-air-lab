@@ -31,7 +31,7 @@ router.route('/calendar_dow')
 						}
 						else{
 							ret.success.push(false)
-							ret.global_msg.push("Echec de la mise à jour de l'agenda, contactez le support/modérateur !")
+							ret.global_msg.push("Echec de la mise à jour de l'agenda, aucune modification à effectuer !")
 						}
 						response.send(ret)
 					})
