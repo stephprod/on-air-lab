@@ -39,7 +39,7 @@ body {
   float:left;
   width: 96px;
   height: 70px;
-  background: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/top-menu.png") -3px -118px no-repeat;
+  background: url("/asset/images/top-menu.png") -3px -118px no-repeat;
 }
 #topmenu span.friends{margin-bottom:-1px;}
 #topmenu span.chats{background-position:-95px 25px; cursor:pointer;}

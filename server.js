@@ -160,6 +160,12 @@ io.sockets.on('connection', function (socket) {
     socket.on('sendNotif', (res) => {
         socketManage.sendNotif(res)
     })
+    socket.on('refresh_notifs', (data) => {
+        socketManage.refreshNotifs(data)
+    })
+    socket.on('refresh_art_payments', (data) => {
+        socketManage.refreshArtPayments(data)
+    })
     // QUAND LE USER SE CO DANS LOGIN ET ARRIVE SUR LA PAGE DU CHAT
     socket.on('adduser', function(id, type){
         socketManage.add_user(id, type)

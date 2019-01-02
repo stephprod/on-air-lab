@@ -331,7 +331,8 @@ import {update_front_with_msg, update_front_with_errors} from './front-update.js
 	}
 	$(document).on('click', '#redirectAdmin', function(event) {
 		event.preventDefault();
-		$("#switcher-button2").trigger('click');
+		//$("#switcher-button2").trigger('click');
+		$($('iframe[src="/chat"]')[0].contentDocument).find("#friends").trigger('click');
 		$($('iframe[src="/chat"]')[0].contentDocument).find(".friend:nth-child(1)").trigger('click');
 	});
 var price = 1999;

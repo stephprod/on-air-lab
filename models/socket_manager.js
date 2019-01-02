@@ -4,7 +4,7 @@ class SocketManager{
     constructor(io_obj, sock, usglob){
         this.userGlobal = usglob
         this.tabCorresp = []
-        this.admin = {id: 1, room: 1, firstName: "Admin", name: "admin", type: 1, type_libelle: "Modérateur", mail: "admin@label-onair.com", img_chat: "/asset/content/img/default_admin.png"};
+        this.admin = {id: 1, room: 1, firstName: "Admin", name: "admin", type: 1, type_libelle: "Modérateur", mail: "admin@label-onair.com", img_chat: "/asset/content/img/default_admin.png", dispo: 0};
         this.socket = sock
         this.io = io_obj
         this.Usr = User
@@ -741,7 +741,7 @@ class SocketManager{
                     let room = []
                     this.tabCorresp = []
                     if (type != 1){
-                        room.push(this.admin.id, this.admin.room, this.admin.firstName, this.admin.name, this.admin.type, this.admin.type_libelle, this.admin.mail, this.admin.img_chat)
+                        room.push(this.admin.id, this.admin.room, this.admin.firstName, this.admin.name, this.admin.type, this.admin.type_libelle, this.admin.mail, this.admin.img_chat, this.admin.dispo)
                         setTimeout((function(room, admin, getPreviousMsgAdmin, tabCorresp, sock){
                             return function(){
                                 getPreviousMsgAdmin(1, id, admin.room, (result2) => {
@@ -769,6 +769,7 @@ class SocketManager{
                         room.push(result[k].libelle)
                         room.push(result[k].email)
                         room.push(result[k].img_chat)
+                        room.push(result[k].disponibilite)
                         //FONCTION DE CLOSURE POUR PERMETTRE LA RECUPERATION DES RSLT AVANT ITERATION DE LA BOUCLE
                         setTimeout((function(k, room, getPreviousMsg, tabCorresp, sock){
                             return function(){
@@ -822,7 +823,7 @@ class SocketManager{
                 }else{
                     let room = []
                     this.tabCorresp = []
-                    room.push(this.admin.id, this.admin.room, this.admin.firstName, this.admin.name, this.admin.type, this.admin.type_libelle, this.admin.mail, this.admin.img_chat)
+                    room.push(this.admin.id, this.admin.room, this.admin.firstName, this.admin.name, this.admin.type, this.admin.type_libelle, this.admin.mail, this.admin.img_chat, this.admin.dispo)
                     setTimeout((function(room, admin, getPreviousMsgAdmin, tabCorresp, sock){
                         return function(){
                             getPreviousMsgAdmin(1, id, admin.room, (result2) => {
@@ -850,6 +851,7 @@ class SocketManager{
                         room.push(result[k].libelle)
                         room.push(result[k].email)
                         room.push(result[k].img_chat)
+                        room.push(result[k].disponibilite)
                         //FONCTION DE CLOSURE POUR PERMETTRE LA RECUPERATION DES RSLT AVANT ITERATION DE LA BOUCLE
                         setTimeout((function(k, room, getPreviousMsg, tabCorresp, sock){
                             return function(){
@@ -1148,6 +1150,46 @@ class SocketManager{
            this.io.sockets.in(this.socket.room).emit('new_notif', res)
         })
         .catch((err) => console.log(err))
+    }
+    refreshNotifs(data){
+        let table = []
+        table.push(data.userId)
+        User.get_notifications(table[0], (res, resolve, reject) => {
+            if (res.length > 0){
+                resolve(res)
+            }else{
+                reject(new Error("Aucune notification à afficher !"))
+            }
+        }).then((notifs) => {
+            //res.id = result
+            //console.log(notifs)
+           this.io.sockets.in(this.socket.id).emit('socket_refresh_notifs', notifs)
+        }, (err) => {
+            //console.log(err)
+            this.io.sockets.in(this.socket.id).emit('socket_refresh_notifs', err.message)
+        }).catch((err) => {
+            this.io.sockets.in(this.socket.id).emit('socket_refresh_notifs', err.message)
+        })
+    }
+    refreshArtPayments(data){
+        let table = []
+        table.push(data.userId)
+        User.get_art_payments(table[0], (res, resolve, reject) => {
+            if (res.length > 0){
+                resolve(res)
+            }else{
+                reject(new Error("Aucun payment à afficher !"))
+            }
+        }).then((payments) => {
+            //res.id = result
+            //console.log(payments)
+           this.io.sockets.in(this.socket.id).emit('socket_refresh_art_payments', payments)
+        }, (err) => {
+            //console.log(err)
+            this.io.sockets.in(this.socket.id).emit('socket_refresh_art_payments', err.message)
+        }).catch((err) => {
+            this.io.sockets.in(this.socket.id).emit('socket_refresh_art_payments', err.message)
+        })
     }
     update_preview_in_room(data, context){
         for (var k in this.tabCorresp){

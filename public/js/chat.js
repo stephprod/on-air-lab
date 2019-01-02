@@ -26,12 +26,25 @@ var userId = null;
 //var page = null;
 var token = null;
 var iframe;
+var msg_part = $("#friendslist span.friends");
+var notifs_part = $("#friendslist span.history");
+var payments_part = $("#friendslist span.chats");
 if (session != null && session.user != undefined){
   user = session.user;
   userId = user.id;
 //  page = session.page;
   token = session.token;
 }
+if (user.type == 4 || user.type == 1){
+  notifs_part.show();
+  payments_part.show();
+}else{
+  notifs_part.show();
+  payments_part.hide();
+}
+$("div#friends").show();
+$("div#history").hide();
+$("div#chats").hide();
 $(document).on("click", "a.booking-chat", on_reservation_link_click);
 $(document).on("click", "a.meet-up-chat", on_reservation_link_click);
 $(document).on("click", "a.payment-chat", on_payment_link_click);
@@ -45,6 +58,10 @@ $(document).on("click", ".div-submi .btn-accept", on_module_accept_typeMessage_l
 $(document).on("click", ".div-submi .btn-refus", on_module_deny_typeMessage_link_click);
 $(document).on("click", "a[data-action='update-module']", on_module_payment_bank_link_click);
 $(document).on("click", "button[data-id-message]", on_message_view_button_click);
+msg_part.on("click", chat_headlines_span_click);
+notifs_part.on("click", chat_headlines_span_click);
+payments_part.on("click", chat_headlines_span_click);
+
 if (socket != null){
   socket.on('updaterooms', on_socket_update_rooms);
   socket.on('connect', on_socket_connect);
@@ -57,6 +74,8 @@ if (socket != null){
   socket.on('update_contactstypemessage', on_socket_update_contactstypemessage);
   socket.on('update_paymentstypemessage', on_socket_update_paymentstypemessage);
   socket.on('new_notif', on_socket_new_notif);
+  socket.on('socket_refresh_notifs', on_socket_refresh_notifs);
+  socket.on('socket_refresh_art_payments', on_socket_refresh_art_payments);
 }
 $('#sendmessage button#send').on("click", on_msg_send_click);
 $('#sendmessage button#send').on("keypress", on_msg_send_keypress);
@@ -406,14 +425,72 @@ $(document).on("click", ".friend", function(){
   }
   switchRoom($(this).data("room"), $(this).data("coresp"), name.split(" ")[0], name.split(" ")[1], $(this).data('coresp-type'), $(this).data('coresp-mail'), $(this).data('img-chat'), user);
 });
+function chat_headlines_span_click(e){
+  e.preventDefault();
+  var target = $(e.target);
+  $("div#chats").hide();
+  $("div#history").hide();
+  $("div#friends").hide();
+  if (target.hasClass("history")){  
+    // console.log("notifs refresh !");
+    // console.log(socket);
+    socket.emit('refresh_notifs', {userId: userId});
+    notifs_part.css("background", "url(/asset/images/top-menu.png) -186px -118px no-repeat");
+    msg_part.css("background", "url(/asset/images/top-menu.png) -5px -48px no-repeat");
+    payments_part.css("background", "");
+    $("div#history").show();
+  }else if(target.hasClass("friends")){
+    msg_part.css("background", "url(/asset/images/top-menu.png) -3px -118px no-repeat");
+    notifs_part.css("background", "");
+    payments_part.css("background", "");
+    $("div#friends").show();
+  }else{
+    //console.log("payments refresh !");
+    socket.emit('refresh_art_payments', {userId: userId});
+    msg_part.css("background", "url(/asset/images/top-menu.png) -5px -48px no-repeat");
+    payments_part.css("background", "url(/asset/images/top-menu.png) -97px -118px no-repeat");
+    notifs_part.css("background", "");
+    $("div#chats").show();
+  }
+}
+function on_socket_refresh_art_payments(payments){
+  $("div#chats").empty();
+  // console.log("payments");
+  // console.log(payments);
+  if (payments instanceof Array){
+    for (var i = 0; i < payments.length; i++){
+      $("div#chats").append('<div class="friend" data-type-payment="'+payments[i]["type_payment"]+'" data-desc-payment="'+payments[i]["desc_payment"]+'"><p><strong>'+payments[i]["desc_payment"]+' ('+payments[i]["type_payment"]+')</strong><span>'+payments[i]["price_payment"]+' €</span><p class="preview">'+payments[i]["date_payment"]+'</p></p><div class="status available"></div></div>');
+    }
+  }else{
+    $("div#chats").append('<div class="friend"><p><strong>'+payments+'</p></strong></div>');
+  }
+}
+function on_socket_refresh_notifs(notifications){
+  $("div#history").empty();
+  // console.log("history");
+  // console.log(notifications);
+  if (notifications instanceof Array){
+    for (var i = 0; i < notifications.length; i++){
+      $("div#history").append('<div class="friend" data-sender="'+notifications[i]["sender_user_id"]+'" data-receiver="'+notifications[i]["receiver_user_id"]+'"><p><strong>'+notifications[i]["notification"]+'</strong><span></span><p class="preview">'+notifications[i]["time"]+'</p></p><div class="status available"></div></div>');
+    }
+  }else{
+    $("div#history").append('<div class="friend"><p><strong>'+notifications+'</p></strong></div>');
+  }
+}
 function on_socket_update_rooms(rooms){
   //console.log("updateroom");
   //console.log(coresp);
   //console.log(rooms);
   $("div#friends").empty();
   if (rooms != null){
+    var status;
     for (var i = 0; i < rooms.length; i++){
-      $("div#friends").append('<div class="friend" data-coresp="'+rooms[i][0]+'" data-coresp-type="'+rooms[i][4]+'" data-room="'+rooms[i][1]+'" data-coresp-mail="'+rooms[i][6]+'" data-img-chat="'+rooms[i][7]+'"><img src="'+rooms[i][7]+'" /><p><strong>'+rooms[i][2]+' '+rooms[i][3]+'</strong><span>'+rooms[i][5]+'</span><p class="preview">'+rooms[i][9]+'</p></p><div class="status available"></div></div>');
+      if (rooms[i][8] == 0){
+        status = "inactive";
+      }else{
+        status = "available";
+      }
+      $("div#friends").append('<div class="friend" data-coresp="'+rooms[i][0]+'" data-coresp-type="'+rooms[i][4]+'" data-room="'+rooms[i][1]+'" data-coresp-mail="'+rooms[i][6]+'" data-img-chat="'+rooms[i][7]+'"><img src="'+rooms[i][7]+'" /><p><strong>'+rooms[i][2]+' '+rooms[i][3]+'</strong><span>'+rooms[i][5]+'</span><p class="preview">'+rooms[i][10]+'</p></p><div class="status '+ status +'"></div></div>');
     }
   }else{
     console.log("Aucune room trouvée !");
@@ -431,6 +508,7 @@ if (userId != null && userId != "null") {
         coresp.type = 1;
         coresp.mail = "admin@label-onair.com";
         socket.emit('adduser', id, type);
+        //socket.emit('update_notifs', {userId: userId});
         console.log("TU ES DEJA CONNECTE :)");
         updateUserReceived(coresp);
     } else {

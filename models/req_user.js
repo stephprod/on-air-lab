@@ -63,7 +63,7 @@ class User{
 	}
 	static getRoomForArt(clause, cb){
 		let q = db.query('SELECT `rooms`.`id_room`, `rooms`.`userid`, `rooms`.`with_userid`, `user`.`id` '+
-			', `user`.`nom`, `user`.`prenom`, `user`.`email`, `user`.`img_chat`, '+
+			', `user`.`nom`, `user`.`prenom`, `user`.`email`, `user`.`img_chat`,  `user`.`disponibilite`, '+
             '`user_type`.`id_user_type`, `user_type`.`libelle` '+
             'FROM `rooms` '+
             'INNER JOIN `user` ON `user`.`id`=`rooms`.`with_userid` '+
@@ -78,7 +78,7 @@ class User{
 	}
 	static getRoomForPro(clause, cb){
 		let q=db.query('SELECT `rooms`.`id_room`, `rooms`.`userid`, `rooms`.`with_userid`, `user`.`id`, '+
-			'`user`.`nom`, `user`.`prenom`, `user`.`email`, `user`.`img_chat`, '+
+			'`user`.`nom`, `user`.`prenom`, `user`.`email`, `user`.`img_chat`, `user`.`disponibilite`, '+
             '`user_type`.`id_user_type`, `user_type`.`libelle` '+
             ' FROM `rooms` '+
             'INNER JOIN `user` ON `user`.`id`=`rooms`.`userid` '+
@@ -1242,18 +1242,6 @@ class User{
             })
         })
     }
-    static get_notifications(table, cb){
-        return new Promise((resolve, reject) => {
-            let r = db.query('SELECT * FROM `notifications` '+
-                'WHERE `notifiaction`.`sender_user_id`=? OR `notifiaction`.`receiver_user_id`=?', [table], (err, result) => {
-                if(err){
-                    console.log(r.sql)
-                    throw err;
-                }
-                cb(result, resolve, reject);
-            });
-        });
-    }
     static historique_payment(id, cb){
         return new Promise((resolve, reject) => {
             let r = db.query('SELECT * FROM `payments` WHERE id_pro=? ORDER BY `payments`.`date_payment` DESC', [id], (err, result) => {
@@ -1328,6 +1316,54 @@ class User{
                     throw err
                 }
                 cb(res, resolve, reject)
+            })
+        })
+    }
+    static get_notifications(id, cb){
+        return new Promise((resolve, reject) => {
+            let r = db.query("SELECT * FROM `notifications` WHERE `receiver_user_id`="+id+" ORDER BY `time` DESC",
+            (err, res) => {
+                if (err){
+                    console.log(r.sql)
+                    throw err
+                }
+                cb (res, resolve, reject)
+            })
+        })
+    }
+    static get_art_payments(id, cb){
+        return new Promise((resolve, reject) => {
+            let r = db.query("SELECT * FROM `payments` WHERE `id_art`="+id+" ORDER BY `date_payment` DESC",
+            (err, res) => {
+                if (err){
+                    console.log(r.sql)
+                    throw err
+                }
+                cb (res, resolve, reject)
+            })
+        })
+    }
+    static get_nb_new_art_payments(id, time, cb){
+        return new Promise((resolve, reject) => {
+            let r = db.query("SELECT COUNT(*) FROM `payments` WHERE `id_art`="+id+" AND `date_payments` > "+time+" ORDER BY `date_payments` DESC",
+            (err, res) => {
+                if (err){
+                    console.log(r.sql)
+                    throw err
+                }
+                cb (res, resolve, reject)
+            })
+        })
+    }
+    static get_nb_new_notifs(id, time, cb){
+        return new Promise((resolve, reject) => {
+            let r = db.query("SELECT COUNT(*) FROM `notifications` WHERE `receiver_user_id`="+id+" AND `time` > "+time+" ORDER BY `time` DESC",
+            (err, res) => {
+                if (err){
+                    console.log(r.sql)
+                    throw err
+                }
+                cb (res, resolve, reject)
             })
         })
     }
