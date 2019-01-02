@@ -434,7 +434,8 @@ function chat_headlines_span_click(e){
   if (target.hasClass("history")){  
     // console.log("notifs refresh !");
     // console.log(socket);
-    socket.emit('refresh_notifs', {userId: userId});
+    if (userId != null && userId != "null")
+      socket.emit('refresh_notifs', {userId: userId});
     notifs_part.css("background", "url(/asset/images/top-menu.png) -186px -118px no-repeat");
     msg_part.css("background", "url(/asset/images/top-menu.png) -5px -48px no-repeat");
     payments_part.css("background", "");
@@ -446,7 +447,8 @@ function chat_headlines_span_click(e){
     $("div#friends").show();
   }else{
     //console.log("payments refresh !");
-    socket.emit('refresh_art_payments', {userId: userId});
+    if (userId != null && userId != "null")
+      socket.emit('refresh_art_payments', {userId: userId});
     msg_part.css("background", "url(/asset/images/top-menu.png) -5px -48px no-repeat");
     payments_part.css("background", "url(/asset/images/top-menu.png) -97px -118px no-repeat");
     notifs_part.css("background", "");
