@@ -115,7 +115,42 @@
 		</div>
 	</div>
 	</section>
-    <script>
+	<script>
+		function removeFile(path_img){    		
+			event.preventDefault();
+			var div = $("div#images");
+			var nodeImg = event.target.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode
+			var datas = {}
+			datas.file_profileId = div.data("profil");
+			datas.path = path_img
+			if (datas.file_profileId != 0){
+				$.ajax({
+					type: "POST",
+					url: '/delete-in-serv',
+					data: datas,
+					beforeSend: function (req){
+						req.setRequestHeader("x-access-token", "<%- locals.session.token %>");
+					},
+					success : function(data){
+						//update_front_with_msg(data, "upload-files-msg");
+						$.ajax({
+							type: "POST",
+							url: '/delete-files',
+							beforeSend: function (req){
+								req.setRequestHeader("x-access-token", "<%- locals.session.token %>");
+							},
+							data: datas,
+							success: function(data){
+								update_front_with_msg(data, "upload-files-msg");
+								nodeImg.remove();
+							}
+						});
+					}
+				});
+			}else{
+				update_front_with_msg({success: [false], global_msg: ["Veuillez remplir votre profile avant de modifier votre galerie d'images !"]}, "upload-files-msg");
+			}
+		}
     	var user = {};
 		var session = {};
 		user.id = "<%- locals.session.userId != undefined ? 

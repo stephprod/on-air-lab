@@ -25,54 +25,19 @@ function on_upload_imgs_link_click(event){
     var files = div.find("input[name='uploaded_file']");
     var datas = {}
     datas.file_profileId = div.data("profil");
-    if (datas.file_profileId != 0){
+   if (datas.file_profileId != 0){
         $(files[0]).fileinput("upload");
-        $.ajax({
-            type: "POST",
-            url: '/upload-files',
-            beforeSend: function (req){
-                req.setRequestHeader("x-access-token", token);
-            },
-            data: datas,
-            success: function(data){
-                update_front_with_msg(data, "upload-files-msg");
-            }
-        })
-    }else{
-        update_front_with_msg({success: [false], global_msg: ["Veuillez remplir votre profile avant de modifier votre galerie d'images !"]}, "upload-files-msg");
-    }
-}
-function removeFile(path_img){    		
-    event.preventDefault();
-    var div = $("div#"+$(link[0]).data("form"));
-    var nodeImg = event.target.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode
-    var datas = {}
-    datas.file_profileId = div.data("profil");
-    datas.path = path_img
-    if (datas.file_profileId != 0){
-        $.ajax({
-            type: "POST",
-            url: '/delete-in-serv',
-            data: datas,
-            beforeSend: function (req){
-                req.setRequestHeader("x-access-token", token);
-            },
-            success : function(data){
-                update_front_with_msg(data, "upload-files-msg");
-                $.ajax({
-                    type: "POST",
-                    url: '/delete-files',
-                    beforeSend: function (req){
-                        req.setRequestHeader("x-access-token", token);
-                    },
-                    data: datas,
-                    success: function(data){
-                        update_front_with_msg(data, "upload-files-msg");
-                        nodeImg.remove();
-                    }
-                });
-            }
-        });
+        // $.ajax({
+        //     type: "POST",
+        //     url: '/upload-files',
+        //     beforeSend: function (req){
+        //         req.setRequestHeader("x-access-token", token);
+        //     },
+        //     data: datas,
+        //     success: function(data){
+        //         update_front_with_msg(data, "upload-files-msg");
+        //     }
+        // })
     }else{
         update_front_with_msg({success: [false], global_msg: ["Veuillez remplir votre profile avant de modifier votre galerie d'images !"]}, "upload-files-msg");
     }

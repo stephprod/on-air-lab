@@ -132,27 +132,27 @@ eventClick: function(event, jsEvent, view) {
     },
     droppable: true, // this allows things to be dropped onto the calendar !!!
     dragRevertDuration: 0,
-    eventDrop: function(event, date, allDay) { // this function is called when something is dropped
+    // eventDrop: function(event, date, allDay) { // this function is called when something is dropped
     
-    //retrieve the dropped element's stored Event Object
-    var originalEventObject = $(this).data('eventObject');
+    // //retrieve the dropped element's stored Event Object
+    // var originalEventObject = $(this).data('eventObject');
     
-    // we need to copy it, so that multiple events don't have a reference to the same object
-    var copiedEventObject = $.extend({}, originalEventObject);
+    // // we need to copy it, so that multiple events don't have a reference to the same object
+    // var copiedEventObject = $.extend({}, originalEventObject);
     
-    // assign it the date that was reported
-    copiedEventObject.start = date;
-    copiedEventObject.allDay = allDay;
-    // render the event on the calendar
-    // the last `true` argument determines if the event "sticks" (http://arshaw.com/fullcalendar/docs/event_rendering/renderEvent/)
+    // // assign it the date that was reported
+    // copiedEventObject.start = date;
+    // copiedEventObject.allDay = allDay;
+    // // render the event on the calendar
+    // // the last `true` argument determines if the event "sticks" (http://arshaw.com/fullcalendar/docs/event_rendering/renderEvent/)
     
-    // is the "remove after drop" checkbox checked?
-    if ($('#drop-remove').is(':checked')) {
-        // if so, remove the element from the "Draggable Events" list
-        $(this).remove();
-    }
+    // // is the "remove after drop" checkbox checked?
+    // if ($('#drop-remove').is(':checked')) {
+    //     // if so, remove the element from the "Draggable Events" list
+    //     $(this).remove();
+    // }
     
-    },
+    // },
     eventDrop: function(event, delta, revertFunc) {
         var start = event.start.format();
         var end = event.end.format();
@@ -267,7 +267,7 @@ $('input[type=checkbox]').change(function(e){
         }
     }
 });
-$('.savecal').click(function(ev){
+$('#dishoraire .savecal').click(function(ev){
     ev.preventDefault();
     pause = $('input[name="pausedeb"]').val()+"-"+$('input[name="pausefin"]').val();
     //console.log(lundi+" / "+mardi+" / "+mercredi+" / "+jeudi+" / "+vendredi+" / "+samedi+" / "+dimanche+" / "+pause);

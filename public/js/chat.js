@@ -331,7 +331,7 @@ actions.nextMessagesButton = function(data){
   var ret = "<button name='next' data-id-message='"+data.id_m+"'>Messages suivants</button>";
   return ret;
 };
-$(document).on("click", ".friend", function(){
+$(document).on("click", ".friend[data-action='room']", function(){
   var childOffset = $(this).offset();
   var parentOffset = $(this).parent().parent().offset();
   var childTop = childOffset.top - parentOffset.top;
@@ -492,7 +492,7 @@ function on_socket_update_rooms(rooms){
       }else{
         status = "available";
       }
-      $("div#friends").append('<div class="friend" data-coresp="'+rooms[i][0]+'" data-coresp-type="'+rooms[i][4]+'" data-room="'+rooms[i][1]+'" data-coresp-mail="'+rooms[i][6]+'" data-img-chat="'+rooms[i][7]+'"><img src="'+rooms[i][7]+'" /><p><strong>'+rooms[i][2]+' '+rooms[i][3]+'</strong><span>'+rooms[i][5]+'</span><p class="preview">'+rooms[i][10]+'</p></p><div class="status '+ status +'"></div></div>');
+      $("div#friends").append('<div class="friend" data-action="room" data-coresp="'+rooms[i][0]+'" data-coresp-type="'+rooms[i][4]+'" data-room="'+rooms[i][1]+'" data-coresp-mail="'+rooms[i][6]+'" data-img-chat="'+rooms[i][7]+'"><img src="'+rooms[i][7]+'" /><p><strong>'+rooms[i][2]+' '+rooms[i][3]+'</strong><span>'+rooms[i][5]+'</span><p class="preview">'+rooms[i][10]+'</p></p><div class="status '+ status +'"></div></div>');
     }
   }else{
     console.log("Aucune room trouvée !");

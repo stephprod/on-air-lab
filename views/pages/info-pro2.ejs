@@ -143,26 +143,26 @@
 									<div class="row">
 											<% if (locals.etabObj.length > 0){
 												for (k in locals.allServObj){
-												var checked="";
-												for (j in locals.servObj){
-													if (locals.servObj[j].id_service == locals.allServObj[k].id_service){
-														checked = "checked";
-														break;
+													var checked="";
+													for (j in locals.servObj){
+														if (locals.servObj[j].id_service == locals.allServObj[k].id_service){
+															checked = "checked";
+															break;
+														}
 													}
-												}
-												if (k == 0){ %>
-													<div class="col-xs-12 col-sm-4 col-md-6 col-lg-4 margin-top-15">
-												<% } if (k > 0 && k % 6 == 0){ %>
-													</div>
-													<div class="col-xs-12 col-sm-4 col-md-6 col-lg-4 margin-top-15">
-												<% } %>
-												<input type="checkbox" id="<%= locals.allServObj[k].id_service %>" name="cc<%= (k + 1) %>" class="main-checkbox" <%= checked %>/>
-												<label for="<%= locals.allServObj[k].id_service %>"><span></span><%= locals.allServObj[k].nom_service %></label><br/>
-												<% if (k == locals.allServObj.length - 1){ %>
-												</div>
-												<%	}
-											} %>
-											<a href="#" data-action="services" class="savecal button-alternative button-shadow button-full margin-top-15">
+													if (k == 0){ %>
+														<div class="col-xs-12 col-sm-4 col-md-6 col-lg-4 margin-top-15">
+													<% } if (k > 0 && k % 6 == 0){ %>
+														</div>
+														<div class="col-xs-12 col-sm-4 col-md-6 col-lg-4 margin-top-15">
+													<% } %>
+													<input type="checkbox" id="<%= locals.allServObj[k].id_service %>" name="cc<%= parseInt(k) + 1 %>" class="main-checkbox" <%= checked %>/>
+													<label for="<%= locals.allServObj[k].id_service %>"><span></span><%= locals.allServObj[k].nom_service %></label><br/>
+													<% if (k == locals.allServObj.length - 1){ %>
+														</div>
+													<%	}
+												} %>
+												<a href="#" data-action="services" class="savecal button-alternative button-shadow button-full margin-top-15">
 												<span>Sauvegarder</span>
 												<div class="button-triangle"></div>
 												<div class="button-triangle2"></div>
@@ -600,7 +600,7 @@
 		<!-- DEVIS -->
   <!-- <script type="text/javascript" src="/asset/js/devis.js"></script> -->
     <script type="module" src="/asset/js/info-pro.js"></script>
-    <script type="text/javascript">
+	<script type="text/javascript">
 	var servs = [];
 	<% for (k in locals.servObj){ %>
 		var serv={};

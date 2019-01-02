@@ -23,9 +23,9 @@ router.route('/delete-in-serv')
 							fs.access(file, fs.constants.F_OK, (err) => {
 								if (!err){
 									fs.unlink(file, (err) => {
-									if (err)
-										throw err
-									console.log(file+' was deleted');
+										if (err)
+											throw err
+										//console.log(file+' was deleted');
 									})
 								}
 							})

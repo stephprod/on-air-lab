@@ -1103,7 +1103,7 @@ class User{
                 console.log(r.sql)
                 throw err;
             }
-            console.log(r.sql)
+            //console.log(r.sql)
             cb(result.affectedRows);
         });
     }

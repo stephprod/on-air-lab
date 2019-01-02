@@ -20,7 +20,10 @@ var wowAnimationMobile = false; //you can WOW animations (sections sliding when 
 var user = JSON.parse(localStorage.getItem('user'));
 //console.log(user);
 var absolutePathApp = '';
-
+var session = JSON.parse(sessionStorage.getItem('session')), token;
+if (session != null && session.user != undefined){
+    token = session.token;
+}
 /********** SETTINGS END **********/	
 
 
@@ -860,7 +863,18 @@ jQuery(window).load(function() {
 			showRemove: false,
 			browseClass: "button-shadow btn",
 			maxFileSize: 1024,
-			maxFileCount: 10
+			maxFileCount: 10,
+			ajaxSettings: {
+				beforeSend: function (req){
+					req.setRequestHeader("x-access-token", token);
+				},
+				success: function(data){
+					update_front_with_msg(data, "upload-files-msg");
+				}
+			},
+			uploadExtraData : {
+				file_profileId: $("div#images").data("profil"),
+			}
 		});
 	}
 		
