@@ -31,33 +31,33 @@ class MailTemplate{
 				case "rdv_response":
 					param.content += action == "accept" ? 'Ta demande de rendez-vous a été acceptée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !' : 
 						'Ta demande de rendez-vous a été refusée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
-					param.subject = "Demande de rendez-vous !"
+					param.subject = action == "accept" ? "Demande de rendez-vous accteptée !" : "Demande de rendez-vous rejetée !"
 					break;
 				case "booking_response":
 					param.content += action == "accept" ? 'Ta demande de booking a été acceptée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !' : 
 						'Ta demande de booking a été refusée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
-					param.subject = "Demande de booking !"
+					param.subject = action == "accept" ? "Demande de booking acceptée !" : "Demande de booking rejetée !" 
 					break;
 				case "devis_response":
 					param.content += action == "accept" ? 'Ta demande de devis a été acceptée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !' : 
 						'Ta demande de devis a été refusée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
-					param.subject = "Demande de devis ! (suite)"
+					param.subject = action == "accept" ? "Demande de devis acceptée ! (suite)" : "Demande de devis rejetée ! (suite)"
 					break;
 				case "payment_response":
 					param.content += action == "accept" ? 'Ta demande de paiement a été acceptée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !' : 
 						'Ta demande de paiement a été refusée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
-					param.subject = "Demande de paiement !"
+					param.subject = action == "accept" ? "Demande de paiement accepté !" : "Demande de paiement rejeté !"
 					break;
 				case "contact_response":
 					param.content += action == "accept" ? 'Ta demande de contact a été acceptée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !<br>'+
 						'Accédez au chat se trouvant sur le site pour le/la contacter.' : 
 						'Ta demande de contact a été refusée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
-					param.subject = "Demande de contact !"
+					param.subject = action == "accept" ? "Demande de contact acceptée !" : "Demande de contact rejetée !"
 					break;
 				case "rdv_offer_response":
 					param.content += action == "accept" ? 'Ta demande de rendez-vous liée à une offre a été acceptée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !' : 
 						'Ta demande de rendez-vous liée à une offre a été refusée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
-					param.subject = "Demande de rendez-vous liée à une offre !"
+					param.subject = action == "accept" ? "Demande de rendez-vous liée à une offre acceptée !" : "Demande de rendez-vous liée à une offre rejetée !"
 					break;
 				default:
 					param.subject = "Label-onair - Nouveau message !"
@@ -173,7 +173,7 @@ class MailTemplate{
 							"Il ne te manque plus qu'à te reconnecter pour profiter de nos services sans restrictions !" : 
 							"Ton paiment de "+amount+" € a été refusé  !"
 					}
-					p.subject = "Nouveau paiement !"
+					p.subject = action == "accept" ? "Nouveau paiement accepté !" : "Nouveau paiement rejeté !" 
 					break;
 				default:
 					p.subject = "Label-onair - Nouveau message !"

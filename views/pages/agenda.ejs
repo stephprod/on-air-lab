@@ -173,8 +173,8 @@
 			locals.session.token : "null" %>";
 		calendar.dow = '<%- locals.dow != undefined ? 
 			locals.dow : "null" %>';
-		calendar.event = '<%- locals.eventObj != undefined ? 
-			locals.eventObj : "null" %>';	
+		calendar.event = <%- locals.eventObj != undefined ? 
+			locals.eventObj : "null" %>;	
 		// console.log(session);
 		// console.log(calendar);
 		session.user = user;

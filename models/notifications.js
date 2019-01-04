@@ -49,12 +49,12 @@ class Notif{
                     }else{
                         //console.log("ok")
                         ret = {
-                            receiverAction: {id: this.objReceiver.id, nom: this.objReceiver.nom},
+                            receiverAction: {id: this.objReceiver.id, nom: this.objReceiver.nom, img_chat: this.objReceiver.img_chat},
                             msg: result.subject,
-                            typeOfAction: this.type,
+                            typeOfAction: this.type
                         }
                         if (this.sender != null)
-                            ret.senderAction = {id:this.sender.id, nom: this.sender.nom}
+                            ret.senderAction = {id:this.sender.id, nom: this.sender.nom, img_path: this.sender.img_chat}
                         //console.log(ret)
                         resolve(ret)
                     }
@@ -89,13 +89,13 @@ class Notif{
                         reject(error)
                     }else{
                         ret = {
-                            receiverAction: {id: this.objReceiver.id, nom: this.objReceiver.nom},
+                            receiverAction: {id: this.objReceiver.id, nom: this.objReceiver.nom, img_chat: this.objReceiver.img_chat},
                             //senderAction: {id:this.sender.id, nom: this.sender.nom},
                             msg: result.subject,
-                            typeOfAction: this.type,
+                            typeOfAction: this.type
                         }
                         if (this.sender != null)
-                            ret.senderAction = {id:this.sender.id, nom: this.sender.nom}
+                            ret.senderAction = {id:this.sender.id, nom: this.sender.nom, img_path: this.sender.img_chat}
                         resolve(ret)
                     }
                 })

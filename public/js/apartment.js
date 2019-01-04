@@ -2,10 +2,7 @@
 Apartment HTML Site Template
 Author: Jan Skwara - http://themeforest.net/user/johnnychaos
 ***********************/
-
-
-
-
+//import {update_front_with_msg, update_front_with_errors} from './front-update.js';
 
 /********** SETTINGS **********/	
 

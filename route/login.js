@@ -70,7 +70,7 @@ router.route('/login')
 						console.log('Tu est connecter avec id bdd ' +userSess.userId)
 						console.log('Tu est connecter avec le nom '+userSess.userName)
 						//console.log(userSess)
-						User.updateUser("disponibilite='1' WHERE id='"+result.id+"'"
+						User.updateUser("disponibilite='1' WHERE id='"+result[0].id+"'"
 						, () => {
 								//ret.global_msg.push("dispo mis à jour avec succés !")
 								//ret.success.push(true)

@@ -2,7 +2,7 @@ let db = require('../db_start_engine')
 
 class User{
 	static create(user, cb){
-		let q = db.query('INSERT INTO user(nom, prenom, email, mot_de_passe, type, anniversaire, jeton) VALUE (?)', [user], (err, result) =>{
+		let q = db.query('INSERT INTO `user`(`nom`, `prenom`, `email`, `mot_de_passe`, `type`, `anniversaire`, `jeton`, `img_chat`) VALUE (?)', [user], (err, result) =>{
 			if (err){
 				console.log(q.sql)
 				throw err
@@ -465,7 +465,7 @@ class User{
     }
     static infoPro_etablissement(tab, cb)
     {
-        let r = db.query('INSERT INTO etablissement (nom, adresse, cp, descr, siret) VALUE (?)', [tab], (err, result) => {
+        let r = db.query('INSERT INTO `etablissement` (`nom`, `adresse`, `cp`, `ville_id`, `descr`, `siret`, `path_img`) VALUE (?)', [tab], (err, result) => {
             if(err){
             	console.log(r.sql)
                 throw err;
@@ -491,7 +491,7 @@ class User{
             'INNER JOIN `tarification` ON `tarification`.`id_tarification`=`profil`.`id_tarification` '+
             'INNER JOIN `appartenir` ON `appartenir`.`id_user`=`profil`.`id_user` '+
             'INNER JOIN `service` ON `service`.`id_service`=`appartenir`.`id_service` '+
-            'LEFT JOIN `villes_france_free` ON `etablissement`.`cp`=`villes_france_free`.`ville_code_postal` '+
+            'LEFT JOIN `villes_france_free` ON `etablissement`.`ville_id`=`villes_france_free`.`ville_id` '+
             'WHERE `etablissement`.`id` > '+ind+' GROUP BY `etablissement`.`id`, `profil`.`id_user`, `service`.`type_service`, `villes_france_free`.`ville_longitude_deg`, `villes_france_free`.`ville_latitude_deg` LIMIT 800', (err, result, fields) =>{
 			if (err) 
 			{

@@ -186,7 +186,7 @@ $.fn.easyPaginate = function (options) {
                     },
                     distance: function (elem){
                         var distance = $(elem).find(".distance").text();
-                        console.log(distance);
+                        //console.log(distance);
                         return parseFloat(distance);
                     } 
                 }

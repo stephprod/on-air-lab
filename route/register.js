@@ -11,6 +11,8 @@ router.route('/register')
 		let created_date = new Date()
 		let table = []
 		let ret = {}
+		let jeton = uid(16)
+		let img_chat = "/asset/content/img/default_vis.png"
 		ret.success = []
 		ret.global_msg = []
 		delete request.body.confirm_password
@@ -23,8 +25,13 @@ router.route('/register')
 		table[3] = hmac.finalize().toString()
 		if(table.length < 5)
 			table.push(1)
-		let jeton = uid(16)
-		table.push(created_date, jeton)
+		if (table[4] == 3)
+			img_chat = "/asset/content/img/default_pro_video.png"
+		else if(table[4] == 2)
+			img_chat = "/asset/content/img/default_pro_audio.png"
+		else if (table[4] == 1)
+			img_chat = "/asset/content/img/default_admin.png"
+		table.push(created_date, jeton, img_chat)
 		User.create(table, (userId) => {
 			if (userId == 0)
 			{

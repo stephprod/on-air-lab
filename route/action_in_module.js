@@ -18,6 +18,7 @@ router.route('/action-in-module')
 				prenom: request.session.userFirstName,
 				type: request.session.userType,
 				email: request.session.userMail,
+				img_chat: request.session.img_chat,
 			}
 			for (const prop in request.body){
 				table.push(request.body[prop])

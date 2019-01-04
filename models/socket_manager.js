@@ -1000,7 +1000,14 @@ class SocketManager{
                         notifications.mail(data.user_receiver, data.user_sender, data.type_m)
                         .then((result2) => {
                             data.notif = result2
-                           this.io.sockets.in(this.socket.id).emit('updatechat', user_receiver, data, context)
+                            for( var i=0, len=this.userGlobal.length; i<len; ++i ){
+                                var c = this.userGlobal[i]
+                                if(c.id_user == userIdReceiver){
+                                    this.io.sockets.in(c.socket).emit('updatechat', user_receiver, data, context)
+                                    break;
+                                }
+                            }
+                           //this.io.sockets.in(this.socket.id).emit('updatechat', user_receiver, data, context)
                         }).catch((err) => {
                             console.log(err)
                         })
@@ -1032,7 +1039,8 @@ class SocketManager{
                     })
                 }
             }
-            //console.log(this.userGlobal)
+            // console.log(this.userGlobal)
+            // console.log(data)
             //Si tu n'est pas l'administrateur
             if (userId != 1)
             {

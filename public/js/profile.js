@@ -229,7 +229,7 @@ function on_reservation_link_click(e){
 	datas.user_receiv = session.id_u;
 	datas.user_sender = userId;
 	datas.room = roomDisplay_from_session;
-	console.log(roomDisplay_from_session);
+	//console.log(roomDisplay_from_session);
 	if (roomDisplay_from_session != null && roomDisplay_from_session != "null"){
 		if ($(this).data("frame") == "1"){
 			datas.from = "rdv";
@@ -336,7 +336,7 @@ function on_valid_rdv_offer_link_click(e){
 						request_state : 0
 					}
 					//console.log(rdv_off);
-					//console.log(socket);
+					console.log(user);
 					switchRoom(roomDisplay_from_session, user_receiv_from_session.id_coresp, user_receiv_from_session.nom, user_receiv_from_session.prenom, user_receiv_from_session.type, user_receiv_from_session.mail, user);
 					socket.emit('sendchat', rdv_off, userId, user_receiv_from_session, "iframe-chat");
 				}

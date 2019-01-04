@@ -82,7 +82,7 @@ router.route('/info-pro')
         //console.log("NOM du GARS "+request.session.userName)
 	})
 	.post(validator, (request, response) => {
-		let table = [], ret = {}, tableE = [], tableP = []
+		let table = [], ret = {}, tableE = [], tableP = [], path_img = "/asset/content/img/default_pro_audio_profile.jpeg"
 		ret.success = []
 		ret.global_msg = []
 		if (request.session.token == request.headers['x-access-token']){
@@ -96,7 +96,9 @@ router.route('/info-pro')
 				User.getEtablissement(request.session.userId, (result) => {
 					if (result == 0) {
 						//INSERTION
-						tableE.push(table[1], table[2], table[3], table[4], table[5])
+						if (request.session.userType == 2)
+							path_img = "/asset/content/img/default_pro_video_profile.jpeg"
+						tableE.push(table[1], table[2], table[3], table[4], table[5], table[6], path_img)
 						User.infoPro_etablissement(tableE, (result) => {
 							if (result == 0){
 								ret.success.push(false)
@@ -123,7 +125,7 @@ router.route('/info-pro')
 						table.push(request.session.userId)
 						if (isNaN(table[3]))
 							table[3] = null
-						User.update_etablissement("nom='"+table[1]+"',adresse='"+table[2]+"',cp='"+table[3]+"',descr='"+table[4]+"',siret='"+table[5]+"' WHERE profil.id_user='"+table[6]+"'", (result) => {
+						User.update_etablissement("nom='"+table[1]+"',adresse='"+table[2]+"',cp='"+table[3]+"',ville_id='"+table[4]+"',descr='"+table[5]+"',siret='"+table[6]+"' WHERE profil.id_user='"+table[7]+"'", (result) => {
 							//console.log("-----------UPDATE OK----------")
 							//console.log("-----------"+result+" LIGNE CHANGE---------")
 							if (result > 0){

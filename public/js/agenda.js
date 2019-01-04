@@ -9,7 +9,7 @@ if (session != null && session.user != undefined){
     token = session.token;
     if (calen != null){
         dow = JSON.parse(calen.dow);
-        eventObj = JSON.parse(calen.event);
+        eventObj = calen.event;
     }
 }
 var lundi;
@@ -103,9 +103,9 @@ var calendar =  $('#calendar').fullCalendar({
     calendar.fullCalendar('unselect');
 },
 eventClick: function(event, jsEvent, view) {
-    console.log('Clicked on: ' + event.start.format()+' A : ' + event.end.format());
-    console.log('Clicked on: ' + event.title);
-    console.log('Clicked on: ' + event.id_event);
+    // console.log('Clicked on: ' + event.start.format()+' A : ' + event.end.format());
+    // console.log('Clicked on: ' + event.title);
+    // console.log('Clicked on: ' + event.id_event);
 
     // console.log('Coordinates: ' + jsEvent.id + ',' + jsEvent.pageY);
 
@@ -113,7 +113,7 @@ eventClick: function(event, jsEvent, view) {
 
     // change the day's background color just for fun
     $(this).css('background-color', '#e9e9e9');
-        var result = confirm('ete vous sur de vouloir supprimer l\'evenement ?');
+        var result = confirm('Êtes-vous sûr de vouloir supprimer l\'evenement ?');
         if(result){
             $('#calendar').fullCalendar('removeEvents', event._id);
             $.ajax({

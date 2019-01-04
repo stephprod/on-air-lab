@@ -1,16 +1,8 @@
 import {update_front_with_msg, update_front_with_errors} from './front-update.js';
-//import {update_front_with_msg, update_front_with_errors} from './front-update.js';
-//import {Push} from './push.min.js';
-/*import {get_events} from './events.js';
-import {socket, switchRoom} from './socket_modules.js';*/
-// var song_module_send_link = $("#song_up");
-// var video_module_send_link = $("#video_up");
-// var devis_module_send_link = $("#devis-send");
 var input_file_ghost = $("[name='uploaded_file']");
 var input_text = $("[name='song']");
 input_text.css("cursor", "pointer");
 var form_song = $("form.upload");
-//var io = io.connect();
 var socket = io.connect();
 var roomDisplay = null;
 var iframe_cal1 = $(".cal")[0].contentDocument ? $(".cal")[0].contentDocument : $(".cal")[0].contentWindow.document;
@@ -434,8 +426,9 @@ function chat_headlines_span_click(e){
   if (target.hasClass("history")){  
     // console.log("notifs refresh !");
     // console.log(socket);
-    if (userId != null && userId != "null")
-      socket.emit('refresh_notifs', {userId: userId});
+    console.log(user);
+    if (user.id != null && user.id != "null" && user.id != "")
+      socket.emit('refresh_notifs', {userId: user.id});
     notifs_part.css("background", "url(/asset/images/top-menu.png) -186px -118px no-repeat");
     msg_part.css("background", "url(/asset/images/top-menu.png) -5px -48px no-repeat");
     payments_part.css("background", "");
@@ -447,8 +440,8 @@ function chat_headlines_span_click(e){
     $("div#friends").show();
   }else{
     //console.log("payments refresh !");
-    if (userId != null && userId != "null")
-      socket.emit('refresh_art_payments', {userId: userId});
+    if (user.id != null && user.id != "null" && user.id != "")
+      socket.emit('refresh_art_payments', {userId: user.id});
     msg_part.css("background", "url(/asset/images/top-menu.png) -5px -48px no-repeat");
     payments_part.css("background", "url(/asset/images/top-menu.png) -97px -118px no-repeat");
     notifs_part.css("background", "");
@@ -519,7 +512,7 @@ if (userId != null && userId != "null") {
 }
 function on_socket_updatechat(coresp, data, cont){
 //console.log("updatechat");
-//console.log(data);
+console.log(data);
 //console.log(user);
 //console.log(cont);
 if (data !== undefined && data != null){
@@ -1151,22 +1144,29 @@ function on_module_accept_typeMessage_link_click(e){
     }
   }else{
     //Cas du rdv /offre_rdv /contact
-    $.ajax({
-      type: "POST",
-      url: "/action-in-module",
-      data: glob_datas,
-      beforeSend: function (req){
-        req.setRequestHeader("x-access-token", token);
-      },
-      success: function (data){
-        if (data.success[0]){
-          socket.emit("sendNotif", data.notif);
-          const content = 'demande acceptée !';
-          div.find("div.card-chat div.div-submi").empty();
-          div.find("div.card-chat div.div-submi").append(content);
+    //console.log(user);
+    if (user.abonnement == undefined || user.abonnement){
+      $.ajax({
+        type: "POST",
+        url: "/action-in-module",
+        data: glob_datas,
+        beforeSend: function (req){
+          req.setRequestHeader("x-access-token", token);
+        },
+        success: function (data){
+          if (data.success[0]){
+            socket.emit("sendNotif", data.notif);
+            if (type_message_libelle == "contact")
+              iframe.reload();
+            const content = 'demande acceptée !';
+            div.find("div.card-chat div.div-submi").empty();
+            div.find("div.card-chat div.div-submi").append(content);
+          }
         }
-      }
-    });
+      });
+    }else{
+      update_front_with_msg({success: [false], global_msg: ["Vous devez être connecté et avoir un abonnement valide pour accepter des demandes !"]}, "msg-inf-chat");
+    }
   }
 }
 function on_module_deny_typeMessage_link_click(e){
@@ -1177,24 +1177,28 @@ function on_module_deny_typeMessage_link_click(e){
   datas.id_type_message = div.data("id-typeMessage");
   datas.action = "deny";
   datas.type_m = type_message_libelle + "_response";
-  //console.log(datas);
-  $.ajax({
-    type: "POST",
-    url: "/action-in-module",
-    data: datas,
-    beforeSend: function (req){
-      req.setRequestHeader("x-access-token", token);
-    },
-    success: function (data){
-      //console.log(data);
-      if (data.success[0]){
-        socket.emit("sendNotif", data.notif);
-        const content = 'demande refusée !';
-        div.find("div.card-chat div.div-submi").empty();
-        div.find("div.card-chat div.div-submi").append(content);
+  console.log(user);
+  if (user.abonnement == undefined || user.abonnement){
+    $.ajax({
+      type: "POST",
+      url: "/action-in-module",
+      data: datas,
+      beforeSend: function (req){
+        req.setRequestHeader("x-access-token", token);
+      },
+      success: function (data){
+        //console.log(data);
+        if (data.success[0]){
+          socket.emit("sendNotif", data.notif);
+          const content = 'demande refusée !';
+          div.find("div.card-chat div.div-submi").empty();
+          div.find("div.card-chat div.div-submi").append(content);
+        }
       }
-    }
-  });
+    });
+  }else{
+    update_front_with_msg({success: [false], global_msg: ["Vous devez être connecté et avoir un abonnement valide pour refuser des demandes !"]}, "msg-inf-chat");
+  }
 }
 function on_socket_update_eventstypeoffermessage(data){
   //console.log(data);
@@ -1280,19 +1284,19 @@ function on_socket_new_notif(data){
   if (data.senderAction.id != user.id){
     Push.create("Notification de Label-onair !", {
       body: data.msg+" par "+data.senderAction.nom+" "+data.time,
-      icon: "/icon.png",
+      icon: data.senderAction.img_chat,
       timeout: 5000,
       onClick: function() {
-          console.log(this);
+        console.log(this);
       }
     });
   }else{
     Push.create("Notification de Label-onair !", {
       body: data.msg+"  "+data.time,
-      icon: "/icon.png",
+      icon: data.senderAction.img_chat,
       timeout: 5000,
       onClick: function() {
-          console.log(this);
+        console.log(this);
       }
     });
   }

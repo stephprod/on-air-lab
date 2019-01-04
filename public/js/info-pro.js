@@ -236,16 +236,18 @@ function on_etab_valid_link_click(e){
 	var datas = {};
 	e.preventDefault();
 	var form = $("form[name='agent-form']");
-	var nom, adresse, cp, description, siret;
+	var nom, adresse, cp, ville_id, description, siret;
 	datas.cible = "etab";
 	nom = form.find("[name='nom']").val();
 	adresse = form.find("[name='adresse']").val();
 	cp = parseInt(form.find("[name='cp'] option:selected").text().split("/")[1]);
+	ville_id = parseInt(form.find("[name='cp']").val());
 	description = form.find("[name='descr']").val();
 	siret = form.find("[name='siret']").val();
 	datas.nom = nom;
 	datas.adresse = adresse;
 	datas.cp = cp;
+	datas.ville_id = ville_id;
 	datas.descr = description;
 	datas.siret = siret;
 	//console.log(datas);
@@ -276,8 +278,8 @@ function on_off_delete_div_click(e){
 	// var parentRow = $("div#home > div.row");
 	datas.action = "delete";
 	datas.id_offre = $(this).data("id-offre");
-	console.log(datas);
-	console.log($(this));
+	// console.log(datas);
+	// console.log($(this));
 	$.ajax({
 		type: "POST",
 		url: "/create_off",
