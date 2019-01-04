@@ -426,7 +426,7 @@ function chat_headlines_span_click(e){
   if (target.hasClass("history")){  
     // console.log("notifs refresh !");
     // console.log(socket);
-    console.log(user);
+    //console.log(user);
     if (user.id != null && user.id != "null" && user.id != "")
       socket.emit('refresh_notifs', {userId: user.id});
     notifs_part.css("background", "url(/asset/images/top-menu.png) -186px -118px no-repeat");
@@ -512,7 +512,7 @@ if (userId != null && userId != "null") {
 }
 function on_socket_updatechat(coresp, data, cont){
 //console.log("updatechat");
-console.log(data);
+//console.log(data);
 //console.log(user);
 //console.log(cont);
 if (data !== undefined && data != null){
@@ -1177,7 +1177,7 @@ function on_module_deny_typeMessage_link_click(e){
   datas.id_type_message = div.data("id-typeMessage");
   datas.action = "deny";
   datas.type_m = type_message_libelle + "_response";
-  console.log(user);
+  //console.log(user);
   if (user.abonnement == undefined || user.abonnement){
     $.ajax({
       type: "POST",

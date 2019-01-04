@@ -1,7 +1,7 @@
 const express = require('express')
 const User = require('../models/req_user')
 const router = express.Router()
-//const notifications = require("../models/notifications").actions
+const notifications = require("../models/notifications").actions
 
 router.param('id', (req, res, next, token) => {
 	req.session.id_u = token
@@ -66,8 +66,8 @@ router.route('/profile/:id')
 	.post((req, res) => {
 		//console.log(req.session.id_u)
 		//let created_date = new Date();
-		let userSender = {id: req.session.userId, nom: req.session.userName, prenom: req.session.userFirstName, email: req.session.userMail}
-		//let userReceiver = {id: req.session.user_receiv.id_coresp, nom: req.session.user_receiv.nom, prenom: req.session.user_receiv.prenom, email: req.session.user_receiv.mail}
+		let userSender = {id: req.session.userId, nom: req.session.userName, prenom: req.session.userFirstName, email: req.session.userMail, img_chat: req.session.img_chat}
+		let userReceiver = {id: req.session.user_receiv.id_coresp, nom: req.session.user_receiv.nom, prenom: req.session.user_receiv.prenom, email: req.session.user_receiv.mail}
 		//let table = [], tableTemp = [], tableT = [], tableM = []
 		// let req_ok = '', req_ko = ''
 		let ret = {}
@@ -87,37 +87,42 @@ router.route('/profile/:id')
 				ret.global_msg.push("Connexion requise !")
 				res.send(ret)
 			}else{
-		// 		check_if_room_exist(req, ret).then((result) => {
-		// 			return insert_contact_tm(req, result)
-		// 		}).then((result) => {
-		// 			return insert_message(req, result)
-		// 		}).then((result) => {
-		// 			return tempo(req, result)
-		// 		}).then((result) => {
-		// 			notifications.mail(userReceiver, userSender, result.result.type_d)
-		// 			.then((result2) => {
-		// 				result.notif = result2
-		// 				res.send(result)
-		// 			})
-		// 		}).catch((err) => {
-		// 			console.log(err)
-		// 			res.send(err)
-		// 		})
-				check_if_room_exist(req, ret).then((result) => {
-					return insert_contact_tm(req, result)
-					.then((result) => insert_message(req, result))
-					.then((result) => tempo(req, result))
-					.then((result) => {
-						res.send(result)
-						// console.log(userSender)
-						// console.log(userReceiver)
-						// return notifications.mail(userReceiver, userSender, result.result.type_d)
-						// .then((result2) => {
-						// 	result.notif = result2
-						// 	res.send(result)
-						// })
-					}).catch((err) => {
-						console.log(err)
+				check_if_contact_already_send(req, ret)
+				.then((result) => {
+					check_if_room_exist(req, result).then((result) => {
+						return insert_contact_tm(req, result)
+						.then((result) => insert_message(req, result))
+						.then((result) => tempo(req, result))
+						.then((result) => {
+							notifications.mail(userReceiver, userSender, result.result.type_d)
+							.then((result2) => {
+								result.notif = result2
+								// for( var i=0, len=this.userGlobal.length; i<len; ++i ){
+								// 	var c = this.userGlobal[i]
+								// 	if(c.id_user == userIdReceiver){
+								// 		this.io.sockets.in(c.socket).emit('updatechat', user_receiver, data, context)
+								// 		break;
+								// 	}
+								// }
+								res.send(result)
+							//this.io.sockets.in(this.socket.id).emit('updatechat', user_receiver, data, context)
+							}).catch((err) => {
+								console.log(err)
+							})
+							// res.send(result)
+							// console.log(userSender)
+							// console.log(userReceiver)
+							// return notifications.mail(userReceiver, userSender, result.result.type_d)
+							// .then((result2) => {
+							// 	result.notif = result2
+							// 	res.send(result)
+							// })
+						}).catch((err) => {
+							console.log(err)
+							res.send(err)
+						})
+					}, (err) => {
+						//console.log(err)
 						res.send(err)
 					})
 				}, (err) => {
@@ -151,6 +156,21 @@ function check_if_room_exist(req, ret){
 				resolve(ret)
 			}
 		})
+	})
+}
+function check_if_contact_already_send(req, ret){
+	return new Promise((resolve, reject) => {
+		let tab = [req.session.user_receiv.id_coresp, req.session.userId]
+		User.contact_request_exist(tab, (count, resolve, reject) => {
+			if (count[0].nb > 0){
+				ret.success.push(false)
+				ret.global_msg.push("Une demande de contact a déjà été envoyée à ce professionnel, attendez sa réponse avant de lui envoyer une autre demande !")
+				//console.log(ret)
+				reject(ret)
+			}else{
+				resolve(ret)
+			}
+		}).then((res) => resolve(res), (err) => reject(err))
 	})
 }
 function insert_contact_tm(req, ret){

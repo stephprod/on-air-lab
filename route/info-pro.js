@@ -96,7 +96,7 @@ router.route('/info-pro')
 				User.getEtablissement(request.session.userId, (result) => {
 					if (result == 0) {
 						//INSERTION
-						if (request.session.userType == 2)
+						if (request.session.userType == 3)
 							path_img = "/asset/content/img/default_pro_video_profile.jpeg"
 						tableE.push(table[1], table[2], table[3], table[4], table[5], table[6], path_img)
 						User.infoPro_etablissement(tableE, (result) => {

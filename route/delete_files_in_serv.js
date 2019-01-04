@@ -32,10 +32,12 @@ router.route('/delete-in-serv')
 						};
 					}) (file), 100)
 					ret.success.push(true)
+					ret.global_msg.push("Image(s) supprimée(s) du serveur !")
 					response.send(ret)
 			}
 			else{
 				ret.success.push(false)
+				ret.global_msg.push("Mauvaise requête !")
 				response.send(ret)
 			}
 		}else{

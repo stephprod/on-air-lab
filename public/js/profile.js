@@ -204,7 +204,7 @@ function on_form_contact_submit(e){
 					//console.log(socket);
 					switchRoom(1, 1, "Admin", "Admin", 1, 'admin@label-onair.com', '/asset/content/img/default_admin.png', user);
 					socket.emit('sendchat', contact, user.id, user_request, "iframe-chat");
-					//socket.emit('sendNotif', data.notif);
+					socket.emit('sendNotif', data.notif);
 				}
 			}else{
 				if (data.result.room !== undefined){

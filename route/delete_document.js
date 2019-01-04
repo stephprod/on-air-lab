@@ -18,9 +18,11 @@ router.route('/delete-files')
 			User.delete_document(table, (res) => {
 				if (res > 0){
 					ret.success.push(true)
+					ret.global_msg.push("Image(s) supprimée(s)!")
 				}
 				else
 				{
+					ret.global_msg.push("Erreur lors de la suppression d'image(s) !")
 					ret.success.push(false)
 				}
 				response.send(ret)

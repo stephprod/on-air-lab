@@ -2,7 +2,6 @@
 Apartment HTML Site Template
 Author: Jan Skwara - http://themeforest.net/user/johnnychaos
 ***********************/
-//import {update_front_with_msg, update_front_with_errors} from './front-update.js';
 
 /********** SETTINGS **********/	
 
@@ -20,6 +19,29 @@ var absolutePathApp = '';
 var session = JSON.parse(sessionStorage.getItem('session')), token;
 if (session != null && session.user != undefined){
     token = session.token;
+}
+function update_front_with_msg(ret, dataName){
+	$('.global_msg').remove();
+	var content = "";
+	$.each(ret, function (ind, val){
+		var elem = $("."+dataName);
+		//console.log(elem);
+		//elem.after();
+		if (ind == "global_msg"){
+			content += '<div class="global_msg">';
+			$.each(val, function (i, v){
+				if (!ret.success[i])
+					content += '<div class="error-box"><p style="margin:0;">'+v+'</p><div class="small-triangle"></div><div class="small-icon"><i class="jfont">&#xe80f;</i></div></div>';
+				else{
+					content += '<div class="success-box"><p style="margin:0;">'+v+'</p><div class="small-triangle"></div><div class="small-icon"><i class="jfont">&#xe816;</i></div></div>';
+				}
+			});
+			content += '</div>';
+			//console.log(content);
+			elem.after(content);		
+		}
+	});
+	//$('[data-toggle="tooltip"]').tooltip();
 }
 /********** SETTINGS END **********/	
 

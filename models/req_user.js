@@ -1367,6 +1367,21 @@ class User{
             })
         })
     }
+    static contact_request_exist(table, cb){
+        return new Promise((resolve, reject) => {
+            let r = db.query("SELECT COUNT(*) AS nb FROM `temp` "+
+            "INNER JOIN `type_message` ON `type_message`.`id_type_m`=`temp`.`id_type_message` "+
+            "AND `temp`.`id_user_dest`="+table[0]+" AND `temp`.`id_user_host`="+table[1]+" "+
+            "AND `type_message`.`type_m`='contact'",
+            (err, res) => {
+                if (err){
+                    console.log(r.sql)
+                    throw err
+                }
+                cb (res, resolve, reject)
+            })
+        })
+    }
 }
 
 module.exports = User

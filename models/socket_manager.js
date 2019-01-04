@@ -997,20 +997,20 @@ class SocketManager{
                         break;
                     case "contact":
                         //console.log(data);
-                        notifications.mail(data.user_receiver, data.user_sender, data.type_m)
-                        .then((result2) => {
-                            data.notif = result2
-                            for( var i=0, len=this.userGlobal.length; i<len; ++i ){
-                                var c = this.userGlobal[i]
-                                if(c.id_user == userIdReceiver){
-                                    this.io.sockets.in(c.socket).emit('updatechat', user_receiver, data, context)
-                                    break;
-                                }
-                            }
-                           //this.io.sockets.in(this.socket.id).emit('updatechat', user_receiver, data, context)
-                        }).catch((err) => {
-                            console.log(err)
-                        })
+                        // notifications.mail(data.user_receiver, data.user_sender, data.type_m)
+                        // .then((result2) => {
+                        //     data.notif = result2
+                        //     for( var i=0, len=this.userGlobal.length; i<len; ++i ){
+                        //         var c = this.userGlobal[i]
+                        //         if(c.id_user == userIdReceiver){
+                        //             this.io.sockets.in(c.socket).emit('updatechat', user_receiver, data, context)
+                        //             break;
+                        //         }
+                        //     }
+                        //    //this.io.sockets.in(this.socket.id).emit('updatechat', user_receiver, data, context)
+                        // }).catch((err) => {
+                        //     console.log(err)
+                        // })
                         break;
                     default:
                         tableT.push(data.type_m, data.path)

@@ -78,27 +78,27 @@ class MailTemplate{
 			switch (typeMessage){
 				case "rdv":
 					param.content += 'Nouvelle demande de rendez-vous envoyée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
-					param.subject = "Une action de votre part est requise !"
+					param.subject = "Une action de votre part est requise - Demande de rendez-vous !"
 					break;
 				case "booking":
 					param.content += 'Nouvelle demande de booking envoyée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
-					param.subject = "Une action de votre part est requise !"	
+					param.subject = "Une action de votre part est requise - Demande de booking !"	
 					break;
 				case "devis":
 					param.content += 'Nouveau devis envoyée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
-					param.subject = "Une action de votre part est requise !"
+					param.subject = "Une action de votre part est requise - Devis !"
 					break;
 				case "payment":
 					param.content += 'Nouvelle demande de paiement envoyée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
-					param.subject = "Une action de votre part est requise !"
+					param.subject = "Une action de votre part est requise - Demande de paiement !"
 					break;
 				case "contact":
 					param.content += 'Nouvelle demande de contact envoyée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
-					param.subject = "Une action de votre part est requise !"
+					param.subject = "Une action de votre part est requise - Demande de contact !"
 					break;
 				case "rdv_offer":
 					param.content += 'Nouvelle demande de rendez-vous liée à une offre envoyée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
-					param.subject = "Une action de votre part est requise !"
+					param.subject = "Une action de votre part est requise  - Demande liée à une offre !"
 					break;
 				case "devis_request":
 					param.content += 'Nouvelle demande de devis envoyée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
