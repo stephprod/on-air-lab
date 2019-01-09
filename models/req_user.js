@@ -1297,6 +1297,17 @@ class User{
             })
         })
     }
+    static update_payment(req, cb){
+        return new Promise((resolve, reject) =>{
+            let r = db.query("UPDATE `payments` SET "+req, (err, res) => {
+                if (err){
+                    console.log(r.sql)
+                    throw err
+                }
+                cb(res, resolve, reject)
+            })
+        })
+    }
     static get_pro_payment_source(table, cb){
         return new Promise((resolve, reject) =>{
             let r = db.query("SELECT * FROM `payments` WHERE `id_pro`=? AND `type_payment`='ABONNEMENT' ORDER BY `date_payment` DESC LIMIT 1", [table], (err, res) => {

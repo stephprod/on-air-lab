@@ -102,7 +102,7 @@ function payment_intent_responses(wh_datas, resp){
     if (wh_datas.type != "payment_intent.created"){
         return get_user_in_event(wh_datas.data.object.charges.data[0].source.owner.email).then((user) => {
             if (wh_datas.type == "payment_intent.succeeded"){
-                insert_new_payment("valide", wh_datas, user)
+                insert_new_payment("en attente", wh_datas, user)
                     .then((res) => {
                         let hash = res.id + '-' + res.datePayment.to2DigitsString()
                         //console.log("HASH : "+hash)
