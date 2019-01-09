@@ -1304,7 +1304,7 @@ function on_socket_new_notif(data){
 function on_module_payment_bank_link_click(e){
   e.preventDefault();
   var state = false, buttonText = "", button,
-   buttonClass, new_state, newButtonClass, msg = "En activant le module bancaire vous acceptez que Label-Onair vous prélève directement 3% du montant de votre demande !";
+   buttonClass, new_state, newButtonClass, msg = "En activant le module bancaire vous acceptez que Label-Onair vous prélève directement 3,5% du montant de votre demande !";
   // console.log(e.target);
   // console.log($(e.target).parents("#paiement-modal"));
   // console.log($(e.target).parents("#paiement-modal").find("a[name='module']"));
