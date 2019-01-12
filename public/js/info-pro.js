@@ -474,6 +474,7 @@ function sendPlan() {
 	function check_3d_secure(response) {
 		//console.log(response)
 		// check the 3DS source's status
+		var date_entr = new Date(business.dateOfBirth);
 		if (response.error) {
 			var message = response.error.message;
 			displayResult("Unexpected 3DS source creation response status: " + status + ". Error: " + message);
@@ -482,7 +483,6 @@ function sendPlan() {
 		if (response.source.card.three_d_secure == 'not_supported') {
 			data.sourceId = response.source.id;
 			displayResult("This card does not support 3D Secure authentication, but liability will be shifted to the card issuer.");
-			var date_entr = new Date(business.dateOfBirth);
 			//console.log(date_entr);
 			stripe.createToken('account', {
 				name: user.name,

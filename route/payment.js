@@ -9,8 +9,8 @@ router.route('/payment')
         res.locals.session = req.session
         // create_stripe_account(req, req.query.accountToken)
         create_stripe_customer(req, req.query.source)
-        .then((res) => {
-            res.send({customer : res})
+        .then((res0) => {
+            res.send({customer : res0})
         }).catch((err) => {
             res.send({err : err.message})
         })
