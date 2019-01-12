@@ -80,6 +80,17 @@
 							<div class="title-separator-primary"></div>
 						</div>
 					</div>
+					<% if (locals.datas_infoPro !== undefined){ %>
+						<div class="global_msg">
+					<%  for (var ind in locals.datas_infoPro.global_msg){
+							if (locals.datas_infoPro.success[0]){ %>
+								<div class="success-box"><p style="margin:0;"><%= locals.datas_infoPro.global_msg[ind] %></p><div class="small-triangle"></div><div class="small-icon"><i class="jfont">&#xe816;</i></div></div>
+							<% }else{ %>
+								<div class="error-box"><p style="margin:0;"><%= locals.datas_infoPro.global_msg[ind] %></p><div class="small-triangle"></div><div class="small-icon"><i class="jfont">&#xe80f;</i></div></div>
+							<% }
+						} %>
+						</div>
+				 	<% } %>
 					<form name="agent-form" action="#">
 					<div class="row margin-top-60">
 						<div class="col-xs-6 col-xs-offset-3 col-sm-offset-0 col-sm-3 col-md-4">

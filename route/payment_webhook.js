@@ -79,26 +79,32 @@ function manage_event_response(wh_datas, response){
         .catch((err) => {
             response.status(500).send({received: true, error: err})
         })
-    }else if (wh_datas.type.indexOf("customer") !== -1){
-        customer_responses(wh_datas, response)
-        .then(() => {
-            response.status(200).send({received: true})
-        })
-        .catch((err) => {
-            response.status(500).send({received: true, error: err})
-        })
+    }
+    // else if (wh_datas.type.indexOf("customer") !== -1){
+    //     customer_responses(wh_datas, response)
+    //     .then(() => {
+    //         response.status(200).send({received: true})
+    //     })
+    //     .catch((err) => {
+    //         response.status(500).send({received: true, error: err})
+    //     })
+    // }
+    else{
+        response.status(200).send({received: true})
     }
 }
 function customer_responses(wh_datas, resp){
-    return get_user_in_event(wh_datas.metadata.userMail)
-    .then((res) => {
-        if (wh_datas.type == "customer.created"){
-            //Mise à jour avec l'id du customer
-        }
-    })
+    // console.log(wh_datas)
+    // return get_user_in_event(wh_datas.data.object.metadata.userMail)
+    // .then((res) => {
+    //     if (wh_datas.type == "customer.created"){
+    //         //Mise à jour avec l'id du customer
+    //     }
+    // })
 }
 function charge_responses(wh_datas, resp){
-    return get_user_in_event(wh_datas.data.object.source.owner.name)
+    //console.log(wh_datas.data.object.source)
+    return get_user_in_event(wh_datas.data.object.source.metadata.user_mail)
     .then((user) => {
         if (wh_datas.type == "charge.succeeded"){
             send_notification(user, wh_datas.data.object.amount, "accept")
@@ -106,8 +112,10 @@ function charge_responses(wh_datas, resp){
                 insert_new_abo(resp, "valide", wh_datas, user)
             })
             .then(() => {
-                update_profil(wh_datas)
+                //console.log(wh_datas);
+                update_profil(wh_datas);
             })
+            .catch((err) => err)
         }else{
             send_notification(user, wh_datas.data.object.amount, "deny")
             .then(() => {
@@ -181,6 +189,7 @@ function insert_new_abo(resp, action, wh_datas, user_from){
     })
 }
 function update_profil(wh_datas){
+    //console.log(wh_datas.data.object.source)
     return User.update_profil("SET `profil`.`customer`='"+
         wh_datas.data.object.source.metadata.customer_id+
         "', `profil`.`account`='"+

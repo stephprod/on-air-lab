@@ -280,13 +280,13 @@ $('#dishoraire .savecal').click(function(ev){
             type: "POST",
             success: function(data) {
                 //console.log(data);
-                localStorage.setItem("datas", JSON.stringify(data));
+                localStorage.setItem("datas_cal", JSON.stringify(data));
                 document.location = "/agenda";
             }
         });
 });
 window.onload = function() {
-    var session_data = JSON.parse(localStorage.getItem("datas"));
+    var session_data = JSON.parse(localStorage.getItem("datas_cal"));
     //console.log(session_data);
     //console.log(localStorage);
     localStorage.clear();

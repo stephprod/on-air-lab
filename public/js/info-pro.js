@@ -13,6 +13,13 @@ var sliders_tarification = $("div[id^='slider-t-']");
 var etab_valid_link = $("a[data-action='etablissement']");
 var off_delete_div = $("div.delete-off");
 var code_payment_check_link = $("a[data-action='get-payment']");
+var session = JSON.parse(sessionStorage.getItem('session'));
+//sessionStorage.clear();
+var user = null;
+//var userId = null;
+var token = null;
+var business= JSON.parse(sessionStorage.getItem('business'));
+var price = 1999;
 code_payment_check_link.on("click", on_code_payment_check_link_click);
 etab_valid_link.on("click", on_etab_valid_link_click);
 off_delete_div.on("click", on_off_delete_div_click);
@@ -23,24 +30,24 @@ $(sliders_tarification[0]).slider("disable");
 $(sliders_tarification[1]).on("slidechange", on_tarif_slider_change);
 $(sliders_tarification[2]).on("slidechange", on_tarif_slider_change);
 $(document).on("ready", function(){
-	$("input[name^='cc']").removeAttr("disabled");	
+	var extra_datas = JSON.parse(localStorage.getItem("datas_infoPro"));
+	localStorage.clear();
+	$("input[name^='cc']").removeAttr("disabled");
+	if (extra_datas != null){
+		//console.log(extra_datas);
+		update_front_with_msg(extra_datas, "msg-profile");
+		if (!extra_datas.success[0])
+			update_front_with_errors(extra_datas.errors);
+		else
+			$("input[name^='cc']").removeAttr("disabled");
+	}
 });
 $("form[name='agent-form'] [name='email']").attr("disabled", "disabled");
-var session = JSON.parse(sessionStorage.getItem('session'));
-//sessionStorage.clear();
-var user = null;
-//var userId = null;
-var token = null;
-var business= JSON.parse(sessionStorage.getItem('business'));
 if (session != null && session.user != undefined){
 	user = session.user;
 	//userId = user.id;
 	token = session.token;
 }
-// if (business != null){
-// 	console.log(business);
-// }
-var price = 1999;
 $(".slider[id^=slider-o-price]").each( function() {
 	var sliderId = $( this ).attr('id');
 	$( this ).slider({
@@ -163,7 +170,7 @@ function on_agent_photo_change(){
 		processData: false,  // indique à jQuery de ne pas traiter les données
 		contentType: false,  // indique à jQuery de ne pas configurer le contentType
 		success: function(data){
-			localStorage.setItem("datas", JSON.stringify(data));
+			localStorage.setItem("datas_infoPro", JSON.stringify(data));
 			document.location = "/info-pro";
 			//console.log(data);
 		}
@@ -316,13 +323,13 @@ function on_etab_valid_link_click(e){
 		},
 		success: function (data){
 			//console.log(data)
-			update_front_with_msg(data, "msg-profile");
-			if (!data.success[0])
-				update_front_with_errors(data.errors);
-			else
-				$("input[name^='cc']").removeAttr("disabled");
-			//localStorage.setItem("datas", JSON.stringify(data));
-			//document.location = "/info-pro";
+			// update_front_with_msg(data, "msg-profile");
+			// if (!data.success[0])
+			// 	update_front_with_errors(data.errors);
+			// else
+			// 	$("input[name^='cc']").removeAttr("disabled");
+			localStorage.setItem("datas_infoPro", JSON.stringify(data));
+			document.location = "/info-pro";
 		}
 	});
 }
@@ -403,10 +410,24 @@ $(document).on('click', '#redirectAdmin', function(event) {
 $(document).on('click', '#customButton', function(e) {
 	e.preventDefault();
 	if ($("#customButton").data("action") == "create")
-		sendPlan();
+		if (business.dateOfBirth != null)
+			sendPlan();
+		else
+			update_front_with_msg({success:[false], global_msg:["Veillez remplir votre profil afin de pouvoir créer votre abonnement !"]}, "pro-payment-msg");
 	else
 		deletePlan();
 })
+function check_abo(usr){
+	if (usr != "null" && (usr.type == 2 || usr.type == 3)){
+		if ((usr.abonnement !== undefined && usr.abonnement))
+		return true;
+		else
+		return false;
+	}
+	else if(usr.type == 4 || usr.type == 1)
+		return true;
+	return false;
+  }
 function deletePlan(){
 	var datas = {
 		id: user.id,
@@ -464,9 +485,6 @@ function sendPlan() {
 			type: 'card',
 			token: token.id
 		}).then((result) => {
-			//console.log(result);
-			// console.log(token);
-			// token.card.currency = "eur";
 			data.cardToken = token.id;
 			check_3d_secure(result);
 		});
@@ -520,8 +538,6 @@ function sendPlan() {
 						},
 						success: function (data) {
 							update_front_with_msg(data, "pro-payment-msg");
-							// console.log('plan souscription ok !');
-							// console.log(data);
 						}
 					});
 				}else{
@@ -559,32 +575,32 @@ function sendPlan() {
 			})
 			.then((tok) => {
 				if (!tok.error){
-					$.ajax({
-						type : 'GET',
-						url : '/payment',
-						data : {source : response.source.id},
-						async: false,
-						success : function(data){
-							var returnURL = "http://localhost:4000/plan3dsecure?cust="+data.customer.id+"&amount="+price+"&accountToken="+tok.token.id;
+					// $.ajax({
+					// 	type : 'GET',
+					// 	url : '/payment',
+					// 	data : {source : response.source.id},
+					// 	async: false,
+					// 	success : function(data){
+							var returnURL = "http://localhost:4000/plan3dsecure?amount="+price+"&accountToken="+tok.token.id+"&src="+response.source.id;
 							stripe.createSource({
 								type: 'three_d_secure',
 								amount: price,
 								currency: "eur",
 								three_d_secure: {
-									customer : data.customer.id,
+									//customer : data.customer.id,
 									card: response.source.id
 								},
 								redirect: {
 									return_url: returnURL,
 								},
 							}).then((response) =>{
-								// console.log('response: ');
-								// console.log(response);
+								console.log('response: ');
+								console.log(response.source);
 								if (response.error === undefined)
 									window.location.assign(response.source.redirect.url);
 							}).catch((err) => console.log(err));
-						}
-					})
+						// }
+					// })
 				}else{
 					console.log(tok.err)
 				}

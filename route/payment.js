@@ -4,17 +4,17 @@ const router = express.Router()
 //const User = require('../models/req_user')
 
 router.route('/payment')
-    .get((req, res) => {
-        //console.log(req.query)
-        res.locals.session = req.session
-        // create_stripe_account(req, req.query.accountToken)
-        create_stripe_customer(req, req.query.source)
-        .then((res0) => {
-            res.send({customer : res0})
-        }).catch((err) => {
-            res.send({err : err.message})
-        })
-    })
+    // .get((req, res) => {
+    //     //console.log(req.query)
+    //     res.locals.session = req.session
+    //     // create_stripe_account(req, req.query.accountToken)
+    //     create_stripe_customer(req, req.query.source)
+    //     .then((res0) => {
+    //         res.send({customer : res0})
+    //     }).catch((err) => {
+    //         res.send({err : err.message})
+    //     })
+    // })
 	.post((req, res) => {
         let ret = {}
         ret.success = []

@@ -16,7 +16,13 @@ router.route('/info-pro')
 		//request.session.userId = 18
 		//request.session.userName = "Unnom"
 		//request.session.userType = 2
+		// console.log(request.query)
 		response.locals.session = request.session
+		if (request.query.datas_infoPro !== undefined){
+			// console.log(request.query.datas_infoPro)
+			// console.log(JSON.parse(request.query.datas_infoPro))
+			response.locals.datas_infoPro = JSON.parse(request.query.datas_infoPro)
+		}
 		if (request.session.userId == undefined || request.session.userType == 4) {
 			response.render('pages/index')
 		}else{

@@ -220,6 +220,9 @@
       locals.session.userFirstName : "null" %>";
     user.mail = "<%- locals.session.userMail ?
       locals.session.userMail : "null" %>";
+    <% if (locals.session.abonnement !== undefined && locals.session.abonnement != null) { %>
+			user.abonnement = <%= locals.session.abonnement %>;
+		<% } %>
     session.user = user;
     //console.log(session);
     sessionStorage.setItem("session", JSON.stringify(session));

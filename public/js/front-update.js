@@ -26,11 +26,13 @@ function update_front_with_errors(tabErr){
 	$('[data-toggle="tooltip"]').tooltip('enable');
 }
 function update_front_with_msg(ret, dataName){
+	//console.log()
 	$('.global_msg').remove();
 	var content = "";
 	$.each(ret, function (ind, val){
 		var elem = $("."+dataName);
-		//console.log(elem);
+		// console.log(elem);
+		// console.log(ret);
 		//elem.after();
 		if (ind == "global_msg"){
 			content += '<div class="global_msg">';
