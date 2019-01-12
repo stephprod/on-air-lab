@@ -30,6 +30,7 @@ router.route('/payment-intent/:id')
             allowed_source_types: ['card'],
             description: req.body.desc,
             statement_descriptor: "user "+req.session.user_receiv.id_coresp,
+            transfer_group: "pay_for_"+req.session.user_receiv.id_coresp,
         }).then((result) => {
             ret.result = result.client_secret
             //console.log(req.query)

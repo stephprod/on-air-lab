@@ -15,14 +15,14 @@ function form_payment(data, glob_datas){
      // Create Checkout's handler
     var handler = StripeCheckout.configure({
       key: stripePublishableKey,
-      image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
+      image: data.img,
       locale: 'auto',
-      allowRememberMe: false,
+      allowRememberMe: true,
       email: data.email,
     }); 
     // Open Checkout with further options:
     handler.open({
-      name: 'Stripe.com',
+      name: 'Label-OnAir',
       description: data.desc,
       amount: price,
       currency: currency,

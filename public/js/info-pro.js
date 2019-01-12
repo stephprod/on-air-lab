@@ -448,7 +448,6 @@ function sendPlan() {
 		name: 'Label-OnAir',
 		image: '/asset/images/logo-onair.jpg',
 		locale: 'auto',
-		allowRememberMe: false,
 		email: data.email,
 		token: handlePlanToken,
 		currency: currency

@@ -39,26 +39,28 @@ router.route('/get-payment')
                         }else{
                             reject(new Error("Code inséré expiré ou inconnu !"))
                         }
-                    }).then((res3) => {
+                    }).then((res0) => {
                         //console.log(res3)
-                        rslt = res3
-                        return User.get_pro_payment_source(res3.id_pro, (result, resolve, reject) => {
+                        rslt = res0
+                        return User.get_pro_account(res0.id_pro, (result, resolve, reject) => {
                             if (result.length > 0){
                                 //console.log(result[0])
-                                resolve(result)
+                                resolve(result[0].account)
                             }
                             else
-                                reject(new Error("Source irrécupérable !"))
+                                reject(new Error("Compte irrécupérable !"))
                         })
-                    }).then((res2) => {
+                    }).then((res1) => {
+                        console.log("accountId :")
+                        console.log(res1)
+                        return retrieve_stripe_account(res1)
+                    })
+                    .then((res2) => {
+                        console.log("account :")
+                        console.log(res2)
                         fee = rslt.price_payment * 3.5
                         let amount_net = (rslt.price_payment * 100) - fee
-                        return make_stripe_payment(amount_net, res2.source)
-                    // }, (err) => {
-                    //     ret.success.push(false)
-                    //     ret.global_msg.push(err.name+": "+err.message)
-                    //     ret.result = code
-                    //     response.send(ret)
+                        return make_stripe_payment(request, amount_net, res2.id)
                     }).then((res) => {
                         // ENVOI DE MAIL AU PRO INDIQUANT LA RECUPERATION D'UN PAIEMENT
                         return User.update_payment("`state_payment`='valide' WHERE `id_p`="+rslt.id_p, (result, resolve, reject) => {
@@ -71,8 +73,9 @@ router.route('/get-payment')
                         })
                     })
                     .then((res) => {
+                        let amount_for_display = parseFloat(res / 100).toFixed(2);
                         ret.success.push(true)
-                        ret.global_msg.push("Un paiement de "+(res / 100)+"€ a été effectué à destination de votre compte, il sera effectif dans 1-2 jours ouvrés !")
+                        ret.global_msg.push("Un paiement de "+amount_for_display+"€ a été effectué à destination de votre compte, il sera effectif dans 1-2 jours ouvrés !")
                         ret.result = code
                         response.send(ret)
                     })
@@ -91,21 +94,40 @@ router.route('/get-payment')
         }
 })
 
-function make_stripe_payment(amount_net, source){
+function make_stripe_payment(req, amount_net, accountId){
     return new Promise((resolve, reject) => {
-        stripe.payouts.create({
+        // Create a Transfer to the connected account (later):
+        stripe.transfers.create({
             amount: amount_net,
             currency: "eur",
-            card: source //res2.source
-        }, function(err, payout) {
+            destination: accountId,
+            transfer_group: "pay_for_"+req.session.userId,
+        }).then((transfer) => {
             // asynchronously called
-            if (err){
-                reject(new Error(err.message))
+            if (transfer.err){
+                reject(transfer.err)
             }else{
                 //console.log(payout)
                 resolve (amount_net)
             }
         });
+    })
+}
+function retrieve_stripe_account(accountId){
+    return new Promise((resolve, reject) => {
+        // Create a Transfer to the connected account (later):
+        stripe.accounts.retrieve(
+            accountId,
+            function(err, account) {
+              // asynchronously called
+              if (err){
+                  reject(err)
+              }else{
+                  console.log(account)
+                  resolve(account)
+              }
+            }
+          );
     })
 }
 Date.prototype.to2DigitsString = function() {

@@ -610,35 +610,35 @@ class User{
         });
     }
     static displayProfile(id_pro, cb){
-    	let r = db.query('SELECT `profil`.`id_profil`, `profil`.`id_user`, `profil`.`id_etablissement`, `profil`.`id_tarification`, '+
+        let r = db.query('SELECT `profil`.`id_profil`, `profil`.`id_user`, `profil`.`id_etablissement`, `profil`.`id_tarification`, '+
             '`etablissement`.`nom`, `etablissement`.`adresse`, `etablissement`.`cp`, `etablissement`.`descr`, `etablissement`.`siret`, `etablissement`.`path_img` , '+
             '`user`.`id`, `user`.`type`, `user`.`email` '+
             'FROM `profil` '+
-    		'INNER JOIN `etablissement` ON `etablissement`.`id`=`profil`.`id_etablissement` '+
-    		'INNER JOIN `user` ON `user`.`id`=`profil`.`id_user` '+
+            'INNER JOIN `etablissement` ON `etablissement`.`id`=`profil`.`id_etablissement` '+
+            'INNER JOIN `user` ON `user`.`id`=`profil`.`id_user` '+
             'WHERE `profil`.`id_user`='+id_pro+' GROUP BY `profil`.`id_profil`',
-    		(err, result) => { 
-    			if(err){
-	            	console.log(r.sql)
-	                throw err;
-	            }
-	            cb(result);
-    	});
+            (err, result) => { 
+                if(err){
+                    console.log(r.sql)
+                    throw err;
+                }
+                cb(result);
+        });
     }
     static getOffresForDisplay(id_pro, cb){
-    	let r = db.query('SELECT * FROM `profil`'+ 
-			'INNER JOIN `contenir` ON `contenir`.`id_profil_contenir`=`profil`.`id_profil` '+
-			'INNER JOIN `offres` ON `offres`.`id_offre`=`contenir`.`id_offre_contenir` '+
+        let r = db.query('SELECT * FROM `profil`'+ 
+            'INNER JOIN `contenir` ON `contenir`.`id_profil_contenir`=`profil`.`id_profil` '+
+            'INNER JOIN `offres` ON `offres`.`id_offre`=`contenir`.`id_offre_contenir` '+
             'INNER JOIN `appartenir` ON `appartenir`.`id_user`=`profil`.`id_user` '+
             'INNER JOIN `service` ON `service`.`id_service`=`appartenir`.`id_service` '+
             'WHERE `profil`.`id_user`='+id_pro+' GROUP BY `offres`.`id_offre`', 
-			(err, result) =>{
-				if(err){
-	            	console.log(r.sql)
-	                throw err;
-	            }
-	            cb(result);
-		})
+            (err, result) =>{
+                if(err){
+                    console.log(r.sql)
+                    throw err;
+                }
+                cb(result);
+        })
     }
     static getServicesForDisplay(id_pro, cb){
         let r = db.query('SELECT * FROM `profil` '+
@@ -1341,9 +1341,20 @@ class User{
             })
         })
     }
-    static get_pro_payment_source(table, cb){
-        return new Promise((resolve, reject) =>{
-            let r = db.query("SELECT * FROM `payments` WHERE `id_pro`=? AND `type_payment`='ABONNEMENT' ORDER BY `date_payment` DESC LIMIT 1", [table], (err, res) => {
+    // static get_pro_payment_source(table, cb){
+    //     return new Promise((resolve, reject) =>{
+    //         let r = db.query("SELECT * FROM `payments` WHERE `id_pro`=? AND `type_payment`='ABONNEMENT' ORDER BY `date_payment` DESC LIMIT 1", [table], (err, res) => {
+    //             if (err){
+    //                 console.log(r.sql)
+    //                 throw err
+    //             }
+    //             cb(res, resolve, reject)
+    //         })
+    //     })
+    // }
+    static get_pro_account(table, cb){
+        return new Promise((resolve, reject) => {
+            let r = db.query("SELECT `profil`.`account` FROM `profil` WHERE `profil`.`id_user`=?", [table], (err, res) => {
                 if (err){
                     console.log(r.sql)
                     throw err

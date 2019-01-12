@@ -1115,6 +1115,7 @@ function on_module_accept_typeMessage_link_click(e){
             price: div.attr("payment-price"),
             email: user.mail,
             nom: user.nom,
+            img: div.find("img").attr("src"),
             prenom: user.prenom,
             intent: data.result
           };
