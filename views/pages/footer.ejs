@@ -220,8 +220,8 @@
       locals.session.userFirstName : "null" %>";
     user.mail = "<%- locals.session.userMail ?
       locals.session.userMail : "null" %>";
-    //console.log(session);
     session.user = user;
+    //console.log(session);
     sessionStorage.setItem("session", JSON.stringify(session));
 <% } %>
 </script>

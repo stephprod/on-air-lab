@@ -9,27 +9,30 @@ router.route('/plan3dsecure')
         create_stripe_account(req, req.query.accountToken)
         .then((res0) => {
             account = res0
-            console.log("account : ")
-            console.log(res0)
+            // console.log("account : ")
+            // console.log(res0)
             return retrieve_stripe_customer(req)
         })
         .then((res1) =>{
             cust = res1
-            console.log("customer : ")
-            console.log(res1)
-            return retrieve_stripe_source(cust)
+            // console.log("customer : ")
+            // console.log(res1)
+            return retrieve_stripe_source(req)
         }).then((res2) => {
-            console.log("source : ")
-            console.log(res2)
+            // console.log("source : ")
+            // console.log(res2)
             return update_stripe_source(req, res2, account, cust)
         })
-        .then(() => {
+        .then((res3) => {
+            // console.log("source : ")
+            // console.log(res3)
             return create_stripe_subscription(cust)
         })
         .then(() => {
             res.redirect("/info-pro")
         })
         .catch((err) => {
+            console.log(err)
             res.redirect("/info-pro")
         })
 })
@@ -66,9 +69,9 @@ function retrieve_stripe_customer(req){
         })
     })
 }
-function retrieve_stripe_source(customer){
+function retrieve_stripe_source(req){
     return new Promise((resolve, reject) => {
-        stripe.sources.retrieve(customer.sources.data[0].id
+        stripe.sources.retrieve(req.query.source
             , function(err, source) {
             // asynchronously called
             if (err){
@@ -86,7 +89,8 @@ function update_stripe_source(req, source, acct, cust){
                 user_id: req.session.userId,
                 plan_id: "plan_EKH9hJs6m4yQrl",
                 account_id: acct.id,
-                customer_id: cust.id
+                customer_id: cust.id,
+                user_mail: req.session.userMail,
             }
         }, function(err, source){
             // asynchronously called
@@ -111,6 +115,7 @@ function create_stripe_subscription(customer){
             if (err){
                 reject(err)
             }else{
+                //console.log(subscription)
                 resolve(subscription)
             }
         })

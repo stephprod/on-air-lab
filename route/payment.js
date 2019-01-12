@@ -71,7 +71,7 @@ function create_stripe_account(req, token){
 function create_stripe_customer(req, token){
     return new Promise((resolve, reject) => {
         stripe.customers.create({
-            description: `${req.session.userId} ${req.body.prenom} ${req.body.nom}`,
+            description: `${req.session.userId} ${req.session.userFirstName} ${req.session.userName}`,
             source: token,
             metadata: {
                 userId: req.session.userId,
@@ -112,7 +112,8 @@ function update_stripe_source(sourceId, account, customer, req){
                 user_id: req.session.userId,
                 plan_id: "plan_EKH9hJs6m4yQrl",
                 account_id: account.id,
-                customer_id: customer.id
+                customer_id: customer.id,
+                user_mail: req.session.userMail,
             }
         }, function(err, source){
             // asynchronously called
