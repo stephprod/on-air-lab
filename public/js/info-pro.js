@@ -69,16 +69,17 @@ if(business != null){
 		type: "POST",
 		url: "/get_all_cp",
 		success: function (data){
+			let business_dpt_in_5_digits = business.dpt.padStart(5, '0');
 			//console.log(data);
 			$.each(data.cp, function(key, value) {
 				select_dpt.append("<option value='"+value.ville_departement+"'>"+value.ville_departement+"</option>");
 			});
 			//console.log(business.dpt);
 			select_dpt.selectpicker('refresh');
-			select_dpt.val(business.dpt.substring(0, 2));
+			select_dpt.val(business_dpt_in_5_digits.substring(0, 2));
 			select_dpt.selectpicker('render');
 			var d = {}
-			d.code_p = business.dpt.substring(0, 2);
+			d.code_p = business_dpt_in_5_digits.substring(0, 2);
 			//console.log(datas);
 			$.ajax({
 				type : "POST",
