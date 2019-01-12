@@ -4,109 +4,54 @@ const router = express.Router()
 
 router.route('/plan3dsecure')
     .get((req, res) => {
-        let source, plan, cust
+        let cust, account
         //console.log(req.query)
-        create_stripe_plan(req)
-        .then((res) => {
-            plan = res
+        create_stripe_account(req, req.query.accountToken)
+        .then((res0) => {
+            account = res0
+            console.log("account : ")
+            console.log(res0)
             return retrieve_stripe_customer(req)
         })
-        .then((res2) => {
-            cust = res2
-            return retrieve_stripe_source(res2)
+        .then((res1) =>{
+            cust = res1
+            console.log("customer : ")
+            console.log(res1)
+            return retrieve_stripe_source(cust)
+        }).then((res2) => {
+            console.log("source : ")
+            console.log(res2)
+            return update_stripe_source(req, res2, account, cust)
         })
-        .then((res3) => {
-            source = res3
-            return update_stripe_source(req, plan)
+        .then(() => {
+            return create_stripe_subscription(cust)
         })
-        .then((res4) => {
-            source = res4
-            return create_stripe_subscription(plan, cust)
-        })
-        .then((res5) => {
-            let datas = {}
-            return create_stripe_account(datas)
-        })
-        .then((res6) => {
+        .then(() => {
             res.redirect("/info-pro")
         })
         .catch((err) => {
             res.redirect("/info-pro")
         })
-        // stripe.plans.create({
-        //     amount: parseFloat(req.query.amount),
-        //     interval: "month",
-        //     product: "prod_E3Lh8uPFzCj9gs",
-        //     currency: "eur"
-        // }, function(err, plan) {
-        //     // console.log(err)
-        //     // console.log("plan : ")
-        //     // console.log(plan);
-        //     stripe.customers.retrieve(req.query.cust,
-        //     function(err, customer) {
-        //         // asynchronously called
-        //         stripe.sources.retrieve(customer.sources.data[0].id
-        //         , function(err, source) {
-        //             //console.log(source.id)
-        //             stripe.sources.update(source.id, {
-        //                 metadata: {plan_id: plan.id}
-        //             }, function(){
-        //                 stripe.subscriptions.create({
-        //                     customer: req.query.cust,
-        //                     items: [
-        //                         {
-        //                             plan: plan.id,
-        //                         },
-        //                     ]
-        //                 }, function() {
-        //                     // console.log("subscription : ")
-        //                     // console.log(subscription)
-        //                     // console.log(err)
-        //                     // asynchronously called
-        //                     res.redirect("/info-pro")
-        //                 });
-        //             })
-        //         });
-        //     });
-        // })
 })
-function create_stripe_account(infos){
+function create_stripe_account(req, token){
     return new Promise((resolve, reject) => {
         stripe.accounts.create({
             type: 'custom',
             country: 'FR',
-            email: infos.email,
-            legal_entity: {
-                address : infos.adresse,
-                first_name: infos.firstName,
-                personal_id_number: infos.SIRET,
-            }
+            email: req.session.userMail,
+            // business_url:,
+            // business_logo:,
+            // business_primary_color:,
+            account_token: token
         }, function(err, account) {
             // asynchronously called
             if (err){
-                reject(new Error(err.message))
+                reject(err)
             }else{
                 resolve(account)
             }
         });
     });
-}
-function create_stripe_plan(req){
-    return new Promise((resolve, reject) => {
-        stripe.plans.create({
-            amount: parseFloat(req.query.amount),
-            interval: "month",
-            product: "prod_E3Lh8uPFzCj9gs",
-            currency: "eur"
-        }, function(err, plan) {
-            // asynchronously called
-            if (err){
-                reject(new Error(err.message))
-            }else{
-                resolve(plan)
-            }
-        })
-    })
 }
 function retrieve_stripe_customer(req){
     return new Promise((resolve, reject) => {
@@ -114,7 +59,7 @@ function retrieve_stripe_customer(req){
             function(err, customer) {
             // asynchronously called
             if (err){
-                reject(new Error(err.message))
+                reject(err)
             }else{
                 resolve(customer)
             }
@@ -134,10 +79,15 @@ function retrieve_stripe_source(customer){
         })
     })
 }
-function update_stripe_source(source, plan){
+function update_stripe_source(req, source, acct, cust){
     return new Promise((resolve, reject) => {
         stripe.sources.update(source.id, {
-            metadata: {plan_id: plan.id}
+            metadata: {
+                user_id: req.session.userId,
+                plan_id: "plan_EKH9hJs6m4yQrl",
+                account_id: acct.id,
+                customer_id: cust.id
+            }
         }, function(err, source){
             // asynchronously called
             if (err){
@@ -148,17 +98,18 @@ function update_stripe_source(source, plan){
         })
     })
 }
-function create_stripe_subscription(plan, customer){
+function create_stripe_subscription(customer){
     return new Promise((resolve, reject) => {
         stripe.subscriptions.create({
             customer: customer.id,
             items: [{
-                plan: plan.id,
+                plan: "plan_EKH9hJs6m4yQrl",
             }]
-        }, function(err, subscription) {
+        },
+        function(err, subscription) {
             // asynchronously called
             if (err){
-                reject(new Error(err.message))
+                reject(err)
             }else{
                 resolve(subscription)
             }

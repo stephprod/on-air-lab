@@ -7,6 +7,7 @@ router.route('/payment')
     .get((req, res) => {
         //console.log(req.query)
         res.locals.session = req.session
+        // create_stripe_account(req, req.query.accountToken)
         create_stripe_customer(req, req.query.source)
         .then((res) => {
             res.send({customer : res})
@@ -18,25 +19,18 @@ router.route('/payment')
         let ret = {}
         ret.success = []
         ret.global_msg = []
-        let cust, plan, account
+        let cust, account
         create_stripe_account(req, req.body.accountToken)
         .then((res0) => {
             account = res0
-            console.log("account : ")
-            console.log(res0)
+            // console.log("account : ")
+            // console.log(res0)
             return create_stripe_customer(req, req.body.sourceId)
         })
-        // .then((res6) => {
-        //     //let card
-        //     cust = res6
-        //     console.log("customer : ")
-        //     console.log(res6)
-        //     return create_stripe_plan(req)
-        // })
         .then((res2) => {
             cust = res2
-            console.log("customer : ")
-            console.log(res2)
+            // console.log("customer : ")
+            // console.log(res2)
             return update_stripe_source(req.body.sourceId, account, res2, req)
         })
         .then(() => {
@@ -54,17 +48,6 @@ router.route('/payment')
             res.send(ret)
         })
 });
-// function get_profil(req){
-//     return new Promise((resolve, reject) => {
-//         User.getInfoPro_etablissement_for_account(req.session.userId, (result) => {
-//             if (result.length > 0){
-//                 resolve(result[0])
-//             }else{
-//                 reject(new Error("Aucun profil existant !"))
-//             }
-//         })
-//     })
-// }
 function create_stripe_account(req, token){
     return new Promise((resolve, reject) => {
         stripe.accounts.create({
@@ -85,38 +68,6 @@ function create_stripe_account(req, token){
         });
     });
 }
-function update_stripe_account(account, req){
-    return new Promise((resolve, reject) => {
-        stripe.accounts.update(
-            account.id,
-            {
-              legal_entity: {
-                additional_owners: {
-                  // Note the use of an object instead of an array
-                  0: {
-                      first_name: req.session.userFirstName, 
-                      last_name: req.session.userName,
-                    //   address: {
-
-                    //   },
-                    //   dob: {
-
-                    //   },
-                      email: req.session.userMail,
-                      //verification: document/status
-                    },
-                }
-              }
-        }, function(err, account) {
-            // asynchronously called
-            if (err){
-                reject(err)
-            }else{
-                resolve(account)
-            }
-        });
-    })
-}
 function create_stripe_customer(req, token){
     return new Promise((resolve, reject) => {
         stripe.customers.create({
@@ -132,23 +83,6 @@ function create_stripe_customer(req, token){
                 reject(err)
             }else{
                 resolve(customer)
-            }
-        })
-    })
-}
-function create_stripe_plan(req){
-    return new Promise((resolve, reject) => {
-        stripe.plans.create({
-            amount: parseFloat(req.body.price),
-            interval: "month",
-            product: "prod_EKH5fP8aV3rwTy",
-            currency: "eur"
-        }, function(err, plan) {
-            // asynchronously called
-            if (err){
-                reject(err)
-            }else{
-                resolve(plan)
             }
         })
     })

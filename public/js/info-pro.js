@@ -487,23 +487,6 @@ function sendPlan() {
 			stripe.createToken('account', {
 				name: user.name,
 				legal_entity: {
-					// additional_owners: [
-					// 	// Note the use of an object instead of an array
-					// 	{
-					// 		first_name: user.prenom, 
-					// 		last_name: user.nom,
-					// 		//   address: {
-
-					// 		//   },
-					// 		dob: {
-					// 			day: parseInt(date_entr.to2Digits4YearsString().substring(2, 4)),
-					// 			month: parseInt(date_entr.to2Digits4YearsString().substring(4, 6)),
-					// 			year: parseInt(date_entr.to2Digits4YearsString().substring(6))
-					// 		},
-					// 		//email: user.mail,
-					// 		//verification: document/status
-					// 	},
-					// ],
 					business_name: business.name,
 					business_tax_id: business.siren, 
 					address : {
@@ -515,11 +498,6 @@ function sendPlan() {
 					first_name: user.prenom,
 					last_name: user.nom,
 					type: "company",
-					// personal_address: {
-					//     city: infos.owner.city,
-					//     line1: infos.owner.rue,
-					//     postal_code: infos.owner.dpt
-					// },
 					dob: {
 						day: parseInt(date_entr.to2Digits4YearsString().substring(2, 4)),
                         month: parseInt(date_entr.to2Digits4YearsString().substring(4, 6)),
@@ -557,32 +535,60 @@ function sendPlan() {
 				
 			});
 		}else if(response.source.card.three_d_secure == 'required' || response.source.card.three_d_secure == 'optional' ||response.source.card.three_d_secure == 'recommended'){
-			$.ajax({
-				type : 'GET',
-				url : '/payment',
-				data : {source : response.source.id},
-				async: false,
-				success : function(data){
-					var returnURL = "http://localhost:4000/plan3dsecure?cust="+data.customer.id+"&amount="+price;
-					stripe.createSource({
-						type: 'three_d_secure',
-						amount: price,
-						currency: "eur",
-						three_d_secure: {
-							customer : data.customer.id,
-							card: response.source.id
-						},
-						redirect: {
-							return_url: returnURL,
-						},
-					}).then((response) =>{
-						// console.log('response: ');
-						// console.log(response);
-						if (response.error === undefined)
-							window.location.assign(response.source.redirect.url);
-					}).catch((err) => console.log(err));
-				}
+			stripe.createToken('account', {
+				name: user.name,
+				legal_entity: {
+					business_name: business.name,
+					business_tax_id: business.siren, 
+					address : {
+						city: business.city,
+						line1: business.rue,
+						postal_code: business.dpt,
+						state: "FRANCE"
+					},
+					first_name: user.prenom,
+					last_name: user.nom,
+					type: "company",
+					dob: {
+						day: parseInt(date_entr.to2Digits4YearsString().substring(2, 4)),
+                        month: parseInt(date_entr.to2Digits4YearsString().substring(4, 6)),
+                        year: parseInt(date_entr.to2Digits4YearsString().substring(6))
+					}
+				},
+				tos_shown_and_accepted: true,
 			})
+			.then((tok) => {
+				if (!tok.error){
+					$.ajax({
+						type : 'GET',
+						url : '/payment',
+						data : {source : response.source.id},
+						async: false,
+						success : function(data){
+							var returnURL = "http://localhost:4000/plan3dsecure?cust="+data.customer.id+"&amount="+price+"&accountToken="+tok.token.id;
+							stripe.createSource({
+								type: 'three_d_secure',
+								amount: price,
+								currency: "eur",
+								three_d_secure: {
+									customer : data.customer.id,
+									card: response.source.id
+								},
+								redirect: {
+									return_url: returnURL,
+								},
+							}).then((response) =>{
+								// console.log('response: ');
+								// console.log(response);
+								if (response.error === undefined)
+									window.location.assign(response.source.redirect.url);
+							}).catch((err) => console.log(err));
+						}
+					})
+				}else{
+					console.log(tok.err)
+				}
+			});
 		} else if (response.source.status != 'pending') {
 			displayResult("Unexpected 3D Secure status: " + response.source.status);
 		}
