@@ -448,13 +448,35 @@ class User{
     static getInfoPro_etablissement(id_user, cb)
     {
         let r = db.query('SELECT `etablissement`.`id`, `etablissement`.`nom`, `etablissement`.`adresse`, '+
-            '`etablissement`.`cp`, `etablissement`.`descr`, `etablissement`.`siret`, `etablissement`.`path_img`, '+
+            '`etablissement`.`cp`, `etablissement`.`descr`, `etablissement`.`siret`, `etablissement`.`path_img`, `etablissement`.`date_birth_owner`, `etablissement`.`siren`, '+
             '`tarification`.`id_tarification`, `tarification`.`prix_min`, `tarification`.`prix_h`, `tarification`.`nbr_h_min`, '+
             '`document`.`path`, '+
-            '`profil`.`id_profil` '+
+            '`profil`.`id_profil`, '+
+            '`villes_france_free`.`ville_nom`,  `villes_france_free`.`ville_id` '+
             'FROM `etablissement` INNER JOIN `profil` ON `profil`.`id_etablissement`=`etablissement`.`id` '+
             'LEFT JOIN `tarification` ON `tarification`.`id_tarification`=`profil`.`id_tarification` '+
             'LEFT JOIN `document` ON `document`.`id_profil`=`profil`.`id_profil` '+
+            'INNER JOIN `villes_france_free` ON `villes_france_free`.`ville_id`=`etablissement`.`ville_id` '+
+            'WHERE `profil`.`id_user`=?', [id_user], (err, result) => {
+            if(err){
+                console.log(r.sql)
+                throw err;
+            }
+            cb(result);
+        });
+    }
+    static getInfoPro_etablissement_for_account(id_user, cb)
+    {
+        let r = db.query('SELECT `etablissement`.`id`, `etablissement`.`nom`, `etablissement`.`adresse`, '+
+            '`etablissement`.`cp`, `etablissement`.`descr`, `etablissement`.`siret`, `etablissement`.`path_img`, `etablissement`.`date_birth_owner`, `etablissement`.`siren`, '+
+            '`tarification`.`id_tarification`, `tarification`.`prix_min`, `tarification`.`prix_h`, `tarification`.`nbr_h_min`, '+
+            '`document`.`path`, '+
+            '`profil`.`id_profil`, '+
+            '`villes_france_free`.`ville_nom`,  `villes_france_free`.`ville_id` '+
+            'FROM `etablissement` INNER JOIN `profil` ON `profil`.`id_etablissement`=`etablissement`.`id` '+
+            'LEFT JOIN `tarification` ON `tarification`.`id_tarification`=`profil`.`id_tarification` '+
+            'LEFT JOIN `document` ON `document`.`id_profil`=`profil`.`id_profil` '+
+            'INNER JOIN `villes_france_free` ON `villes_france_free`.`ville_id`=`etablissement`.`ville_id` '+
             'WHERE `profil`.`id_user`=?', [id_user], (err, result) => {
             if(err){
                 console.log(r.sql)
@@ -465,9 +487,9 @@ class User{
     }
     static infoPro_etablissement(tab, cb)
     {
-        let r = db.query('INSERT INTO `etablissement` (`nom`, `adresse`, `cp`, `ville_id`, `descr`, `siret`, `path_img`) VALUE (?)', [tab], (err, result) => {
+        let r = db.query('INSERT INTO `etablissement` (`nom`, `adresse`, `cp`, `ville_id`, `descr`, `siret`, `path_img`, `date_birth_owner`, `siren`) VALUE (?)', [tab], (err, result) => {
             if(err){
-            	console.log(r.sql)
+                console.log(r.sql)
                 throw err;
             }
             cb(result.insertId);
@@ -482,6 +504,17 @@ class User{
             }
             cb(result.insertId);
         });
+    }
+    static update_profil(req, cb){
+        return new Promise((resolve, reject) =>{
+            let r = db.query('UPDATE `profil` '+req, (err, result) =>{
+                if (err){
+                    console.log(r.sql)
+                    throw err;
+                }
+                cb(result, resolve, reject)
+            })
+        })
     }
     static getAllEtablissement(ind, cb){
     	let q=db.query('SELECT `etablissement`.`id`, `etablissement`.`nom`, `etablissement`.`adresse`, `etablissement`.`cp`, '+
@@ -1264,7 +1297,7 @@ class User{
     }
     static create_payment_abo(table, cb){
         return new Promise((resolve, reject) => {
-            let r = db.query('INSERT INTO `payments`(`type_payment`, `state_payment`, `desc_payment`, `id_pro`, `price_payment`, `date_payment`, `source`, `plan`) '+
+            let r = db.query('INSERT INTO `payments`(`type_payment`, `state_payment`, `desc_payment`, `id_pro`, `price_payment`, `date_payment`, `source`) '+
                 'VALUES (?)', [table], (err, result) => {
                 if(err){
                     console.log(r.sql)

@@ -40,7 +40,7 @@ router.route('/get-payment')
                             reject(new Error("Code inséré expiré ou inconnu !"))
                         }
                     }).then((res3) => {
-                        console.log(res3)
+                        //console.log(res3)
                         rslt = res3
                         return User.get_pro_payment_source(res3.id_pro, (result, resolve, reject) => {
                             if (result.length > 0){
@@ -102,7 +102,7 @@ function make_stripe_payment(amount_net, source){
             if (err){
                 reject(new Error(err.message))
             }else{
-                console.log(payout)
+                //console.log(payout)
                 resolve (amount_net)
             }
         });

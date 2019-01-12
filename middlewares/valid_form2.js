@@ -95,8 +95,10 @@ let profile_valid_form = (request, response, next) => {
 	let nom = request.body.nom,
 	adresse = request.body.adresse,
 	cp = request.body.cp,
-	descr= request.body.descr,
-	siret= request.body.siret
+	descr = request.body.descr,
+	siret = request.body.siret,
+	siren = request.body.siren,
+	date_birth = request.body.date_birth
 	if (request.body.cible == "etab"){
 		if (!validator.notEmpty(nom))
 		{
@@ -127,6 +129,23 @@ let profile_valid_form = (request, response, next) => {
 			errors.siret = ["SIRET invalide !"]
 			err_flag = true;
 			
+		}
+		if (!validator.isNum(siren))
+		{
+			errors.siren = ["SIREN invalide !"]
+			err_flag = true;
+			
+		}
+		if (!validator.isInputDate(date_birth))
+		{
+			errors.date_birth = ["Date invalide !"]
+			err_flag = true;
+		}
+		else{
+			if (!validator.isLegalAgeDob(date_birth)){
+				errors.date_birth = ["Vous devez avoir au moins 13ans pour utiliser nos services !"]
+				err_flag = true;
+			}
 		}
 	}
 	if (err_flag)

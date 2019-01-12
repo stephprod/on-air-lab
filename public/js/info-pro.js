@@ -25,16 +25,21 @@ $(sliders_tarification[2]).on("slidechange", on_tarif_slider_change);
 $(document).on("ready", function(){
 	$("input[name^='cc']").removeAttr("disabled");	
 });
+$("form[name='agent-form'] [name='email']").attr("disabled", "disabled");
 var session = JSON.parse(sessionStorage.getItem('session'));
 //sessionStorage.clear();
 var user = null;
 //var userId = null;
 var token = null;
+var business= JSON.parse(sessionStorage.getItem('business'));
 if (session != null && session.user != undefined){
 	user = session.user;
 	//userId = user.id;
 	token = session.token;
 }
+// if (business != null){
+// 	console.log(business);
+// }
 var price = 1999;
 $(".slider[id^=slider-o-price]").each( function() {
 	var sliderId = $( this ).attr('id');
@@ -50,17 +55,62 @@ $(".slider[id^=slider-o-price]").each( function() {
 	});
 	$( "#" + sliderId + "-value" ).val( $( this ).slider( "value" ) );
 });
-$.ajax({
-	type: "POST",
-	url: "/get_all_cp",
-	success: function (data){
-		//console.log(data);
-		$.each(data.cp, function(key, value) {
-			select_dpt.append("<option value='"+value.ville_departement+"'>"+value.ville_departement+"</option>");
-		});
-		$(select_dpt[0]).selectpicker('refresh');
-	}
-});
+if(business != null){
+	var date_ob = new Date(business.dateOfBirth);
+	// var now = new Date();
+	// console.log(now - date_ob);
+	var date_string = date_ob.getUTCFullYear().toString(10) + "-" +
+		(date_ob.getUTCMonth() + 1).toString(10).padStart(2, '0') + "-" +
+		date_ob.getUTCDate().toString(10).padStart(2, '0');
+	// console.log(date_ob);
+	// console.log(business);
+	$("form[name='agent-form'] [name='date_birth']").val(date_string);
+	$.ajax({
+		type: "POST",
+		url: "/get_all_cp",
+		success: function (data){
+			//console.log(data);
+			$.each(data.cp, function(key, value) {
+				select_dpt.append("<option value='"+value.ville_departement+"'>"+value.ville_departement+"</option>");
+			});
+			//console.log(business.dpt);
+			select_dpt.selectpicker('refresh');
+			select_dpt.val(business.dpt.substring(0, 2));
+			select_dpt.selectpicker('render');
+			var d = {}
+			d.code_p = business.dpt.substring(0, 2);
+			//console.log(datas);
+			$.ajax({
+				type : "POST",
+				url : "/get_cities_in_cp",
+				data:  d,
+				success: function(data) {
+					//AFFICHER LES VILLES ISSUS DE LA BASE DE DONNEES
+					//console.log(select_cp);
+					select_cities.empty();
+					$.each(data.cities, function(key, value) {
+						select_cities.append("<option data-city='"+value.ville_nom+"' data-long='"+value.ville_longitude_deg+"' data-lat='"+value.ville_latitude_deg+"' value='"+value.ville_id+"'>"+value.ville_nom+" / "+value.ville_code_postal+"</option>");
+					});
+					select_cities.selectpicker('refresh');
+					select_cities.val(business.ville_id);
+					select_cities.selectpicker('render');
+				}   
+			});
+		}
+	});
+}else{
+	$.ajax({
+		type: "POST",
+		url: "/get_all_cp",
+		success: function (data){
+			//console.log(data);
+			$.each(data.cp, function(key, value) {
+				select_dpt.append("<option value='"+value.ville_departement+"'>"+value.ville_departement+"</option>");
+			});
+			select_dpt.selectpicker('refresh');
+		}
+	});
+}
 $(select_dpt[0]).on("changed.bs.select", cp_change_action);
 function on_offre_valid_link_click(event){
 	event.preventDefault();
@@ -236,7 +286,7 @@ function on_etab_valid_link_click(e){
 	var datas = {};
 	e.preventDefault();
 	var form = $("form[name='agent-form']");
-	var nom, adresse, cp, ville_id, description, siret;
+	var nom, adresse, cp, ville_id, description, siret, date_birth, siren;
 	datas.cible = "etab";
 	nom = form.find("[name='nom']").val();
 	adresse = form.find("[name='adresse']").val();
@@ -244,12 +294,17 @@ function on_etab_valid_link_click(e){
 	ville_id = parseInt(form.find("[name='cp']").val());
 	description = form.find("[name='descr']").val();
 	siret = form.find("[name='siret']").val();
+	siren = form.find("[name='siren']").val();
+	date_birth = form.find("[name='date_birth']").val();
 	datas.nom = nom;
 	datas.adresse = adresse;
 	datas.cp = cp;
 	datas.ville_id = ville_id;
 	datas.descr = description;
 	datas.siret = siret;
+	datas.date_birth = date_birth
+	datas.siren = siren;
+	//console.log(date_creat);
 	//console.log(datas);
 	$.ajax({
 		type: "POST",
@@ -272,7 +327,7 @@ function on_etab_valid_link_click(e){
 }
 function on_off_delete_div_click(e){
 	e.preventDefault();
-	console.log("click on delete offre !");
+	//console.log("click on delete offre !");
 	var datas = {};
 	// var that = $(this);
 	// var parentRow = $("div#home > div.row");
@@ -367,7 +422,7 @@ function deletePlan(){
 		async: false,
 		success: function (data){
 			update_front_with_msg(data, "pro-payment-msg");
-			console.log(data);
+			//console.log(data);
 			//Refresh de page cause --> trop d'éléments à maj
 			window.location.reload();
 		}
@@ -379,7 +434,7 @@ function sendPlan() {
 	//console.log(user);
 	var data = {
 		email: user.mail,
-		desc: 'Label OnAir full access !',
+		desc: 'Label-OnAir accès complet !',
 		nom: user.nom,
 		prenom: user.prenom,
 		price: price
@@ -390,27 +445,29 @@ function sendPlan() {
 	// Create Checkout's handler
 	var handler = StripeCheckout.configure({
 		key: stripePublishableKey,
-		image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
+		name: 'Label-OnAir',
+		image: '/asset/images/logo-onair.jpg',
 		locale: 'auto',
 		allowRememberMe: false,
 		email: data.email,
-		token: handlePlanToken
+		token: handlePlanToken,
+		currency: currency
 	});
 	// Open Checkout with further options:
 	handler.open({
-		name: 'Stripe.com',
 		amount : 1999,
 		description: data.desc,
-		currency: currency,
+		allowRememberMe: true
 	});
 	function handlePlanToken(token) {
 		stripe.createSource({
 			type: 'card',
 			token: token.id
 		}).then((result) => {
-			// console.log(result);
+			//console.log(result);
 			// console.log(token);
-			//data.stripeToken = token.id;
+			// token.card.currency = "eur";
+			data.cardToken = token.id;
 			check_3d_secure(result);
 		});
 	}
@@ -423,20 +480,81 @@ function sendPlan() {
 			return;
 		}
 		if (response.source.card.three_d_secure == 'not_supported') {
+			data.sourceId = response.source.id;
 			displayResult("This card does not support 3D Secure authentication, but liability will be shifted to the card issuer.");
-			data.stripeToken = response.source.id;
-			$.ajax({
-				type: "POST",
-				url: "/payment",
-				data: data,
-				async: false,
-				beforeSend: function (req) {
-					req.setRequestHeader("x-access-token", session.token);
+			var date_entr = new Date(business.dateOfBirth);
+			//console.log(date_entr);
+			stripe.createToken('account', {
+				name: user.name,
+				legal_entity: {
+					// additional_owners: [
+					// 	// Note the use of an object instead of an array
+					// 	{
+					// 		first_name: user.prenom, 
+					// 		last_name: user.nom,
+					// 		//   address: {
+
+					// 		//   },
+					// 		dob: {
+					// 			day: parseInt(date_entr.to2Digits4YearsString().substring(2, 4)),
+					// 			month: parseInt(date_entr.to2Digits4YearsString().substring(4, 6)),
+					// 			year: parseInt(date_entr.to2Digits4YearsString().substring(6))
+					// 		},
+					// 		//email: user.mail,
+					// 		//verification: document/status
+					// 	},
+					// ],
+					business_name: business.name,
+					business_tax_id: business.siren, 
+					address : {
+						city: business.city,
+						line1: business.rue,
+						postal_code: business.dpt,
+						state: "FRANCE"
+					},
+					first_name: user.prenom,
+					last_name: user.nom,
+					type: "company",
+					// personal_address: {
+					//     city: infos.owner.city,
+					//     line1: infos.owner.rue,
+					//     postal_code: infos.owner.dpt
+					// },
+					dob: {
+						day: parseInt(date_entr.to2Digits4YearsString().substring(2, 4)),
+                        month: parseInt(date_entr.to2Digits4YearsString().substring(4, 6)),
+                        year: parseInt(date_entr.to2Digits4YearsString().substring(6))
+					}
 				},
-				success: function (data) {
-					update_front_with_msg(data, "pro-payment-msg");
-					console.log('plan souscription ok!! ' + data);
+				tos_shown_and_accepted: true,
+			})
+			.then((tok) => {
+				if (!tok.error)
+				{
+					data.accountToken = tok.token.id;
+					$.ajax({
+						type: "POST",
+						url: "/payment",
+						data: data,
+						async: false,
+						beforeSend: function (req) {
+							req.setRequestHeader("x-access-token", session.token);
+						},
+						success: function (data) {
+							update_front_with_msg(data, "pro-payment-msg");
+							// console.log('plan souscription ok !');
+							// console.log(data);
+						}
+					});
+				}else{
+					if (tok.error.param == "account[individual][dob][year]"){
+						update_front_with_msg({success:[false], msg_global:["Vous devez avoir au moins 13 ans pour utiliser les services de paiement !"]}, "pro-payment-msg");
+					}else{
+						update_front_with_msg({success:[false], msg_global:[tok.error.message]}, "pro-payment-msg");
+					}
+					console.log(tok.error)
 				}
+				
 			});
 		}else if(response.source.card.three_d_secure == 'required' || response.source.card.three_d_secure == 'optional' ||response.source.card.three_d_secure == 'recommended'){
 			$.ajax({
@@ -468,8 +586,30 @@ function sendPlan() {
 		} else if (response.source.status != 'pending') {
 			displayResult("Unexpected 3D Secure status: " + response.source.status);
 		}
-  }
+	}
 }
 function displayResult(msg){
 	console.log(msg);
 }
+// Date.toInputFormattedString = function(delim) {
+// 	return this.getUTCFullYear().toString(10) + delim +
+// 		(this.getUTCMonth() + 1).toString(10).padStart(2, '0') + delim +
+// 		this.getUTCDate().toString(10).padStart(2, '0');
+// };
+Date.prototype.toInputFormattedString = function(delim) {
+	return this.getUTCFullYear().toString(10) + delim +
+		(this.getUTCMonth() + 1).toString(10).padStart(2, '0') + delim +
+		this.getUTCDate().toString(10).padStart(2, '0');
+};
+Date.prototype.to2DigitsString = function() {
+    return this.getUTCHours().toString(10).padStart(2, '0') +
+        this.getUTCDate().toString(10).padStart(2, '0') +
+        (this.getUTCMonth() + 1).toString(10).padStart(2, '0') +
+        this.getUTCFullYear().toString(10).substring(2);
+};
+Date.prototype.to2Digits4YearsString = function() {
+    return this.getUTCHours().toString(10).padStart(2, '0') +
+        this.getUTCDate().toString(10).padStart(2, '0') +
+        (this.getUTCMonth() + 1).toString(10).padStart(2, '0') +
+        this.getUTCFullYear().toString(10);
+};

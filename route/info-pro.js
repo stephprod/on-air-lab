@@ -98,12 +98,12 @@ router.route('/info-pro')
 						//INSERTION
 						if (request.session.userType == 3)
 							path_img = "/asset/content/img/default_pro_video_profile.jpeg"
-						tableE.push(table[1], table[2], table[3], table[4], table[5], table[6], path_img)
+						tableE.push(table[1], table[2], table[3], table[4], table[5], table[6], path_img, table[7], table[8])
 						User.infoPro_etablissement(tableE, (result) => {
 							if (result == 0){
 								ret.success.push(false)
 								ret.global_msg.push("Echec lors de l'insertion des données de l'établissement, contactez le modérateur du site !")
-								console.log("echec")
+								//console.log("echec")
 							}
 							else{
 								tableP.push(request.session.userId, result)
@@ -114,7 +114,7 @@ router.route('/info-pro')
 									}else{
 										ret.success.push(true)
 										ret.global_msg.push("Profil enregistré avec succès !")
-										console.log("succes data envoyer")
+										//console.log("succes data envoyer")
 									}
 									response.send(ret)
 								})
@@ -125,7 +125,7 @@ router.route('/info-pro')
 						table.push(request.session.userId)
 						if (isNaN(table[3]))
 							table[3] = null
-						User.update_etablissement("nom='"+table[1]+"',adresse='"+table[2]+"',cp='"+table[3]+"',ville_id='"+table[4]+"',descr='"+table[5]+"',siret='"+table[6]+"' WHERE profil.id_user='"+table[7]+"'", (result) => {
+						User.update_etablissement("`nom`='"+table[1]+"',`adresse`='"+table[2]+"',`cp`='"+table[3]+"',`ville_id`='"+table[4]+"',`descr`='"+table[5]+"',`siret`='"+table[6]+"',`date_birth_owner`='"+table[7]+"',`siren`='"+table[8]+"'  WHERE `profil`.`id_user`='"+table[9]+"'", (result) => {
 							//console.log("-----------UPDATE OK----------")
 							//console.log("-----------"+result+" LIGNE CHANGE---------")
 							if (result > 0){

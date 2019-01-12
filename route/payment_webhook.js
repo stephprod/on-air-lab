@@ -63,24 +63,39 @@ function extract_and_check_signature(sig, body, delta_in_ms){
     // --//
 }
 function manage_event_response(wh_datas, response){
-    if (wh_datas.type.indexOf("payment_intent") !== -1)
+    if (wh_datas.type.indexOf("payment_intent") !== -1){
         payment_intent_responses(wh_datas, response)
         .then(() => {
             response.status(200).send({received: true})
-        }, (err) => {
-            response.status(500).send({received: true, error: err})
-        }).catch((err) => {
+        })
+        .catch((err) => {
             response.status(500).send({received: true, error: err})
         })
-    else if (wh_datas.type.indexOf("charge") !== -1)
+    }else if (wh_datas.type.indexOf("charge") !== -1){
         charge_responses(wh_datas, response)
         .then(() => {
             response.status(200).send({received: true})
-        }, (err) => {
-            response.status(500).send({received: true, error: err})
-        }).catch((err) => {
+        })
+        .catch((err) => {
             response.status(500).send({received: true, error: err})
         })
+    }else if (wh_datas.type.indexOf("customer") !== -1){
+        customer_responses(wh_datas, response)
+        .then(() => {
+            response.status(200).send({received: true})
+        })
+        .catch((err) => {
+            response.status(500).send({received: true, error: err})
+        })
+    }
+}
+function customer_responses(wh_datas, resp){
+    return get_user_in_event(wh_datas.metadata.userMail)
+    .then((res) => {
+        if (wh_datas.type == "customer.created"){
+            //Mise à jour avec l'id du customer
+        }
+    })
 }
 function charge_responses(wh_datas, resp){
     return get_user_in_event(wh_datas.data.object.source.owner.name)
@@ -89,6 +104,9 @@ function charge_responses(wh_datas, resp){
             send_notification(user, wh_datas.data.object.amount, "accept")
             .then(() => {
                 insert_new_abo(resp, "valide", wh_datas, user)
+            })
+            .then(() => {
+                update_profil(wh_datas)
             })
         }else{
             send_notification(user, wh_datas.data.object.amount, "deny")
@@ -152,7 +170,7 @@ function insert_new_abo(resp, action, wh_datas, user_from){
     if(dateInMilis < 10000000000) 
         dateInMilis *= 1000; // convert to milliseconds (Epoch is usually expressed in seconds, but Javascript uses Milliseconds)
     amount = parseFloat(wh_datas.data.object.amount) / 100
-    table.push("ABONNEMENT", action, "Nouvelle abonnement LabelOnAir", user_from.id, amount, new Date(dateInMilis), wh_datas.data.object.source.id, wh_datas.data.object.source.metadata.plan_id)
+    table.push("ABONNEMENT", action, "Nouvelle abonnement LabelOnAir", user_from.id, amount, new Date(dateInMilis), wh_datas.data.object.source.id)
     return User.create_payment_abo(table, (result, resolve, reject) => {
         let valid = result.changedRows != 0 ? result.changedRows : result.affectedRows
         if (valid > 0){
@@ -160,6 +178,23 @@ function insert_new_abo(resp, action, wh_datas, user_from){
         }else{
             reject(new Error("Insertion de l'abonnement echouée !"))
         }
+    })
+}
+function update_profil(wh_datas){
+    return User.update_profil("SET `profil`.`customer`='"+
+        wh_datas.data.object.source.metadata.customer_id+
+        "', `profil`.`account`='"+
+        wh_datas.data.object.source.metadata.account_id
+        +"', `profil`.`plan`='"+
+        wh_datas.data.object.source.metadata.plan_id
+        +"' WHERE `profil`.`id_user`="+
+        wh_datas.data.object.source.metadata.user_id,
+        (result, resolve, reject) =>{
+            if (result.changedRows > 0){
+                resolve()
+            }else{
+                reject(new Error("Mise à jour du profil echouée"))
+            }
     })
 }
 function get_user_in_event(user_mail){
@@ -173,7 +208,6 @@ function get_user_in_event(user_mail){
         })
     })
 }
-
 Date.prototype.to2DigitsString = function() {
     return this.getUTCHours().toString(10).padStart(2, '0') +
         this.getUTCDate().toString(10).padStart(2, '0') +
