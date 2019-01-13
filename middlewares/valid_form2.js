@@ -114,7 +114,7 @@ let profile_valid_form = (request, response, next) => {
 		}
 		if (!validator.isNum(cp))
 		{
-			errors.cp = ["Code postale invalide !"]
+			errors.cp = ["Code postal invalide !"]
 			err_flag = true;
 			
 		}

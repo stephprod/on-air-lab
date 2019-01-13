@@ -1,48 +1,104 @@
 const stripe = require('stripe')("sk_test_o35xg7SsHTft63zVgw2Qm05p");
 const express = require('express')
 const router = express.Router()
+const planId = "plan_EKskL7WtHXxDxK"
 
 router.route('/plan3dsecure')
     .get((req, res) => {
-        let cust, account, ret = {}
+        let src, account, ret = {}
         ret.success = []
         ret.global_msg = []
-        //console.log(req.query)
-        create_stripe_account(req, req.query.accountToken)
+        retrieve_stripe_source(req.query.source)
         .then((res0) => {
-            account = res0
-            // console.log("account : ")
-            // console.log(res0)
-            //return retrieve_stripe_customer(req)
-            return create_stripe_customer(req, req.query.src)
+            src = res0
+            console.log("source for first charge : ")
+            //console.log(res0)
+            return attach_stripe_source_to_customer(src, req.query.cust)
         })
-        .then((res1) =>{
-            cust = res1
-            // console.log("customer : ")
-            // console.log(res1)
-            return retrieve_stripe_source(req)
-        }).then((res2) => {
-            // console.log("source : ")
-            // console.log(res2)
-            return update_stripe_source(req, res2, account, cust)
+        .then(() =>{
+            return create_stripe_account(req, req.query.accountToken)
         })
-        .then((res3) => {
-            // console.log("source : ")
-            // console.log(res3)
-            return create_stripe_subscription(cust)
+        .then((res2) => {
+            account = res2
+            console.log("account : ")
+            //console.log(res2)
+            return update_stripe_source(req, req.query.source, account.id, req.query.cust)
         })
         .then(() => {
+            console.log("source for first charge with metadatas : ")
+            //console.log(res3)
+            return direct_charge_stripe_customer(req.query.cust, req.query.source, src.amount)
+        })
+        .then(() =>{
+            console.log("charge : ")
+            //console.log(res4)
+            return retrieve_stripe_source(req.query.src)
+        })
+        .then(() => {
+            console.log("source for subscription : ")
+            //console.log(res5)
+            return update_stripe_source(req, req.query.src, account.id, req.query.cust)
+        })
+        .then((res5) => {
+            src = res5
+            console.log("source for subscription with metadatas : ")
+            //console.log(res5)
+            return update_default_stripe_source_to_customer(req.query.cust, src)
+        })
+        .then(() => {
+            console.log("setting source for subscription to default : ")
+            //console.log(res6)
+            return create_stripe_subscription(req.query.cust)
+        })
+        .then(() => {
+            console.log("subscription created : ")
+            // console.log(res7)
             ret.success.push(true)
             ret.global_msg.push("La création de ton abonnement est en cours, tu devrais recevoir un mail de confirmation dans un délai de 1h maximum !", "A réception de ce mail tu devras te reconnecter pour que les changements soient effectifs !")
             res.redirect("/info-pro?datas_infoPro="+encodeURIComponent(JSON.stringify(ret)))
         })
         .catch((err) => {
-            //console.log(err)
+            console.log(err)
             ret.success.push(false)
             ret.global_msg.push("Une erreur est survenue lors de la création du compte !", err.message)
+            if (err.raw !== undefined)
+                ret.global_msg.push(err.rawType+": "+err.raw.decline_code)
             res.redirect("/info-pro?datas_infoPro="+encodeURIComponent(JSON.stringify(ret)))
         })
 })
+function update_default_stripe_source_to_customer(custId, src){
+    return new Promise((resolve, reject) =>{
+        if (src.status != "failed"){
+            stripe.customers.update(custId, {
+                default_source: src.id
+            },function (err, cust){
+                if (err)
+                    reject(err)
+                else
+                    resolve(cust)
+            });
+        }else{
+            reject(new Error("Vérification 3DSecure echouée"))
+        }
+    });
+}
+function direct_charge_stripe_customer(custId, srcId, amount){
+    return new Promise((resolve, reject) => {
+        stripe.charges.create({
+            amount: amount,
+            currency: "eur",
+            customer: custId,
+            source: srcId,
+          }, function(err, charge) {
+            // asynchronously called
+            if (err){
+                reject(err)
+            }else{
+                resolve(charge)
+            }
+        });
+    })
+}
 function create_stripe_account(req, token){
     return new Promise((resolve, reject) => {
         stripe.accounts.create({
@@ -63,41 +119,33 @@ function create_stripe_account(req, token){
         });
     });
 }
-function create_stripe_customer(req, token){
+function attach_stripe_source_to_customer(source, custId){
     return new Promise((resolve, reject) => {
-        stripe.customers.create({
-            description: `${req.session.userId} ${req.session.userFirstName} ${req.session.userName}`,
-            source: token,
-            metadata: {
-                userId: req.session.userId,
-                userMail: req.session.userMail
-            }
-        }, function(err, customer) {
-            // asynchronously called
-            if (err){
-                reject(err)
-            }else{
-                resolve(customer)
-            }
-        })
+        if (source.status != "failed"){
+            stripe.customers.createSource(custId, {
+                source: source.id
+            }, function(err, src){
+                if (err)
+                    reject(err)
+                else{
+                    stripe.customers.update(custId, {
+                        default_source: src.id
+                    },function (err, cust){
+                        if (err)
+                            reject(err)
+                        else
+                            resolve(cust)
+                    });
+                }
+            });
+        }else{
+            reject(new Error("Vérification 3DSecure echouée"))
+        }
     })
 }
-function retrieve_stripe_customer(req){
+function retrieve_stripe_source(srcId){
     return new Promise((resolve, reject) => {
-        stripe.customers.retrieve(req.query.cust,
-            function(err, customer) {
-            // asynchronously called
-            if (err){
-                reject(err)
-            }else{
-                resolve(customer)
-            }
-        })
-    })
-}
-function retrieve_stripe_source(req){
-    return new Promise((resolve, reject) => {
-        stripe.sources.retrieve(req.query.src
+        stripe.sources.retrieve(srcId
             , function(err, source) {
             // asynchronously called
             if (err){
@@ -108,14 +156,14 @@ function retrieve_stripe_source(req){
         })
     })
 }
-function update_stripe_source(req, source, acct, cust){
+function update_stripe_source(req, sourceId, acctId, custId){
     return new Promise((resolve, reject) => {
-        stripe.sources.update(source.id, {
+        stripe.sources.update(sourceId, {
             metadata: {
                 user_id: req.session.userId,
-                plan_id: "plan_EKH9hJs6m4yQrl",
-                account_id: acct.id,
-                customer_id: cust.id,
+                plan_id: planId,
+                account_id: acctId,
+                customer_id: custId,
                 user_mail: req.session.userMail,
             }
         }, function(err, source){
@@ -128,13 +176,14 @@ function update_stripe_source(req, source, acct, cust){
         })
     })
 }
-function create_stripe_subscription(customer){
+function create_stripe_subscription(customerId){
     return new Promise((resolve, reject) => {
         stripe.subscriptions.create({
-            customer: customer.id,
+            customer: customerId,
             items: [{
-                plan: "plan_EKH9hJs6m4yQrl",
-            }]
+                plan: planId,
+            }],
+            trial_period_days: 31
         },
         function(err, subscription) {
             // asynchronously called

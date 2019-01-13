@@ -29,7 +29,7 @@ router.route('/tarification')
 							User.infoPro_tarification_updateprofil(result, request.session.userId, (result2) =>{
 								if (result2 > 0){
 									ret.success.push(true)
-									ret.global_msg.push("Tarification crée avec succès !")
+									ret.global_msg.push("Tarification créée avec succès !")
 									console.log("succes data envoyer")
 								}
 								else{

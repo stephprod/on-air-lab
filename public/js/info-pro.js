@@ -1,6 +1,6 @@
 import {update_front_with_msg, update_front_with_errors} from './front-update.js';
 var off_valid_link = $("a[data-action='offre']");
-off_valid_link.on("click", on_offre_valid_link_click);
+off_valid_link.on("click", on_offer_valid_link_click);
 var tarif_valid_link = $("a[data-action='tarif']");
 tarif_valid_link.on("click", on_tarif_valid_link_click);
 var agent_photo = $( "#agent-photo" );
@@ -120,7 +120,7 @@ if(business != null){
 	});
 }
 $(select_dpt[0]).on("changed.bs.select", cp_change_action);
-function on_offre_valid_link_click(event){
+function on_offer_valid_link_click(event){
 	event.preventDefault();
 	//console.log($(event.target).parents("a[data-action='offre']"));
 	var link = $(event.target).parents("a[data-action='offre']");
@@ -146,11 +146,13 @@ function on_offre_valid_link_click(event){
 			//console.log(data);
 			//localStorage.setItem("datas", JSON.stringify(data));
 			//document.location = "/info-pro";
-			update_front_with_msg(data, "msg-tab");
-			if (!data.success[0])
+			if (!data.success[0]){
+				update_front_with_msg(data, "msg-tab");
 				update_front_with_errors(data.errors);
-			else
+			}else{
+				localStorage.setItem("datas_infoPro", JSON.stringify(data));
 				document.location = "/info-pro";
+			}
 		}
 	});
 }
@@ -170,9 +172,14 @@ function on_agent_photo_change(){
 		processData: false,  // indique à jQuery de ne pas traiter les données
 		contentType: false,  // indique à jQuery de ne pas configurer le contentType
 		success: function(data){
-			localStorage.setItem("datas_infoPro", JSON.stringify(data));
-			document.location = "/info-pro";
 			//console.log(data);
+			if (data.success[0]){
+				localStorage.setItem("datas_infoPro", JSON.stringify(data));
+				document.location = "/info-pro";
+			}else{
+				update_front_with_msg(data, "msg-profile");
+				update_front_with_errors(data.errors);
+			}
 		}
 	});
 }
@@ -251,10 +258,13 @@ function on_tarif_valid_link_click(event){
 		},
 		success: function (data){
 			update_front_with_msg(data, "msg-tab");
-			if (!data.success[0])
+			if (!data.success[0]){
 				update_front_with_errors(data.errors);
-			else
-				document.location = "/info-pro";
+			}
+			// else{
+			// 	localStorage.setItem("datas_infoPro", JSON.stringify(data));
+			// 	document.location = "/info-pro";
+			// }
 		}
 	});
 }
@@ -306,7 +316,7 @@ function on_etab_valid_link_click(e){
 	date_birth = form.find("[name='date_birth']").val();
 	datas.nom = nom;
 	datas.adresse = adresse;
-	datas.cp = cp;
+	datas.cp = cp.toString(10).padStart(5, "0");
 	datas.ville_id = ville_id;
 	datas.descr = description;
 	datas.siret = siret;
@@ -323,13 +333,13 @@ function on_etab_valid_link_click(e){
 		},
 		success: function (data){
 			//console.log(data)
-			// update_front_with_msg(data, "msg-profile");
-			// if (!data.success[0])
-			// 	update_front_with_errors(data.errors);
-			// else
-			// 	$("input[name^='cc']").removeAttr("disabled");
-			localStorage.setItem("datas_infoPro", JSON.stringify(data));
-			document.location = "/info-pro";
+			if (data.success[0]){
+				localStorage.setItem("datas_infoPro", JSON.stringify(data));
+				document.location = "/info-pro";
+			}else{
+				update_front_with_msg(data, "msg-profile");
+				update_front_with_errors(data.errors);
+			}
 		}
 	});
 }
@@ -351,26 +361,14 @@ function on_off_delete_div_click(e){
 			req.setRequestHeader("x-access-token", token);
 		},
 		success: function (data){
-			update_front_with_msg(data, "msg-tab");
+			//update_front_with_msg(data, "msg-tab");
 			//console.log(that.parents(".grid-offer-col"));
 			if (data.success[0]){
-				/*that.parents(".grid-offer-col").remove();
-				parentRow.append(offre_add_card);
-				$(".slider[id^=slider-o-price]").each( function( index ) {
-					var sliderId = $( this ).attr('id');
-					$( this ).slider({
-							range: "min",
-							min:  parseFloat($( this ).attr("data-min")),
-							max: parseFloat($( this ).attr("data-max")),
-							value: parseFloat($( this ).attr("data-val")),
-							step: 0.1,
-							slide: function( event, ui ) {
-							$( "#" + sliderId + "-value" ).val( ui.value );
-							}
-					});
-					$( "#" + sliderId + "-value" ).val( $( this ).slider( "value" ) );
-				});*/
+				localStorage.setItem("datas_infoPro", JSON.stringify(data));
 				document.location = "/info-pro";
+			}else{
+				update_front_with_msg(data, "msg-tab");
+				update_front_with_errors(data.errors);
 			}
 			//console.log(data);
 		}
@@ -410,24 +408,13 @@ $(document).on('click', '#redirectAdmin', function(event) {
 $(document).on('click', '#customButton', function(e) {
 	e.preventDefault();
 	if ($("#customButton").data("action") == "create")
-		if (business.dateOfBirth != null)
+		if (business != null)
 			sendPlan();
 		else
-			update_front_with_msg({success:[false], global_msg:["Veillez remplir votre profil afin de pouvoir créer votre abonnement !"]}, "pro-payment-msg");
+			update_front_with_msg({success:[false], global_msg:["Veuillez au préalable remplir votre profil afin de pouvoir créer votre abonnement !"]}, "pro-payment-msg");
 	else
 		deletePlan();
 })
-function check_abo(usr){
-	if (usr != "null" && (usr.type == 2 || usr.type == 3)){
-		if ((usr.abonnement !== undefined && usr.abonnement))
-		return true;
-		else
-		return false;
-	}
-	else if(usr.type == 4 || usr.type == 1)
-		return true;
-	return false;
-  }
 function deletePlan(){
 	var datas = {
 		id: user.id,
@@ -575,32 +562,35 @@ function sendPlan() {
 			})
 			.then((tok) => {
 				if (!tok.error){
-					// $.ajax({
-					// 	type : 'GET',
-					// 	url : '/payment',
-					// 	data : {source : response.source.id},
-					// 	async: false,
-					// 	success : function(data){
-							var returnURL = "http://localhost:4000/plan3dsecure?amount="+price+"&accountToken="+tok.token.id+"&src="+response.source.id;
+					$.ajax({
+						type : 'GET',
+						url : '/payment',
+						data : {source : response.source.id},
+						async: false,
+						success : function(data){
+							var returnURL = "http://localhost:4000/plan3dsecure?amount="+price+
+								"&accountToken="+tok.token.id+
+								"&src="+response.source.id+
+								"&cust="+data.customer.id;					
 							stripe.createSource({
 								type: 'three_d_secure',
 								amount: price,
 								currency: "eur",
 								three_d_secure: {
-									//customer : data.customer.id,
+									customer : data.customer.id,
 									card: response.source.id
 								},
 								redirect: {
 									return_url: returnURL,
 								},
 							}).then((response) =>{
-								console.log('response: ');
-								console.log(response.source);
+								// console.log('response: ');
+								// console.log(response.source);
 								if (response.error === undefined)
 									window.location.assign(response.source.redirect.url);
 							}).catch((err) => console.log(err));
-						// }
-					// })
+						}
+					})
 				}else{
 					console.log(tok.err)
 				}

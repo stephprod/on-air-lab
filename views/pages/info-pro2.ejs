@@ -619,29 +619,26 @@
 		<!-- DEVIS -->
   <!-- <script type="text/javascript" src="/asset/js/devis.js"></script> -->
 	<script type="text/javascript">
-	var servs = [];
-	var business = {};
-	<% for (k in locals.servObj){ %>
-		var serv={};
-		serv.id_service = "<%- locals.servObj[k].id_service %>";
-		serv.nom_service = "<%- locals.servObj[k].nom_service %>";
-		servs.push(serv);
-	<% } %>
-	business.name = "<%- locals.etabObj[0].nom ?
-      locals.etabObj[0].nom : "null" %>";
-    business.siren = "<%- locals.etabObj[0].siren ?
-      locals.etabObj[0].siren : "null" %>";
-    business.city = "<%- locals.etabObj[0].ville_nom ?
-      locals.etabObj[0].ville_nom : "null" %>";
-    business.rue = "<%- locals.etabObj[0].adresse ?
-      locals.etabObj[0].adresse : "null" %>";
-    business.dpt = "<%- locals.etabObj[0].cp ?
-	  locals.etabObj[0].cp : "null" %>";
-	business.ville_id = "<%- locals.etabObj[0].ville_id ?
-      locals.etabObj[0].ville_id : "null" %>";
-    business.dateOfBirth = "<%- locals.etabObj[0].date_birth_owner ?
-	  locals.etabObj[0].date_birth_owner : "null" %>";
-	sessionStorage.setItem("services", JSON.stringify(servs));
-	sessionStorage.setItem("business", JSON.stringify(business));
+		var servs = [];
+		var business = {};
+		<% for (k in locals.servObj){ %>
+			var serv={};
+			serv.id_service = "<%- locals.servObj[k].id_service %>";
+			serv.nom_service = "<%- locals.servObj[k].nom_service %>";
+			servs.push(serv);
+		<% } 
+		if (locals.etabObj.length > 0){ %>
+			business.name = "<%- locals.etabObj[0].nom %>";
+			business.siren = "<%- locals.etabObj[0].siren %>";
+			business.city = "<%- locals.etabObj[0].ville_nom %>";
+			business.rue = "<%- locals.etabObj[0].adresse %>";
+			business.dpt = "<%- locals.etabObj[0].cp %>";
+			business.ville_id = "<%- locals.etabObj[0].ville_id %>";
+			business.dateOfBirth = "<%- locals.etabObj[0].date_birth_owner %>";
+		<% } else { %>
+			business = null;
+		<% } %>
+		sessionStorage.setItem("services", JSON.stringify(servs));
+		sessionStorage.setItem("business", JSON.stringify(business));
     </script>
 <% include footer %>
