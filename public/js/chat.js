@@ -1158,7 +1158,7 @@ function on_module_accept_typeMessage_link_click(e){
           if (data.success[0]){
             socket.emit("sendNotif", data.notif);
             if (type_message_libelle == "contact")
-              iframe.reload();
+              iframe.src = iframe.src;
             const content = 'demande acceptée !';
             div.find("div.card-chat div.div-submi").empty();
             div.find("div.card-chat div.div-submi").append(content);

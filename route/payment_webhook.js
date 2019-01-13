@@ -104,25 +104,31 @@ function customer_responses(wh_datas, resp){
 }
 function charge_responses(wh_datas, resp){
     //console.log(wh_datas.data.object.source)
-    return get_user_in_event(wh_datas.data.object.source.metadata.user_mail)
-    .then((user) => {
-        if (wh_datas.type == "charge.succeeded"){
-            send_notification(user, wh_datas.data.object.amount, "accept")
-            .then(() => {
-                insert_new_abo(resp, "valide", wh_datas, user)
-            })
-            .then(() => {
-                //console.log(wh_datas);
-                update_profil(wh_datas);
-            })
-            .catch((err) => err)
-        }else{
-            send_notification(user, wh_datas.data.object.amount, "deny")
-            .then(() => {
-                insert_new_abo(resp, "annule", wh_datas, user)
-            })
-        }
-    })
+    if (Object.keys(wh_datas.data.object.source.metadata).length > 0){
+        return get_user_in_event(wh_datas.data.object.source.metadata.user_mail)
+        .then((user) => {
+                if (wh_datas.type == "charge.succeeded"){
+                    send_notification(user, wh_datas.data.object.amount, "accept")
+                    .then(() => {
+                        insert_new_abo(resp, "valide", wh_datas, user)
+                    })
+                    .then(() => {
+                        //console.log(wh_datas);
+                        update_profil(wh_datas);
+                    })
+                    .catch((err) => err)
+                }else{
+                    send_notification(user, wh_datas.data.object.amount, "deny")
+                    .then(() => {
+                        insert_new_abo(resp, "annule", wh_datas, user)
+                    })
+                }
+        })
+    }else{
+        return new Promise((resolve) => {
+            resolve(0)
+        });
+    }
 }
 function payment_intent_responses(wh_datas, resp){
     if (wh_datas.type != "payment_intent.created"){

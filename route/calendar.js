@@ -62,14 +62,16 @@ router.route('/agenda')
 						for(let k in business){table.push(business[k])}
 							//console.log(table)
 				}
-				//EN LOCALS BUSINESS IS NOT DEFINED SHIIIIT
 				User.get_calendar(request.session.userId, (result) => {
 					if (result.length >= 0){
 						let data = JSON.stringify(result)
 						data = data.replace(/"([^(")"]+)":/g,"$1:");
 						let d = JSON.stringify(table)
 						table = [];
-						response.render('pages/agenda', {eventObj : data, dow: d})
+						User.getInfoPro_etablissement(request.session.userId, (result2) => {
+							//console.log(result)
+							response.render('pages/agenda', {eventObj : data, dow: d, etabObj: result2})
+						})
 					}
 				})
 			})
@@ -88,9 +90,9 @@ router.route('/agenda')
 			table.push(request.session.userId)
 			User.insertCalendar(table, (result) => {
 				if (result == 0) {
-					console.log("ca marche pas")
+					//console.log("ca marche pas")
 				}else{
-					console.log("Envoi data au calme")
+					//console.log("Envoi data au calme")
 					table.push(result)
 					response.send(table)
 				}

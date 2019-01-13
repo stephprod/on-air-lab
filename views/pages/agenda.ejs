@@ -157,28 +157,12 @@
 		</div>
 	</section>
 	<script>
-    	var user = {};
-		var session = {}, calendar = {};
-		user.id = "<%- locals.session.userId != undefined ? 
-			locals.session.userId : "null" %>";
-		user.nom = "<%- locals.session.userName ? 
-			locals.session.userName : "null" %>";
-		user.prenom = "<%- locals.session.userFirstName ? 
-			locals.session.userFirstName : "null" %>";
-		user.type = "<%- locals.session.userType ? 
-			locals.session.userType : "null" %>";
-		user.mail = "<%- locals.session.userMail ? 
-			locals.session.userMail : "null" %>";
-		session.token = "<%- locals.session.token != undefined ? 
-			locals.session.token : "null" %>";
+    	var calendar = {};
 		calendar.dow = '<%- locals.dow != undefined ? 
 			locals.dow : "null" %>';
 		calendar.event = <%- locals.eventObj != undefined ? 
 			locals.eventObj : "null" %>;	
 		// console.log(session);
-		// console.log(calendar);
-		session.user = user;
-		sessionStorage.setItem("session", JSON.stringify(session));
 		sessionStorage.setItem("calendar", JSON.stringify(calendar));
     </script>
 <% include footer %>

@@ -626,19 +626,7 @@
 			serv.id_service = "<%- locals.servObj[k].id_service %>";
 			serv.nom_service = "<%- locals.servObj[k].nom_service %>";
 			servs.push(serv);
-		<% } 
-		if (locals.etabObj.length > 0){ %>
-			business.name = "<%- locals.etabObj[0].nom %>";
-			business.siren = "<%- locals.etabObj[0].siren %>";
-			business.city = "<%- locals.etabObj[0].ville_nom %>";
-			business.rue = "<%- locals.etabObj[0].adresse %>";
-			business.dpt = "<%- locals.etabObj[0].cp %>";
-			business.ville_id = "<%- locals.etabObj[0].ville_id %>";
-			business.dateOfBirth = "<%- locals.etabObj[0].date_birth_owner %>";
-		<% } else { %>
-			business = null;
 		<% } %>
 		sessionStorage.setItem("services", JSON.stringify(servs));
-		sessionStorage.setItem("business", JSON.stringify(business));
     </script>
 <% include footer %>

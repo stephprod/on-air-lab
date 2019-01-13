@@ -80,6 +80,7 @@
           <div class="button-triangle2"></div>
           <div class="button-icon"><i class="fa fa-user"></i></div>
         </a>
+        <p>En cliquant sur "S'enregistrer" ou en créant un nouveau compte utilisateur sur notre site, vous acceptez les <a href="#">Conditions d'utilisation</a> et la <a href="https://stripe.com/connect-account/legal">Politique de Confidentialité des comptes stripe</a>. Vous consentez également à recevoir par email des informations et des offres concernant nos services.</p>
         <div class="clearfix"></div>
         <!--<p class="login-or">OU</p>
         <a href="#" class="facebook-button">
@@ -167,8 +168,9 @@
           <div class="button-triangle2"></div>
           <div class="button-icon"><i class="fa fa-user"></i></div>
         </a>
-        <p>By clicking, you agree to <a href="#">our terms</a> and the <a href="https://stripe.com/connect-account/legal">Stripe Connected Account Agreement</a>.</p>
-      <% } %>
+        <!-- <p>By clicking, you agree to <a href="#">our terms</a> and the <a href="https://stripe.com/connect-account/legal">Stripe Connected Account Agreement</a>.</p> -->
+        <p>En cliquant sur 'Créer un abonnement', vous acceptez les <a href="#">Conditions d'utilisation</a> et la <a href="https://stripe.com/connect-account/legal">Politique de Confidentialité des comptes stripe</a>. Vous consentez également à recevoir par email des informations et des offres concernant nos services.</p>
+       <% } %>
       <iframe src="/historique_payment" style="width: 100%;position: relative;border: none;height: 420px;overflow: auto;"></iframe>
       </div>
     </div><!-- /.modal-content -->
@@ -208,6 +210,7 @@
   <% if (locals.session)  { %>
     var user = {};
     var session = {};
+    var business = {};
     session.token = "<%- locals.session.token != undefined ?
       locals.session.token : "null" %>";
     user.id = "<%- locals.session.userId != undefined ?
@@ -225,6 +228,19 @@
 		<% } %>
     session.user = user;
     //console.log(session);
+    <% if (locals.etabObj !== undefined && locals.etabObj.length > 0){ %>
+			business.name = "<%- locals.etabObj[0].nom %>";
+			business.siren = "<%- locals.etabObj[0].siren %>";
+			business.city = "<%- locals.etabObj[0].ville_nom %>";
+			business.rue = "<%- locals.etabObj[0].adresse %>";
+			business.dpt = "<%- locals.etabObj[0].cp %>";
+			business.ville_id = "<%- locals.etabObj[0].ville_id %>";
+			business.dateOfBirth = "<%- locals.etabObj[0].date_birth_owner %>";
+		<% } else { %>
+			business = null;
+    <% } %>
+    //console.log(business);
+    sessionStorage.setItem("business", JSON.stringify(business));
     sessionStorage.setItem("session", JSON.stringify(session));
 <% } %>
 </script>
