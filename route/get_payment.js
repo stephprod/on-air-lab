@@ -61,19 +61,19 @@ router.route('/get-payment')
                         fee = rslt.price_payment * 3.5
                         let amount_net = (rslt.price_payment * 100) - fee
                         return make_stripe_payment(request, amount_net, res2.id)
-                    }).then((res) => {
+                    }).then((res3) => {
                         // ENVOI DE MAIL AU PRO INDIQUANT LA RECUPERATION D'UN PAIEMENT
                         return User.update_payment("`state_payment`='valide' WHERE `id_p`="+rslt.id_p, (result, resolve, reject) => {
                             if (result.changedRows > 0){
                                 rslt.state_payment = 'valide'
-                                resolve(res)
+                                resolve(rslt)
                             }
                             else
                                 reject(new Error("Mise à jour échouée - contactez l'administrateur !"))
                         })
                     })
-                    .then((res) => {
-                        let amount_for_display = parseFloat(res / 100).toFixed(2);
+                    .then((res4) => {
+                        let amount_for_display = parseFloat(res4.price_payment / 100).toFixed(2);
                         ret.success.push(true)
                         ret.global_msg.push("Un paiement de "+amount_for_display+"€ a été effectué à destination de votre compte, il sera effectif dans 1-2 jours ouvrés !")
                         ret.result = code

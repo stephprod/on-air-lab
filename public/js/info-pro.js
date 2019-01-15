@@ -430,9 +430,10 @@ function deletePlan(){
 		data: datas,
 		async: false,
 		success: function (data){
-			update_front_with_msg(data, "pro-payment-msg");
+			//update_front_with_msg(data, "pro-payment-msg");
 			//console.log(data);
 			//Refresh de page cause --> trop d'éléments à maj
+			localStorage.setItem("datas_infoPro", JSON.stringify(data))
 			window.location.reload();
 		}
 	})

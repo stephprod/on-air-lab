@@ -123,7 +123,7 @@ class MailTemplate{
 						'Des utilisateurs t\'attendent, connecte toi au plus vite !'
 					param.subject = "Bienvenue dans la communauté 'LabelOnAir' !"
 					break;
-				case "plan_deleted":
+				case "subscription_deleted":
 					param.content += "Tu viens de clôturer ton abonnement à nos services. <br><br>"+
 						"Cette action est effective à reception de ce mail. <br>"+
 						"Afin de pouvoir continuer à profiter de nos services tu peux à tout moment retourner sur <a href='"+website_path+"'><b>notre site</b></a> et créer un nouvel abonnement.<br><br>"+

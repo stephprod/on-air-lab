@@ -1307,6 +1307,17 @@ class User{
             });
         })
     }
+    static update_payment_abo(sql, cb){
+        return new Promise((resolve, reject) => {
+            let r = db.query('UPDATE `payments` '+sql, (err, result) => {
+                if(err){
+                    console.log(r.sql)
+                    throw err;
+                }
+                cb(result, resolve, reject);
+            });
+        })
+    }
     static create_payment(table, cb){
         return new Promise((resolve, reject) => {
             let r = db.query('INSERT INTO `payments`(`type_payment`, `state_payment`, `desc_payment`, `id_pro`, `id_art`, `price_payment`, `date_payment`) '+
@@ -1341,17 +1352,17 @@ class User{
             })
         })
     }
-    // static get_pro_payment_source(table, cb){
-    //     return new Promise((resolve, reject) =>{
-    //         let r = db.query("SELECT * FROM `payments` WHERE `id_pro`=? AND `type_payment`='ABONNEMENT' ORDER BY `date_payment` DESC LIMIT 1", [table], (err, res) => {
-    //             if (err){
-    //                 console.log(r.sql)
-    //                 throw err
-    //             }
-    //             cb(res, resolve, reject)
-    //         })
-    //     })
-    // }
+    static get_pro_payment_plan(table, cb){
+        return new Promise((resolve, reject) =>{
+            let r = db.query("SELECT * FROM `profil` WHERE `id_user`=? LIMIT 1", [table], (err, res) => {
+                if (err){
+                    console.log(r.sql)
+                    throw err
+                }
+                cb(res, resolve, reject)
+            })
+        })
+    }
     static get_pro_account(table, cb){
         return new Promise((resolve, reject) => {
             let r = db.query("SELECT `profil`.`account` FROM `profil` WHERE `profil`.`id_user`=?", [table], (err, res) => {

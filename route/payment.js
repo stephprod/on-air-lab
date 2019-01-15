@@ -32,16 +32,19 @@ router.route('/payment')
             account = res1
             console.log("account : ")
             // console.log(res1)
-            return update_stripe_source(req.body.sourceId, account.id, cust.id, req)
+            return update_stripe_source(req.body.sourceId, account.id, cust.id, req, "new_abo")
         })
         .then(() => {
             console.log("source with metadatas : ")
             // console.log(res2)
             return create_stripe_subscription(cust.id)
         })
-        .then(() => {
+        .then((res3) => {
             console.log("subscription created : ")
             // console.log(res3)
+            return update_stripe_source(req.body.sourceId, account.id, cust.id, req, "recurring")
+        })
+        .then(() => {
             ret.success.push(true, true)
             ret.global_msg.push("La création de ton abonnement est en cours, tu devrais recevoir un mail de confirmation dans un délai de 1h maximum !", "A réception de ce mail tu devras te reconnecter pour que les changements soient effectifs !")
             res.send(ret)
@@ -110,7 +113,7 @@ function create_stripe_subscription(custId){
         })
     })
 }
-function update_stripe_source(sourceId, accountId, customerId, req){
+function update_stripe_source(sourceId, accountId, customerId, req, action){
     return new Promise((resolve, reject) => {
         stripe.sources.update(sourceId, {
             metadata: {
@@ -119,6 +122,7 @@ function update_stripe_source(sourceId, accountId, customerId, req){
                 account_id: accountId,
                 customer_id: customerId,
                 user_mail: req.session.userMail,
+                action: action
             }
         }, function(err, source){
             // asynchronously called

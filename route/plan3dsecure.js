@@ -22,7 +22,7 @@ router.route('/plan3dsecure')
             account = res2
             console.log("account : ")
             //console.log(res2)
-            return update_stripe_source(req, req.query.source, account.id, req.query.cust)
+            return update_stripe_source(req, req.query.source, account.id, req.query.cust, "new_abo")
         })
         .then(() => {
             console.log("source for first charge with metadatas : ")
@@ -37,7 +37,7 @@ router.route('/plan3dsecure')
         .then(() => {
             console.log("source for subscription : ")
             //console.log(res5)
-            return update_stripe_source(req, req.query.src, account.id, req.query.cust)
+            return update_stripe_source(req, req.query.src, account.id, req.query.cust, "recurring")
         })
         .then((res5) => {
             src = res5
@@ -156,7 +156,7 @@ function retrieve_stripe_source(srcId){
         })
     })
 }
-function update_stripe_source(req, sourceId, acctId, custId){
+function update_stripe_source(req, sourceId, acctId, custId, action){
     return new Promise((resolve, reject) => {
         stripe.sources.update(sourceId, {
             metadata: {
@@ -165,6 +165,8 @@ function update_stripe_source(req, sourceId, acctId, custId){
                 account_id: acctId,
                 customer_id: custId,
                 user_mail: req.session.userMail,
+                action: action
+
             }
         }, function(err, source){
             // asynchronously called

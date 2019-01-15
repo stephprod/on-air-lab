@@ -114,7 +114,13 @@ function charge_responses(wh_datas, resp){
                     })
                     .then(() => {
                         //console.log(wh_datas);
-                        update_profil(wh_datas);
+                        if (wh_datas.data.object.source.metadata.action == "new_abo"){
+                            update_profil(wh_datas);
+                        }else{
+                            return new Promise((resolve) => {
+                                resolve()
+                            })
+                        }
                     })
                     .catch((err) => err)
                 }else{
@@ -126,7 +132,7 @@ function charge_responses(wh_datas, resp){
         })
     }else{
         return new Promise((resolve) => {
-            resolve(0)
+            resolve()
         });
     }
 }
@@ -166,18 +172,18 @@ function insert_new_payment(action, wh_datas, user_from){
         dateInMilis *= 1000; // convert to milliseconds (Epoch is usually expressed in seconds, but Javascript uses Milliseconds)
     amount = parseFloat(wh_datas.data.object.amount) / 100
     table.push("PRESTATION", action, wh_datas.data.object.description, id_pro, user_from.id, amount, new Date(dateInMilis))
-    return User.create_payment(table, (result, resolve, reject) => {
-        let valid = result.insertId
-        if (valid > 0){
-            let ret = {
-                datePayment: new Date(dateInMilis),
-                id: valid
+        return User.create_payment(table, (result, resolve, reject) => {
+            let valid = result.insertId
+            if (valid > 0){
+                let ret = {
+                    datePayment: new Date(dateInMilis),
+                    id: valid
+                }
+                resolve(ret)
+            }else{
+                reject(new Error("Insertion du paiement echouée !"))
             }
-            resolve(ret)
-        }else{
-            reject(new Error("Insertion du paiement echouée !"))
-        }
-    })
+        })
 }
 function insert_new_abo(resp, action, wh_datas, user_from){
     let table = [], dateInMilis = parseInt(wh_datas.data.object.created), amount = 0
@@ -185,14 +191,26 @@ function insert_new_abo(resp, action, wh_datas, user_from){
         dateInMilis *= 1000; // convert to milliseconds (Epoch is usually expressed in seconds, but Javascript uses Milliseconds)
     amount = parseFloat(wh_datas.data.object.amount) / 100
     table.push("ABONNEMENT", action, "Nouvelle abonnement LabelOnAir", user_from.id, amount, new Date(dateInMilis), wh_datas.data.object.source.id)
-    return User.create_payment_abo(table, (result, resolve, reject) => {
-        let valid = result.changedRows != 0 ? result.changedRows : result.affectedRows
-        if (valid > 0){
-            resolve()
-        }else{
-            reject(new Error("Insertion de l'abonnement echouée !"))
-        }
-    })
+    if (wh_datas.data.object.source.metadata.action == "new_abo"){
+        return User.create_payment_abo(table, (result, resolve, reject) => {
+            let valid = result.changedRows != 0 ? result.changedRows : result.affectedRows
+            if (valid > 0){
+                resolve()
+            }else{
+                reject(new Error("Insertion de l'abonnement echouée !"))
+            }
+        })
+    }else{
+        return User.update_payment_abo("SET `payments`.`source`='"+
+            wh_datas.data.object.source.id+"' WHERE `payments`.`id_pro`="+
+            wh_datas.data.object.source.metadata.user_id+" AND `payments`.`type_payment`='ABONNEMENT'", (res, resolve, reject) => {
+                if (res.changedRows > 0){
+                    resolve()
+                }else{
+                    reject(new Error("Mise à jour de l'abonnement echouée !"))
+                }
+            })
+    }
 }
 function update_profil(wh_datas){
     //console.log(wh_datas.data.object.source)
