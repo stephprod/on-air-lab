@@ -24,14 +24,25 @@ router.route('/payment-intent/:id')
     .post((req, res) => {
         let ret = {}
         ret.result = {}
-        stripe.paymentIntents.create({
-            amount: parseFloat(req.body.price) * 100,
-            currency: 'eur',
-            allowed_source_types: ['card'],
-            description: req.body.desc,
-            statement_descriptor: "user "+req.session.user_receiv.id_coresp,
-            transfer_group: "pay_for_"+req.session.user_receiv.id_coresp,
+        User.get_pro_account(req.session.user_receiv.id_coresp, (result, resolve, reject) => {
+            if (result.length > 0){
+                //console.log(result[0])
+                resolve(result[0].account)
+            }
+            else
+                reject(new Error("Compte irrécupérable !"))
+        }).then((res) => {
+            return stripe.paymentIntents.create({
+                amount: parseFloat(req.body.price) * 100,
+                currency: 'eur',
+                allowed_source_types: ['card'],
+                description: req.body.desc,
+                statement_descriptor: "user "+req.session.user_receiv.id_coresp,
+                transfer_group: "pay_for_"+req.session.user_receiv.id_coresp,
+                on_behalf_of: res,
+            })
         }).then((result) => {
+            //if (result.error)
             ret.result = result.client_secret
             //console.log(req.query)
             res.send(ret)

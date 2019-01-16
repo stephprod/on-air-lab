@@ -89,9 +89,9 @@ var updateFront = function (ret, dataName){
             content += '<div class="global_msg">';
             $.each(val, function (i, v){
                 if (!ret.success[i])
-                    content += '<div class="error-box"><p style="margin:0;>'+v+'</p><div class="small-triangle"></div><div class="small-icon"><i class="jfont">&#xe80f;</i></div></div>';
+                    content += '<div class="error-box"><p style="margin:0;">'+v+'</p><div class="small-triangle"></div><div class="small-icon"><i class="jfont">&#xe80f;</i></div></div>';
                 else{
-                    content += '<div class="success-box"><p style="margin:0;>'+v+'</p><div class="small-triangle"></div><div class="small-icon"><i class="jfont">&#xe816;</i></div></div>';
+                    content += '<div class="success-box"><p style="margin:0;">'+v+'</p><div class="small-triangle"></div><div class="small-icon"><i class="jfont">&#xe816;</i></div></div>';
                 }
             });
             content += '</div>';

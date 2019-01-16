@@ -50,32 +50,33 @@ router.route('/get-payment')
                             else
                                 reject(new Error("Compte irrécupérable !"))
                         })
-                    }).then((res1) => {
-                        console.log("accountId :")
-                        console.log(res1)
-                        return retrieve_stripe_account(res1)
                     })
+                    // .then((res1) => {
+                    //     console.log("accountId :")
+                    //     console.log(res1)
+                    //     return retrieve_stripe_account(res1)
+                    // })
                     .then((res2) => {
-                        console.log("account :")
+                        console.log("accountId :")
                         console.log(res2)
                         fee = rslt.price_payment * 3.5
                         let amount_net = (rslt.price_payment * 100) - fee
-                        return make_stripe_payment(request, amount_net, res2.id)
+                        return make_stripe_payment(amount_net, res2, rslt.charge)
                     }).then((res3) => {
                         // ENVOI DE MAIL AU PRO INDIQUANT LA RECUPERATION D'UN PAIEMENT
                         return User.update_payment("`state_payment`='valide' WHERE `id_p`="+rslt.id_p, (result, resolve, reject) => {
                             if (result.changedRows > 0){
                                 rslt.state_payment = 'valide'
-                                resolve(rslt)
+                                resolve(res3)
                             }
                             else
                                 reject(new Error("Mise à jour échouée - contactez l'administrateur !"))
                         })
                     })
                     .then((res4) => {
-                        let amount_for_display = parseFloat(res4.price_payment / 100).toFixed(2);
+                        let amount_for_display = parseFloat(res4 / 100).toFixed(2);
                         ret.success.push(true)
-                        ret.global_msg.push("Un paiement de "+amount_for_display+"€ a été effectué à destination de votre compte, il sera effectif dans 1-2 jours ouvrés !")
+                        ret.global_msg.push("Un paiement de "+amount_for_display+"€ a été enregistré à destination de votre compte, il sera effectif dans 7 jours ouvrés maximum !")
                         ret.result = code
                         response.send(ret)
                     })
@@ -94,15 +95,15 @@ router.route('/get-payment')
         }
 })
 
-function make_stripe_payment(req, amount_net, accountId){
+function make_stripe_payment(amount_net, accountId, chargeId){
     return new Promise((resolve, reject) => {
         // Create a Transfer to the connected account (later):
         stripe.transfers.create({
             amount: amount_net,
             currency: "eur",
+            source_transaction: chargeId,
             destination: accountId,
-            transfer_group: "pay_for_"+req.session.userId,
-        }).then((transfer) => {
+          }).then((transfer) => {
             // asynchronously called
             if (transfer.err){
                 reject(transfer.err)

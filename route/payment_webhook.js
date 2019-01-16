@@ -171,7 +171,7 @@ function insert_new_payment(action, wh_datas, user_from){
     if(dateInMilis < 10000000000) 
         dateInMilis *= 1000; // convert to milliseconds (Epoch is usually expressed in seconds, but Javascript uses Milliseconds)
     amount = parseFloat(wh_datas.data.object.amount) / 100
-    table.push("PRESTATION", action, wh_datas.data.object.description, id_pro, user_from.id, amount, new Date(dateInMilis))
+    table.push("PRESTATION", action, wh_datas.data.object.description, id_pro, user_from.id, amount, new Date(dateInMilis), wh_datas.data.object.charges.data[0].id)
         return User.create_payment(table, (result, resolve, reject) => {
             let valid = result.insertId
             if (valid > 0){
