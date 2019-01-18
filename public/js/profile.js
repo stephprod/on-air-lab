@@ -1,7 +1,33 @@
 //import {socket, get_events, switchRoom} from './chat.js';
 import {update_front_with_msg} from './front-update.js';
-/*import {get_events} from './events.js';
-import {socket, switchRoom} from './socket_modules.js';*/
+var form = $("form#contact");
+form.on("submit", on_form_contact_submit);
+var iframe_cal1 = $(".cal")[0].contentDocument ? $(".cal")[0].contentDocument : $(".cal")[0].contentWindow.document;
+var iframe_cal2 = $(".cal")[1].contentDocument ? $(".cal")[1].contentDocument : $(".cal")[1].contentWindow.document;
+var iframe_cal3 = $(".cal")[2].contentDocument ? $(".cal")[2].contentDocument : $(".cal")[2].contentWindow.document;
+// var check_in = $("a#booking");
+// var meet_up = $("a#meet-up");
+// var offer_meet_up = $("a#offer-meet-up");
+var socket = io.connect();
+var session = JSON.parse(sessionStorage.getItem('session'));
+//sessionStorage.clear();
+//console.log(session);
+var roomDisplay_from_session = JSON.parse(sessionStorage.getItem('room'));
+var user_receiv_from_session = JSON.parse(sessionStorage.getItem('user_receiv'));
+var user_receiv;
+var user = null;
+var userId = null;
+//var page = null;
+var token = null;
+if (session != null && session.user != undefined){
+	user = session.user;
+	userId = user.id;
+//	page = session.page;
+	token = session.token;
+}
+$(document).on("click", "a#booking, a#meet-up", on_reservation_link_click);
+$(document).on("click", "a#offer-meet-up", on_valid_rdv_offer_link_click);
+$(document).on("click", "a[data-action='in-chat']", on_rdv_offer_link_click);
 function get_events(hours, datePickerValTab){
 	var start, end, datas = {};
 	datas.events = [];
@@ -365,53 +391,3 @@ function on_rdv_offer_link_click(e){
 	//console.log(parent);
 	//console.log(id_offre);
 }
-var form = $("form#contact");
-form.on("submit", on_form_contact_submit);
-var iframe_cal1 = $(".cal")[0].contentDocument ? $(".cal")[0].contentDocument : $(".cal")[0].contentWindow.document;
-var iframe_cal2 = $(".cal")[1].contentDocument ? $(".cal")[1].contentDocument : $(".cal")[1].contentWindow.document;
-var iframe_cal3 = $(".cal")[2].contentDocument ? $(".cal")[2].contentDocument : $(".cal")[2].contentWindow.document;
-// var check_in = $("a#booking");
-// var meet_up = $("a#meet-up");
-// var offer_meet_up = $("a#offer-meet-up");
-var socket = io.connect();
-var session = JSON.parse(sessionStorage.getItem('session'));
-//sessionStorage.clear();
-//console.log(session);
-var roomDisplay_from_session = JSON.parse(sessionStorage.getItem('room'));
-var roomDisplay;
-var user_receiv_from_session = JSON.parse(sessionStorage.getItem('user_receiv'));
-var user_receiv;
-var user = null;
-var userId = null;
-//var page = null;
-var token = null;
-if (session != null && session.user != undefined){
-	user = session.user;
-	userId = user.id;
-//	page = session.page;
-	token = session.token;
-}
-//console.log($(".cal"));
-/*$(iframe_cal1).on("click", ".timeSelect", on_click_dispo);
-$(iframe_cal2).on("click", ".timeSelect", on_click_dispo);*/
-$(document).on("click", "a#booking, a#meet-up", on_reservation_link_click);
-$(document).on("click", "a#offer-meet-up", on_valid_rdv_offer_link_click);
-$(document).on("click", "a[data-action='in-chat']", on_rdv_offer_link_click);
-//check_in.on("click", on_reservation_link_click);
-//meet_up.on("click", on_reservation_link_click);
-//export {get_events};
-//sessionStorage.clear();
-// if (userId != null && userId != "null") {
-// 	var type = user.type;
-// 	// var coresp = {};
-// 	// coresp.nom = "Admin";
-// 	// coresp.prenom = "amdin";
-// 	// coresp.id_coresp = 1;
-// 	// coresp.type = 1;
-// 	// coresp.mail = "admin@label-onair.com";
-// 	socket.emit('adduser', userId, type);
-// 	console.log("TU ES DEJA CONNECTE :)");
-// 	//updateUserReceived(coresp);
-// } else {
-// 	console.log("CONNECTE TOI POUR UTILISER LE TCHAT NO HACK :)");
-// }

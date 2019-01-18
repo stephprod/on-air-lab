@@ -42,7 +42,8 @@ $(document).ready(function() {
 		locale : 'fr',
 		inline : true,
 		sideBySide : true,
-		debug : true
+		debug : true,
+		minDate: new Date().ajouteHeures(1)
 	});
 	$('input[name="date-select"]').on("dp.change", function(e){
 		var a = e.date._d;
@@ -207,6 +208,10 @@ $(document).ready(function() {
 		});
 	})
 });
+Date.prototype.ajouteHeures = function(heures) {
+    this.setHours(this.getHours() + heures);
+    return this;
+};
 </script>
 <script>
 	function on_click_dispo(e){

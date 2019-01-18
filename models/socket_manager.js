@@ -91,6 +91,7 @@ class SocketManager{
                 content_m: result[k].content_m,
                 id_r : data,
                 id_payment: result[k].id_payment,
+                pro_type: result[k].type
             }
             if (len == size && k == (len - 1) && (src == "latestMsg" || src == "previousMsg")){
                 message.fullPrevious = false
@@ -267,6 +268,7 @@ class SocketManager{
                 content_m: result[k].content_m,
                 id_r : data,
                 id_payment: result[k].id_payment,
+                pro_type: result[k].type
             }
             if (len == size && k == 0 && (src == "latestMsg" || src == "previousMsg")){
                 message.fullPrevious = false

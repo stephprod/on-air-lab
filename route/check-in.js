@@ -12,24 +12,16 @@ router.route('/check-in')
 	ret.created = new Date()
 	if (request.session.token == request.headers["x-access-token"]){
 		var table = []
-		//let tableD = [], tableT = [], tableTemp = [], tableE = [], tableM = []
-		//let start, end, title, id_pro, id_art
 		var len
-		//let req_ok = '', req_ko = ''
-		//var id_sender = request.body.user_sender,
-		//title = request.body.title
-		//id_receiv = request.body.user_receiv
-		//id_pro = request.body.id_pro
-		//id_art = request.body.id_art
-		//console.log(request.body)
 		for (var k in request.body){
 			table.push(request.body[k])
 		}
 		//console.log(table)
 		//INSERTION EVENNEMENT
+		ret.result.type_r = request.body.from
 		if (request.body.from == "rdv_offer"){
 			len = (table.length - 12) / 2 ;
-			insert_event(request, ret, len)
+			insert_event(request, ret, len, 0)
 			.then((res) => {
 				return insert_type_rdv_offer_message(request, res)
 			})
@@ -51,9 +43,29 @@ router.route('/check-in')
 				console.log(err);
 				response.send(err)
 			});
-		}else{	
+		}else if (request.body.from == "rdv_payment"){
+			//UPDATE EVENTS_IN_TYPE_MESSAGE
+			len = (table.length - 8) / 2 ;
+			ret.result.id_type_m = request.body.id_type_message
+			ret.result.type_transac = request.body.transaction_type
+			var acceptation_state = ret.result.type_transac == "MOD" ? 0 : 1	
+			insert_event(request, ret, len, acceptation_state)
+			.then((res0) => {
+				//console.log(res0)
+				return insert_events_in_tm(res0)
+			})
+			.then((res1) => {
+				return tempo(request, res1)
+			})
+			.then((res2)=>{
+				response.send(res2)
+			}).catch((err) => {
+				//console.log(err);
+				response.send(err)
+			});
+		}else{
 			len = (table.length - 7) / 2 ;
-			insert_event(request, ret, len)
+			insert_event(request, ret, len, 0)
 			.then((res) => {
 				return insert_type_rdv_message(request, res)
 			})
@@ -87,23 +99,19 @@ router.route('/check-in')
 		response.send(ret)
 	}
 })
-function insert_event(req, ret, len){
+function insert_event(req, ret, len, acceptation){
 	return new Promise((resolve, reject) =>{
-		//console.log(request.body);
-		for (var k=0; k < len; k++){
-			// console.log("Résultat : ")
-			// console.log(ret)
-			//console.log(len)
-			ret.result.id_dispos = []
-			setTimeout((function(k) {
-				return function(){
+		ret.result.id_dispos = []
+		for (let k=0, p = Promise.resolve(); k < len; k++){
+			p = p.then(_ => new Promise((resolve2) => {
+				return setTimeout(function(){
 					var tableD = [],
 					start = req.body["events["+k+"][start]"],
 					end = req.body["events["+k+"][end]"];
-					//console.log(k);
-					//console.log(start);
-					//console.log(end);
-					tableD.push(req.body.id_pro, req.body.id_art, start, end, req.body.title, 0);
+					tableD.push(req.body.id_pro, req.body.id_art, start, end, req.body.title, acceptation);
+					// console.log(k);
+					// console.log(len);
+					// console.log(tableD);
 					User.insertDisponibiliteTemp(tableD, (result)=>{
 						if (result > 0){
 							ret.result.id_dispos.push(result)
@@ -119,15 +127,17 @@ function insert_event(req, ret, len){
 							reject(ret)
 						}
 						if (k == len - 1){
+							//console.log("last !");
 							//messages in chat
-							ret.result.type_r = req.body.from
 							//insert_message(request, response, ret.result.id_dispos, ret);
-							//response.send(ret)
+							//console.log(ret)
 							resolve(ret)
 						}
 					});
-				};
-			}) (k), 100);
+					resolve2()
+				}, 100);
+			}))
+			.catch((err) => err);
 		}
 	});
 }
@@ -143,29 +153,6 @@ function insert_type_rdv_offer_message(req, ret){
 					ret.global_msg.push("Type du message inséré !")
 					ret.result.id_type_m = result
 					resolve (ret)
-					// for (var k in ret.result.id_dispos){
-					// 	setTimeout((function(k) {
-					// 		return function (){		
-					// 			let tableE = []
-					// 			let id = ret.result.id_dispos[k]
-					// 			tempo(req, result, id, ret)
-					// 			tableE.push(id, result)
-					// 			User.insertEventsInTypeMessage(tableE, (result2)=>{
-					// 				if (result2 > 0){
-					// 					ret.success.push(true)
-					// 				}
-					// 				else{
-					// 					ret.success.push(false)
-					// 					ret.global_msg.push("Une erreur est survenue lors l'insertion du type du message, veuillez contacter le support/modérateur !")
-					// 				}
-					// 			});
-					// 			//Dernière élement du tableau
-					// 			if (k == ret.result.id_dispos.length - 1){
-					// 				resolve(ret)
-					// 			}
-					// 		};
-					// 	}) (k), 100);
-					// }
 				}else{
 					ret.success.push(false)
 					ret.global_msg.push("Une erreur est survenue lors de l'insertion du type de message, contactez le support/modérateur !")

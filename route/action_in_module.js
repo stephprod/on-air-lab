@@ -32,7 +32,7 @@ router.route('/action-in-module')
 				//console.log(res)
 				res.result.libelle = request.body.action
 				res.result.events = []
-				if (request.body.type_m == "contact_response" || request.body.type_m == "payment_response")
+				if (request.body.type_m == "contact_response")
 					return res
 				else if (request.body.action == "accept")
 					return get_events(request, res)
@@ -40,6 +40,7 @@ router.route('/action-in-module')
 					return res
 			}).then((res) => {
 				//console.log(res)
+				//res.result.actionForNotif et receiver identiques pour validation de paiement
 				return notifications.mail(res.result.actionForNotif, receiver, request.body.type_m, request.body.action, ret.result.events)
 				.then((res) => {
 					ret.notif = res

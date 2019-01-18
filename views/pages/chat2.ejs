@@ -107,12 +107,6 @@
 		            <p>Null</p>
 		            <span>Null</span>
 		            <div class="box-module">
-		            	<a class="module" href="#booking-modal" data-toggle="modal">booking</a>
-		            	<a class="module" href="#devis-modal" data-toggle="modal">devis</a>
-		            	<a class="module" href="#rdv-modal" data-toggle="modal">rdv</a>
-		            	<a class="module" href="#paiement-modal" data-toggle="modal">paiement</a>
-		            	<a class="module" href="#son-modal" data-toggle="modal">son</a>
-		            	<a class="module" href="#video-modal" data-toggle="modal">video</a>
 		            </div>
 				</div>
 				<div class="msg-inf-chat"></div>
@@ -246,7 +240,50 @@
 			</div><!-- /.modal-content -->
 		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
-
+	<!-- rdv-for-payment-modal -->
+	<div class="modal fade apartment-modal" id="rdv-for-payment-modal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<div class="modal-title msg-rdv-payment">
+						<h1>Proposer un/des rdv<span class="special-color">?</span></h1>
+						<div class="short-title-separator"></div>
+					</div>
+					<iframe class="cal" src="/widget_calendar?page=chat" style="border: none;width: 100%;min-height: 350px;"></iframe>
+					<div id="selectHours"></div>
+					<a class="button-primary button-shadow button-full meet-up-for-payment-chat">
+						<span>Valider le(s) rendez-vous</span>
+						<div class="button-triangle"></div>
+						<div class="button-triangle2"></div>
+						<div class="button-icon"><i class="fa fa-user"></i></div>
+					</a>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+	<!-- booking-for-payment-modal -->
+	<div class="modal fade apartment-modal" id="booking-for-payment-modal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<div class="modal-title msg-booking-payment">
+						<h1>Proposer un/des booking(s)<span class="special-color">?</span></h1>
+						<div class="short-title-separator"></div>
+					</div>
+					<iframe class="cal" src="/widget_calendar?page=chat" style="border: none;width: 100%;min-height: 350px;"></iframe>
+					<div id="selectHours"></div>
+					<a class="button-primary button-shadow button-full booking-for-payment-chat">
+						<span>Valider le(s) booking(s)</span>
+						<div class="button-triangle"></div>
+						<div class="button-triangle2"></div>
+						<div class="button-icon"><i class="fa fa-user"></i></div>
+					</a>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
 <!-- devis modal -->
 	<div class="modal fade apartment-modal" id="devis-modal">
 		<div class="modal-dialog">

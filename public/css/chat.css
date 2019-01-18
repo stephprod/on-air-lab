@@ -388,6 +388,7 @@ a.module {
     background-color: white;
     text-decoration: none;
     color: #8495a3;
+    margin-right: 5px;
 }
 a.module:hover {
     padding: 7px;

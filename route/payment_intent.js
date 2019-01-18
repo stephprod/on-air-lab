@@ -24,6 +24,8 @@ router.route('/payment-intent/:id')
     .post((req, res) => {
         let ret = {}
         ret.result = {}
+        ret.success = []
+        ret.global_msg = []
         User.get_pro_account(req.session.user_receiv.id_coresp, (result, resolve, reject) => {
             if (result.length > 0){
                 //console.log(result[0])
@@ -40,12 +42,27 @@ router.route('/payment-intent/:id')
                 statement_descriptor: "user "+req.session.user_receiv.id_coresp,
                 transfer_group: "pay_for_"+req.session.user_receiv.id_coresp,
                 on_behalf_of: res,
+                metadata : {
+                    id_request: req.body.id_r
+                }
             })
         }).then((result) => {
             //if (result.error)
             ret.result = result.client_secret
+            ret.price = parseFloat(req.body.price)
+            ret.desc = req.body.desc
+            ret.id = req.session.user_receiv.id_coresp
+            ret.email = req.session.userMail
+            ret.nom = req.session.userName
+            ret.prenom = req.session.userFirstName
+            ret.success.push(true)
+            ret.global_msg.push("Réservation effectuée, patientez pour le paiement !")
             //console.log(req.query)
             res.send(ret)
-        }).catch((err) => err);
+        }).catch((err) => {
+            ret.success.push(false)
+            ret.global_msg.push("Une erreur est survenue lors de la création de la passerelle sécurisée pour le paiement !", err.message)
+            res.send(ret)
+        });
     });
 module.exports = router

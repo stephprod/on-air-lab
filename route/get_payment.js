@@ -59,7 +59,7 @@ router.route('/get-payment')
                     .then((res2) => {
                         console.log("accountId :")
                         console.log(res2)
-                        fee = rslt.price_payment * 3.5
+                        fee = rslt.price_payment * 3
                         let amount_net = (rslt.price_payment * 100) - fee
                         return make_stripe_payment(amount_net, res2, rslt.charge)
                     }).then((res3) => {
