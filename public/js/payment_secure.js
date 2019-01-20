@@ -62,6 +62,7 @@ function form_payment(data, glob_datas){
                         req.setRequestHeader("x-access-token", session.token);
                     },
                     success: function (data){
+                        console.log(data);
                         if (data.success[0]){
                             socket.emit("sendNotif", data.notif);
                             const content = 'demande acceptée !';

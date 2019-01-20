@@ -13,13 +13,13 @@ router.route('/action-in-module')
 		if (request.session.token == request.headers["x-access-token"]){
 			//console.log(request.body);
 			const table = []
-			const receiver = { id: request.session.userId,
+			var receiver = { id: request.session.userId,
 				nom: request.session.userName,
 				prenom: request.session.userFirstName,
 				type: request.session.userType,
 				email: request.session.userMail,
 				img_chat: request.session.img_chat,
-			}
+			}, sender = {}, events = []
 			for (const prop in request.body){
 				table.push(request.body[prop])
 			}
@@ -39,14 +39,35 @@ router.route('/action-in-module')
 				else
 					return res
 			}).then((res) => {
-				//console.log(res)
-				//res.result.actionForNotif et receiver identiques pour validation de paiement
-				return notifications.mail(res.result.actionForNotif, receiver, request.body.type_m, request.body.action, ret.result.events)
-				.then((res) => {
-					ret.notif = res
-					response.send(ret)
-				}, (err) => response.send(err))
+				// console.log(res)
+				// console.log(res.result.actions)
+				if (request.body.type_m == "payment_response"){
+					receiver = res.result.actions[0]
+					sender = res.result.actionForNotif
+					events = res.result.events
+					return sendMail(request, res, receiver, res.result.actionForNotif)
+				}else{
+					return sendMail(request, res, res.result.actionForNotif, receiver)
+				}
 			})
+			.then((res) => {
+				ret.notif = res
+				if (request.body.type_m == "payment_response" && request.body.type_transac == "ESP"){
+					User.create_payment(["PRESTATION", "valide", request.body.desc_payment, receiver.id, sender.id, request.body.price_payment, new Date(events[0].start), "ESP", null,
+					request.body.id_r],
+						(result, resolve, reject) => {
+						if (result.insertId > 0){
+							response.send(ret)
+						}else{
+							ret.success.push(false)
+							ret.global_msg.push("Insertion du paiement echouée !")
+							reject(ret)
+						}
+					})
+				}else{
+					response.send(ret)
+				}
+			}, (err) => response.send(err))
 			.catch((err) => {
 				//console.log("error -> "+err)
 				response.send(err)
@@ -57,6 +78,14 @@ router.route('/action-in-module')
 			response.send(ret)
 		}
 })
+function sendMail(req, ret, user_pro, user_art){
+	// console.log(user_pro)
+	// console.log(user_art)
+	// console.log(req.body.type_m)
+	//res.result.actionForNotif et receiver identiques pour validation de paiement
+	return notifications.mail(user_pro, user_art, req.body.type_m+"_for_pro", req.body.action, ret.result.events)
+	.then(() => notifications.mail(user_art, user_pro, req.body.type_m+"_for_art", req.body.action, ret.result.events))
+}
 function get_action(req, ret){
 	return new Promise((resolve) => {
 		User.get_accept_action_module(req.body.id_type_message, (result) =>{

@@ -54,35 +54,44 @@ $(document).on("click", ".div-submi .btn-accept", on_module_accept_typeMessage_l
 $(document).on("click", ".div-submi .btn-refus", on_module_deny_typeMessage_link_click);
 $(document).on("click", "a[data-action='update-module']", on_module_payment_bank_link_click);
 $(document).on("click", "button[data-id-message]", on_message_view_button_click);
+$(document).on("click", "#refund", on_refund_link_click);
 $(document).on('shown.bs.modal', "#rdv-for-payment-modal", function (e) {
   //console.log($(this));
   $(this).css("padding-left", "0px");
   $('body').css('padding-right','0px');
-})
+  $(this).find("iframe")[0].src = $(this).find("iframe")[0].src;
+});
 $(document).on('shown.bs.modal', "#booking-for-payment-modal",  function (e) {
   $(this).css("padding-left", "0px");
   $('body').css('padding-right','0px');
-})
+  $(this).find("iframe")[0].src = $(this).find("iframe")[0].src;
+});
 $(document).on('shown.bs.modal', "#rdv-modal", function (e) {
   $(this).css("padding-left", "0px");
   $('body').css('padding-right','0px');
-})
+  $(this).find("iframe")[0].src = $(this).find("iframe")[0].src;
+});
+$(document).on('shown.bs.modal', "#booking-modal",  function (e) {
+  $(this).css("padding-left", "0px");
+  $('body').css('padding-right','0px');
+});
 $(document).on('shown.bs.modal', "#video-modal", function (e) {
   $(this).css("padding-left", "0px");
   $('body').css('padding-right','0px');
+  $(this).find("iframe")[0].src = $(this).find("iframe")[0].src;
 })
 $(document).on('shown.bs.modal', "#son-modal", function (e) {
   $(this).css("padding-left", "0px");
   $('body').css('padding-right','0px');
-})
+});
 $(document).on('shown.bs.modal', "#devis-modal", function (e) {
   $(this).css("padding-left", "0px");
   $('body').css('padding-right','0px');
-})
+});
 $(document).on('shown.bs.modal', "#paiement-modal",  function (e) {
   $(this).css("padding-left", "0px");
   $('body').css('padding-right','0px');
-})
+});
 msg_part.on("click", chat_headlines_span_click);
 notifs_part.on("click", chat_headlines_span_click);
 payments_part.on("click", chat_headlines_span_click);
@@ -466,6 +475,10 @@ $(document).on("click", ".friend[data-action='room']", function(){
   }
   switchRoom($(this).data("room"), $(this).data("coresp"), name.split(" ")[0], name.split(" ")[1], $(this).data('coresp-type'), $(this).data('coresp-mail'), $(this).data('img-chat'), user);
 });
+function on_refund_link_click(e){
+  var parent = $(this).parents(".friend");
+  console.log(parent);
+}
 function chat_headlines_span_click(e){
   e.preventDefault();
   //console.log("head change !");
@@ -507,10 +520,27 @@ function on_socket_refresh_art_payments(payments){
   // console.log(payments);
   if (payments instanceof Array){
     for (var i = 0; i < payments.length; i++){
-      $("div#chats").append('<div class="friend" data-type-payment="'+payments[i]["type_payment"]+'" data-desc-payment="'+payments[i]["desc_payment"]+'"><p><strong>'+payments[i]["desc_payment"]+' ('+payments[i]["type_payment"]+')</strong><span>'+payments[i]["price_payment"]+' €</span><p class="preview">'+payments[i]["date_payment"]+'</p></p><div class="status available"></div></div>');
+      var type_transac = payments[i]["type_transaction"] == "ESP" ? "espèce" : "virement bancaire";
+      var status = "inactive";
+      if (payments[i]["state_payment"] == "valide")
+        status = "available";
+      else if(payments[i]["state_payment"] == "en attente")
+        status = "away";
+      $("div#chats").append('<div class="friend" style="height:auto;" '+
+        'data-type-payment="'+payments[i]["type_payment"]+'" '+
+        'data-desc-payment="'+payments[i]["desc_payment"]+'" '+
+        'data-type-transac="'+type_transac+'" '+
+        'data-date-payment="'+payments[i]["date_payment"]+'" '+
+        'data-date-presta="'+payments[i]["start"]+'" >'+
+        '<p>'+
+          '<strong>'+payments[i]["desc_payment"]+' ('+payments[i]["type_payment"]+')</strong> <span>'+payments[i]["price_payment"]+' €</span><p class="preview">Date du paiement : '+new Date(payments[i]["date_payment"]).formatForDisplay()+'<br>Date de la prestation : '+new Date(payments[i]["start"]).formatForDisplay()+'<br>Type de la transaction : '+type_transac+'</p>'+
+          '<p><a href="#" id="refund" class="btn-refus">Annuler la réservation</a></p>'+
+        '</p>'+
+        '<div class="status '+status+'"></div>'+
+      '</div>');
     }
   }else{
-    $("div#chats").append('<div class="friend"><p><strong>'+payments+'</p></strong></div>');
+    $("div#chats").append('<div class="friend" style="height:auto;"><p><strong>'+payments+'</p></strong></div>');
   }
 }
 function on_socket_refresh_notifs(notifications){
@@ -519,10 +549,10 @@ function on_socket_refresh_notifs(notifications){
   // console.log(notifications);
   if (notifications instanceof Array){
     for (var i = 0; i < notifications.length; i++){
-      $("div#history").append('<div class="friend" data-sender="'+notifications[i]["sender_user_id"]+'" data-receiver="'+notifications[i]["receiver_user_id"]+'"><p><strong>'+notifications[i]["notification"]+'</strong><span></span><p class="preview">'+notifications[i]["time"]+'</p></p><div class="status available"></div></div>');
+      $("div#history").append('<div class="friend" style="height:auto;" data-sender="'+notifications[i]["sender_user_id"]+'" data-receiver="'+notifications[i]["receiver_user_id"]+'"><p><strong>'+notifications[i]["notification"]+'</strong><span></span><p class="preview">'+new Date(notifications[i]["time"]).formatForDisplay()+'</p></p><div class="status available"></div></div>');
     }
   }else{
-    $("div#history").append('<div class="friend"><p><strong>'+notifications+'</p></strong></div>');
+    $("div#history").append('<div class="friend" style="height:auto;"><p><strong>'+notifications+'</p></strong></div>');
   }
 }
 function on_socket_update_rooms(rooms){
@@ -785,7 +815,7 @@ return str.join("&");
 function on_reservation_link_click(e){
   e.preventDefault();
   //console.log("Resa click !");
-  iframe = $(this).hasClass("booking-chat") ? iframe_cal4 : iframe_cal1 ;
+  iframe = $(this).hasClass("booking-chat") ? $(".cal")[3].contentDocument : $(".cal")[0].contentDocument ;
   //console.log($(iframe).find("#selectHours"));
   var datePickerVal = $(iframe).find(".datepicker input").val().replace(new RegExp("/", "g"), "-");
   var datePickerValTab = datePickerVal.split("-");
@@ -883,12 +913,16 @@ function on_reservation_for_payment_link_click(e){
   e.preventDefault();
   // console.log("Resa for payment click !");
   // console.log($(this));
-  iframe = $(this).hasClass("booking-for-payment-chat") ? iframe_cal3 : iframe_cal2 ;
+  iframe = $(this).hasClass("booking-for-payment-chat") ? $(".cal")[2].contentDocument : $(".cal")[1].contentDocument ;
+  iframe = $(".cal")[1].contentDocument;
   var datePickerVal = $(iframe).find(".datepicker input").val().replace(new RegExp("/", "g"), "-");
   var datePickerValTab = datePickerVal.split("-");
   var hours = $(iframe).find("#selectHours .sel");
   var global_datas = {};
-  var modal, resp_target
+  var modal, resp_target;
+  // console.log(iframe);
+  // console.log(hours);
+  // console.log($(".cal"));
   global_datas = get_events(hours, datePickerValTab);
   global_datas.id_art = user.id;
   global_datas.id_pro = user_receiv.id_coresp;
@@ -903,7 +937,7 @@ function on_reservation_for_payment_link_click(e){
     resp_target = "msg-booking-payment"
     global_datas.from = "booking_payment";
   }
-  var div = $("div[data-id-typeMessage='"+modal.find("[name='id_type_m']").val()+"']");
+  var div = $("div[data-id-type-message='"+modal.find("[name='id_type_m']").val()+"']");
   global_datas.id_type_message = modal.find("[name='id_type_m']").val();
   global_datas.transaction_type = modal.find("[name='type_transac']").val();
   global_datas.title = modal.find("[name='desc_presta']").val();
@@ -926,60 +960,65 @@ function on_reservation_for_payment_link_click(e){
         req.setRequestHeader("x-access-token", token);
       },
       success: function(data) {
-        console.log(data);
+        // console.log(data);
         update_front_with_msg(data, resp_target);
-        modal.modal("hide");
-        if (data.type_transac == "MOD"){
-          if (data.success[0]){
-            $.ajax({
-              type : "POST",
-              url : "/payment-intent/"+user_receiv.id_coresp,
-              data: {price: modal.find("[name='price_presta']").val(), desc: global_datas.title,
-                id_r: modal.find("[name='id_request']").val()},
-              success: function(data) {
-                update_front_with_msg(data, resp_target);
-                console.log(data);
-                if (data.success[0]){
-                  var datas = {
-                    id: data.id,
-                    desc: data.desc,
-                    price: data.price,
-                    email: data.email,
-                    nom: data.nom,
-                    img: "/asset/images/logo-onair.jpg",
-                    prenom: data.prenom,
-                    intent: data.result
-                  };
-                  var other = {
-                    id_type_message:  global_datas.id_type_message,
-                    type_m: "payment",
-                    action: "accept",                   
+        if (data.success[0]){
+          modal.modal("hide");
+          if (data.result.type_transac == "MOD"){
+              $.ajax({
+                type : "POST",
+                url : "/payment-intent/"+user_receiv.id_coresp,
+                data: {price: modal.find("[name='price_presta']").val(), desc: global_datas.title,
+                  id_r: modal.find("[name='id_request']").val()},
+                success: function(data2) {
+                  update_front_with_msg(data2, resp_target);
+                  //console.log(data);
+                  if (data.success[0]){
+                    var datas = {
+                      id: data2.id,
+                      desc: data2.desc,
+                      price: data2.price,
+                      email: data2.email,
+                      nom: data2.nom,
+                      img: "/asset/images/logo-onair.jpg",
+                      prenom: data2.prenom,
+                      intent: data2.result
+                    };
+                    var other = {
+                      id_type_message:  global_datas.id_type_message,
+                      type_m: "payment",
+                      action: "accept",
+                      type_transac: data.result.type_transac                  
+                    }
+                    //console.log(window.parent);
+                    window.parent.form_payment(datas, other);
                   }
-                  //console.log(window.parent);
-                  window.parent.form_payment(datas, other);
                 }
-              }
-            });
-          }
+              });
         }else{
           $.ajax({
             type: "POST",
             url: "/action-in-module",
-            data: {action: "accept", type_m:"payment_response", id_type_message: global_datas.id_type_message},
+            data: {action: "accept", type_m:"payment_response", id_type_message: global_datas.id_type_message,
+              type_transac: data.result.type_transac, desc_payment: global_datas.title, price_payment: modal.find("[name='price_presta']").val(),
+              id_r: modal.find("[name='id_request']").val()},
             beforeSend: function (req){
               req.setRequestHeader("x-access-token", token);
             },
-            success: function (data){
-              //console.log(data);
-              if (data.success[0]){
-                socket.emit("sendNotif", data.notif);
+            success: function (data2){
+              //console.log(data2);
+              if (data2.success[0]){
+                socket.emit("sendNotif", data2.notif);
                 const content = 'demande acceptée !';
                 div.find("div.card-chat div.div-submi").empty();
                 div.find("div.card-chat div.div-submi").append(content);
+              }else{
+                update_front_with_msg(data2, resp_target);
               }
             }
           });
-        }  
+        }
+      }
       }
     });
   }
@@ -1259,7 +1298,7 @@ function on_module_accept_typeMessage_link_click(e){
   var glob_datas = {};
   var div = $(e.target).parents("div[id-message]");
   var type_message_libelle = div.data("type-message-libelle");
-  glob_datas.id_type_message = div.data("id-typeMessage");
+  glob_datas.id_type_message = div.data("id-type-message");
   glob_datas.action = "accept";
   glob_datas.type_m = type_message_libelle + '_response';
   //console.log(user);
@@ -1322,6 +1361,7 @@ function on_module_accept_typeMessage_link_click(e){
     var type_transaction = div.attr("type-transaction");
     var modal
     // if (type_transaction == "MOD"){
+      // console.log(user_receiv);
       if (user_receiv.type == 3){
         modal = "#rdv-for-payment-modal";
         $(modal).find(".msg-rdv-payment h1").html("Proposer un/des rdv pour '"+presta.desc+"'<span class='special-color'>?</span>")
@@ -1431,6 +1471,7 @@ function on_payment_link_click(e){
       if (!data.success[0])
         update_front_with_errors(data.errors);
       else{
+        parent.modal("hide");
         //Emmistion de socket
         //console.log("demande de paiement enregistré !");
         //console.log(data);
@@ -1528,8 +1569,9 @@ var start, end, datas = {};
 datas.events = [];
 var timeIndice = -1.0;
 var donn = {};
+console.log(hours);
 $.each(hours, function(ind){
-var hour = $(this).text();
+var hour = parseFloat($(this).data("val"));
 if (parseInt(hour) == hour){
   var tabTimeIndice = timeIndice.toString().split(".");
   if (timeIndice == parseInt(hour)){
@@ -1688,6 +1730,14 @@ $.ajax({
 Date.prototype.ajouteHeures = function(heures) {
   this.setHours(this.getHours() + heures);
   return this;
+};
+Date.prototype.formatForDisplay = function(){
+  return (this.getDate() + 1).toString(10).padStart(2, '0') + "/" +
+    (this.getMonth() + 1).toString(10).padStart(2, '0') + "/" +
+    this.getFullYear() + " " +
+    this.getHours().toString(10).padStart(2, '0') + ":" +
+    this.getMinutes().toString(10).padStart(2, '0') + ":" +
+    this.getSeconds().toString(10).padStart(2, '0');
 };
 //*******************************************************************//
 //export {socket, get_events, switchRoom};

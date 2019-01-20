@@ -1320,7 +1320,7 @@ class User{
     }
     static create_payment(table, cb){
         return new Promise((resolve, reject) => {
-            let r = db.query('INSERT INTO `payments`(`type_payment`, `state_payment`, `desc_payment`, `id_pro`, `id_art`, `price_payment`, `date_payment`, `charge`) '+
+            let r = db.query('INSERT INTO `payments`(`type_payment`, `state_payment`, `desc_payment`, `id_pro`, `id_art`, `price_payment`, `date_payment`, `type_transaction`, `charge`, `id_p_request`) '+
                 'VALUES (?)', [table], (err, result) => {
                 if(err){
                     console.log(r.sql)
@@ -1399,7 +1399,11 @@ class User{
     }
     static get_art_payments(id, cb){
         return new Promise((resolve, reject) => {
-            let r = db.query("SELECT * FROM `payments` WHERE `id_art`="+id+" ORDER BY `date_payment` DESC",
+            let r = db.query("SELECT * FROM `payments` "+
+                "RIGHT JOIN `type_message` ON `type_message`.`id_payment`=`payments`.`id_p_request` "+
+                "LEFT JOIN `events_in_type_message` ON `events_in_type_message`.`id_type_message`=`type_message`.`id_type_m` "+
+                "INNER JOIN `calendar_event` ON `calendar_event`.`id_event`=`events_in_type_message`.`id_calendar_event` "+
+                "WHERE `payments`.`id_art`="+id+" ORDER BY `payments`.`date_payment` DESC",
             (err, res) => {
                 if (err){
                     console.log(r.sql)

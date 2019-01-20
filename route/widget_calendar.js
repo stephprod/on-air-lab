@@ -28,12 +28,12 @@ router.route('/widget_calendar')
 			//console.log(request.body)
 			//console.log(id_user)
 			User.get_calendar_widget("id_pro= '"+id_user+"' AND LEFT(start, 10)='"+request.body.d+"'", (result) =>{
-				for(let k in result){
+				for(var k in result){
 					table.push(result[k].start.substr(11,5),result[k].end.substr(11,5));
 				}
 				User.get_dow_widget("SELECT `"+request.body.word+"` AS day,`pause` FROM dow WHERE userid= '"+id_user+"'", (result) =>{
 					table[table.length] = []
-					for(r in result)
+					for(var r in result)
 						table[table.length - 1].push(result[r].day, result[r].pause);
 					//console.log(table)
 					response.send(table)

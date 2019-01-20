@@ -43,10 +43,17 @@ class MailTemplate{
 						'Ta demande de devis a été refusée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
 					param.subject = action == "accept" ? "Demande de devis acceptée ! (suite)" : "Demande de devis rejetée ! (suite)"
 					break;
-				case "payment_response":
+				case "payment_response_for_pro":
 					param.content += action == "accept" ? 'Ta demande de paiement a été acceptée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !' : 
 						'Ta demande de paiement a été refusée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
-					param.subject = action == "accept" ? "Demande de paiement accepté !" : "Demande de paiement rejeté !"
+					param.subject = action == "accept" ? "Demande de paiement acceptée !" : "Demande de paiement rejetée !"
+					break;
+				case "payment_response_for_art":
+					param.content += action == "accept" ? 'Tu as accepté une demande de paiement venant de <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !<br>'+
+						'Tu peux l\'annuler à tout moment (avant la date de la première prestation) en accédant au tchat dans la partie \'Mes Réservations\'.<br>'+
+						'Vérifies nos conditions d\'annulation de réservation pour connaître la politique de remboursement en cas d\'annulation ou de litiges.<br>' : 
+						'Ta as refusé une demande de paiement venant de <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
+					param.subject = action == "accept" ? "Demande de paiement acceptée !" : "Demande de paiement rejetée !"
 					break;
 				case "contact_response":
 					param.content += action == "accept" ? 'Ta demande de contact a été acceptée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !<br>'+

@@ -127,10 +127,6 @@ function insert_event(req, ret, len, acceptation){
 							reject(ret)
 						}
 						if (k == len - 1){
-							//console.log("last !");
-							//messages in chat
-							//insert_message(request, response, ret.result.id_dispos, ret);
-							//console.log(ret)
 							resolve(ret)
 						}
 					});
@@ -180,29 +176,6 @@ function insert_type_rdv_message(req, ret){
 					ret.result.id_type_m = result
 					ret.global_msg.push("Type du message inséré !")
 					resolve(ret)
-					// for (var k in ret.result.id_dispos){
-					// 	setTimeout((function(k) {
-					// 		return function (){		
-					// 			let tableE = []
-					// 			let id = ret.result.id_dispos[k]
-					// 			tempo(req, result, id, ret)
-					// 			tableE.push(id, result)
-					// 			User.insertEventsInTypeMessage(tableE, (result2)=>{
-					// 				if (result2 > 0){
-					// 					ret.success.push(true)
-					// 				}
-					// 				else{
-					// 					ret.success.push(false)
-					// 					ret.global_msg.push("Une erreur est survenue lors l'insertion du type du message, veuillez contacter le support/modérateur !")
-					// 				}
-					// 			});
-					// 			//Dernière élement du tableau
-					// 			if (k == ret.result.id_dispos.length - 1){
-					// 				resolve(ret)
-					// 			}
-					// 		};
-					// 	}) (k), 100);
-					// }
 				}else{
 					ret.success.push(false)
 					ret.global_msg.push("Une erreur est survenue lors de l'insertion du type de message, contactez le support/modérateur !")
