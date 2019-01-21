@@ -79,7 +79,7 @@ class MailTemplate{
 					const ev = events[k];
 					param.content += '<p style="margin:0px;"><b>Début :</b> ' + ev.start + ' <b>Fin :</b> ' + ev.end + '</p>';
 				}
-			} 
+			}
 		}else{
 			param.content = '<p style="margin:0px;">'
 			switch (typeMessage){
@@ -188,6 +188,55 @@ class MailTemplate{
 			}
 			p.content += "</p>"
 			//console.log(p)
+		}else{
+			p.content = "<p>"
+			p.content += "</p>"
+		}
+		p.content += "<p style='margin:0px;'>Bien cordialement, </p>"
+		p.content += "<p style='margin:0px;'><b>LabelOnAir</b></p>"
+		return p
+	}
+	static generateClassicHtmlReservationTemplate(events, userInfoReceiver, userInfoSender, action, typeMessage, website_path, amount, code){
+		let p = {}
+		// console.log(typeMessage);
+		//p.events = events
+		p.userInfoReceiv = userInfoReceiver
+		p.userInfoSend = userInfoSender
+		p.action = action
+		p.typeMessage = typeMessage
+		p.website_path = website_path
+		p.typeMail = "classic"
+		p.content = ""
+		if (action == null){
+			p.content = "<p>"
+			switch (typeMessage){
+				case "resa_annule_for_pro":
+					p.content += "Une réservation a été annulée. <br><br>"+
+						"L'utilisateur <b>"+userInfoSender.prenom+" "+userInfoSender.nom+"</b> a annulé sa réservation. <br><br>"
+					if (code != null)
+						p.content += "Pour récupérer une indemnisation de "+amount+"€ pour les dérangements causés, utilisez le code suivant : <b>"+code+"</b><sbr><br>"
+					p.subject = "Annulation de réservation !"
+					break;
+				case "resa_annule_for_art":
+					p.content += "Tu as annulé ta réservation auprès du professionel <b>"+userInfoSender.prenom+" "+userInfoSender.nom+"</b>. <br><br>"
+					if (amount > 0)
+						p.content += "Tu va être remboursé de "+amount+"€ selon nos conditions d'annulation de réservation. <br>"
+					p.subject = "Annulation de réservation !"
+					break;
+				default:
+					p.subject = "Label-onair - Nouveau message !"
+					break;
+			}
+			p.content += "</p>"
+			//console.log(p)
+			if (events != null && events.length > 0) {
+				p.content += '<p style="margin:0px;text-align:left;">Ces créneaux horaires sont désormais disponibles : </p>';
+				for (var k in events) {
+					//Json parse
+					const ev = events[k];
+					p.content += '<p style="margin:0px;"><b>Début :</b> ' + ev.start + ' <b>Fin :</b> ' + ev.end + '</p>';
+				}
+			} 
 		}else{
 			p.content = "<p>"
 			p.content += "</p>"

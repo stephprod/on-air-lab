@@ -19,9 +19,8 @@ router.route('/login')
 		var hmac = CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA256, table[0])
 		hmac.update(table[1]);
 		table[1] = hmac.finalize().toString()
-		User.getUserForLogin("LEFT JOIN `payments` ON `payments`.`id_pro`=`user`.`id` "+ 
-			"WHERE `user`.`email`='" + table[0] + "' AND " +
-			"`user`.`mot_de_passe`='" + table[1] + "' ORDER BY `payments`.`date_payment` DESC"
+		User.getUserForLogin("WHERE `user`.`email`='" + table[0] + "' AND " +
+			"`user`.`mot_de_passe`='" + table[1] + "'"
 			, (result) => {
 				let errors = {}
 				if (result.length == 0){
@@ -62,7 +61,7 @@ router.route('/login')
 						userSess.userMail = result[0].email
 						if (res.type != 4){
 							//console.log(result[0])
-							if (result[0].state_payment == "valide")
+							if (result[0].id_etat_dispo == 1 || result[0].id_etat_dispo == 3)
 								userSess.abonnement = true
 							else
 								userSess.abonnement = false

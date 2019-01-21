@@ -10,6 +10,7 @@ const transporter = nodemailer.createTransport({
         pass: 'y3HEPhr67AdcBswmcg' // generated ethereal password
     }
 });
+const root_path = "http://localhost:4000"
 class Notif{
    constructor (objReceiverOfAction, senderOfAction, type = null, action = null, events = null, amount = 0, path = "http://localhost:4000"){
        this.events = events;
@@ -102,17 +103,60 @@ class Notif{
             }).catch((err) => err)
         })
     }
+    sendAbordResaEmail(path, code){
+        return new Promise((resolve, reject) => {
+            let result = mail_gen.generateClassicHtmlReservationTemplate(this.events, this.objReceiver, this.sender, null, this.type, path, this.amount, code)
+            //console.log(result)
+            axios.get(path+"/generateMail", {params: result}).then((res) => {
+                //console.log(res.data)
+                let ret = {}
+                let html = res.data
+                let mailOptions = {
+                    from: '"Automate 👻" <nepasrepondre@label-onair.com>', // sender address
+                    to: '"'+this.objReceiver.nom+' '+this.objReceiver.prenom+'" <'+this.objReceiver.email+'>, <ijv6lvrhtrfvwaqq@ethereal.email>', // list of receivers
+                    subject: result.subject, // Subject line
+                    text: null, // plain text body
+                    html: html, // html body
+                    // attachments: [
+					// 	{
+					// 	  filePath: 'leCheminDuFichierAEnvoyer'
+                    //     },
+                    // ]
+                };
+                //console.log(mailOptions)
+                transporter.sendMail(mailOptions, (error) => {
+                    if (error) {
+                        //console.log(error);
+                        reject(error)
+                    }else{
+                        ret = {
+                            receiverAction: {id: this.objReceiver.id, nom: this.objReceiver.nom, img_chat: this.objReceiver.img_chat},
+                            //senderAction: {id:this.sender.id, nom: this.sender.nom},
+                            msg: result.subject,
+                            typeOfAction: this.type
+                        }
+                        if (this.sender != null)
+                            ret.senderAction = {id:this.sender.id, nom: this.sender.nom, img_path: this.sender.img_chat}
+                        resolve(ret)
+                    }
+                })
+            }).catch((err) => err)
+        })
+    }
 }
 
-exports.actions = {mail: (receiver, sender, type_message = null, action = null, events = null) => new Notif(receiver, sender, type_message, action, events).sendEmail("http://localhost:4000")  
+exports.actions = {mail: (receiver, sender, type_message = null, action = null, events = null) => new Notif(receiver, sender, type_message, action, events).sendEmail(root_path)  
     .then((result) => result, 
         (err) => err)
     .catch((err) => err),
-    webhook_payment_mail: (receiver, transac_code, type_message = null, action = null, amount = 0) => new Notif(receiver, null, type_message, action, null, amount).sendPaymentEmail("http://localhost:4000", transac_code)
+    webhook_payment_mail: (receiver, transac_code, type_message = null, action = null, amount = 0) => new Notif(receiver, null, type_message, action, null, amount).sendPaymentEmail(root_path, transac_code)
     .then((result) => result)
     .catch((err) => err),
-    mail_with_links: (receiver, type_message = null, webPath) => new Notif(receiver, null, type_message, null, null, null, webPath).sendEmail("http://localhost:4000")  
+    mail_with_links: (receiver, type_message = null, webPath) => new Notif(receiver, null, type_message, null, null, null, webPath).sendEmail(root_path)  
     .then((result) => result, 
         (err) => err)
+    .catch((err) => err),
+    mail_abord_resa: (receiver, sender, transac_code=null, type_message=null, amount = 0, events=null) => new Notif(receiver, sender, type_message, null, events, amount).sendAbordResaEmail(root_path, transac_code)
+    .then((result) => result)
     .catch((err) => err)
 }

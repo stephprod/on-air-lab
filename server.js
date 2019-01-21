@@ -52,6 +52,7 @@ const plan3dsecure = require('./route/plan3dsecure')
 const validRegister = require('./route/valid_register')
 const get_paid = require('./route/get_payment')
 const delete_plan = require('./route/delete_plan')
+const refund = require('./route/refund')
 //const loginFast = require('./route/login_fast')
 /*Modeles*/
 const notifications = require('./models/notifications').actions
@@ -134,6 +135,7 @@ app.use('/', validRegister)
 //app.use('/', loginFast)
 app.use('/', get_paid)
 app.use('/', delete_plan)
+app.use('/', refund)
 app.get('/', (request, response) => {
     response.locals.session = request.session
 	response.render('pages/index')

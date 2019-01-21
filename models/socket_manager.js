@@ -1193,18 +1193,25 @@ class SocketManager{
         }).then((payments) => {
             //res.id = result
             // console.log(payments)
-            // let ref = 0
-            for (var k=0; k < payments.length - 1; k++){
-                // console.log("payment_len "+payments.length)
-                if (payments[k].id_p == payments[k+1].id_p){
-                    // console.log("k "+k)
-                    payments.splice(k+1, 1)
-                    // k++;
+            let ref = 0, pay_for_display = []
+            payments.forEach((val) => {
+                if (ref != val.id_p){
+                    pay_for_display.push(val)
+                    ref = val.id_p
                 }
-                // console.log("ref "+ref)
-            }
+            });
+            // for (var k=0; k < payments.length - 1; k++){
+            //     // console.log("payment_len "+payments.length)
+            //     if (payments[k].id_p == payments[k+1].id_p){
+            //         // console.log("k "+k)
+            //         payments.splice(k+1, 1)
+            //         // k++;
+            //     }
+            //     // console.log("ref "+ref)
+            // }
             // console.log(payments)
-            this.io.sockets.in(this.socket.id).emit('socket_refresh_art_payments', payments)
+            // console.log(pay_for_display)
+            this.io.sockets.in(this.socket.id).emit('socket_refresh_art_payments', pay_for_display)
         }, (err) => {
             //console.log(err)
             this.io.sockets.in(this.socket.id).emit('socket_refresh_art_payments', err.message)
