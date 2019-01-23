@@ -736,7 +736,7 @@ class User{
         let r = db.query('SELECT `calendar_event`.`id_event`, `calendar_event`.`id_pro`, `calendar_event`.`id_artist`, `calendar_event`.`start`, '+
         '`calendar_event`.`end`, `calendar_event`.`title`, '+
         '`type_message`.`id_type_m`, `type_message`.`id_payment`, '+
-        '`payment_request`.`acceptation`, `payment_request`.`type_transaction` '+
+        '`payment_request`.`acceptation`, `payment_request`.`type_transaction`, `payment_request`.`price` '+
         'FROM `calendar_event` '+
         'LEFT JOIN `events_in_type_message` ON `events_in_type_message`.`id_calendar_event`=`calendar_event`.id_event '+
         'LEFT JOIN `type_message` ON `type_message`. `id_type_m`=`events_in_type_message`.`id_type_message` '+
@@ -1354,6 +1354,17 @@ class User{
     static get_payment(table, cb){
         return new Promise((resolve, reject) =>{
             let r = db.query("SELECT * FROM `payments` WHERE `id_p`=?", [table], (err, res) => {
+                if (err){
+                    console.log(r.sql)
+                    throw err
+                }
+                cb(res, resolve, reject)
+            })
+        })
+    }
+    static get_payment_by_request(id, cb){
+        return new Promise((resolve, reject) =>{
+            let r = db.query("SELECT * FROM `payments` WHERE `id_p_request`=?", [id], (err, res) => {
                 if (err){
                     console.log(r.sql)
                     throw err

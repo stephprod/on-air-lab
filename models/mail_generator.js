@@ -218,9 +218,22 @@ class MailTemplate{
 					p.subject = "Annulation de réservation !"
 					break;
 				case "resa_annule_for_art":
-					p.content += "Tu as annulé ta réservation auprès du professionel <b>"+userInfoSender.prenom+" "+userInfoSender.nom+"</b>. <br><br>"
+					p.content += "Vous avez annulé ta réservation auprès du professionel <b>"+userInfoSender.prenom+" "+userInfoSender.nom+"</b>. <br><br>"
 					if (amount > 0)
-						p.content += "Tu va être remboursé de "+amount+"€ selon nos conditions d'annulation de réservation. <br>"
+						p.content += "Vous allez être remboursé de "+amount+"€ selon nos conditions d'annulation de réservation. <br>"
+					p.subject = "Annulation de réservation !"
+					break;
+				case "calen_annule_for_pro":
+					p.content += "Une réservation a été annulée. <br><br>"+
+						"Vous avez annulé ta réservation venant de l'utilisateur <b>"+userInfoSender.prenom+" "+userInfoSender.nom+"</b>. <br><br>"
+					if (code != null)
+						p.content += "Pour récupérer une indemnisation de "+amount+"€ pour les dérangements causés, utilisez le code suivant : <b>"+code+"</b><sbr><br>"
+					p.subject = "Annulation de réservation !"
+					break;
+				case "calen_annule_for_art":
+					p.content += "Le professionnel <b>"+userInfoSender.prenom+" "+userInfoSender.nom+"</b> as annulé votre réservation. <br><br>"
+					if (amount > 0)
+						p.content += "Vous allez être remboursé de "+amount+"€ selon nos conditions d'annulation de réservation. <br>"
 					p.subject = "Annulation de réservation !"
 					break;
 				default:

@@ -1,4 +1,5 @@
 import {update_front_with_msg, update_front_with_errors} from './front-update.js';
+//import socket_manager from '../../models/socket_manager.js';
 var session = JSON.parse(sessionStorage.getItem('session')), user, token, userId, dow, eventObj;
 var calen = JSON.parse(sessionStorage.getItem('calendar'));
 // console.log(session);
@@ -105,17 +106,20 @@ var calendar =  $('#calendar').fullCalendar({
         // console.log('Clicked on: ' + event.start.format()+' A : ' + event.end.format());
         // console.log('Clicked on: ' + event.title);
         // console.log('Clicked on: ' );
-        console.log(event);
+        //console.log(event);
         // console.log('Coordinates: ' + jsEvent.id + ',' + jsEvent.pageY);
         // console.log('Current view: ' + view.name);
         // change the day's background color just for fun
-        $(this).css('background-color', '#e9e9e9');
-        var result = confirm('Êtes-vous sûr de vouloir supprimer l\'evenement ?');
+        // $(this).css('background-color', '#e9e9e9');
+        var result = confirm('Êtes-vous sûr de vouloir supprimer l\'évènement ?');
         if(result){
-            $('#calendar').fullCalendar('removeEvents', event._id);
-            $.ajax({
+            if (event.editable){
+                $('#calendar').fullCalendar('removeEvents', event._id);
+                $.ajax({
                     url: '/drop_event_calendar',
-                    data: 'id='+event.id_event,
+                    data: {id_event: event.id_event, id_payment_request: event.id_payment,
+                        type_transaction: event.type_transaction, price_refund: event.price,
+                        id_pro: event.id_pro, id_art: event.id_artist, id_type_message:event.id_type_m},
                     type: "POST",
                     beforeSend: function(req){
                         req.setRequestHeader("x-access-token", session.token);
@@ -125,10 +129,13 @@ var calendar =  $('#calendar').fullCalendar({
                         //console.log("Event "+data+" Mit à la poubelle");
                     }
                 })
+            }else{
+                update_front_with_msg({success:[false], global_msg:["Evènement expiré !"]}, "calendar-msg");
+            }
         }
     },
     // droppable: true, // this allows things to be dropped onto the calendar !!!
-    dragRevertDuration: 0,
+    // dragRevertDuration: 0,
     // eventDrop: function(event, date, allDay) { // this function is called when something is dropped
     
     // //retrieve the dropped element's stored Event Object

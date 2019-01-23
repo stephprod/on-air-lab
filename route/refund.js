@@ -24,87 +24,87 @@ router.route('/annule_resa')
             })
             .then((ev)=> {
                 events = ev
-                if (req.body.action == "pro_annulation"){
-                    if (req.body.type_transac == "MOD"){
-                        let amount_refund = parseFloat(req.body.price_refund)
-                        //Remboursement total de l'atiste
-                        console.log("100%")
-                        console.log(amount_refund)
-                    }
-                }else{
-                    if (req.body.type_transac == "MOD"){
-                        //Récupération du paiment
-                        User.get_payment([req.body.id_payment], (result, resolve, reject) =>{
-                            if (result.length > 0){
-                                resolve(result[0])
-                            }else{
-                                ret.success.push(false)
-                                ret.global_msg.push("Récupération des informations du paiement impossible !")
-                                reject(ret)
-                            }
+                // if (req.body.action == "pro_annulation"){
+                //     if (req.body.type_transac == "MOD"){
+                //         let amount_refund = parseFloat(req.body.price_refund)
+                //         //Remboursement total de l'atiste
+                //         console.log("100%")
+                //         console.log(amount_refund)
+                //     }
+                // }else{
+                if (req.body.type_transac == "MOD"){
+                    //Récupération du paiment
+                    User.get_payment([req.body.id_payment], (result, resolve, reject) =>{
+                        if (result.length > 0){
+                            resolve(result[0])
+                        }else{
+                            ret.success.push(false)
+                            ret.global_msg.push("Récupération des informations du paiement impossible !")
+                            reject(ret)
+                        }
+                    })
+                    //Remboursement de l'artiste
+                    .then((res0) => {
+                        return make_stripe_refund(ret, req.body.price_refund, res0.charge) 
+                    })
+                    //Mettre à jour table "payments"
+                    .then((res1) => {
+                        return update_payment("`payments`.`state_payment`='annule', `payments`.`refund`='"+res1.id+"' WHERE `payments`.`id_p`="+req.body.id_payment, ret)
+                    })
+                    //Supprimer résa par tempo => refuses
+                    .then(() => {
+                        return get_action(req, ret)
+                        .then((res20) => {
+                            do_actions_deny(req, res20)
                         })
-                        //Remboursement de l'artiste
-                        .then((res0) => {
-                            return make_stripe_refund(ret, req.body.price_refund, res0.charge) 
-                        })
-                        //Mettre à jour table "payments"
-                        .then((res1) => {
-                            return update_payment("`payments`.`state_payment`='annule', `payments`.`refund`='"+res1.id+"' WHERE `payments`.`id_p`="+req.body.id_payment, ret)
-                        })
-                        //Supprimer résa par tempo => refuses
-                        .then(() => {
-                            return get_action(req, ret)
-                            .then((res20) => {
-                                do_actions_deny(req, res20)
+                    })
+                    // //Envoi de mails
+                    .then(() => {
+                        if (req.body.mode == 1){
+                            let hash = req.body.id_payment + '-' + new Date(req.body.date_payment).to2DigitsString()
+                            //console.log("HASH : "+hash)
+                            return random_code_gen.obj.convertBase(hash, random_code_gen.base12, random_code_gen.base54)
+                            .then((code) => {
+                                send_mails(usr_pro, usr_art, code, req.body.price_refund, events)
                             })
-                        })
-                        // //Envoi de mails
-                        .then(() => {
-                            if (req.body.mode == 1){
-                                let hash = req.body.id_payment + '-' + new Date(req.body.date_payment).to2DigitsString()
-                                //console.log("HASH : "+hash)
-                                return random_code_gen.obj.convertBase(hash, random_code_gen.base12, random_code_gen.base54)
-                                .then((code) => {
-                                    send_mails(usr_pro, usr_art, code, req.body.price_refund, events)
-                                })
-                            }else
-                                return send_mails(usr_pro, usr_art, null, req.body.price_refund, events)
-                        })
-                        .then((res2) => {
-                            ret.notif = res2
-                            ret.success.push(true)
-                            ret.global_msg.push("Annulation de réservation effective, tu recevras un mail de confirmation dans les prochaines minutes !")
-                            res.send(ret)
-                        })
-                        .catch((err) => {
-                            res.send(err)
-                        })
-                    }else{
-                        //Mettre à jour table "payments"
-                        update_payment("`payments`.`state_payment`='annule', `payments`.`refund`='not_paid' WHERE `payments`.`id_p`="+req.body.id_payment, ret)
-                        //Supprimer résa par tempo => refuses
-                        .then(() => {
-                            return get_action(req, ret)
-                            .then((res20) => {
-                                do_actions_deny(req, res20)
-                            })
-                        })
-                        //Envoi de mails
-                        .then(() => {
+                        }else
                             return send_mails(usr_pro, usr_art, null, req.body.price_refund, events)
+                    })
+                    .then((res2) => {
+                        ret.notif = res2
+                        ret.success.push(true)
+                        ret.global_msg.push("Annulation de réservation effective, tu recevras un mail de confirmation dans les prochaines minutes !")
+                        res.send(ret)
+                    })
+                    .catch((err) => {
+                        res.send(err)
+                    })
+                }else{
+                    //Mettre à jour table "payments"
+                    update_payment("`payments`.`state_payment`='annule', `payments`.`refund`='not_paid' WHERE `payments`.`id_p`="+req.body.id_payment, ret)
+                    //Supprimer résa par tempo => refuses
+                    .then(() => {
+                        return get_action(req, ret)
+                        .then((res20) => {
+                            do_actions_deny(req, res20)
                         })
-                        .then((res2) => {
-                            // console.log(res2)
-                            ret.notif = res2
-                            ret.success.push(true)
-                            ret.global_msg.push("Annulation de réservation effective, tu recevras un mail de confirmation dans les prochaines minutes !")
-                            res.send(ret)
-                        })
-                        .catch((err) => {
-                            res.send(err)
-                        })
-                    }
+                    })
+                    //Envoi de mails
+                    .then(() => {
+                        return send_mails(usr_pro, usr_art, null, null, events)
+                    })
+                    .then((res2) => {
+                        // console.log(res2)
+                        ret.notif = res2
+                        ret.success.push(true)
+                        ret.global_msg.push("Annulation de réservation effective, tu recevras un mail de confirmation dans les prochaines minutes !")
+                        res.send(ret)
+                    })
+                    .catch((err) => {
+                        res.send(err)
+                    })
                 }
+                // }
             })
         }else{
             ret.success.push(false)
@@ -128,14 +128,6 @@ function make_stripe_refund(ret, amount_refund, charge_id){
         });
     })
 }
-// function make_stripe_payment(amount_refund, charge_id){
-//     return new Promise((resolve, reject) => {
-//         const refund = stripe.refunds.create({
-//         charge: charge_id,
-//         amount: amount_refund,
-//         );
-//     })
-// }
 function update_payment(req, ret){
     return User.update_payment(req, (result, resolve, reject) =>{
         if (result.affectedRows > 0){
