@@ -106,14 +106,14 @@ var calendar =  $('#calendar').fullCalendar({
         // console.log('Clicked on: ' + event.start.format()+' A : ' + event.end.format());
         // console.log('Clicked on: ' + event.title);
         // console.log('Clicked on: ' );
-        //console.log(event);
+        // console.log(event);
         // console.log('Coordinates: ' + jsEvent.id + ',' + jsEvent.pageY);
         // console.log('Current view: ' + view.name);
         // change the day's background color just for fun
         // $(this).css('background-color', '#e9e9e9');
         var result = confirm('Êtes-vous sûr de vouloir supprimer l\'évènement ?');
         if(result){
-            if (event.editable){
+            if (!event.expired){
                 $('#calendar').fullCalendar('removeEvents', event._id);
                 $.ajax({
                     url: '/drop_event_calendar',
@@ -125,8 +125,8 @@ var calendar =  $('#calendar').fullCalendar({
                         req.setRequestHeader("x-access-token", session.token);
                     },
                     success: function(data) {
-                        update_front_with_msg(data, "calendar-msg");
-                        //console.log("Event "+data+" Mit à la poubelle");
+                        localStorage.setItem("datas_cal", JSON.stringify(data));
+                        document.location = "/agenda";
                     }
                 })
             }else{
@@ -297,7 +297,7 @@ $('#dishoraire .savecal').click(function(ev){
             },
             type: "POST",
             success: function(data) {
-                //console.log(data);
+                // console.log(JSON.stringify(data));
                 localStorage.setItem("datas_cal", JSON.stringify(data));
                 document.location = "/agenda";
             }
@@ -305,7 +305,7 @@ $('#dishoraire .savecal').click(function(ev){
 });
 window.onload = function() {
     var session_data = JSON.parse(localStorage.getItem("datas_cal"));
-    //console.log(session_data);
+    // console.log(session_data);
     //console.log(localStorage);
     localStorage.clear();
     if (session_data != null){

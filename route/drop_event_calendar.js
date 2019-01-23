@@ -89,6 +89,25 @@ router.route('/drop_event_calendar')
 						.catch((err) => {
 							response.send(err)
 						})
+					}else{
+						//Supprimer résa par tempo => refuses
+						get_action(request, ret)
+						.then((res0) => {
+							do_actions_deny(request, res0)
+						})
+						// //Envoi de mails
+						.then(() => {
+								return send_mails(user_pro, user_art, null, null, events)
+						})
+						.then((res1) => {
+							ret.notif = res1
+							ret.success.push(true)
+							ret.global_msg.push("Annulation de réservation effective, tu recevras un mail de confirmation dans les prochaines minutes !")
+							response.send(ret)
+						})
+						.catch((err) => {
+							response.send(err)
+						})
 					}
 				})
 			}else{	

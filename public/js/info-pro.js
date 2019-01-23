@@ -31,7 +31,7 @@ $(sliders_tarification[1]).on("slidechange", on_tarif_slider_change);
 $(sliders_tarification[2]).on("slidechange", on_tarif_slider_change);
 $(document).on("ready", function(){
 	var extra_datas = JSON.parse(localStorage.getItem("datas_infoPro"));
-	localStorage.clear();
+	//localStorage.clear();
 	$("input[name^='cc']").removeAttr("disabled");
 	if (extra_datas != null){
 		//console.log(extra_datas);

@@ -94,7 +94,7 @@ $(document).on('shown.bs.modal', "#paiement-modal",  function () {
 });
 $(document).on("ready", function(){
 	var extra_datas = JSON.parse(localStorage.getItem("datas_chat"));
-	localStorage.clear();
+	// localStorage.clear();
 	if (extra_datas != null){
 		//console.log(extra_datas);
 		update_front_with_msg(extra_datas, "msg-chat");
@@ -914,6 +914,7 @@ function on_reservation_link_click(e){
   var datePickerValTab = datePickerVal.split("-");
   var hours = $(iframe).find("#selectHours .sel");
   var global_datas = {};
+  var modal = $("#rdv-modal");
   global_datas = get_events(hours, datePickerValTab);
   if (user.type == 4){
     global_datas.id_art = user.id;
@@ -929,6 +930,14 @@ function on_reservation_link_click(e){
   //console.log(global_datas);
   if (!check_abo(user)){
     var ret = {success: [false], global_msg: ['Vous devez être connecté et avoir un abonnement en cours de validité pour utiliser les modules du chat !']};
+    update_front_with_msg(ret, "msg-rdv");
+    return false;
+  }
+  if (!check_events(global_datas.events)){
+    ret = {success:[], global_msg:[]};
+    ret.success.push(false);
+    ret.global_msg.push("Un ou plusieurs créneaux choisi(s) se trouve(nt) à une date inférieure ou égale à la date actuelle + 1 heure !",
+      "Il est impossible de réserver à moins d'une heure à l'avance !");
     update_front_with_msg(ret, "msg-rdv");
     return false;
   }
@@ -948,6 +957,7 @@ function on_reservation_link_click(e){
           update_front_with_msg(data, "msg-rdv");
         else
           update_front_with_msg(data, "msg-booking");
+        modal.modal("hide");
         if (data.success[0]){
           //Emission de la socket
           //console.log("rdv envoyé !" +userId);

@@ -45,9 +45,10 @@ router.route('/action-in-module')
 					receiver = res.result.actions[0]
 					sender = res.result.actionForNotif
 					events = res.result.events
-					return sendMail(request, res, receiver, res.result.actionForNotif)
+					return sendPaymentMail(request, res, receiver, res.result.actionForNotif)
 				}else{
-					return sendMail(request, res, res.result.actionForNotif, receiver)
+					sender = receiver.id != res.result.actions[0].id ? res.result.actions[0] : res.result.actionForNotif;
+					return sendMail(request, res, sender, receiver);
 				}
 			})
 			.then((res) => {
@@ -78,13 +79,20 @@ router.route('/action-in-module')
 			response.send(ret)
 		}
 })
-function sendMail(req, ret, user_pro, user_art){
+function sendPaymentMail(req, ret, user_pro, user_art){
 	// console.log(user_pro)
 	// console.log(user_art)
 	// console.log(req.body.type_m)
 	//res.result.actionForNotif et receiver identiques pour validation de paiement
 	return notifications.mail(user_pro, user_art, req.body.type_m+"_for_pro", req.body.action, ret.result.events)
 	.then(() => notifications.mail(user_art, user_pro, req.body.type_m+"_for_art", req.body.action, ret.result.events))
+}
+function sendMail(req, ret, user_receiver, user_sender){
+	// console.log(user_pro)
+	// console.log(user_art)
+	// console.log(req.body.type_m)
+	//res.result.actionForNotif et receiver identiques pour validation de paiement
+	return notifications.mail(user_receiver, user_sender, req.body.type_m, req.body.action, ret.result.events)
 }
 function get_action(req, ret){
 	return new Promise((resolve) => {
