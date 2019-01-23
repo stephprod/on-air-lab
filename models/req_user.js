@@ -187,6 +187,19 @@ class User{
             cb(result.affectedRows)
         })
     }
+    static isEventsInTypeMessage(table, cb){
+        return new Promise ((resolve, reject) => {
+            let r = db.query('SELECT * FROM `events_in_type_message` '+
+                'INNER JOIN `calendar_event` ON `calendar_event`.`id_event`=`events_in_type_message`.`id_calendar_event` '+
+                'WHERE `events_in_type_message`.`id_type_message`=?', [table], (err, result) =>{
+                if (err){
+                    console.log(r.sql)
+                    throw err
+                }
+                cb(result, resolve, reject)
+            })
+        })
+    }
     static insertServicesInTypeMessage(table, cb){
       let r = db.query('INSERT INTO services_in_type_message (id_type_message, id_service) VALUE (?)', [table], (err, result) =>{
             if (err){
@@ -720,7 +733,15 @@ class User{
         });
     }
     static get_calendar(id, cb){
-        let r = db.query('SELECT * FROM calendar_event WHERE id_pro=?', [id], (err, result) => {
+        let r = db.query('SELECT `calendar_event`.`id_event`, `calendar_event`.`id_pro`, `calendar_event`.`id_artist`, `calendar_event`.`start`, '+
+        '`calendar_event`.`end`, `calendar_event`.`title`, '+
+        '`type_message`.`id_payment`, '+
+        '`payment_request`.`acceptation`, `payment_request`.`type_transaction` '+
+        'FROM `calendar_event` '+
+        'LEFT JOIN `events_in_type_message` ON `events_in_type_message`.`id_calendar_event`=`calendar_event`.id_event '+
+        'LEFT JOIN `type_message` ON `type_message`. `id_type_m`=`events_in_type_message`.`id_type_message` '+
+        'LEFT JOIN `payment_request` ON `payment_request`.`id`=`type_message`.`id_payment` '+
+        'AND `calendar_event`.id_pro=?', [id], (err, result) => {
             if(err){
                 console.log(r.sql)
                 throw err;
@@ -1400,9 +1421,9 @@ class User{
     static get_art_payments(id, cb){
         return new Promise((resolve, reject) => {
             let r = db.query("SELECT * FROM `payments` "+
-                "RIGHT JOIN `type_message` ON `type_message`.`id_payment`=`payments`.`id_p_request` "+
+                "LEFT JOIN `type_message` ON `type_message`.`id_payment`=`payments`.`id_p_request` "+
                 "LEFT JOIN `events_in_type_message` ON `events_in_type_message`.`id_type_message`=`type_message`.`id_type_m` "+
-                "INNER JOIN `calendar_event` ON `calendar_event`.`id_event`=`events_in_type_message`.`id_calendar_event` "+
+                "LEFT JOIN `calendar_event` ON `calendar_event`.`id_event`=`events_in_type_message`.`id_calendar_event` "+
                 "WHERE `payments`.`id_art`="+id+" ORDER BY `payments`.`date_payment` DESC",
             (err, res) => {
                 if (err){

@@ -11,14 +11,6 @@ router.route('/annule_resa')
         ret.result = {}
         ret.success = []
         ret.global_msg = []
-        // 'data-id-type-message="'+payments[i]["id_type_message"]+'" '+
-        // 'data-id-p-request="'+payments[i]["id_payment"]+'" '+
-        // 'data-id-payment="'+payments[i]["id_p"]+'" '+
-        // 'data-type-payment="'+payments[i]["type_payment"]+'" '+
-        // 'data-desc-payment="'+payments[i]["desc_payment"]+'" '+
-        // 'data-type-transac="'+payments[i]["type_transaction"]+'" '+
-        // 'data-date-payment="'+payments[i]["date_payment"]+'" '+
-        // 'data-date-presta="'+payments[i]["start"]+'"
         if (req.headers["x-access-token"] == req.session.token){
             // console.log(req.body)
             get_user(req.body.id_pro, ret)
@@ -28,6 +20,10 @@ router.route('/annule_resa')
             })
             .then((art) => {
                 usr_art = art
+                return get_events(req, ret)
+            })
+            .then((ev)=> {
+                events = ev
                 if (req.body.action == "pro_annulation"){
                     if (req.body.type_transac == "MOD"){
                         let amount_refund = parseFloat(req.body.price_refund)
@@ -77,7 +73,7 @@ router.route('/annule_resa')
                         .then((res2) => {
                             ret.notif = res2
                             ret.success.push(true)
-                            ret.global_msg.push("Remboursement effectué !")
+                            ret.global_msg.push("Annulation de réservation effective, tu recevras un mail de confirmation dans les prochaines minutes !")
                             res.send(ret)
                         })
                         .catch((err) => {
@@ -95,13 +91,13 @@ router.route('/annule_resa')
                         })
                         //Envoi de mails
                         .then(() => {
-                            return send_mails(usr_pro, usr_art, null, req.body.price_refund, null)
+                            return send_mails(usr_pro, usr_art, null, req.body.price_refund, events)
                         })
                         .then((res2) => {
                             // console.log(res2)
                             ret.notif = res2
                             ret.success.push(true)
-                            ret.global_msg.push("Remboursement effectué !")
+                            ret.global_msg.push("Annulation de réservation effective, tu recevras un mail de confirmation dans les prochaines minutes !")
                             res.send(ret)
                         })
                         .catch((err) => {
@@ -175,8 +171,8 @@ function get_action(req, ret){
 		User.get_accept_action_module(req.body.id_type_message, (result) =>{
 			if (result.length > 0){
 				ret.result.actions = result
-				ret.success.push(true)
-				ret.global_msg.push("Récupération de l'action réussite !")
+				// ret.success.push(true)
+				// ret.global_msg.push("Récupération de l'action réussite !")
 				resolve(ret)
 			}else{
 				ret.success.push(false)
@@ -203,13 +199,13 @@ function do_actions_deny(req, ret){
 					// console.log(resOfAction)
 					if (resOfAction > 0){
 						//ret.result.action = result
-						ret.success.push(true)
-						ret.global_msg.push("Action effectuée !")
+						// ret.success.push(true)
+						// ret.global_msg.push("Action effectuée !")
 						//resolve(ret)
 					}else{
 						//console.log("Action echouée !")
-						ret.success.push(false)
-						ret.global_msg.push("Action echouée !")
+						// ret.success.push(false)
+						// ret.global_msg.push("Action echouée !")
 						reject(ret)
 					}
 					if (err)
@@ -226,6 +222,22 @@ function do_actions_deny(req, ret){
 				}
 			}		
 		}
+	})
+}
+function get_events(req, ret){
+	return new Promise((resolve, reject) => {
+		User.getEventsInTypeMessage(req.body.id_type_message, (result)=> {
+			if (result.length > 0){
+				// ret.result.events = result
+				// ret.success.push(true)
+				// ret.global_msg.push("Evennements récupérés !")
+				resolve(result)
+			}else{
+				ret.success.push(false)
+				ret.global_msg.push("Erreur lors de la récupération des évennements !")
+                reject(ret)			
+            }
+		})
 	})
 }
 Date.prototype.to2DigitsString = function() {

@@ -64,6 +64,29 @@ router.route('/agenda')
 				}
 				User.get_calendar(request.session.userId, (result) => {
 					if (result.length >= 0){
+						let now = new Date()
+						for (var k in result){
+							let color = "#ddae89", date_ev = new Date(result[k].start),
+							border = "#ddae89" 
+							if (date_ev > now){
+								if (result[k].id_payment == null){
+									color = "#c0c0c0"
+									border = "#c0c0c0"
+								}else{
+									if (result[k].type_transaction == "ESP")
+										color = "#df7919"
+									else
+										color = "#447dd8"
+									if (result[k].acceptation == 1)
+										border = "#2a9c3c"
+									else
+										border = "#af2b2f"
+								}
+							}
+							result[k].color = color
+							result[k].borderColor = border
+						}
+						// console.log(result)
 						let data = JSON.stringify(result)
 						data = data.replace(/"([^(")"]+)":/g,"$1:");
 						let d = JSON.stringify(table)

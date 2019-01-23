@@ -55,7 +55,7 @@ class Notif{
                             typeOfAction: this.type
                         }
                         if (this.sender != null)
-                            ret.senderAction = {id:this.sender.id, nom: this.sender.nom, img_path: this.sender.img_chat}
+                            ret.senderAction = {id:this.sender.id, nom: this.sender.nom, img_chat: this.sender.img_chat}
                         //console.log(ret)
                         resolve(ret)
                     }
@@ -145,10 +145,7 @@ class Notif{
     }
 }
 
-exports.actions = {mail: (receiver, sender, type_message = null, action = null, events = null) => new Notif(receiver, sender, type_message, action, events).sendEmail(root_path)  
-    .then((result) => result, 
-        (err) => err)
-    .catch((err) => err),
+exports.actions = {mail: (receiver, sender, type_message = null, action = null, events = null) => new Notif(receiver, sender, type_message, action, events).sendEmail(root_path),
     webhook_payment_mail: (receiver, transac_code, type_message = null, action = null, amount = 0) => new Notif(receiver, null, type_message, action, null, amount).sendPaymentEmail(root_path, transac_code)
     .then((result) => result)
     .catch((err) => err),
@@ -157,6 +154,4 @@ exports.actions = {mail: (receiver, sender, type_message = null, action = null, 
         (err) => err)
     .catch((err) => err),
     mail_abord_resa: (receiver, sender, transac_code=null, type_message=null, amount = 0, events=null) => new Notif(receiver, sender, type_message, null, events, amount).sendAbordResaEmail(root_path, transac_code)
-    .then((result) => result)
-    .catch((err) => err)
 }

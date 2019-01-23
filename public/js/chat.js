@@ -5,10 +5,10 @@ input_text.css("cursor", "pointer");
 var form_song = $("form.upload");
 var socket = io.connect();
 var roomDisplay = null;
-var iframe_cal1 = $(".cal")[0].contentDocument ? $(".cal")[0].contentDocument : $(".cal")[0].contentWindow.document;
-var iframe_cal2 = $(".cal")[1].contentDocument ? $(".cal")[1].contentDocument : $(".cal")[1].contentWindow.document;
-var iframe_cal3 = $(".cal")[2].contentDocument ? $(".cal")[2].contentDocument : $(".cal")[2].contentWindow.document;
-var iframe_cal4 = $(".cal")[3].contentDocument ? $(".cal")[3].contentDocument : $(".cal")[3].contentWindow.document;
+// var iframe_cal1 = $(".cal")[0].contentDocument ? $(".cal")[0].contentDocument : $(".cal")[0].contentWindow.document;
+// var iframe_cal2 = $(".cal")[1].contentDocument ? $(".cal")[1].contentDocument : $(".cal")[1].contentWindow.document;
+// var iframe_cal3 = $(".cal")[2].contentDocument ? $(".cal")[2].contentDocument : $(".cal")[2].contentWindow.document;
+// var iframe_cal4 = $(".cal")[3].contentDocument ? $(".cal")[3].contentDocument : $(".cal")[3].contentWindow.document;
 //console.log($("a.booking-chat"));
 // var check_in = $("a.booking-chat");
 // var meet_up = $("a.meet-up-chat");
@@ -55,42 +55,52 @@ $(document).on("click", ".div-submi .btn-refus", on_module_deny_typeMessage_link
 $(document).on("click", "a[data-action='update-module']", on_module_payment_bank_link_click);
 $(document).on("click", "button[data-id-message]", on_message_view_button_click);
 $(document).on("click", "#refund", on_refund_link_click);
-$(document).on('shown.bs.modal', "#rdv-for-payment-modal", function (e) {
+$(document).on('shown.bs.modal', "#rdv-for-payment-modal", function () {
   //console.log($(this));
   $(this).css("padding-left", "0px");
   $('body').css('padding-right','0px');
   $(this).find("iframe")[0].src = $(this).find("iframe")[0].src;
 });
-$(document).on('shown.bs.modal', "#booking-for-payment-modal",  function (e) {
+$(document).on('shown.bs.modal', "#booking-for-payment-modal",  function () {
   $(this).css("padding-left", "0px");
   $('body').css('padding-right','0px');
   $(this).find("iframe")[0].src = $(this).find("iframe")[0].src;
 });
-$(document).on('shown.bs.modal', "#rdv-modal", function (e) {
+$(document).on('shown.bs.modal', "#rdv-modal", function () {
   $(this).css("padding-left", "0px");
   $('body').css('padding-right','0px');
   $(this).find("iframe")[0].src = $(this).find("iframe")[0].src;
 });
-$(document).on('shown.bs.modal', "#booking-modal",  function (e) {
+$(document).on('shown.bs.modal', "#booking-modal",  function () {
   $(this).css("padding-left", "0px");
   $('body').css('padding-right','0px');
 });
-$(document).on('shown.bs.modal', "#video-modal", function (e) {
+$(document).on('shown.bs.modal', "#video-modal", function () {
   $(this).css("padding-left", "0px");
   $('body').css('padding-right','0px');
   $(this).find("iframe")[0].src = $(this).find("iframe")[0].src;
 })
-$(document).on('shown.bs.modal', "#son-modal", function (e) {
+$(document).on('shown.bs.modal', "#son-modal", function () {
   $(this).css("padding-left", "0px");
   $('body').css('padding-right','0px');
 });
-$(document).on('shown.bs.modal', "#devis-modal", function (e) {
+$(document).on('shown.bs.modal', "#devis-modal", function () {
   $(this).css("padding-left", "0px");
   $('body').css('padding-right','0px');
 });
-$(document).on('shown.bs.modal', "#paiement-modal",  function (e) {
+$(document).on('shown.bs.modal', "#paiement-modal",  function () {
   $(this).css("padding-left", "0px");
   $('body').css('padding-right','0px');
+});
+$(document).on("ready", function(){
+	var extra_datas = JSON.parse(localStorage.getItem("datas_chat"));
+	localStorage.clear();
+	if (extra_datas != null){
+		//console.log(extra_datas);
+		update_front_with_msg(extra_datas, "msg-chat");
+		if (!extra_datas.success[0])
+			update_front_with_errors(extra_datas.errors);
+	}
 });
 msg_part.on("click", chat_headlines_span_click);
 notifs_part.on("click", chat_headlines_span_click);
@@ -392,7 +402,7 @@ $(document).on("click", ".friend[data-action='room']", function(){
   var name = $(this).find("p strong").html();
   var email = $(this).find("p span").html();
   var booking_modal = '<a class="module" href="#booking-modal" data-toggle="modal">booking</a>';
-  var devis_modal = '<a class="module" href="#devis-modal" data-toggle="modal">devis</a>';
+  // var devis_modal = '<a class="module" href="#devis-modal" data-toggle="modal">devis</a>';
   var rdv_modal = '<a class="module" href="#rdv-modal" data-toggle="modal">rdv</a>';
   var payment_modal = '<a class="module" href="#paiement-modal" data-toggle="modal">paiement</a>';
   var song_modal = '<a class="module" href="#son-modal" data-toggle="modal">son</a>';
@@ -475,7 +485,7 @@ $(document).on("click", ".friend[data-action='room']", function(){
   }
   switchRoom($(this).data("room"), $(this).data("coresp"), name.split(" ")[0], name.split(" ")[1], $(this).data('coresp-type'), $(this).data('coresp-mail'), $(this).data('img-chat'), user);
 });
-function on_refund_link_click(e){
+function on_refund_link_click(){
   var parent = $(this).parents(".friend");
   // console.log(parent);
   var date_presta, date_payment, now = new Date(), fees, amount_refund, mode
@@ -503,7 +513,7 @@ function on_refund_link_click(e){
         mode = 0;
       }
     }
-    confirm_text += " Vous serez remboursé à hauteur de "+amount_refund+"€ selon nos conditions d'annulation de réservation.";
+    confirm_text += " Vous serez remboursé à hauteur de <b>"+amount_refund+"</b>€ selon nos conditions d'annulation de réservation.";
   }
   var r = confirm(confirm_text);
   if (r){
@@ -531,6 +541,7 @@ function on_refund_link_click(e){
           // console.log(data);
           if (data.success[0]){
             socket.emit("sendNotif", data.notif);
+            localStorage.setItem("datas_chat", JSON.stringify(data));
             window.document.location.reload();
           }
         }
@@ -583,10 +594,10 @@ function on_socket_refresh_art_payments(payments){
       var start_for_display = '', date_p_for_display = '';
       start = new Date(payments[i]["start"]);
       // console.log(start.toLocaleDateString());
-      start_for_display = start.toLocaleDateString()+" "+start.toTimeString().substring(0, 8);
+      start_for_display = start.formatForDisplay();
       date_p = new Date(payments[i]["date_payment"]);
       // console.log(date_p.toLocaleDateString());
-      date_p_for_display = date_p.toLocaleDateString()+" "+date_p.toTimeString().substring(0, 8);
+      date_p_for_display = date_p.formatForDisplay();
       if (payments[i]["state_payment"] == "valide")
         status = "available";
       else if(payments[i]["state_payment"] == "en attente")
@@ -596,8 +607,16 @@ function on_socket_refresh_art_payments(payments){
       }else{
         actions = '<p><a href="#" id="reclam" class="btn-refus">Réclamation</a></p>';
       }
-      if (payments[i]["refund"] != null)
+      if (payments[i]["refund"] != null){
         actions = '<p>Réservation annulée !</p>';
+        if (payments[i]["type_transaction"] == "ESP"){
+          date_p_for_display = "null";
+          start_for_display = date_p.formatForDisplay();
+        }else{
+          date_p_for_display = date_p.formatForDisplay();
+          start_for_display = "null";
+        }
+      }
       $("div#chats").append('<div class="friend" style="height:auto;" '+
         'data-id-type-message="'+payments[i]["id_type_message"]+'" '+
         'data-id-p-request="'+payments[i]["id_payment"]+'" '+
@@ -672,10 +691,6 @@ if (userId != null && userId != "null") {
     }
 }
 function on_socket_updatechat(coresp, data, cont){
-//console.log("updatechat");
-//console.log(data);
-//console.log(user);
-//console.log(cont);
 if (data !== undefined && data != null){
   var htmlToAppend = "";
   if (data.fullPrevious !== undefined){
@@ -1027,8 +1042,7 @@ function on_reservation_for_payment_link_click(e){
     ret.global_msg.push("Un ou plusieurs créneaux choisi(s) se trouve(nt) à une date inférieure ou égale à la date actuelle + 1 heure !",
       "Il est impossible de réserver à moins d'une heure à l'avance !");
     update_front_with_msg(ret, resp_target);
-  }
-  else{
+  }else{
     $.ajax({
       type : "POST",
       url : "/check-in",
@@ -1042,7 +1056,7 @@ function on_reservation_for_payment_link_click(e){
         update_front_with_msg(data, resp_target);
         if (data.success[0]){
           modal.modal("hide");
-          if (data.result.type_transac == "MOD"){
+          if (global_datas.transaction_type == "MOD"){
               $.ajax({
                 type : "POST",
                 url : "/payment-intent/"+user_receiv.id_coresp,
@@ -1051,7 +1065,7 @@ function on_reservation_for_payment_link_click(e){
                 success: function(data2) {
                   update_front_with_msg(data2, resp_target);
                   //console.log(data);
-                  if (data.success[0]){
+                  if (data2.success[0]){
                     var datas = {
                       id: data2.id,
                       desc: data2.desc,
@@ -1066,7 +1080,7 @@ function on_reservation_for_payment_link_click(e){
                       id_type_message:  global_datas.id_type_message,
                       type_m: "payment",
                       action: "accept",
-                      type_transac: data.result.type_transac                  
+                      type_transac: global_datas.transaction_type                  
                     }
                     //console.log(window.parent);
                     window.parent.form_payment(datas, other);
@@ -1078,7 +1092,7 @@ function on_reservation_for_payment_link_click(e){
             type: "POST",
             url: "/action-in-module",
             data: {action: "accept", type_m:"payment_response", id_type_message: global_datas.id_type_message,
-              type_transac: data.result.type_transac, desc_payment: global_datas.title, price_payment: modal.find("[name='price_presta']").val(),
+              type_transac: global_datas.transaction_type, desc_payment: global_datas.title, price_payment: modal.find("[name='price_presta']").val(),
               id_r: modal.find("[name='id_request']").val()},
             beforeSend: function (req){
               req.setRequestHeader("x-access-token", token);
@@ -1097,52 +1111,9 @@ function on_reservation_for_payment_link_click(e){
           });
         }
       }
-      }
+    }
     });
   }
-
-
-    // }else{
-    //   $.ajax({
-    //     type: "POST",
-    //     url: "/action-in-module",
-    //     data: glob_datas,
-    //     beforeSend: function (req){
-    //       req.setRequestHeader("x-access-token", token);
-    //     },
-    //     success: function (data){
-    //       if (data.success[0]){
-    //         socket.emit("sendNotif", data.notif);
-    //         const content = 'demande acceptée !';
-    //         div.find("div.card-chat div.div-submi").empty();
-    //         div.find("div.card-chat div.div-submi").append(content);
-    //       }else{
-    //         //update_front_with_msg(data, );
-    //       }
-    //     }
-    //   });
-    // }
-  //   //Récapitaulatif de paiement en cas de booking
-  //   $.ajax({
-  //     type : "POST",
-  //     url : "/secure_profile",
-  //     data: {"temp": user_receiv.id_coresp},
-  //     success: function() {
-  //       //console.log(data);
-  //       var datas = {},
-  //       query = '';
-  //       datas.type = "booking";
-  //       datas.events = global_datas.events;
-  //       datas.id_pro = global_datas.user_receiv;
-  //       datas.from = "new-booking";
-  //       //console.log(datas);
-  //       query = serialize(datas);
-  //       //console.log(query);
-  //       //Récupération du nombre d'h de booking a faire
-  //       iframe.location = '/payment-recap/'+user_receiv.id_coresp + '?' + query;
-  //     }   
-  //   });
-  //console.log(global_datas);
 }
 /*Module sons*/
 function on_form_song_submit(e){
@@ -1433,27 +1404,121 @@ function on_module_accept_typeMessage_link_click(e){
   }else if(type_message_libelle == 'payment'){
     //window.location = "#rdv-modal";
     //$("a[href='#rdv-modal']").trigger("click");
-    var presta = {desc: div.attr("price-desc"),
-      price: div.attr("payment-price"),
-      request_id: div.attr("request-id")};
-    var type_transaction = div.attr("type-transaction");
-    var modal
-    // if (type_transaction == "MOD"){
-      // console.log(user_receiv);
-      if (user_receiv.type == 3){
-        modal = "#rdv-for-payment-modal";
-        $(modal).find(".msg-rdv-payment h1").html("Proposer un/des rdv pour '"+presta.desc+"'<span class='special-color'>?</span>")
-      }else{
-        modal = "#booking-for-payment-modal";
-        $(modal).find(".msg-booking-payment h1").html("Proposer un/des booking pour '"+presta.desc+"'<span class='special-color'>?</span>")
+    // iframe = $(this).hasClass("booking-for-payment-chat") ? $(".cal")[2].contentDocument : $(".cal")[1].contentDocument ;
+    //iframe = $(".cal")[1].contentDocument;
+    // var datePickerVal = $(iframe).find(".datepicker input").val().replace(new RegExp("/", "g"), "-");
+    // var datePickerValTab = datePickerVal.split("-");
+    // var hours = $(iframe).find("#selectHours .sel");
+    var global_datas = {};
+    var modal, resp_target;
+    // console.log(iframe);
+    // console.log(hours);
+    // console.log($(".cal"));
+    // global_datas = get_events(hours, datePickerValTab);
+    global_datas.id_type_message = div.data("id-type-message");
+    global_datas.id_art = user.id;
+    global_datas.id_pro = user_receiv.id_coresp;
+    global_datas.user_receiv = user_receiv.id_coresp;
+    global_datas.user_sender = user.id;
+    if (user_receiv.type == 3){
+      modal = $("#rdv-for-payment-modal");
+      resp_target = "msg-payment-valid";
+      global_datas.from = "rdv_payment";
+    }else{
+      modal = $("#booking-for-payment-modal");
+      resp_target = "msg-payment-valid";
+      global_datas.from = "booking_payment";
+    }
+    $.ajax({
+      type : "POST",
+      url : "/check-in",
+      data: global_datas,
+      async: false,
+      beforeSend: function (req){
+        req.setRequestHeader("x-access-token", token);
+      },
+      success: function(data) {
+        // console.log(data);
+        update_front_with_msg(data, resp_target);
+        if (!data.result.has_events){
+          var presta = {desc: div.attr("price-desc"),
+            price: div.attr("payment-price"),
+            request_id: div.attr("request-id")};
+          var type_transaction = div.attr("type-transaction");
+          // if (type_transaction == "MOD"){
+          // console.log(user_receiv);
+          if (user_receiv.type == 3){
+            // modal = "#rdv-for-payment-modal";
+            $(modal).find(".msg-rdv-payment h1").html("Proposer un/des rdv pour '"+presta.desc+"'<span class='special-color'>?</span>")
+          }else{
+            // modal = "#booking-for-payment-modal";
+            $(modal).find(".msg-booking-payment h1").html("Proposer un/des booking pour '"+presta.desc+"'<span class='special-color'>?</span>")
+          }
+          $(modal).find(".modal-body input[type='hidden']").remove();
+          $(modal).find(".modal-body").append("<input type='hidden' name='id_type_m' value='"+glob_datas.id_type_message+"' />");
+          $(modal).find(".modal-body").append("<input type='hidden' name='desc_presta' value='"+presta.desc+"' />");
+          $(modal).find(".modal-body").append("<input type='hidden' name='price_presta' value='"+presta.price+"' />");
+          $(modal).find(".modal-body").append("<input type='hidden' name='id_request' value='"+presta.request_id+"' />");
+          $(modal).find(".modal-body").append("<input type='hidden' name='type_transac' value='"+type_transaction+"' />");
+          $(modal).modal('show');
+        }else{
+          if (div.attr("type-transaction") == "MOD"){
+            $.ajax({
+              type : "POST",
+              url : "/payment-intent/"+user_receiv.id_coresp,
+              data: {price: div.attr("payment-price"), desc: div.attr("price-desc"),
+                id_r: div.attr("request-id")},
+              success: function(data2) {
+                update_front_with_msg(data2, resp_target);
+                //console.log(data);
+                if (data2.success[0]){
+                  var datas = {
+                    id: data2.id,
+                    desc: data2.desc,
+                    price: data2.price,
+                    email: data2.email,
+                    nom: data2.nom,
+                    img: "/asset/images/logo-onair.jpg",
+                    prenom: data2.prenom,
+                    intent: data2.result
+                  };
+                  var other = {
+                    id_type_message:  global_datas.id_type_message,
+                    type_m: "payment",
+                    action: "accept",
+                    type_transac: div.attr("type-transaction")                  
+                  }
+                  //console.log(window.parent);
+                  window.parent.form_payment(datas, other);
+                }
+              }
+            });
+          }else{
+            $.ajax({
+              type: "POST",
+              url: "/action-in-module",
+              data: {action: "accept", type_m:"payment_response", id_type_message: global_datas.id_type_message,
+                type_transac: div.attr("type-transaction"), desc_payment: div.attr("price-desc"), price_payment: div.attr("payment-price"),
+                id_r: div.attr("request-id")},
+              beforeSend: function (req){
+                req.setRequestHeader("x-access-token", token);
+              },
+              success: function (data2){
+                //console.log(data2);
+                if (data2.success[0]){
+                  socket.emit("sendNotif", data2.notif);
+                  const content = 'demande acceptée !';
+                  div.find("div.card-chat div.div-submi").empty();
+                  div.find("div.card-chat div.div-submi").append(content);
+                }else{
+                  update_front_with_msg(data2, resp_target);
+                }
+              }
+            });
+          }
+        }
       }
-      $(modal).find(".modal-body input[type='hidden']").remove();
-      $(modal).find(".modal-body").append("<input type='hidden' name='id_type_m' value='"+glob_datas.id_type_message+"' />");
-      $(modal).find(".modal-body").append("<input type='hidden' name='desc_presta' value='"+presta.desc+"' />");
-      $(modal).find(".modal-body").append("<input type='hidden' name='price_presta' value='"+presta.price+"' />");
-      $(modal).find(".modal-body").append("<input type='hidden' name='id_request' value='"+presta.request_id+"' />");
-      $(modal).find(".modal-body").append("<input type='hidden' name='type_transac' value='"+type_transaction+"' />");
-      $(modal).modal('show');
+    });
   }else{
     //Cas du rdv /offre_rdv /contact
     //console.log(user);
@@ -1811,12 +1876,8 @@ Date.prototype.ajouteHeures = function(heures) {
   return this;
 };
 Date.prototype.formatForDisplay = function(){
-  return (this.getDate() + 1).toString(10).padStart(2, '0') + "/" +
-    (this.getMonth() + 1).toString(10).padStart(2, '0') + "/" +
-    this.getFullYear() + " " +
-    this.getHours().toString(10).padStart(2, '0') + ":" +
-    this.getMinutes().toString(10).padStart(2, '0') + ":" +
-    this.getSeconds().toString(10).padStart(2, '0');
+  return this.toLocaleDateString() + " " +
+    this.toTimeString().substring(0, 8);
 };
 Date.getDaysBetween = function(date1, date2){
   var one_day = 1000*60*60*24;

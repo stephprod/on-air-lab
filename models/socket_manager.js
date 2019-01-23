@@ -941,6 +941,7 @@ class SocketManager{
         }
     }
     send_chat(data, userId, user_receiver, context){
+        // console.log(this.socket.request.session)
         data.user_sender = {id: userId, nom: this.socket.request.session.userName, prenom:this.socket.request.session.userFirstName, email:this.socket.request.session.userMail}
         data.user_receiver = {id: user_receiver.id_coresp, nom: user_receiver.nom, prenom: user_receiver.prenom, email: user_receiver.mail}
         data.id_r = this.socket.room
@@ -963,6 +964,7 @@ class SocketManager{
                     data.created = created_date
                     notifications.mail(data.user_receiver, data.user_sender, data.type_m)
                     .then((res) =>{
+                        // console.log(res)
                         data.notif = res
                        this.io.sockets.in(this.socket.id).emit('updatechat', user_receiver, data)
                     }).catch((err) => console.log(err));
@@ -985,14 +987,9 @@ class SocketManager{
                     case "payment":
                         notifications.mail(data.user_receiver, data.user_sender, data.type_m, null, data.events)
                         .then((res) => {
-                            data.notif = res
-                            // console.log("notif -> ")
-                            // console.log(data.notif)
-                            // console.log("globalUsers -> ")
-                            // console.log(this.userGlobal)
-                            // console.log("socket id -> ")
-                            // console.log(this.socket.id)
-                           this.io.sockets.in(this.socket.id).emit('updatechat', user_receiver, data, context)
+                            if (!(res instanceof Error))
+                                data.notif = res
+                            this.io.sockets.in(this.socket.id).emit('updatechat', user_receiver, data, context)
                         }).catch((err) => {
                             console.log(err)
                         })
@@ -1099,7 +1096,9 @@ class SocketManager{
                     case "contact":
                         notifications.mail(data.user_receiver, data.user_sender, data.type_m, null, data.events)
                         .then((res) => {
-                            data.notif = res
+                            // console.log(res)
+                            if (!(res instanceof Error))
+                                data.notif = res
                            this.io.sockets.in(this.socket.room).emit('updatechat', user_receiver, data, context)
                         }).catch((err) => {
                             console.log(err)

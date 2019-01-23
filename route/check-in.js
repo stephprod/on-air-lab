@@ -8,7 +8,7 @@ router.route('/check-in')
 	ret.success = []
 	ret.global_msg = []
 	ret.result = {}
-	ret.msg = request.body.from == "rdv" || request.body.from == "rdv_offer" ? "Demande de rendez-vous !" : "Demande de booking !"
+	ret.msg = request.body.from == "rdv" || request.body.from == "rdv_offer" || "rdv_payment" ? "Demande de rendez-vous !" : "Demande de booking !"
 	ret.created = new Date()
 	if (request.session.token == request.headers["x-access-token"]){
 		var table = []
@@ -48,21 +48,44 @@ router.route('/check-in')
 			len = (table.length - 8) / 2 ;
 			ret.result.id_type_m = request.body.id_type_message
 			ret.result.type_transac = request.body.transaction_type
-			var acceptation_state = ret.result.type_transac == "MOD" ? 0 : 1	
-			insert_event(request, ret, len, acceptation_state)
-			.then((res0) => {
-				//console.log(res0)
-				return insert_events_in_tm(res0)
+			var acceptation_state = ret.result.type_transac == "MOD" ? 0 : 1
+			User.isEventsInTypeMessage([ret.result.id_type_m], (resu, resolve) => {
+				resolve(resu)
 			})
-			.then((res1) => {
-				return tempo(request, res1)
-			})
-			.then((res2)=>{
-				response.send(res2)
+			.then((res00) => {
+				if (res00.length == 0){
+					if (request.body["events[0][start]"] !== undefined){
+						insert_event(request, ret, len, acceptation_state)
+						.then((res0) => {
+							//console.log(res0)
+							return insert_events_in_tm(res0)
+						})
+						.then((res1) => {
+							return tempo(request, res1)
+						})
+						.then((res2)=>{
+							response.send(res2)
+						}).catch((err) => {
+							//console.log(err);
+							response.send(err)
+						});
+					}else{
+						ret.result.has_events = false
+						ret.success.push(true)
+						response.send(ret)
+					}
+				}else{
+					ret.result.id_dispos = []
+					ret.result.has_events = true
+					for (var k in res00){
+						ret.result.id_dispos.push(res00[k].id_event)
+					}
+					ret.success.push(true)
+					response.send(ret)
+				}
 			}).catch((err) => {
-				//console.log(err);
 				response.send(err)
-			});
+			})
 		}else{
 			len = (table.length - 7) / 2 ;
 			insert_event(request, ret, len, 0)

@@ -55,9 +55,9 @@ $('#external-events div.external-event').each(function() {
 
 var calendar =  $('#calendar').fullCalendar({
     header: {
-    left: 'title',
-    center: 'agendaDay,agendaWeek,month',
-    right: 'prev,next today'
+        left: 'title',
+        center: 'agendaDay,agendaWeek,month',
+        right: 'prev,next today'
     },
     slotLabelFormat:"HH:mm",
     editable: true,
@@ -68,9 +68,9 @@ var calendar =  $('#calendar').fullCalendar({
     locale: 'fr', // AJOUTER LE FICHIER LOCALS src='fullcalendar/lang-all.js
     eventLimit: true, // for all non-agenda views
     views: {
-    agenda: {
-        eventLimit: 4 // adjust to 6 only for agendaWeek/agendaDay
-    },
+        agenda: {
+            eventLimit: 4 // adjust to 6 only for agendaWeek/agendaDay
+        },
     },  	
     selectHelper: true,
     selectConstraint: "businessHours",
@@ -79,40 +79,40 @@ var calendar =  $('#calendar').fullCalendar({
         if (title) {
             start = start.format();
             end = end.format();
-        $.ajax({
-            url: '/agenda',
-            data: 'title='+ title+'&start='+ start +'&end='+ end ,
-            type: "POST",
-            beforeSend: function (req){
-                req.setRequestHeader("x-access-token", token);
-            },
-            success: function(data) {
-                //console.log(data);
-                calendar.fullCalendar('renderEvent',
-                    {
-                        id_event : data[4],
-                        title: title,
-                        start: start,
-                        end: end,
-                    },
-                    true // make the event "stick"
-                );
-            }
-        });
-    }
-    calendar.fullCalendar('unselect');
-},
-eventClick: function(event, jsEvent, view) {
-    // console.log('Clicked on: ' + event.start.format()+' A : ' + event.end.format());
-    // console.log('Clicked on: ' + event.title);
-    // console.log('Clicked on: ' + event.id_event);
+            $.ajax({
+                url: '/agenda',
+                data: 'title='+ title+'&start='+ start +'&end='+ end ,
+                type: "POST",
+                beforeSend: function (req){
+                    req.setRequestHeader("x-access-token", token);
+                },
+                success: function(data) {
+                    //console.log(data);
+                    calendar.fullCalendar('renderEvent',
+                        {
+                            id_event : data[4],
+                            title: title,
+                            start: start,
+                            end: end,
+                        },
+                        true // make the event "stick"
+                    );
+                }
+            });
+        }
+        calendar.fullCalendar('unselect');
+    },
+    eventClick: function(event, jsEvent, view) {
+        // console.log('Clicked on: ' + event.start.format()+' A : ' + event.end.format());
+        // console.log('Clicked on: ' + event.title);
+        // console.log('Clicked on: ' + event.id_event);
 
-    // console.log('Coordinates: ' + jsEvent.id + ',' + jsEvent.pageY);
+        // console.log('Coordinates: ' + jsEvent.id + ',' + jsEvent.pageY);
 
-    // console.log('Current view: ' + view.name);
+        // console.log('Current view: ' + view.name);
 
-    // change the day's background color just for fun
-    $(this).css('background-color', '#e9e9e9');
+        // change the day's background color just for fun
+        $(this).css('background-color', '#e9e9e9');
         var result = confirm('Êtes-vous sûr de vouloir supprimer l\'evenement ?');
         if(result){
             $('#calendar').fullCalendar('removeEvents', event._id);
