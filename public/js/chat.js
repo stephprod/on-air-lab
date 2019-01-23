@@ -1586,10 +1586,22 @@ function on_socket_update_eventstypeoffermessage(data){
   content += '<p>Prix : '+data.offer.prix+' €</p>';
   div.find(".card-chat > h3").after(content);
 }
+function check_cb_min_val(module, amount){
+  if (module == 1){
+    if (amount > 19){
+      return true;
+    }else{
+      return false
+    }
+  }else{
+    return true;
+  }
+}
 function on_payment_link_click(e){
   e.preventDefault();
   var datas = {};
   var parent = $("#paiement-modal");
+  var button = $(e.target).parents("#paiement-modal").find("a[name='module']");
   datas.desc = parent.find("[name='desc']").val();
   datas.price = parent.find("[name='price']").val();
   datas.type_t = parent.find("[name='module']").data("module") == 0 ? "ESP" : "MOD";
@@ -1599,6 +1611,11 @@ function on_payment_link_click(e){
   //console.log(datas);
   if (!check_abo(user)){
     var ret = {success: [false], global_msg: ['Vous devez être connecté et avoir un abonnement en cours de validité pour utiliser les modules du chat !']};
+    update_front_with_msg(ret, "msg-paiement");
+    return false;
+  }
+  if (!check_cb_min_val(button.data("module"), datas.price)){
+    ret = {success: [false], global_msg: ['Avec le module activé vous devez renseigner un montant supérieur ou égale à 20€ !']};
     update_front_with_msg(ret, "msg-paiement");
     return false;
   }
