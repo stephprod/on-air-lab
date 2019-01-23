@@ -735,7 +735,7 @@ class User{
     static get_calendar(id, cb){
         let r = db.query('SELECT `calendar_event`.`id_event`, `calendar_event`.`id_pro`, `calendar_event`.`id_artist`, `calendar_event`.`start`, '+
         '`calendar_event`.`end`, `calendar_event`.`title`, '+
-        '`type_message`.`id_payment`, '+
+        '`type_message`.`id_type_m`, `type_message`.`id_payment`, '+
         '`payment_request`.`acceptation`, `payment_request`.`type_transaction` '+
         'FROM `calendar_event` '+
         'LEFT JOIN `events_in_type_message` ON `events_in_type_message`.`id_calendar_event`=`calendar_event`.id_event '+

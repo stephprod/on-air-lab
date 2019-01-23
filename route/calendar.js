@@ -67,14 +67,15 @@ router.route('/agenda')
 						let now = new Date()
 						for (var k in result){
 							let color = "#ddae89", date_ev = new Date(result[k].start),
-							border = "#ddae89" 
+							border = "#ddae89", editable = false
 							if (date_ev > now){
 								if (result[k].id_payment == null){
 									color = "#c0c0c0"
 									border = "#c0c0c0"
+									editable = true
 								}else{
 									if (result[k].type_transaction == "ESP")
-										color = "#df7919"
+										color = "#4caf50"
 									else
 										color = "#447dd8"
 									if (result[k].acceptation == 1)
@@ -85,6 +86,7 @@ router.route('/agenda')
 							}
 							result[k].color = color
 							result[k].borderColor = border
+							result[k].editable = editable
 						}
 						// console.log(result)
 						let data = JSON.stringify(result)

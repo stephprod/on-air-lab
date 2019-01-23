@@ -52,15 +52,14 @@ $('#external-events div.external-event').each(function() {
 
 /* initialize the calendar
 -----------------------------------------------------------------*/
-
 var calendar =  $('#calendar').fullCalendar({
     header: {
         left: 'title',
-        center: 'agendaDay,agendaWeek,month',
+        center: 'agendaDay,agendaWeek,month,listWeek',
         right: 'prev,next today'
     },
     slotLabelFormat:"HH:mm",
-    editable: true,
+    // editable: true,
     firstDay: 1, //  1(Monday) this can be changed to 0(Sunday) for the USA system
     selectable: true,
     defaultView: 'agendaWeek',
@@ -100,17 +99,15 @@ var calendar =  $('#calendar').fullCalendar({
                 }
             });
         }
-        calendar.fullCalendar('unselect');
+        $('#calendar').fullCalendar('unselect');
     },
     eventClick: function(event, jsEvent, view) {
         // console.log('Clicked on: ' + event.start.format()+' A : ' + event.end.format());
         // console.log('Clicked on: ' + event.title);
-        // console.log('Clicked on: ' + event.id_event);
-
+        // console.log('Clicked on: ' );
+        console.log(event);
         // console.log('Coordinates: ' + jsEvent.id + ',' + jsEvent.pageY);
-
         // console.log('Current view: ' + view.name);
-
         // change the day's background color just for fun
         $(this).css('background-color', '#e9e9e9');
         var result = confirm('Êtes-vous sûr de vouloir supprimer l\'evenement ?');
@@ -130,7 +127,7 @@ var calendar =  $('#calendar').fullCalendar({
                 })
         }
     },
-    droppable: true, // this allows things to be dropped onto the calendar !!!
+    // droppable: true, // this allows things to be dropped onto the calendar !!!
     dragRevertDuration: 0,
     // eventDrop: function(event, date, allDay) { // this function is called when something is dropped
     
@@ -200,7 +197,21 @@ var calendar =  $('#calendar').fullCalendar({
     },
     //A ACTIVER EN EJS
     businessHours: dow,
-    events: eventObj
+    events: eventObj,
+    // NEED FULLCALENDAR SCHEDULER
+    // resources: '/asset/content/calendar_feed.json',
+    // resourceRender: function(resourceObj, $td) {
+    //     $td.eq(0).find('.fc-cell-content')
+    //     .append(
+    //         $('<strong>(?)</strong>').popover({
+    //             title: resourceObj.title,
+    //             content: 'test!',
+    //             trigger: 'hover',
+    //             placement: 'bottom',
+    //             container: 'body'
+    //         })
+    //     );
+    // },
 });
 $('.datepicker input').datetimepicker({
     format : 'HH:mm',
