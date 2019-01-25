@@ -513,7 +513,7 @@ function on_refund_link_click(){
         mode = 0;
       }
     }
-    confirm_text += " Vous serez remboursé à hauteur de <b>"+amount_refund+"</b>€ selon nos conditions d'annulation de réservation.";
+    confirm_text += " Vous serez remboursé à hauteur de "+amount_refund+"€ selon nos conditions d'annulation de réservation.";
   }
   var r = confirm(confirm_text);
   if (r){
@@ -567,6 +567,8 @@ function chat_headlines_span_click(e){
     window.parent.$("#chat_title").html("Mes Notifications");
     $("div#history").show();
   }else if(target.hasClass("friends")){
+    if (user.id != null && user.id != "null" && user.id != "")
+      socket.emit('adduser', user.id, user.type);
     msg_part.css("background", "url(/asset/images/top-menu.png) -3px -118px no-repeat");
     notifs_part.css("background", "");
     payments_part.css("background", "");
@@ -1153,6 +1155,7 @@ function on_form_song_submit(e){
         else{
           /*Emmistion de socket*/
           //console.log("audio enregistré !" +userId);
+          $("#son-modal").modal("hide");
           var song = {
               type_m : data.result.type_a,
               path: data.result.path,
@@ -1228,6 +1231,7 @@ function on_video_module_send_link_click(e){
     else{
       /*Emmistion de socket*/
       //console.log("vidéo enregistré !" +userId);
+      $("#video-modal").modal("hide");
       var video = {
             type_m : obj.type_v,
           path: obj.path,
@@ -1597,14 +1601,29 @@ function on_socket_update_eventstypeoffermessage(data){
   div.find(".card-chat > h3").after(content);
 }
 function check_cb_min_val(module, amount){
-  if (module == 1){
-    if (amount > 19){
-      return true;
+  var ret = {};
+  ret.success = [];
+  ret.global_msg = [];
+  if (amount > 0){
+    if (module == 1){
+      if (amount > 19){
+        ret.success.push(true);
+        return ret;
+      }else{
+        ret.success.push(false);
+        ret.global_msg.push("Une erreur est survenue lors du remplissage du formulaire, ciblez les champs du formulaire pour plus de détails !");
+        ret.errors = {price: ["Avec le module activé vous devez renseigner un montant supérieur ou égale à 20€ !"]}
+        return ret
+      }
     }else{
-      return false
+      ret.success.push(true);
+      return ret;
     }
   }else{
-    return true;
+    ret.success.push(false);
+    ret.global_msg.push("Une erreur est survenue lors du remplissage du formulaire, ciblez les champs du formulaire pour plus de détails !");
+    ret.errors = {price: ["Vous devez renseigner un montant strictement supérieur à 0 !"]}
+    return ret;
   }
 }
 function on_payment_link_click(e){
@@ -1624,9 +1643,10 @@ function on_payment_link_click(e){
     update_front_with_msg(ret, "msg-paiement");
     return false;
   }
-  if (!check_cb_min_val(button.data("module"), datas.price)){
-    ret = {success: [false], global_msg: ['Avec le module activé vous devez renseigner un montant supérieur ou égale à 20€ !']};
-    update_front_with_msg(ret, "msg-paiement");
+  const result = check_cb_min_val(button.data("module"), datas.price);
+  if (!result.success[0]){
+    update_front_with_msg(result, "msg-paiement");
+    update_front_with_errors(result.errors);
     return false;
   }
   $.ajax({

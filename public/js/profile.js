@@ -13,6 +13,7 @@ var session = JSON.parse(sessionStorage.getItem('session'));
 //sessionStorage.clear();
 //console.log(session);
 var roomDisplay_from_session = JSON.parse(sessionStorage.getItem('room'));
+// var roomDisplay;
 var user_receiv_from_session = JSON.parse(sessionStorage.getItem('user_receiv'));
 var user_receiv;
 var user = null;
@@ -34,7 +35,7 @@ function get_events(hours, datePickerValTab){
 	var timeIndice = -1.0;
 	var donn = {};
 	$.each(hours, function(ind){
-		var hour = $(this).text();
+		var hour = parseFloat($(this).data("val"));
 		if (parseInt(hour) == hour){
 			if (timeIndice == parseInt(hour)){
 				//Ne rien faire
@@ -157,7 +158,7 @@ function switchRoom(room, id_coresp, nom, prenom, type, email, img, usr){
 	coresp.img_chat = img;
     //console.log(coresp);
     updateUserReceived(coresp);
-    roomDisplay = room;
+    // roomDisplay = room;
 	$('#chat-messages').empty();
 	$('#chat-messages').data('current', room);
 	//Mise a jours de la session avec le nouveau correspondant
@@ -233,9 +234,9 @@ function on_form_contact_submit(e){
 					socket.emit('sendNotif', data.notif);
 				}
 			}else{
-				if (data.result.room !== undefined){
-					roomDisplay = data.result.room;
-				}
+				// if (data.result.room !== undefined){
+				// 	roomDisplay = data.result.room;
+				// }
 			}
 		}
 	});
@@ -249,6 +250,7 @@ function on_reservation_link_click(e){
 	var datePickerValTab = datePickerVal.split("-");
 	var hours = $(iframe).find("#selectHours .sel");
 	var datas = {};
+	var modal;
 	datas = get_events(hours, datePickerValTab);
 	datas.id_pro = session.id_u;
 	datas.id_art = userId;
@@ -256,12 +258,22 @@ function on_reservation_link_click(e){
 	datas.user_sender = userId;
 	datas.room = roomDisplay_from_session;
 	//console.log(roomDisplay_from_session);
+	if (!check_events(datas.events)){
+		var ret = {success:[], global_msg:[]};
+		ret.success.push(false);
+		ret.global_msg.push("Un ou plusieurs créneaux choisi(s) se trouve(nt) à une date inférieure ou égale à la date actuelle + 1 heure !",
+			"Il est impossible de réserver à moins d'une heure à l'avance !");
+		update_front_with_msg(ret, "resa-msg");
+		return false;
+	}
 	if (roomDisplay_from_session != null && roomDisplay_from_session != "null"){
 		if ($(this).data("frame") == "1"){
+			modal = $("#rdv-modal");
 			datas.from = "rdv";
 			datas.title = "event-meet";
 		}
-		else if($(this).data("frame") == "2"){ 
+		else if($(this).data("frame") == "2"){
+			modal = $("#booking-modal"); 
 			datas.from = "booking";
 			datas.title = "event-work";
 		}
@@ -279,18 +291,7 @@ function on_reservation_link_click(e){
 				if (data.success[0]){
 					//Emission de la socket
 					//console.log("demande envoyé !" +userId);
-					/*var user_request = {}
-					if (user_receiv.type != 4){
-						user_request.id = user.id;
-						user_request.nom = user.nom;
-						user_request.prenom = user.prenom;
-						user_request.type = user.type;
-					}else{
-						user_request.id = user.id;
-						user_request.nom = user.nom;
-						user_request.prenom = user.prenom;
-						user_request.type = user.type;
-					}*/
+					modal.modal("hide");
 					var rdv = {
 						type_m : data.result.type_r,
 						user_receiver : user_receiv_from_session,
@@ -315,6 +316,16 @@ function on_reservation_link_click(e){
 		//console.log("Aucune room existe entre les users !");
 	}
 }
+function check_events(datas){
+	var start, now = new Date().ajouteHeures(1)
+	for (var k in datas){
+		start = new Date(datas[k].start);
+		if (start < now){
+		return false;
+		}
+	}
+	return true;
+}
 function on_valid_rdv_offer_link_click(e){
 	e.preventDefault();
 	var iframe = iframe_cal3 ;
@@ -334,6 +345,14 @@ function on_valid_rdv_offer_link_click(e){
 		id: $("#rdv-offer-modal").find("[name='offer-id']").val(),
 		type: $("#rdv-offer-modal").find("[name='offer-type']").val()};
 	//console.log(datas);
+	if (!check_events(datas.events)){
+		var ret = {success:[], global_msg:[]};
+		ret.success.push(false);
+		ret.global_msg.push("Un ou plusieurs créneaux choisi(s) se trouve(nt) à une date inférieure ou égale à la date actuelle + 1 heure !",
+			"Il est impossible de réserver à moins d'une heure à l'avance !");
+		update_front_with_msg(ret, "msg-offer");
+		return false;
+	}
 	if (roomDisplay_from_session != null && roomDisplay_from_session != "null"){
 		datas.from = "rdv_offer";
 		datas.title = "event-meet";
@@ -349,6 +368,7 @@ function on_valid_rdv_offer_link_click(e){
 				//console.log(data);
 				update_front_with_msg(data, "msg-offer");
 				if (data.success[0]){
+					$("#rdv-offer-modal").modal('hide');
 					//Emission de la socket
 					var rdv_off = {
 						type_m : data.result.type_r,
@@ -391,3 +411,7 @@ function on_rdv_offer_link_click(e){
 	//console.log(parent);
 	//console.log(id_offre);
 }
+Date.prototype.ajouteHeures = function(heures) {
+	this.setHours(this.getHours() + heures);
+	return this;
+};

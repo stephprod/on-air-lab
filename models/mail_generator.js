@@ -61,7 +61,7 @@ class MailTemplate{
 						'Ta demande de contact a été refusée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
 					param.subject = action == "accept" ? "Demande de contact acceptée !" : "Demande de contact rejetée !"
 					break;
-				case "rdv_offer_response":
+				case "rdv-offer_response":
 					param.content += action == "accept" ? 'Ta demande de rendez-vous liée à une offre a été acceptée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !' : 
 						'Ta demande de rendez-vous liée à une offre a été refusée par <b>'+userInfoSender.prenom+' '+userInfoSender.nom+'</b> !'
 					param.subject = action == "accept" ? "Demande de rendez-vous liée à une offre acceptée !" : "Demande de rendez-vous liée à une offre rejetée !"
