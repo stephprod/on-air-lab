@@ -590,11 +590,11 @@
 												<div class="clearfix"></div>
 											</div>
 											<div class="labelled-input">
-												<label style="width: 100%;" for="names">Nom/Prénom du titulaire du compte*</label><input id="names" name="names" type="text" class="input-full main-input" placeholder="Prénom Nom" value="<%= locals.etabObj.length > 0 ? locals.etabObj[0].prenom +' '+locals.etabObj[0].nom  : '' %>"/>
+												<label style="width: 100%;" for="names">Nom/Prénom du titulaire du compte*</label><input id="names" name="names" type="text" class="input-full main-input" placeholder="Prénom Nom" value="<%= locals.session.userName != undefined ? locals.session.userFirstName +' '+locals.session.userName  : '' %>"/>
 												<div class="clearfix"></div>
 											</div>
 											<div class="labelled-input">
-												<label style="width: 100%;" for="email_adresse">Courriel*</label><input id="email_adresse" name="email_adresse" type="email" class="input-full main-input" placeholder="Courriel du titulaire du compte" value="<%= locals.etabObj.length > 0 ? locals.etabObj[0].email : '' %>"/>
+												<label style="width: 100%;" for="email_adresse">Courriel*</label><input id="email_adresse" name="email_adresse" type="email" class="input-full main-input" placeholder="Courriel du titulaire du compte" value="<%= locals.session.userMail != undefined ? locals.session.userMail : '' %>"/>
 												<div class="clearfix"></div>
 											</div>
 											<div class="labelled-input">
