@@ -14,12 +14,20 @@ var etab_valid_link = $("a[data-action='etablissement']");
 var off_delete_div = $("div.delete-off");
 var code_payment_check_link = $("a[data-action='get-payment']");
 var session = JSON.parse(sessionStorage.getItem('session'));
+var extern_accnt = JSON.parse(sessionStorage.getItem('ext_accnt'));
+var errorMessage = document.getElementById('error-message');
+var bankName = document.getElementById('bank-name');
 //sessionStorage.clear();
 var user = null;
+var iban;
 //var userId = null;
 var token = null;
 var business= JSON.parse(sessionStorage.getItem('business'));
 var price = 1999;
+const stripePublishableKey = 'pk_test_L0T2zWeT0uLcyhZCD1Nfqzx2';
+var stripe = Stripe(stripePublishableKey, {
+	betas: ['payment_intent_beta_3']
+});
 code_payment_check_link.on("click", on_code_payment_check_link_click);
 etab_valid_link.on("click", on_etab_valid_link_click);
 off_delete_div.on("click", on_off_delete_div_click);
@@ -40,6 +48,65 @@ $(document).on("ready", function(){
 			update_front_with_errors(extra_datas.errors);
 		else
 			$("input[name^='cc']").removeAttr("disabled");
+	}
+	var style = {
+		base: {
+			color: '#32325d',
+			fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+			fontSmoothing: 'antialiased',
+			fontSize: '16px',
+			'::placeholder': {
+			color: '#aab7c4'
+			},
+			':-webkit-autofill': {
+			color: '#32325d',
+			},
+		},
+		invalid: {
+			color: '#fa755a',
+			iconColor: '#fa755a',
+			':-webkit-autofill': {
+				color: '#fa755a',
+			},
+		}
+	};
+	// console.log(extern_accnt);
+	if (extern_accnt !== undefined && extern_accnt == "none"){
+		// Create an instance of Elements.
+		var elements = stripe.elements();
+		// Custom styling can be passed to options when creating an Element.
+		// Create an instance of the iban Element.
+		iban = elements.create('iban', {
+			style: style,
+			supportedCountries: ['SEPA'],
+			// placeholderCountry: 'DE',
+		});
+		// Add an instance of the iban Element into the `iban-element` <div>.
+		iban.mount('#iban-element');
+		iban.on('change', function(event) {
+			// Handle real-time validation errors from the iban Element.
+			if (event.error) {
+				errorMessage.textContent = event.error.message;
+				errorMessage.classList.add('visible');
+			}else{
+				errorMessage.textContent = "";
+				errorMessage.classList.remove('visible');
+			}
+			// Display bank name corresponding to IBAN, if available.
+			if (event.bankName) {
+				bankName.textContent = event.bankName;
+				bankName.classList.add('visible');
+			}else{
+				bankName.classList.remove('visible');
+			}
+		});
+	}else if(extern_accnt !== undefined && extern_accnt != null){
+		$("input[name='names']").val("Déja renseignée !");
+		$("input[name='names']").attr("disabled", "disabled");
+		$("input[name='email_adresse']").val("Déja renseignée !");
+		$("input[name='email_adresse']").attr("disabled", "disabled");
+		$("input[name='iban']").val("Déja renseignée !");
+		$("input[name='iban']").attr("disabled", "disabled");
 	}
 });
 $("form[name='agent-form'] [name='email']").attr("disabled", "disabled");
@@ -273,32 +340,112 @@ function on_code_payment_check_link_click(e){
 	var parent = $(e.target).parents("#get-payment-form");
 	var link = parent.find("a[data-action='get-payment']");
 	var input = parent.find("input#code-payment");
+	var input2 = parent.find("input[name='names']");
+	var input3 = parent.find("input[name='email_adresse']");
 	if (link.length == 0)
 		link = $(e.target);
 	var datas = {};
+	// var valid = true;
 	//var div = $("div#"+$(link[0]).data("form"));
 	//console.log($(event.target).parents("a"));
 	datas.code = input.val();
 	datas.profil = parent.data("profil");
-	//datas.id_profil = div.data("profil");
-	//console.log(datas);
-	$.ajax({
-		type: "POST",
-		url: "/get-payment",
-		data: datas,
-		beforeSend: function (req){
-			req.setRequestHeader("x-access-token", token);
-		},
-		async: false,
-		success: function (data){
-			update_front_with_msg(data, "msg-tab");
-			// if (!data.success[0])
-			// 	update_front_with_errors(data.errors);
-			// else
-			// 	document.location = "/info-pro";
-			//console.log(data);
-		}
-	});
+	datas.names = input2.val();
+	datas.mail = input3.val();
+	if (extern_accnt !== undefined && extern_accnt == "none"){
+		var sourceData = {
+			type: 'sepa_debit',
+			currency: 'eur',
+			owner: {
+				name: datas.names,
+				email: datas.mail,
+			},
+			mandate: {
+				// Automatically send a mandate notification email to your customer
+				// once the source is charged.
+				notification_method: 'email',
+			}
+		};
+		// Call `stripe.createSource` with the iban Element and additional options.
+		stripe.createSource(iban, sourceData)
+		.then(function(result) {
+			if (result.error) {
+				// Inform the customer that there was an error.
+				errorMessage.textContent = result.error.message;
+				errorMessage.classList.add('visible');
+				return new Promise((resolve, reject) => {
+					reject(result.error);
+				})
+			} else {
+				// Send the Source to your server to create a charge.
+				errorMessage.classList.remove('visible');
+				// stripeSourceHandler(result.source);
+				datas.source = result.source.id
+				$.ajax({
+					type: "POST",
+					url: "/add-external-account",
+					data: datas,
+					beforeSend: function (req){
+						req.setRequestHeader("x-access-token", token);
+					},
+					async: false,
+					success: function (data){
+						update_front_with_msg(data, "msg-tab");
+						// console.log(data);
+						if (!data.success[0]){
+							return new Promise((resolve, reject) => {
+								reject(data);
+							})
+						}else{
+							return new Promise((resolve) => {
+								resolve();
+							})
+						}
+					}
+				});
+			}
+		})
+		.then(() => {
+			$.ajax({
+				type: "POST",
+				url: "/get-payment",
+				data: datas,
+				beforeSend: function (req){
+					req.setRequestHeader("x-access-token", token);
+				},
+				async: false,
+				success: function (data){
+					update_front_with_msg(data, "msg-tab");
+					// if (!data.success[0])
+					// 	update_front_with_errors(data.errors);
+					// else
+					// 	document.location = "/info-pro";
+					//console.log(data);
+				}
+			});
+		})
+		.catch((err) => {
+			console.log(err);
+		})
+	}else{
+		$.ajax({
+			type: "POST",
+			url: "/get-payment",
+			data: datas,
+			beforeSend: function (req){
+				req.setRequestHeader("x-access-token", token);
+			},
+			async: false,
+			success: function (data){
+				update_front_with_msg(data, "msg-tab");
+				// if (!data.success[0])
+				// 	update_front_with_errors(data.errors);
+				// else
+				// 	document.location = "/info-pro";
+				//console.log(data);
+			}
+		});
+	}
 }
 function on_etab_valid_link_click(e){
 	var datas = {};
@@ -439,7 +586,6 @@ function deletePlan(){
 	})
 }
 function sendPlan() {
-	var stripePublishableKey = 'pk_test_L0T2zWeT0uLcyhZCD1Nfqzx2';
 	var currency = 'eur';
 	//console.log(user);
 	var data = {
@@ -449,9 +595,9 @@ function sendPlan() {
 		prenom: user.prenom,
 		price: price
 	};
-	var stripe = Stripe(stripePublishableKey, {
-		betas: ['payment_intent_beta_3']
-	});
+	// var stripe = Stripe(stripePublishableKey, {
+	// 	betas: ['payment_intent_beta_3']
+	// });
 	// Create Checkout's handler
 	var handler = StripeCheckout.configure({
 		key: stripePublishableKey,

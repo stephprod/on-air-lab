@@ -584,9 +584,31 @@
 								<% if (locals.etabObj.length > 0) { %>
 									<div id="get-payment-form" action="#" method="Post" data-profil="<%= locals.etabObj[0].id_profil %>" >
 										<div id="form-result"></div>
-										<div class="adv-search-range-cont">
-											<label for="code-payment" class="adv-search-label">Code :</label>
-											<input type="text" id="code-payment" class="adv-search-amount">
+										<div class="col-xs-12 col-sm-12 col-md-12">
+											<div class="labelled-input">
+												<label style="width: 100%;" for="code-payment">Code*</label><input id="code-payment" name="code-payment" type="text" class="input-full main-input" placeholder="Code reçu par un utilisateur ou par courriel" />
+												<div class="clearfix"></div>
+											</div>
+											<div class="labelled-input">
+												<label style="width: 100%;" for="names">Nom/Prénom du titulaire du compte*</label><input id="names" name="names" type="text" class="input-full main-input" placeholder="Prénom Nom" value="<%= locals.etabObj.length > 0 ? locals.etabObj[0].prenom +' '+locals.etabObj[0].nom  : '' %>"/>
+												<div class="clearfix"></div>
+											</div>
+											<div class="labelled-input">
+												<label style="width: 100%;" for="email_adresse">Courriel*</label><input id="email_adresse" name="email_adresse" type="email" class="input-full main-input" placeholder="Courriel du titulaire du compte" value="<%= locals.etabObj.length > 0 ? locals.etabObj[0].email : '' %>"/>
+												<div class="clearfix"></div>
+											</div>
+											<div class="labelled-input">
+												<label style="width: 100%;" for="iban" class="adv-search-label">Iban*</label>
+												<div id="iban-element">
+													<!-- A Stripe Element will be inserted here. -->
+													<% if (locals.etabObj[0].external_account != null){ %>
+														<input id="iban" type="text" value="Banque déjà renseignée !" class="input-full main-input" disabled="disabled"/>
+													<% } %>
+												</div>
+											</div>
+											<div id="bank-name"></div>
+											<!-- Used to display form errors. -->
+											<div id="error-message" role="alert"></div>
 											<div class="clearfix"></div>
 										</div>
 										<div class="form-submit-cont">
@@ -596,7 +618,18 @@
 												<div class="button-triangle2"></div>
 												<div class="button-icon"><i class="fa fa-paper-plane"></i></div>
 											</a>
-										<div class="clearfix"></div>
+											<div class="clearfix"></div>
+										</div>
+										<!-- Display mandate acceptance text. -->
+										<div id="mandate-acceptance">
+											By providing your IBAN and confirming this payment, you are
+											authorizing Rocketship Inc. and Stripe, our payment service
+											provider, to send instructions to your bank to debit your account and
+											your bank to debit your account in accordance with those instructions.
+											You are entitled to a refund from your bank under the terms and
+											conditions of your agreement with your bank. A refund must be claimed
+											within 8 weeks starting from the date on which your account was debited.
+										</div>
 									</div>						
 								<% } else { %>
 									<div id="page-wrap">
@@ -620,13 +653,15 @@
   <!-- <script type="text/javascript" src="/asset/js/devis.js"></script> -->
 	<script type="text/javascript">
 		var servs = [];
-		var business = {};
+		var external_account = {};
 		<% for (k in locals.servObj){ %>
 			var serv={};
 			serv.id_service = "<%- locals.servObj[k].id_service %>";
 			serv.nom_service = "<%- locals.servObj[k].nom_service %>";
 			servs.push(serv);
 		<% } %>
+		external_account = "<%= locals.etabObj[0].external_account != null ? locals.etabObj[0].external_account : "none" %>";
 		sessionStorage.setItem("services", JSON.stringify(servs));
+		sessionStorage.setItem("ext_accnt", JSON.stringify(external_account));
     </script>
 <% include footer %>

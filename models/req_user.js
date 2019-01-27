@@ -464,7 +464,7 @@ class User{
             '`etablissement`.`cp`, `etablissement`.`descr`, `etablissement`.`siret`, `etablissement`.`path_img`, `etablissement`.`date_birth_owner`, `etablissement`.`siren`, '+
             '`tarification`.`id_tarification`, `tarification`.`prix_min`, `tarification`.`prix_h`, `tarification`.`nbr_h_min`, '+
             '`document`.`path`, '+
-            '`profil`.`id_profil`, '+
+            '`profil`.`id_profil`, `profil`.`account`, `profil`.`external_account`, '+
             '`villes_france_free`.`ville_nom`,  `villes_france_free`.`ville_id` '+
             'FROM `etablissement` INNER JOIN `profil` ON `profil`.`id_etablissement`=`etablissement`.`id` '+
             'LEFT JOIN `tarification` ON `tarification`.`id_tarification`=`profil`.`id_tarification` '+
@@ -521,6 +521,17 @@ class User{
     static update_profil(req, cb){
         return new Promise((resolve, reject) =>{
             let r = db.query('UPDATE `profil` '+req, (err, result) =>{
+                if (err){
+                    console.log(r.sql)
+                    throw err;
+                }
+                cb(result, resolve, reject)
+            })
+        })
+    }
+    static get_profil(id, cb){
+        return new Promise((resolve, reject) =>{
+            let r = db.query('SELECT * FROM `profil` WHERE `profil`.`id_profil`='+id, (err, result) =>{
                 if (err){
                     console.log(r.sql)
                     throw err;

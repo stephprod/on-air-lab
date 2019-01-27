@@ -53,6 +53,7 @@ const validRegister = require('./route/valid_register')
 const get_paid = require('./route/get_payment')
 const delete_plan = require('./route/delete_plan')
 const refund = require('./route/refund')
+const extern_accnt = require('./route/add_extern_account')
 //const loginFast = require('./route/login_fast')
 /*Modeles*/
 const notifications = require('./models/notifications').actions
@@ -136,6 +137,7 @@ app.use('/', validRegister)
 app.use('/', get_paid)
 app.use('/', delete_plan)
 app.use('/', refund)
+app.use('/', extern_accnt)
 app.get('/', (request, response) => {
     response.locals.session = request.session
 	response.render('pages/index')
